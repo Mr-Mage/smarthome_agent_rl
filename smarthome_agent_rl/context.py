@@ -1,0 +1,86 @@
+"""Lossless query ledger with provenance and explicit stale-state markers; no LLM summary."""
+import copy
+import json
+
+from src.agents.types import ChatMessage
+
+STATIC_TOOLS = {'get_rooms', 'get_room_devices', 'get_cluster_doc', 'get_environment_control_rules'}
+MUTATIONS = {'execute_command', 'write_attribute', 'schedule_workflow', 'cancel_workflow',
+             'add_device', 'remove_device', 'set_tick_interval'}
+
+
+def flatten(value, prefix=''):
+    if isinstance(value, dict):
+        result = {}
+        for key, child in value.items():
+            result.update(flatten(child, prefix + '/' + str(key).replace('~', '~0').replace('/', '~1')))
+        return result or {prefix: {}}
+    return {prefix: copy.deepcopy(value)}
+
+
+def build_ledger(observations, proposals, structured=()):
+    facts, receipts, errors, epoch = {}, [], [], 0
+    for observation in observations:
+        tool, arguments, response = observation['tool'], observation['arguments'], observation['response']
+        source = {'turn': observation['turn'], 'tool': tool, 'arguments': arguments,
+                  'extra_query': observation['extra_query']}
+        successful = isinstance(response, dict) and response.get('status', {}).get('code') == 200 and response.get('error') is None
+        if not successful:
+            errors.append({'source': source, 'response': response})
+            continue
+        if tool in MUTATIONS:
+            epoch += 1
+            receipts.append({'source': source, 'response': response,
+                             'workflow_registration_is_not_future_success': tool == 'schedule_workflow'})
+            continue
+        key = json.dumps([tool, arguments], sort_keys=True, separators=(',', ':'))
+        value = copy.deepcopy(response)
+        previous = facts.get(key)
+        versions = previous['previous_versions'] if previous else []
+        if previous and previous['response'] != value:
+            old, new = flatten(previous['response']), flatten(value)
+            # Old leaf values and absence markers reconstruct every previous response exactly.
+            changes = {path: {'present': path in old, 'value': old.get(path)}
+                       for path in old.keys() | new.keys() if old.get(path) != new.get(path) or (path in old) != (path in new)}
+            versions = [*versions, {'source': previous['source'], 'epoch': previous['epoch'],
+                                    'previous_leaf_values': changes}]
+        facts[key] = {'source': source, 'epoch': epoch, 'response': value,
+                      'previous_versions': versions, 'static': tool in STATIC_TOOLS}
+    for fact in facts.values():
+        fact['stale'] = not fact['static'] and fact['epoch'] < epoch
+    for proposal in proposals:
+        if proposal.get('blocked'):
+            errors.append({'source': {'turn': proposal['turn'], 'tool': proposal['tool'],
+                'arguments': proposal['arguments']}, 'guard_error': proposal.get('response')})
+        if 'verification' in proposal:
+            receipts.append({'source': {'turn': proposal['turn']}, 'verification': proposal['verification']})
+    for proposal in structured:
+        if 'validation_error' in proposal:
+            errors.append({'source': {'turn': proposal['turn']},
+                           'output_schema_error': proposal['validation_error']})
+    return {'epoch': epoch, 'facts': facts, 'action_receipts': receipts, 'errors': errors,
+            'rule': 'Facts are observations at their recorded turn. Stale facts are history, not current preconditions. Query public state when needed.'}
+
+
+class LedgerProvider:
+    def __init__(self, inner, executor):
+        self.inner, self.executor = inner, executor
+
+    def generate(self, messages, response_format=None):
+        start = max(i for i, message in enumerate(messages) if 'This is your actual task.' in message.content)
+        history = messages[start + 1:]
+        # Keep the most recent two complete action/observation pairs verbatim.
+        assistant_indices = [i for i, message in enumerate(history) if message.role == 'assistant']
+        recent = history[assistant_indices[-2]:] if len(assistant_indices) >= 2 else history
+        ledger = build_ledger(self.executor.observations, self.executor.audit, self.executor.structured_audit)
+        prompt = 'PUBLIC OBSERVATION LEDGER (no task success goals):\n' + json.dumps(ledger, ensure_ascii=False,
+                                                                                  separators=(',', ':'))
+        converted = [*messages[:start + 1], ChatMessage(role='user', content=prompt), *recent]
+        original_size = sum(len(m.content) for m in messages)
+        managed_size = sum(len(m.content) for m in converted)
+        # Compression is optional when the complete ledger is larger than raw history.
+        used = managed_size < original_size
+        self.executor.context_audit.append({'turn': len(assistant_indices) + 1,
+            'original_characters': original_size, 'managed_characters': managed_size, 'used': used,
+            'facts': len(ledger['facts']), 'errors_retained': len(ledger['errors']), 'epoch': ledger['epoch']})
+        return self.inner.generate(converted if used else messages, response_format=response_format)
