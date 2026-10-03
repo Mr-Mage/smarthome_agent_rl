@@ -109,7 +109,8 @@ def report(run):
         records = [metrics[(item['task']['id'], variant)] for item in protocol['schedule']]
         success_records = [r for r in records if r['success']]
         numeric = ['actor_tokens', 'judge_tokens', 'actor_model_calls', 'judge_model_calls',
-            'invalid_proposed', 'invalid_reached_executor', 'guard_blocked', 'extra_queries',
+            'invalid_proposed', 'invalid_reached_executor', 'structured_rejections',
+            'executed_tool_calls', 'guard_blocked', 'extra_queries',
             'verification_failures', 'recovered_actions', 'recovery_budget_blocked', 'duration_seconds', 'retrieval_tokens',
             'actor_latency', 'judge_latency', 'extra_query_latency']
         summary[variant] = {'episodes': len(records), 'successes': len(success_records),
