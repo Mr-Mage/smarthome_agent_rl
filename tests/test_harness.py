@@ -9,7 +9,9 @@ from smarthome_agent_rl.guard import ToolGuard, GuardError, command_contracts, p
 from smarthome_agent_rl.structured import tool_schemas
 from smarthome_agent_rl.harness_agent import GuardedExecutor
 from smarthome_agent_rl.verification import expected_effect, verify_effect
-from smarthome_agent_rl.context import build_ledger, flatten
+from smarthome_agent_rl.context import build_ledger, flatten, LedgerProvider
+from src.agents.types import ChatMessage
+from types import SimpleNamespace
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -132,6 +134,38 @@ class HarnessTests(unittest.TestCase):
         self.assertTrue(ledger['action_receipts'][0]['workflow_registration_is_not_future_success'])
         self.assertEqual(len(ledger['errors']), 1)
         self.assertEqual(flatten({'a/b': {'~x': 2}}), {'/a~1b/~0x': 2})
+
+    def test_context_retains_task_recent_pairs_and_repeated_query_provenance(self):
+        document = 'public device manual ' * 200
+        response = {'status': {'code': 200}, 'data': {'manual': document}, 'error': None}
+        observations = [{'turn': i, 'tool': 'get_cluster_doc', 'arguments': {'query': 'manual', 'top_k': 1},
+            'response': response, 'extra_query': False} for i in range(1, 10)]
+        class Inner:
+            def generate(self, messages, response_format=None):
+                self.messages, self.schema = messages, response_format
+                return 'reply'
+        inner = Inner()
+        executor = SimpleNamespace(observations=observations, audit=[], structured_audit=[
+            {'turn': 2, 'validation_error': 'missing command args'}], context_audit=[])
+        provider = LedgerProvider(inner, executor)
+        task = ChatMessage(role='user', content='This is your actual task. QUERY_MARKER')
+        history = [message for _ in observations for message in (
+            ChatMessage(role='assistant', content='action'),
+            ChatMessage(role='user', content='observation: ' + json.dumps(response)))]
+        messages = [ChatMessage(role='system', content='full tool registry'), task, *history]
+        provider.generate(messages, response_format={'original_schema': True})
+        self.assertTrue(executor.context_audit[-1]['used'])
+        self.assertIn(task, inner.messages)
+        self.assertEqual(inner.messages[-4:], history[-4:])
+        self.assertEqual(inner.schema, {'original_schema': True})
+        ledger = build_ledger(observations, [], executor.structured_audit)
+        fact = next(iter(ledger['facts'].values()))
+        self.assertEqual(len(fact['observed_at']), 9)
+        self.assertEqual(fact['response']['data']['manual'], document)
+        self.assertEqual(ledger['errors'][0]['output_schema_error'], 'missing command args')
+        provider.generate(messages[:2])
+        self.assertFalse(executor.context_audit[-1]['used'])
+        self.assertEqual(inner.messages, messages[:2])
 
 
 if __name__ == '__main__':

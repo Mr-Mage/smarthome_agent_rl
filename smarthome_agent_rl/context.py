@@ -20,10 +20,10 @@ def flatten(value, prefix=''):
 
 def build_ledger(observations, proposals, structured=()):
     facts, receipts, errors, epoch = {}, [], [], 0
-    for observation in observations:
+    for ordinal, observation in enumerate(observations, 1):
         tool, arguments, response = observation['tool'], observation['arguments'], observation['response']
         source = {'turn': observation['turn'], 'tool': tool, 'arguments': arguments,
-                  'extra_query': observation['extra_query']}
+                  'extra_query': observation['extra_query'], 'observation_index': ordinal}
         successful = isinstance(response, dict) and response.get('status', {}).get('code') == 200 and response.get('error') is None
         if not successful:
             errors.append({'source': source, 'response': response})
@@ -36,6 +36,7 @@ def build_ledger(observations, proposals, structured=()):
         key = json.dumps([tool, arguments], sort_keys=True, separators=(',', ':'))
         value = copy.deepcopy(response)
         previous = facts.get(key)
+        observed_at = previous['observed_at'] if previous else []
         versions = previous['previous_versions'] if previous else []
         if previous and previous['response'] != value:
             old, new = flatten(previous['response']), flatten(value)
@@ -45,7 +46,9 @@ def build_ledger(observations, proposals, structured=()):
             versions = [*versions, {'source': previous['source'], 'epoch': previous['epoch'],
                                     'previous_leaf_values': changes}]
         facts[key] = {'source': source, 'epoch': epoch, 'response': value,
-                      'previous_versions': versions, 'static': tool in STATIC_TOOLS}
+                      'previous_versions': versions, 'static': tool in STATIC_TOOLS,
+                      'observed_at': [*observed_at, {'turn': source['turn'], 'epoch': epoch,
+                                                   'observation_index': ordinal}]}
     for fact in facts.values():
         fact['stale'] = not fact['static'] and fact['epoch'] < epoch
     for proposal in proposals:
