@@ -29,9 +29,10 @@ def episode_metrics(directory):
     if audit_path.exists():
         audit = read(audit_path)
         blocked = sum(row['blocked'] for row in audit['proposals'])
+        budget_blocked = sum(row['blocked'] and row.get('layer') == 'recovery' for row in audit['proposals'])
         structured_rejections = sum('validation_error' in row for row in audit['structured'])
         actual_invalid = sum(invalid(row['response']) for row in audit['actual_observations'] if not row['extra_query'])
-        invalid_proposed = blocked + structured_rejections + actual_invalid
+        invalid_proposed = blocked - budget_blocked + structured_rejections + actual_invalid
         verification_failures = sum(row.get('verification', {}).get('verified') is False for row in audit['proposals'])
         recoveries = sum(row.get('recovered', False) for row in audit['proposals'])
         extra_queries = audit['extra_queries']
@@ -43,6 +44,7 @@ def episode_metrics(directory):
         actual_invalid = sum(invalid(row) for row in observations)
         invalid_proposed = actual_invalid
         blocked = structured_rejections = verification_failures = recoveries = extra_queries = 0
+        budget_blocked = 0
         extra_query_latency = 0
         executed = sum(row['event'] == 'action' for row in events)
         # Original strict loop may throw on a third parser rejection before its observation.
@@ -56,6 +58,7 @@ def episode_metrics(directory):
         raise ValueError(f'Infrastructure failure cannot be included as a completed primary run: {directory}')
     return {**summary, 'invalid_proposed': invalid_proposed, 'invalid_reached_executor': actual_invalid,
         'guard_blocked': blocked, 'structured_rejections': structured_rejections,
+        'recovery_budget_blocked': budget_blocked,
         'verification_failures': verification_failures, 'recovered_actions': recoveries,
         'executed_tool_calls': executed, 'extra_queries': extra_queries,
         'extra_query_latency': extra_query_latency, 'retrieval_calls': len(retrieval),
@@ -88,7 +91,7 @@ def report(run):
         success_records = [r for r in records if r['success']]
         numeric = ['actor_tokens', 'judge_tokens', 'actor_model_calls', 'judge_model_calls',
             'invalid_proposed', 'invalid_reached_executor', 'guard_blocked', 'extra_queries',
-            'verification_failures', 'recovered_actions', 'duration_seconds', 'retrieval_tokens',
+            'verification_failures', 'recovered_actions', 'recovery_budget_blocked', 'duration_seconds', 'retrieval_tokens',
             'actor_latency', 'judge_latency', 'extra_query_latency']
         summary[variant] = {'episodes': len(records), 'successes': len(success_records),
             'success_rate': len(success_records) / len(records), 'unfinished': sum(r['task_failure'] for r in records),
