@@ -6,6 +6,7 @@ import json
 import os
 from pathlib import Path
 import signal
+import shutil
 import socket
 import subprocess
 import sys
@@ -59,6 +60,14 @@ def main():
     save('source_identity.json', {str(path.relative_to(ROOT)): digest(path) for directory in
         ('scripts', 'smarthome_agent_rl') for path in (ROOT / directory).rglob('*.py')})
     (run / 'working.patch').write_bytes(subprocess.check_output(['git', 'diff', 'HEAD'], cwd=ROOT))
+    for directory in ('scripts', 'smarthome_agent_rl'):
+        shutil.copytree(ROOT / directory, run / 'code' / directory,
+                        ignore=shutil.ignore_patterns('__pycache__'))
+    sim = ROOT / 'deps/SimuHome'
+    upstream_commit = subprocess.check_output(['git', '-C', str(sim), 'rev-parse', 'HEAD'], text=True).strip()
+    upstream_dirty = subprocess.check_output(['git', '-C', str(sim), 'status', '--porcelain'], text=True).strip()
+    if upstream_commit != manifest['simuhome_commit'] or upstream_dirty:
+        raise RuntimeError('Official evaluator/simulator must remain pristine at the manifest revision')
     services, handles, commands = [], [], []
     key = 'smarthome-local-rollout'
     client = httpx.Client(trust_env=False, timeout=30)

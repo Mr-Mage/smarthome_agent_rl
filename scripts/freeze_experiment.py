@@ -1,0 +1,71 @@
+"""Freeze a clean project commit and verified model/runtime/manifests before final."""
+import argparse
+import hashlib
+import json
+from pathlib import Path
+import subprocess
+import sys
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+from smarthome_agent_rl.benchmark import digest
+
+
+def git(directory, *arguments):
+    return subprocess.check_output(['git', '-C', str(directory), *arguments], text=True).strip()
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--dev-run', required=True)
+    parser.add_argument('--output', default='work/harness-mvp/final-freeze.json')
+    parser.add_argument('--services', default='work/harness-mvp/services-v3')
+    parser.add_argument('--inventory', default='work/harness-mvp/inventory-v2')
+    args = parser.parse_args()
+    if git(ROOT, 'status', '--porcelain'):
+        raise RuntimeError('Commit all implementation/configuration changes before freezing')
+    config = json.loads((ROOT / 'configs/harness-mvp.json').read_text())
+    dev = ROOT / args.dev_run
+    report = json.loads((dev / 'report.json').read_text())
+    if not report['verified'] or report['phase'] != 'dev' or set(report['arms']) != set(config['variants_dev']) or any(
+            arm['episodes'] != 120 or arm['evaluator_errors'] for arm in report['arms'].values()):
+        raise ValueError('Complete verified 600-episode dev protocol required before final')
+    services = ROOT / args.services
+    if not (services / 'ready').exists():
+        raise RuntimeError('Four-card service supervisor is not ready')
+    service_config = json.loads((services / 'config.json').read_text())
+    if service_config != config:
+        raise ValueError('Running service allocation/model configuration differs from protocol')
+    lock = json.loads((ROOT / 'dependencies.lock.json').read_text())
+    sim = ROOT / lock['SimuHome']['path']
+    lightning = ROOT / lock['agent-lightning']['path']
+    if git(sim, 'rev-parse', 'HEAD') != lock['SimuHome']['commit'] or git(sim, 'status', '--porcelain'):
+        raise RuntimeError('SimuHome must remain at its pristine locked revision')
+    if git(lightning, 'rev-parse', 'HEAD') != lock['agent-lightning']['commit']:
+        raise RuntimeError('Lightning revision changed')
+    output = ROOT / args.output
+    if output.exists():
+        raise FileExistsError('Never overwrite an existing frozen experiment')
+    output.parent.mkdir(parents=True, exist_ok=True)
+    inventories = {name: json.loads((ROOT / args.inventory / f'{name}-inventory.json').read_text())
+                   for name in ('actor', 'judge')}
+    record = {'schema': 'harness-final-freeze-v1', 'commit': git(ROOT, 'rev-parse', 'HEAD'),
+        'config_sha256': digest(ROOT / 'configs/harness-mvp.json'),
+        'manifest_sha256': digest(ROOT / 'configs/benchmark-mvp/final.json'),
+        'dev_report_sha256': digest(dev / 'report.json'), 'dev_run': args.dev_run,
+        'model_identities': {k: v['identity'] for k, v in inventories.items()},
+        'upstream': lock, 'lightning_user_patch_sha256': hashlib.sha256(
+            subprocess.check_output(['git', '-C', str(lightning), 'diff', 'HEAD'])).hexdigest(),
+        'services_config_sha256': digest(services / 'config.json'),
+        'judge_probe_sha256': digest(services / 'inference-probe.json'),
+        'primary_comparisons': ['G-B0', 'GC-B0', 'Full-B0'], 'multiplicity': 'Holm',
+        'unfinished_task_score': 0, 'infrastructure_policy': 'Stop; preserve entire failed round; no selective rerun',
+        'judge_panel_independent_models': False,
+        'hardware': subprocess.check_output(['nvidia-smi', '--query-gpu=index,name,uuid,driver_version',
+                                            '--format=csv,noheader'], text=True).splitlines()}
+    output.write_text(json.dumps(record, indent=2), encoding='utf-8')
+    print(json.dumps({'frozen_commit': record['commit'], 'final_tasks': 192, 'arms': config['variants_final']}))
+
+
+if __name__ == '__main__':
+    main()
