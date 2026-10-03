@@ -33,6 +33,9 @@ def build_ledger(observations, proposals, structured=()):
             receipts.append({'source': source, 'response': response,
                              'workflow_registration_is_not_future_success': tool == 'schedule_workflow'})
             continue
+        if tool in ('get_current_time', 'get_workflow_status', 'get_workflow_list'):
+            # Time and asynchronous workflows may invalidate earlier state without an agent write.
+            epoch += 1
         key = json.dumps([tool, arguments], sort_keys=True, separators=(',', ':'))
         value = copy.deepcopy(response)
         previous = facts.get(key)

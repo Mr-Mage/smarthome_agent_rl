@@ -167,6 +167,18 @@ class HarnessTests(unittest.TestCase):
         self.assertFalse(executor.context_audit[-1]['used'])
         self.assertEqual(inner.messages, messages[:2])
 
+    def test_time_or_workflow_query_invalidates_earlier_state_without_agent_write(self):
+        for tool, data in [('get_current_time', {'now': '2030-01-01 12:31:00'}),
+                           ('get_workflow_status', {'status': 'completed'})]:
+            observations = [{'turn': 1, 'tool': 'get_attribute', 'arguments': {'device_id': 'x'},
+                'extra_query': False, 'response': {'status': {'code': 200}, 'error': None, 'data': {'value': 1}}},
+                {'turn': 2, 'tool': tool, 'arguments': {}, 'extra_query': False,
+                 'response': {'status': {'code': 200}, 'error': None, 'data': data}}]
+            ledger = build_ledger(observations, [])
+            old = next(v for v in ledger['facts'].values() if v['source']['tool'] == 'get_attribute')
+            self.assertTrue(old['stale'])
+            self.assertEqual(old['response']['data']['value'], 1)
+
 
 if __name__ == '__main__':
     unittest.main()
