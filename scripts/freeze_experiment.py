@@ -30,6 +30,15 @@ def main():
     if not report['verified'] or report['phase'] != 'dev' or set(report['arms']) != set(config['variants_dev']) or any(
             arm['episodes'] != 120 or arm['evaluator_errors'] for arm in report['arms'].values()):
         raise ValueError('Complete verified 600-episode dev protocol required before final')
+    protocol = json.loads((dev / 'protocol.json').read_text())
+    if protocol['config'] != config or protocol['manifest_sha256'] != digest(ROOT / 'configs/benchmark-mvp/dev.json'):
+        raise ValueError('Dev configuration or task manifest changed')
+    source_identity = json.loads((dev / 'source_identity.json').read_text())
+    source_changes = {name: {'dev_sha256': expected, 'frozen_sha256': digest(ROOT / name)}
+        for name, expected in source_identity.items() if digest(ROOT / name) != expected}
+    reporting_only = {'scripts/report_benchmark.py', 'scripts/freeze_experiment.py'}
+    if set(source_changes) - reporting_only:
+        raise RuntimeError('Runtime policy changed after dev started')
     services = ROOT / args.services
     if not (services / 'ready').exists():
         raise RuntimeError('Four-card service supervisor is not ready')
@@ -53,6 +62,8 @@ def main():
         'config_sha256': digest(ROOT / 'configs/harness-mvp.json'),
         'manifest_sha256': digest(ROOT / 'configs/benchmark-mvp/final.json'),
         'dev_report_sha256': digest(dev / 'report.json'), 'dev_run': args.dev_run,
+        'dev_commit': protocol['commit'], 'dev_runtime_source_identity_matches': True,
+        'reporting_only_source_changes': source_changes,
         'model_identities': {k: v['identity'] for k, v in inventories.items()},
         'upstream': lock, 'lightning_user_patch_sha256': hashlib.sha256(
             subprocess.check_output(['git', '-C', str(lightning), 'diff', 'HEAD'])).hexdigest(),

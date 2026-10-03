@@ -15,23 +15,44 @@ def read(path):
     return json.loads(path.read_text(encoding='utf-8'))
 
 
+def invalid_observation(response):
+    if not isinstance(response, dict):
+        return False
+    code = response.get('status', {}).get('code')
+    return code in (400, 404, 409, 422) or (code is None and response.get('error') is not None)
+
+
+def baseline_action_metrics(events):
+    # The pristine ReAct loop also emits "observation" for parser/unknown-tool
+    # failures. Only an action followed by its observation reached run_tool.
+    pending_action = False
+    executed = reached_invalid = 0
+    preexecution_rejections = sum(row['event'] == 'consecutive_failure' for row in events)
+    for row in events:
+        if row['event'] == 'action':
+            pending_action = True
+        elif row['event'] == 'observation':
+            if pending_action:
+                executed += 1
+                reached_invalid += invalid_observation(json.loads(row['payload']))
+            pending_action = False
+    return {'invalid_proposed': reached_invalid + preexecution_rejections,
+        'invalid_reached_executor': reached_invalid, 'executed_tool_calls': executed,
+        'structured_rejections': preexecution_rejections}
+
+
 def episode_metrics(directory):
     summary = read(directory / 'summary.json')
     calls = read(directory / 'model_calls.json')
     judges = read(directory / 'judge_calls.json') if (directory / 'judge_calls.json').exists() else []
     retrieval = read(directory / 'retrieval_calls.json') if (directory / 'retrieval_calls.json').exists() else []
-    def invalid(response):
-        if not isinstance(response, dict):
-            return False
-        code = response.get('status', {}).get('code')
-        return code in (400, 404, 409, 422) or (code is None and response.get('error') is not None)
     audit_path = directory / 'harness_audit.json'
     if audit_path.exists():
         audit = read(audit_path)
         blocked = sum(row['blocked'] for row in audit['proposals'])
         budget_blocked = sum(row['blocked'] and row.get('layer') == 'recovery' for row in audit['proposals'])
         structured_rejections = sum('validation_error' in row for row in audit['structured'])
-        actual_invalid = sum(invalid(row['response']) for row in audit['actual_observations'] if not row['extra_query'])
+        actual_invalid = sum(invalid_observation(row['response']) for row in audit['actual_observations'] if not row['extra_query'])
         invalid_proposed = blocked - budget_blocked + structured_rejections + actual_invalid
         verification_failures = sum(row.get('verification', {}).get('verified') is False for row in audit['proposals'])
         recoveries = sum(row.get('recovered', False) for row in audit['proposals'])
@@ -40,16 +61,14 @@ def episode_metrics(directory):
         executed = sum(not row['extra_query'] for row in audit['actual_observations'])
     else:
         events = read(directory / 'agent_events.json')
-        observations = [json.loads(row['payload']) for row in events if row['event'] in ('observation', 'rejected_action')]
-        actual_invalid = sum(invalid(row) for row in observations)
-        invalid_proposed = actual_invalid
-        blocked = structured_rejections = verification_failures = recoveries = extra_queries = 0
+        baseline = baseline_action_metrics(events)
+        actual_invalid = baseline['invalid_reached_executor']
+        invalid_proposed = baseline['invalid_proposed']
+        structured_rejections = baseline['structured_rejections']
+        blocked = verification_failures = recoveries = extra_queries = 0
         budget_blocked = 0
         extra_query_latency = 0
-        executed = sum(row['event'] == 'action' for row in events)
-        # Original strict loop may throw on a third parser rejection before its observation.
-        if summary['task_failure'] and 'consecutive failures' in (summary.get('error') or {}).get('message', ''):
-            invalid_proposed += 1
+        executed = baseline['executed_tool_calls']
     token_total = sum(row['response'].get('usage', {}).get('total_tokens', 0) for row in calls)
     judge_total = sum(row['response'].get('usage', {}).get('total_tokens', 0) for row in judges)
     if token_total != summary['actor_tokens'] or judge_total != summary['judge_tokens']:
@@ -126,6 +145,10 @@ def report(run):
                 if path.is_file() and path.name not in ('report.json', 'report.md', 'artifact_manifest.json')}
     (run / 'artifact_manifest.json').write_text(json.dumps(manifest, indent=2), encoding='utf-8')
     result = {'verified': True, 'phase': protocol['phase'], 'commit': protocol['commit'],
+        'reporter_version': 'executor-attribution-v2',
+        'reporter_sha256': digest(ROOT / 'scripts/report_benchmark.py'),
+        'metric_definitions': {'invalid_reached_executor': 'Immediate errors after run_tool dispatch; excludes parser/unknown-tool rejections and auxiliary queries',
+            'invalid_proposed': 'Preexecution rejections plus immediate errors from proposed calls; recovery-budget blocks excluded'},
         'reference': reference, 'arms': summary, 'paired': pairs, 'artifact_files': len(manifest),
         'exploratory_context_pairs': mechanism,
         'judge_panel': 'Three seeds from one local model/service, not three independent judges',
