@@ -1,0 +1,168 @@
+"""Project variants around the upstream ReAct loop, with process-local tool injection."""
+import copy
+import json
+import hashlib
+from pathlib import Path
+import time
+
+from src.agents.strategies.react_agent import ReActAgent, ReActConfig
+import src.agents.strategies.react_agent as react_module
+from src.agents.strategies.base import ToolInvocation
+from src.agents.tools import run_tool
+from src.agents.types import ChatMessage
+
+from smarthome_agent_rl.guard import ToolGuard, GuardError, command_contracts, public_power_rules, harness_schemas
+from smarthome_agent_rl.structured import StructuredProvider, tool_schemas
+from smarthome_agent_rl.verification import expected_effect, verify_effect
+
+ROOT = Path(__file__).resolve().parents[1]
+MUTATIONS = {'execute_command', 'write_attribute', 'schedule_workflow', 'cancel_workflow',
+             'add_device', 'remove_device', 'set_tick_interval'}
+
+
+def ok(response):
+    return isinstance(response, dict) and response.get('status', {}).get('code') == 200 and response.get('error') is None
+
+
+class GuardedExecutor:
+    def __init__(self, *, verify=False, repair_limit=2, query_limit=40, audit_fn=None, dispatch=run_tool):
+        contracts, sources = command_contracts(ROOT / 'deps/SimuHome/src/simulator/domain/clusters')
+        power_rules, device_sources = public_power_rules(ROOT / 'deps/SimuHome/src/simulator/domain/devices')
+        sources.update(device_sources)
+        sources['api/schemas.py'] = hashlib.sha256((ROOT / 'deps/SimuHome/src/simulator/api/schemas.py').read_bytes()).hexdigest()
+        self.guard = ToolGuard(harness_schemas(tool_schemas()), contracts, power_rules)
+        self.sources, self.verify = sources, verify
+        self.repair_limit, self.query_limit, self.audit_fn, self.dispatch = repair_limit, query_limit, audit_fn, dispatch
+        self.audit, self.actual, self.failures, self.observations = [], [], {}, []
+        self.extra_queries, self.turn = 0, 0
+        self.context_audit = []
+        self.structured_audit = []
+
+    def save_audit(self):
+        if self.audit_fn:
+            self.audit_fn({'proposals': self.audit, 'actual_observations': self.observations,
+                'public_semantics_source_sha256': self.sources, 'extra_queries': self.extra_queries,
+                'context': self.context_audit, 'structured': self.structured_audit})
+
+    def record_structured(self, records):
+        self.structured_audit = records
+        self.save_audit()
+
+    def call(self, tool, arguments, *, extra=False):
+        if extra:
+            if self.extra_queries >= self.query_limit:
+                return None
+            self.extra_queries += 1
+        started = time.monotonic()
+        response = self.dispatch(tool, copy.deepcopy(arguments))
+        invocation = ToolInvocation(tool=tool, params=copy.deepcopy(arguments), observation=copy.deepcopy(response))
+        self.actual.append(invocation)
+        self.observations.append({'turn': self.turn, 'tool': tool, 'arguments': copy.deepcopy(arguments),
+            'response': copy.deepcopy(response), 'extra_query': extra,
+            'duration_seconds': time.monotonic() - started})
+        if extra and isinstance(response, dict) and response.get('status', {}).get('code', 200) >= 500:
+            raise RuntimeError(f'Guard query infrastructure failure: {response}')
+        return response
+
+    def execute(self, tool, arguments):
+        self.turn = self.structured_audit[-1]['turn'] if self.structured_audit else self.turn + 1
+        record = {'turn': self.turn, 'tool': tool, 'arguments': copy.deepcopy(arguments),
+            'blocked': False, 'uncovered': [], 'extra_queries_before': self.extra_queries,
+            'actual_calls_before': len(self.actual)}
+        self.audit.append(record)
+        key = json.dumps([tool, arguments.get('device_id'), arguments.get('cluster_id'),
+                          arguments.get('command_id', arguments.get('attribute_id'))], sort_keys=True)
+        try:
+            self.guard.schema(tool, arguments)
+            if self.verify and self.failures.get(key, 0) > self.repair_limit:
+                raise GuardError('recovery', 'Two repair attempts exhausted; change plan or finish honestly')
+            if self.verify and self.failures.get(key, 0):
+                record['repair_attempt'] = self.failures[key]
+            before = {}
+            if tool in ('execute_command', 'write_attribute', 'get_attribute'):
+                query = self.call('get_device_structure', {'device_id': arguments['device_id']}, extra=True)
+                if query is None:
+                    record['uncovered'].append('prequery_budget_exhausted')
+                elif not ok(query):
+                    raise GuardError('capability', 'Device structure query failed', response=query)
+                else:
+                    before = query['data']
+                    record['uncovered'].extend(self.guard.capability(tool, arguments, before))
+            elif tool == 'schedule_workflow':
+                # Future state is not today's precondition. One targeted query maximum per turn.
+                structures = {}
+                queried = False
+                for step in arguments['steps']:
+                    device = step['args']['device_id']
+                    if not queried:
+                        queried = True
+                        query = self.call('get_device_structure', {'device_id': device}, extra=True)
+                        if query is not None and ok(query):
+                            structures[device] = query['data']
+                    if device in structures:
+                        record['uncovered'].extend(self.guard.capability(step['tool'], step['args'],
+                            structures[device], state=False))
+                    else:
+                        record['uncovered'].append('workflow_device_not_queried:' + device)
+                record['uncovered'].append('future_state_preconditions')
+            response = self.call(tool, arguments)
+            record['reached_executor'] = True
+            failed = not ok(response)
+            if self.verify and ok(response):
+                verification = {'status': 'not_applicable', 'verified': None}
+                if tool in ('execute_command', 'write_attribute'):
+                    query = self.call('get_device_structure', {'device_id': arguments['device_id']}, extra=True)
+                    verification = verify_effect(expected_effect(tool, arguments, before), query['data'], response) if query and ok(query) else {
+                        'status': 'query_unavailable', 'verified': None}
+                elif tool in ('schedule_workflow', 'cancel_workflow'):
+                    workflow_id = response.get('data', {}).get('workflow_id', arguments.get('workflow_id'))
+                    query = self.call('get_workflow_status', {'workflow_id': workflow_id}, extra=True) if workflow_id else None
+                    verification = {'status': 'registration_only' if tool == 'schedule_workflow' else 'cancellation',
+                        'verified': None, 'public_status': query, 'future_success_verified': False}
+                record['verification'] = verification
+                failed |= verification.get('verified') is False
+                response = {**response, 'harness_verification': verification}
+            if failed:
+                self.failures[key] = self.failures.get(key, 0) + 1
+            else:
+                record['recovered'] = bool(self.failures.pop(key, 0))
+            record['simulator_error'] = not ok(response)
+            return response
+        except GuardError as exc:
+            record.update({'blocked': True, 'layer': exc.layer, 'detail': exc.detail,
+                           'reached_executor': False})
+            self.failures[key] = self.failures.get(key, 0) + 1
+            record['response'] = exc.response()
+            return record['response']
+        finally:
+            record['extra_queries'] = self.extra_queries - record['extra_queries_before']
+            record['actual_calls'] = len(self.actual) - record['actual_calls_before']
+            self.save_audit()
+
+
+class HarnessAgent:
+    def __init__(self, llm, *, variant, max_steps, trace_fn=None, audit_fn=None,
+                 repair_limit=2, query_limit=40):
+        if variant not in ('G', 'GV', 'GC', 'Full'):
+            raise ValueError(variant)
+        self.executor = GuardedExecutor(verify=variant in ('GV', 'Full'), audit_fn=audit_fn,
+                                       repair_limit=repair_limit, query_limit=query_limit)
+        provider = StructuredProvider(llm, finish_guard=False, recovery=False, guidance=False,
+                                      audit_fn=self.executor.record_structured)
+        provider.schemas = self.executor.guard.schemas
+        if variant in ('GC', 'Full'):
+            from smarthome_agent_rl.context import LedgerProvider
+            provider = LedgerProvider(provider, self.executor)
+        self.agent = ReActAgent(provider, config=ReActConfig(max_steps=max_steps,
+            show_assistant_raw=True, trace_fn=trace_fn))
+
+    def run(self, query, *, user_location=None, current_time=None):
+        original = react_module.run_tool
+        react_module.run_tool = self.executor.execute
+        try:
+            result = self.agent.run(query, user_location=user_location, current_time=current_time)
+            # Evaluators see real calls, including extra public queries; blocked proposals aren't calls.
+            result.tool_calls = list(self.executor.actual)
+            return result
+        finally:
+            react_module.run_tool = original
