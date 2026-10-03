@@ -1,19 +1,19 @@
-# Runtime artifacts and historical transfer material: preserved on disk.
-/runs/
+# Local handover history and execution artifacts (keep on disk, never commit).
+/.work/
 /work/
+/runs/
 /logs/
 /outputs/
-/.work/
 /referenced-chatgpt-conversation-this-is-an-2/
 /upload-to-h100/
 
-# Independent dependency repositories; see dependencies.lock.json and patches/.
+# External repositories and downloaded models; revisions are in dependencies.lock.json.
 /deps/
 /models/
 /checkpoints/
 /data/
 
-# Python runtimes, environments, caches and build output.
+# Python environments, caches and build output.
 .python/
 .venv*/
 venv/
@@ -31,7 +31,7 @@ htmlcov/
 build/
 dist/
 
-# Model weights, embedding indexes and numerical artifacts.
+# Model weights, binary retrieval indexes and numerical artifacts.
 *.safetensors
 *.gguf
 *.pt
@@ -44,7 +44,7 @@ dist/
 *.npy
 *.npz
 
-# Archives are evidence packages, not a code synchronization mechanism.
+# Transfer packages and reproducibility archives belong outside source control.
 *.tar
 *.tar.gz
 *.tgz
@@ -54,7 +54,7 @@ dist/
 *.whl
 *.bundle
 
-# Duplicate snapshots remain available in the archived experimental evidence.
+# Generated duplicate source snapshots; original handover archives retain them.
 /docs/**/source-*/
 /docs/**/gateway-source/
 /docs/**/device-source/
@@ -62,7 +62,7 @@ dist/
 /docs/**/server-project-documents/
 /docs/**/evidence_manifest.json
 
-# Credentials and local-only overrides.
+# Credentials and machine-only settings. Commit examples, never real values.
 .env
 .env.*
 !.env.example
@@ -80,7 +80,7 @@ secrets.*.json
 /configs/local/
 /configs/*.local.json
 
-# Editor and operating-system artifacts.
+# Editor and OS files.
 .vscode/
 .idea/
 .DS_Store
@@ -88,6 +88,3 @@ Thumbs.db
 Desktop.ini
 *.swp
 *.tmp
-
-# Educational raw trajectories remain in the experiment handover.
-/docs/**/学习用真实轨迹.json
