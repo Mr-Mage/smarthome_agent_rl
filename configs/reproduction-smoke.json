@@ -1,0 +1,20 @@
+{
+  "model_path": "models/Qwen2.5-1.5B-Instruct",
+  "served_model": "Qwen2.5-1.5B-Instruct",
+  "gpu": "0",
+  "tensor_parallel_size": 1,
+  "model_port": 19000,
+  "model_context": 32768,
+  "gpu_memory_utilization": 0.20,
+  "qt": "qt3",
+  "case": "feasible",
+  "seeds": [1, 2, 3],
+  "timeout": 60,
+  "model_replaced": true,
+  "limitations": [
+    "Official repository CLI, ReAct, benchmark and simulator evaluator are unchanged.",
+    "Existing Qwen2.5-1.5B replaces paper models: this is an official protocol smoke test, not table-score reproduction.",
+    "Only qt3 feasible seeds 1-3; no LLM judge or training.",
+    "Current official benchmark was regenerated after the paper and is not the original table-1 dataset."
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "updated_date": "2026-10-03",
+  "model_repository": "Qwen/Qwen3.5-9B",
+  "model_revision": "c202236235762e1c871ad0ccb60c8ee5ba337b9a",
+  "upstream_reproduction": false,
+  "qwen3_32b_download": "stopped_by_user",
+  "qwen3_32b_queue": "cancelled_by_user",
+  "new_download_pid": null,
+  "new_relay_pid": null,
+  "new_tunnel_pid": null,
+  "new_download_log": "logs/qwen35-9b-original-relay-20261003-1744.jsonl",
+  "new_model_state": "full_hash_and_text_inference_verified",
+  "baseline_state": "9b_16_dev_completed_and_verified",
+  "training_started": false,
+  "baseline_queue_pid": null,
+  "baseline_queue_state": "completed_and_verified",
+  "baseline_9b_run": "runs/b0-qwen35-9b-20261003-03",
+  "tests_passed": 25,
+  "updated_utc": "2026-10-03T14:20:35.908526+00:00",
+  "baseline_config": "configs/b0-qwen35-9b-cu128-runtime.json",
+  "baseline_successes": 12,
+  "baseline_tasks": 16,
+  "baseline_success_rate": 0.75,
+  "p0_report": "docs/P0-9B-baseline-20261003.md",
+  "next_phase": "decide_device_capability_or_error_feedback_comparison_then_plan_data_split_and_SFT",
+  "owned_services_stopped": true,
+  "learning_document": "docs/agent-learning-20261003/Agent模块设计与Lightning基线学习文档.md",
+  "learning_document_updated_utc": "2026-10-03T11:28:22.887360+00:00",
+  "p1_state": "completed_and_verified",
+  "p1_requests": 72,
+  "p1_diagnostic_episodes": 8,
+  "p1_complete_formal_rounds": 0,
+  "p1_incomplete_round_episodes": 13,
+  "p1_report": "docs/p1-20261003/P1-三轮配对报告.md",
+  "p1_formal_episodes": 96,
+  "p1_runs": [
+    "runs/p1-paired-round1-20261003-02",
+    "runs/p1-paired-round2-20261003-02",
+    "runs/p1-paired-round3-20261003-02"
+  ],
+  "p1_successes": {
+    "upstream-react": [
+      12,
+      12,
+      12
+    ],
+    "structured-schema": [
+      12,
+      12,
+      12
+    ]
+  }
+}

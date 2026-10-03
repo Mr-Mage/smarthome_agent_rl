@@ -1,0 +1,26 @@
+{
+  "schema": "smarthome-parallel-dev-v1",
+  "harnesses": [
+    "upstream-react",
+    "structured-schema"
+  ],
+  "shards": [
+    {
+      "gpu": "2",
+      "config": "configs/dev-worker0.json",
+      "suite": "configs/dev-expanded-v1-shard0.json"
+    },
+    {
+      "gpu": "3",
+      "config": "configs/dev-worker1.json",
+      "suite": "configs/dev-expanded-v1-shard1.json"
+    }
+  ],
+  "training": false,
+  "benchmark_used": false,
+  "description": "Frozen external schema-only harness vs original agent; independent simulators and services",
+  "preflight": {
+    "suite": "configs/dev-expanded-v1.json",
+    "references": "configs/dev-expanded-reference-plans.json"
+  }
+}

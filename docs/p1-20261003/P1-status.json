@@ -1,0 +1,30 @@
+{
+  "p1_complete": true,
+  "fixed_requests": 72,
+  "current_environment_chain_episodes": 8,
+  "additional_pre_retrieval_chain_episodes": 8,
+  "formal_episodes": 96,
+  "complete_formal_rounds": 3,
+  "tests_passed": 25,
+  "rounds": [
+    "runs/p1-paired-round1-20261003-02",
+    "runs/p1-paired-round2-20261003-02",
+    "runs/p1-paired-round3-20261003-02"
+  ],
+  "successes": {
+    "upstream-react": [
+      12,
+      12,
+      12
+    ],
+    "structured-schema": [
+      12,
+      12,
+      12
+    ]
+  },
+  "training": false,
+  "historical_incomplete_round_episodes": 13,
+  "historical_incomplete_included_in_statistics": false,
+  "retrieval_repaired": true
+}

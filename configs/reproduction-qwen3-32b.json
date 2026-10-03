@@ -1,0 +1,22 @@
+{
+  "model_path": "models/Qwen3-32B",
+  "model_repo": "Qwen/Qwen3-32B",
+  "model_revision": "9216db5781bf21249d130ec9da846c4624c16137",
+  "served_model": "Qwen3-32B",
+  "gpu": "0,1",
+  "tensor_parallel_size": 2,
+  "model_port": 19000,
+  "model_context": 32768,
+  "gpu_memory_utilization": 0.85,
+  "qt": "qt3",
+  "case": "feasible",
+  "seeds": [1, 2, 3],
+  "timeout": 60,
+  "model_replaced": false,
+  "limitations": [
+    "Qwen3-32B is named in paper; Hugging Face checkpoint Qwen/Qwen3-32B must be downloaded and pinned before run.",
+    "Paper used OpenRouter for all models; local vLLM serving and thinking/sampling defaults cannot be claimed exactly matched.",
+    "Current official benchmark was regenerated after the paper and differs from table-1 dataset.",
+    "Initial run only qt3 feasible seeds 1-3: exact original simulator evaluator, no judge substitution, no full-benchmark score claim."
+  ]
+}

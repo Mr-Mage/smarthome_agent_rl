@@ -1,0 +1,5 @@
+# Only the unchanged upstream simulator HTTP backend is used in V0.
+# Upstream CLI/LLM generators require additional packages and are not invoked.
+fastapi==0.122.0
+pydantic==2.12.5
+uvicorn==0.38.0

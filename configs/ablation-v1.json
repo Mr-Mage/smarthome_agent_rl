@@ -1,0 +1,42 @@
+{
+  "suite": "configs/dev-suite-v2.json",
+  "model": "Qwen2.5-1.5B-Instruct",
+  "max_steps": 20,
+  "model_seed": 42,
+  "temperature": 0,
+  "harnesses": [
+    "upstream-react",
+    "structured-schema",
+    "structured-no-gate",
+    "structured-no-recovery",
+    "structured-v1"
+  ],
+  "settings": {
+    "structured-v1": {
+      "finish_guard": true,
+      "recovery": true,
+      "guidance": true
+    },
+    "structured-no-gate": {
+      "finish_guard": false,
+      "recovery": true,
+      "guidance": true
+    },
+    "structured-no-recovery": {
+      "finish_guard": true,
+      "recovery": false,
+      "guidance": true
+    },
+    "structured-schema": {
+      "finish_guard": false,
+      "recovery": false,
+      "guidance": false
+    }
+  },
+  "hypotheses": [
+    "Typed object format/schema reduces malformed or missing arguments.",
+    "Finish gate may reduce unverified early termination.",
+    "Dynamic recovery hint may reduce repeated invalid calls."
+  ],
+  "limitations": "Four static development fixtures; schema-only includes format instructions and few-shot transport adaptation."
+}

@@ -1,0 +1,26 @@
+{
+  "artifact_checks_passed": true,
+  "tasks": 16,
+  "paired_tasks": 0,
+  "episodes": 16,
+  "harnesses": [
+    "upstream-react"
+  ],
+  "generation_settings_verified": true,
+  "same_tasks_and_initial_goal_states": true,
+  "same_model_seed_and_call_budget": true,
+  "reward_and_actual_state_verified": true,
+  "gateway_requests_and_token_ids_verified": true,
+  "aggregation": {
+    "upstream-react": {
+      "episodes": 16,
+      "successes": 12,
+      "success_rate": 0.75,
+      "model_calls": 118,
+      "invalid_actions": 22,
+      "tokens": 633207,
+      "reward_sum": 9.853459666666666
+    }
+  },
+  "note": "Small dev suite; no benchmark or causal isolation of individual harness changes."
+}

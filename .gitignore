@@ -1,0 +1,93 @@
+# Runtime artifacts and historical transfer material: preserved on disk.
+/runs/
+/work/
+/logs/
+/outputs/
+/.work/
+/referenced-chatgpt-conversation-this-is-an-2/
+/upload-to-h100/
+
+# Independent dependency repositories; see dependencies.lock.json and patches/.
+/deps/
+/models/
+/checkpoints/
+/data/
+
+# Python runtimes, environments, caches and build output.
+.python/
+.venv*/
+venv/
+env/
+.conda/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+build/
+dist/
+
+# Model weights, embedding indexes and numerical artifacts.
+*.safetensors
+*.gguf
+*.pt
+*.pth
+*.onnx
+*.bin
+*.faiss
+*.pkl
+*.pickle
+*.npy
+*.npz
+
+# Archives are evidence packages, not a code synchronization mechanism.
+*.tar
+*.tar.gz
+*.tgz
+*.gz
+*.zip
+*.7z
+*.whl
+*.bundle
+
+# Duplicate snapshots remain available in the archived experimental evidence.
+/docs/**/source-*/
+/docs/**/gateway-source/
+/docs/**/device-source/
+/docs/**/retrieval-source-docs/
+/docs/**/server-project-documents/
+/docs/**/evidence_manifest.json
+
+# Credentials and local-only overrides.
+.env
+.env.*
+!.env.example
+!.env.*.example
+*.pem
+*.key
+credentials.json
+credentials.*.json
+secrets.json
+secrets.*.json
+/.ssh/
+/.aws/
+/.codex/
+/.agents/
+/configs/local/
+/configs/*.local.json
+
+# Editor and operating-system artifacts.
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.swp
+*.tmp
+
+# Educational raw trajectories remain in the experiment handover.
+/docs/**/学习用真实轨迹.json

@@ -1,0 +1,9 @@
+{
+  "gpu": "NVIDIA H100 80GB HBM3, 0 MiB, 0 %",
+  "gpu_compute_processes": "",
+  "owned_services_stopped": true,
+  "active_project_services": [],
+  "simuhome_status": "",
+  "lightning_diff_stat": " agentlightning/config/server.yaml             |  7 +++++++\n agentlightning/controller/local_reconciler.py |  3 ++-\n agentlightning/server/app.py                  | 11 ++++++++++-\n examples/gsm8k/run_local.sh                   | 25 ++++++++++++++++++++++---\n examples/gsm8k/train_gsm8k_agent.py           |  4 ++--\n 5 files changed, 43 insertions(+), 7 deletions(-)\n",
+  "lightning_status": " M agentlightning/config/server.yaml\n M agentlightning/controller/local_reconciler.py\n M agentlightning/server/app.py\n M examples/gsm8k/run_local.sh\n M examples/gsm8k/train_gsm8k_agent.py\n?? tests/server/test_http_limits.py\n"
+}

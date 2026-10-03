@@ -1,0 +1,194 @@
+[
+  {
+    "schema": "smarthome-task-v1",
+    "task_id": "dev-lights-20261003",
+    "split": "dev",
+    "seed": 20261003,
+    "instruction": "Turn on bedroom_light_1 and turn off bedroom_light_2 in the bedroom.",
+    "initial_home_config": {
+      "base_time": "2026-10-03 00:00:00",
+      "tick_interval": 0.1,
+      "fast_forward": false,
+      "enable_aggregators": false,
+      "max_ticks": null,
+      "rooms": {
+        "bedroom": {
+          "devices": [
+            {
+              "device_id": "bedroom_light_1",
+              "device_type": "on_off_light",
+              "attributes": {
+                "1.OnOff.OnOff": false
+              }
+            },
+            {
+              "device_id": "bedroom_light_2",
+              "device_type": "on_off_light",
+              "attributes": {
+                "1.OnOff.OnOff": true
+              }
+            }
+          ]
+        }
+      }
+    },
+    "goals": [
+      {
+        "device_id": "bedroom_light_1",
+        "attribute": "1.OnOff.OnOff",
+        "op": "eq",
+        "value": true
+      },
+      {
+        "device_id": "bedroom_light_2",
+        "attribute": "1.OnOff.OnOff",
+        "op": "eq",
+        "value": false
+      }
+    ]
+  },
+  {
+    "schema": "smarthome-task-v1",
+    "task_id": "dev-lights-20261003-query-first",
+    "split": "dev",
+    "seed": 20261003,
+    "instruction": "First call get_room_devices for bedroom to check which lights actually exist. Then turn on bedroom_light_1 and turn off bedroom_light_2 immediately. Verify the result before finishing.",
+    "initial_home_config": {
+      "base_time": "2026-10-03 00:00:00",
+      "tick_interval": 0.1,
+      "fast_forward": false,
+      "enable_aggregators": false,
+      "max_ticks": null,
+      "rooms": {
+        "bedroom": {
+          "devices": [
+            {
+              "device_id": "bedroom_light_1",
+              "device_type": "on_off_light",
+              "attributes": {
+                "1.OnOff.OnOff": false
+              }
+            },
+            {
+              "device_id": "bedroom_light_2",
+              "device_type": "on_off_light",
+              "attributes": {
+                "1.OnOff.OnOff": true
+              }
+            }
+          ]
+        }
+      }
+    },
+    "goals": [
+      {
+        "device_id": "bedroom_light_1",
+        "attribute": "1.OnOff.OnOff",
+        "op": "eq",
+        "value": true
+      },
+      {
+        "device_id": "bedroom_light_2",
+        "attribute": "1.OnOff.OnOff",
+        "op": "eq",
+        "value": false
+      }
+    ]
+  },
+  {
+    "schema": "smarthome-task-v1",
+    "task_id": "dev-lights-20261004-reverse",
+    "split": "dev",
+    "seed": 20261004,
+    "instruction": "Turn off bedroom_light_1 and turn on bedroom_light_2 in the bedroom.",
+    "initial_home_config": {
+      "base_time": "2026-10-03 00:00:00",
+      "tick_interval": 0.1,
+      "fast_forward": false,
+      "enable_aggregators": false,
+      "max_ticks": null,
+      "rooms": {
+        "bedroom": {
+          "devices": [
+            {
+              "device_id": "bedroom_light_1",
+              "device_type": "on_off_light",
+              "attributes": {
+                "1.OnOff.OnOff": true
+              }
+            },
+            {
+              "device_id": "bedroom_light_2",
+              "device_type": "on_off_light",
+              "attributes": {
+                "1.OnOff.OnOff": false
+              }
+            }
+          ]
+        }
+      }
+    },
+    "goals": [
+      {
+        "device_id": "bedroom_light_1",
+        "attribute": "1.OnOff.OnOff",
+        "op": "eq",
+        "value": false
+      },
+      {
+        "device_id": "bedroom_light_2",
+        "attribute": "1.OnOff.OnOff",
+        "op": "eq",
+        "value": true
+      }
+    ]
+  },
+  {
+    "schema": "smarthome-task-v1",
+    "task_id": "dev-lights-20261005-single",
+    "split": "dev",
+    "seed": 20261005,
+    "instruction": "Turn on study_light_1 in the study.",
+    "initial_home_config": {
+      "base_time": "2026-10-03 00:00:00",
+      "tick_interval": 0.1,
+      "fast_forward": false,
+      "enable_aggregators": false,
+      "max_ticks": null,
+      "rooms": {
+        "study": {
+          "devices": [
+            {
+              "device_id": "study_light_1",
+              "device_type": "on_off_light",
+              "attributes": {
+                "1.OnOff.OnOff": false
+              }
+            },
+            {
+              "device_id": "study_light_2",
+              "device_type": "on_off_light",
+              "attributes": {
+                "1.OnOff.OnOff": true
+              }
+            }
+          ]
+        }
+      }
+    },
+    "goals": [
+      {
+        "device_id": "study_light_1",
+        "attribute": "1.OnOff.OnOff",
+        "op": "eq",
+        "value": true
+      },
+      {
+        "device_id": "study_light_2",
+        "attribute": "1.OnOff.OnOff",
+        "op": "eq",
+        "value": true
+      }
+    ]
+  }
+]

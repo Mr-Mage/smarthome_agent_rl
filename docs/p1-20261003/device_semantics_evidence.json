@@ -1,0 +1,139 @@
+{
+  "LevelControl.MoveToLevel": {
+    "parameters": [
+      "Level",
+      "TransitionTime",
+      "OptionsMask",
+      "OptionsOverride"
+    ],
+    "required": [
+      "Level"
+    ],
+    "source": "deps/SimuHome/src/simulator/domain/clusters/level_control.py",
+    "line": 134,
+    "source_sha256": "e827ff940e2ce23cfa79715922e7e212ab7aaf828208b5715a72fe4a478baed6",
+    "method": "_move_to_level",
+    "allows_extra": false
+  },
+  "LevelControl.Move": {
+    "parameters": [
+      "MoveMode",
+      "Rate",
+      "OptionsMask",
+      "OptionsOverride"
+    ],
+    "required": [
+      "MoveMode"
+    ],
+    "source": "deps/SimuHome/src/simulator/domain/clusters/level_control.py",
+    "line": 149,
+    "source_sha256": "e827ff940e2ce23cfa79715922e7e212ab7aaf828208b5715a72fe4a478baed6",
+    "method": "_move",
+    "allows_extra": false
+  },
+  "LevelControl.Step": {
+    "parameters": [
+      "StepMode",
+      "StepSize",
+      "TransitionTime",
+      "OptionsMask",
+      "OptionsOverride"
+    ],
+    "required": [
+      "StepMode",
+      "StepSize"
+    ],
+    "source": "deps/SimuHome/src/simulator/domain/clusters/level_control.py",
+    "line": 164,
+    "source_sha256": "e827ff940e2ce23cfa79715922e7e212ab7aaf828208b5715a72fe4a478baed6",
+    "method": "_step",
+    "allows_extra": false
+  },
+  "LevelControl.Stop": {
+    "parameters": [
+      "OptionsMask",
+      "OptionsOverride"
+    ],
+    "required": [],
+    "source": "deps/SimuHome/src/simulator/domain/clusters/level_control.py",
+    "line": 181,
+    "source_sha256": "e827ff940e2ce23cfa79715922e7e212ab7aaf828208b5715a72fe4a478baed6",
+    "method": "_stop",
+    "allows_extra": false
+  },
+  "LevelControl.MoveToLevelWithOnOff": {
+    "parameters": [
+      "Level",
+      "TransitionTime",
+      "OptionsMask",
+      "OptionsOverride"
+    ],
+    "required": [
+      "Level"
+    ],
+    "source": "deps/SimuHome/src/simulator/domain/clusters/level_control.py",
+    "line": 189,
+    "source_sha256": "e827ff940e2ce23cfa79715922e7e212ab7aaf828208b5715a72fe4a478baed6",
+    "method": "_move_to_level_with_onoff",
+    "allows_extra": false
+  },
+  "LevelControl.MoveWithOnOff": {
+    "parameters": [
+      "MoveMode",
+      "Rate",
+      "OptionsMask",
+      "OptionsOverride"
+    ],
+    "required": [
+      "MoveMode"
+    ],
+    "source": "deps/SimuHome/src/simulator/domain/clusters/level_control.py",
+    "line": 204,
+    "source_sha256": "e827ff940e2ce23cfa79715922e7e212ab7aaf828208b5715a72fe4a478baed6",
+    "method": "_move_with_onoff",
+    "allows_extra": false
+  },
+  "LevelControl.StepWithOnOff": {
+    "parameters": [
+      "StepMode",
+      "StepSize",
+      "TransitionTime",
+      "OptionsMask",
+      "OptionsOverride"
+    ],
+    "required": [
+      "StepMode",
+      "StepSize"
+    ],
+    "source": "deps/SimuHome/src/simulator/domain/clusters/level_control.py",
+    "line": 219,
+    "source_sha256": "e827ff940e2ce23cfa79715922e7e212ab7aaf828208b5715a72fe4a478baed6",
+    "method": "_step_with_onoff",
+    "allows_extra": false
+  },
+  "LevelControl.StopWithOnOff": {
+    "parameters": [
+      "OptionsMask",
+      "OptionsOverride"
+    ],
+    "required": [],
+    "source": "deps/SimuHome/src/simulator/domain/clusters/level_control.py",
+    "line": 236,
+    "source_sha256": "e827ff940e2ce23cfa79715922e7e212ab7aaf828208b5715a72fe4a478baed6",
+    "method": "_stop_with_onoff",
+    "allows_extra": false
+  },
+  "LevelControl.MoveToClosestFrequency": {
+    "parameters": [
+      "Frequency"
+    ],
+    "required": [
+      "Frequency"
+    ],
+    "source": "deps/SimuHome/src/simulator/domain/clusters/level_control.py",
+    "line": 553,
+    "source_sha256": "e827ff940e2ce23cfa79715922e7e212ab7aaf828208b5715a72fe4a478baed6",
+    "method": "_move_to_closest_frequency",
+    "allows_extra": false
+  }
+}

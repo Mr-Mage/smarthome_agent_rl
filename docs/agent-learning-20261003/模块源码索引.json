@@ -1,0 +1,261 @@
+{
+  "source-b0-run03/scripts/capture_model_status.py": [],
+  "source-b0-run03/scripts/capture_single_h100_status.py": [
+    {
+      "name": "read_json",
+      "line": 18,
+      "kind": "FunctionDef"
+    }
+  ],
+  "source-b0-run03/scripts/check_environment.py": [
+    {
+      "name": "check",
+      "line": 12,
+      "kind": "FunctionDef"
+    }
+  ],
+  "source-b0-run03/scripts/generate_dev_suite.py": [
+    {
+      "name": "goal",
+      "line": 15,
+      "kind": "FunctionDef"
+    },
+    {
+      "name": "command",
+      "line": 19,
+      "kind": "FunctionDef"
+    },
+    {
+      "name": "generate",
+      "line": 24,
+      "kind": "FunctionDef"
+    },
+    {
+      "name": "main",
+      "line": 79,
+      "kind": "FunctionDef"
+    }
+  ],
+  "source-b0-run03/scripts/preflight_dev_suite.py": [
+    {
+      "name": "main",
+      "line": 18,
+      "kind": "FunctionDef"
+    }
+  ],
+  "source-b0-run03/scripts/prepare_reproduction_model.py": [
+    {
+      "name": "log",
+      "line": 27,
+      "kind": "FunctionDef"
+    },
+    {
+      "name": "valid",
+      "line": 32,
+      "kind": "FunctionDef"
+    },
+    {
+      "name": "serve_relay",
+      "line": 47,
+      "kind": "FunctionDef"
+    },
+    {
+      "name": "download",
+      "line": 130,
+      "kind": "FunctionDef"
+    },
+    {
+      "name": "main",
+      "line": 199,
+      "kind": "FunctionDef"
+    }
+  ],
+  "source-b0-run03/scripts/reproduce_official_cli.py": [
+    {
+      "name": "main",
+      "line": 22,
+      "kind": "FunctionDef"
+    }
+  ],
+  "source-b0-run03/scripts/run_b0_when_ready.py": [
+    {
+      "name": "main",
+      "line": 12,
+      "kind": "FunctionDef"
+    }
+  ],
+  "source-b0-run03/scripts/run_harness_suite.py": [
+    {
+      "name": "main",
+      "line": 25,
+      "kind": "FunctionDef"
+    }
+  ],
+  "source-b0-run03/scripts/run_official_episode.py": [
+    {
+      "name": "run",
+      "line": 26,
+      "kind": "FunctionDef"
+    }
+  ],
+  "source-b0-run03/scripts/run_official_stack.py": [
+    {
+      "name": "main",
+      "line": 24,
+      "kind": "FunctionDef"
+    }
+  ],
+  "source-b0-run03/scripts/run_parallel_dev.py": [
+    {
+      "name": "validate_plan",
+      "line": 15,
+      "kind": "FunctionDef"
+    },
+    {
+      "name": "main",
+      "line": 44,
+      "kind": "FunctionDef"
+    }
+  ],
+  "source-b0-run03/scripts/run_parallel_workflows.py": [
+    {
+      "name": "main",
+      "line": 13,
+      "kind": "FunctionDef"
+    }
+  ],
+  "source-b0-run03/scripts/run_qwen3_when_ready.py": [
+    {
+      "name": "main",
+      "line": 15,
+      "kind": "FunctionDef"
+    }
+  ],
+  "source-b0-run03/scripts/run_stack.py": [
+    {
+      "name": "main",
+      "line": 24,
+      "kind": "FunctionDef"
+    }
+  ],
+  "source-b0-run03/scripts/summarize_baseline.py": [
+    {
+      "name": "summarize",
+      "line": 10,
+      "kind": "FunctionDef"
+    }
+  ],
+  "source-b0-run03/scripts/verify_harness_suite.py": [
+    {
+      "name": "verify",
+      "line": 14,
+      "kind": "FunctionDef"
+    }
+  ],
+  "source-b0-run03/scripts/verify_official_artifacts.py": [
+    {
+      "name": "verify",
+      "line": 12,
+      "kind": "FunctionDef"
+    }
+  ],
+  "source-b0-run03/smarthome_agent_rl/__init__.py": [],
+  "source-b0-run03/smarthome_agent_rl/accounting.py": [
+    {
+      "name": "pending_rejection",
+      "line": 4,
+      "kind": "FunctionDef"
+    }
+  ],
+  "source-b0-run03/smarthome_agent_rl/adapter.py": [
+    {
+      "name": "InvalidAction",
+      "line": 7,
+      "kind": "ClassDef"
+    },
+    {
+      "name": "SimuHomeAdapter",
+      "line": 11,
+      "kind": "ClassDef"
+    }
+  ],
+  "source-b0-run03/smarthome_agent_rl/baseline.py": [
+    {
+      "name": "BaselineAgent",
+      "line": 7,
+      "kind": "ClassDef"
+    }
+  ],
+  "source-b0-run03/smarthome_agent_rl/generation.py": [
+    {
+      "name": "generation_options",
+      "line": 5,
+      "kind": "FunctionDef"
+    },
+    {
+      "name": "install_generation_options",
+      "line": 40,
+      "kind": "FunctionDef"
+    }
+  ],
+  "source-b0-run03/smarthome_agent_rl/official.py": [
+    {
+      "name": "OfficialBaselineAgent",
+      "line": 7,
+      "kind": "ClassDef"
+    }
+  ],
+  "source-b0-run03/smarthome_agent_rl/react.py": [
+    {
+      "name": "parse_action",
+      "line": 24,
+      "kind": "FunctionDef"
+    },
+    {
+      "name": "ReActAgent",
+      "line": 41,
+      "kind": "ClassDef"
+    }
+  ],
+  "source-b0-run03/smarthome_agent_rl/reward.py": [
+    {
+      "name": "check_goals",
+      "line": 5,
+      "kind": "FunctionDef"
+    },
+    {
+      "name": "Weights",
+      "line": 27,
+      "kind": "ClassDef"
+    },
+    {
+      "name": "reward_parts",
+      "line": 35,
+      "kind": "FunctionDef"
+    }
+  ],
+  "source-b0-run03/smarthome_agent_rl/structured.py": [
+    {
+      "name": "tool_schemas",
+      "line": 43,
+      "kind": "FunctionDef"
+    },
+    {
+      "name": "canonical_action",
+      "line": 63,
+      "kind": "FunctionDef"
+    },
+    {
+      "name": "StructuredProvider",
+      "line": 69,
+      "kind": "ClassDef"
+    }
+  ],
+  "source-b0-run03/smarthome_agent_rl/tasks.py": [
+    {
+      "name": "make_task",
+      "line": 4,
+      "kind": "FunctionDef"
+    }
+  ]
+}

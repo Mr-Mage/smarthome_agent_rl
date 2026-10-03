@@ -1,0 +1,138 @@
+{
+  "verified": true,
+  "embedding_model": "BAAI/bge-small-en-v1.5",
+  "model_revision": "5c38ec7c405ec4b44b94cc5a9bb96e735b38267a",
+  "device": "cpu",
+  "dimension": 384,
+  "documents": 70,
+  "chunks": 4130,
+  "chunk_size": 1000,
+  "chunk_overlap": 200,
+  "original_docs_loader": "src.agents.tools.load_docs",
+  "original_index_unchanged": true,
+  "source_sha256": {
+    "deps/SimuHome/docs/clusters/Energy_Preference_Cluster.md": "ddeb6ac67cc5a5f99ec800a1f00d0e0f42143589bfe821d3bd0272be3fd4ec38",
+    "deps/SimuHome/docs/clusters/Thread_Border_Router_Management_Cluster.md": "47830b06064875cf1e9a7dac8497a88622f3b32b9b8ec2e5a871b4e534b21391",
+    "deps/SimuHome/docs/clusters/Application_Launcher_Cluster.md": "7e9dfbc6fc6ffcde4f4a4ff274ddf84d6c5ef0e0d13afff8198be9a5dc5f7dca",
+    "deps/SimuHome/docs/clusters/Wake_On_LAN_Cluster.md": "6f147a978faf0fdc238c4698ea94d9532b4e922c19d980243760f1f8ef6a2f2a",
+    "deps/SimuHome/docs/clusters/Device_Energy_Management_Mode_Cluster.md": "801f97bc02041860294ddf06996ccad9e0366e270fb73084f413287e274a9a91",
+    "deps/SimuHome/docs/clusters/Fan_Control_Cluster.md": "ff6e582dedbc4fa472343ab618b679a49621b15a40b5bcca1f5c93b227bf578f",
+    "deps/SimuHome/docs/clusters/Media_Input_Cluster.md": "f359edc1834d8d442f9e331155e089509c54e2873551353d4e309418c0e00eeb",
+    "deps/SimuHome/docs/clusters/Smoke_CO_Alarm_Cluster.md": "235d6aade7c2ebbcffc8fb040f4615166b3ecc13aeb189a5525d369a418df433",
+    "deps/SimuHome/docs/clusters/Refrigerator_Alarm_Cluster.md": "1f65ab4ac3c339497242f4664e8083a72a800fd90528812d8a806c4cf51645e7",
+    "deps/SimuHome/docs/clusters/Identify_Cluster.md": "112a81753118c74db47b4715a2af78da28f30b923c402bd8d0dc2e1e46a75a67",
+    "deps/SimuHome/docs/clusters/Window_Covering_Cluster.md": "bfaab3d50c5078c891059b1a37dfea99bce1b172e5ec4f932c4cdf9a49a20d5e",
+    "deps/SimuHome/docs/clusters/Low_Power_Cluster.md": "e6095b8c0c0a6c11aee3ff51dbed285f1c5c1f55232fd5a689b00c5c9ad51e5c",
+    "deps/SimuHome/docs/clusters/Thermostat_User_Interface_Configuration_Cluster.md": "4073de508c64760d3eab98191398e26e68264cca736823f072564b150602fedd",
+    "deps/SimuHome/docs/clusters/Thread_Network_Directory_Cluster.md": "aeb13d07d754423d1926d6ec186d880ca0f5f13b0a8edab7db94bf7a67430855",
+    "deps/SimuHome/docs/clusters/Scenes_Management_Cluster.md": "dd443cd9b1ff4d9e28e8e0230aea68b22c45ff2453122430d89990c94355fd09",
+    "deps/SimuHome/docs/clusters/Laundry_Washer_Mode_Cluster.md": "0e7ba1cb780f8cfa88743f9eaf07448a3fb4443110bc749937dc0e113e092f28",
+    "deps/SimuHome/docs/clusters/Service_Area_Cluster.md": "5f0370d4060e1ca65b4a866c23238c6fadf1ca2e69f6beb8e1c9cc9373381777",
+    "deps/SimuHome/docs/clusters/Oven_Mode_Cluster.md": "d4feb540fceee50276b2c32edb1072e1de113326ab0d33259eebff4adfc9e5e1",
+    "deps/SimuHome/docs/clusters/Dishwasher_Mode_Cluster.md": "3d17a14043b30f78cb95748f33a8d3092cfad6dac927efdd1f9d7fc3abf6edd6",
+    "deps/SimuHome/docs/clusters/Laundry_Washer_Controls_Cluster.md": "7df10ab20fdea5e749753c5718ae7e533c95945022989a203807fa3690d912f4",
+    "deps/SimuHome/docs/clusters/Water_Heater_Management_Cluster.md": "1841c62aad7b10386ecbd5fb20595c7f865f1d441e74d5c4dc83951729232249",
+    "deps/SimuHome/docs/clusters/Groups_Cluster.md": "20d8d76cd7147ee42c6ba1017d6c88ea56cc758e2bf8912d1528b3d9a59999c7",
+    "deps/SimuHome/docs/clusters/Color_Control_Cluster.md": "1f91099378f61f57bd01d49b67175a65e2090447707725a09ec8db12049cc728",
+    "deps/SimuHome/docs/clusters/Oven_Cavity_Operational_State_Cluster.md": "28af155a4f91973f61fc44e32a582226c11ea3d1f7b76ff8f4c7fda2f918acba",
+    "deps/SimuHome/docs/clusters/Occupancy_Sensing_Cluster.md": "0380aa1f698dd96cc1f5783859cce69e94c22b90f2d6150e7c06f73326067bbd",
+    "deps/SimuHome/docs/clusters/RVC_Operational_State_Cluster.md": "816922a3842223001c71b1962e2849b3d0b65f87240b051041d92b2a3a92bd3c",
+    "deps/SimuHome/docs/clusters/Microwave_Oven_Control_Cluster.md": "143e1340f0a0578119325998ee5987890514cc88e85aeafc54f3513871ee4cf8",
+    "deps/SimuHome/docs/clusters/Alarm_Base_Cluster.md": "60a884edf08f2c8cca04e297beaae710478ec59a7463412f0fbe6aa17dc3eb3a",
+    "deps/SimuHome/docs/clusters/Water_Heater_Mode_Cluster.md": "813cdfc8b869f6cefdb95362724ad9f8ef6ee182021c3a6075b659e1e9ac36a7",
+    "deps/SimuHome/docs/clusters/Flow_Measurement_Cluster.md": "a22af1c4e2ba89de23bfaf976888b097860f9b607392ad03fb28c4b1eb5d71d8",
+    "deps/SimuHome/docs/clusters/Electrical_Power_Measurement_Cluster.md": "10f76a5bfaba788e08e5a96a7598dd3c9cc0d1d5f320a29567c225ef880e0812",
+    "deps/SimuHome/docs/clusters/Mode_Select_Cluster.md": "7d43650be276b224ce4d22ffcf81d37876824abe6c470e657de2652fa22f4440",
+    "deps/SimuHome/docs/clusters/Content_App_Observer_Cluster.md": "3f9eab27a4a1269ac482e59571f59159efc526922916d8ca5ddb307fe878ca68",
+    "deps/SimuHome/docs/clusters/Boolean_State_Cluster.md": "e0523c4913a39ad2b4b3406b44db20a1cd8eb937505760a603aa5d25fb4615af",
+    "deps/SimuHome/docs/clusters/Boolean_State_Configuration_Cluster.md": "c90158c135673444c1b244723948fd3a5577aac946b4f84d90460f3041958223",
+    "deps/SimuHome/docs/clusters/Energy_EVSE_Cluster.md": "91305a18e42b131991b15d3f0eb6dd15fd0ffb49724a96ac77642ac096762682",
+    "deps/SimuHome/docs/clusters/Pump_Configuration_and_Control_Cluster.md": "ff258595f769bf7fbb2122648bb34afac4abde4b6623c0fbc49134288df4d0ff",
+    "deps/SimuHome/docs/clusters/Illuminance_Measurement_Cluster.md": "30bdacd2ac06a749d4473ba07e58f8b05899a8a2d372ed815867ebfe4aa42dad",
+    "deps/SimuHome/docs/clusters/Content_Control_Cluster.md": "e1bf206e1baaa5b64395ec8bd49432a7c833864b0edd0836850f3c36920d4a74",
+    "deps/SimuHome/docs/clusters/Account_Login_Cluster.md": "f1c86d05f4dc99331fcc517c1a38cb8d0f47960e4d9705917b82edaf1374311e",
+    "deps/SimuHome/docs/clusters/Messages_Cluster.md": "b33be7d2cab40541d3a85b2dff6706eb5134938b4b3d340b5958af47c15bee14",
+    "deps/SimuHome/docs/clusters/Channel_Cluster.md": "31108523fd525682bb8fdff0d040be61dc866dfeec8bd47e88f74f5cab8fc5b9",
+    "deps/SimuHome/docs/clusters/Device_Energy_Management_Cluster.md": "bf6e2ac9bf981fbacf8328d6ded6c9fcdd931935d1e17c6527a7895a0699babe",
+    "deps/SimuHome/docs/clusters/RVC_Clean_Mode_Cluster.md": "c04547ac24bb6a39d2f378350da12ced806968203a4eddaa783e83a617277c34",
+    "deps/SimuHome/docs/clusters/Pressure_Measurement_Cluster.md": "3671250b23b03da3e3a3222f6b7564f93e7562e71ac165f9851e1ca374042207",
+    "deps/SimuHome/docs/clusters/Energy_EVSE_Mode_Cluster.md": "82b9c498ea3770cfa395f2145bfddf927a354f5abc58fb4771093d603a4db6f1",
+    "deps/SimuHome/docs/clusters/Thermostat_Cluster.md": "06d9b3d7f5666e88061855cfcf71eb125f600f7ccd8fca2e1f0a0b6acb61adfc",
+    "deps/SimuHome/docs/clusters/Dishwasher_Alarm_Cluster.md": "0d8514e2b4a8e4f3431ad659b6101de4818d3a726311719e86bbb383e89239d7",
+    "deps/SimuHome/docs/clusters/Electrical_Energy_Measurement_Cluster.md": "4e9639b9fc20b5c846eb90657b9ef3eff54828022eef8964cc7288fe9c892b39",
+    "deps/SimuHome/docs/clusters/Ballast_Configuration_Cluster.md": "226451ae13f76254608aa86a1be943f9f2137213da6d798fe16dea38643b972e",
+    "deps/SimuHome/docs/clusters/Valve_Configuration_and_Control_Cluster.md": "2bdf9ef5024311d0d5168b5b87ef5b576ec000a4e41a3225bc7a34814dbeb9ee",
+    "deps/SimuHome/docs/clusters/Media_Playback_Cluster.md": "59a6aba8961cf1527a57a23557fe91331a3a8117060f49a8e89f0fe151fc6db4",
+    "deps/SimuHome/docs/clusters/Mode_Base_Cluster.md": "d753d1680b241ba54c59d68334bb76ccbe2146d19cfcdac0cbf9cfebb296d96e",
+    "deps/SimuHome/docs/clusters/Temperature_Control_Cluster.md": "5549041d200a39a35f5dd9771d3ae99018fde92c73b35c362594c3bfa77c421f",
+    "deps/SimuHome/docs/clusters/RVC_Run_Mode_Cluster.md": "d6d5b5b5aa766bd9d75c7d40dae801d93ee47c5fcf455fb1c945ee2bbd146d9d",
+    "deps/SimuHome/docs/clusters/Target_Navigator_Cluster.md": "13bd54e67c9e9edbe62aaa8afda75c534d85692d8c452120bd2a20e21c35468a",
+    "deps/SimuHome/docs/clusters/Operational_State_Cluster.md": "d91bff32cb64cf72e874e28595aa8351bc9790465724f170b95632f3e1943fe4",
+    "deps/SimuHome/docs/clusters/Level_Control_Cluster.md": "a8354e5693895d5560616052a2b910a8c85f5fc5f270d28ed05e46796c1eba15",
+    "deps/SimuHome/docs/clusters/Application_Basic_Cluster.md": "0e03b0fbc0247340d3b78cb6bb497b56d1d1837754d73b5230149494bbd97f78",
+    "deps/SimuHome/docs/clusters/Air_Quality_Cluster.md": "d2515c267037d447e47ab2f2361d97a5eb09f93f13c838d14b1457b7bcce9c06",
+    "deps/SimuHome/docs/clusters/Door_Lock_Cluster.md": "847ffccf0f658e66e642638989f2a7f3368eb02021bb65d9c035024d1d60dbc2",
+    "deps/SimuHome/docs/clusters/On_Off_Cluster.md": "8ff02ccfd32f9b27b8d6deaffc0caf24cbfb47b5110ead641a3ff08a46845f33",
+    "deps/SimuHome/docs/clusters/Content_Launcher_Cluster.md": "3a59f10c4d06ec0629a4ca2f1bca58d44d18059de2c12353b68dbdbef6b5e46d",
+    "deps/SimuHome/docs/clusters/Microwave_Oven_Mode_Cluster.md": "44e9cfb08dbde716ede2255017b6b749c52f9942d491add90cde961ba6e2378e",
+    "deps/SimuHome/docs/clusters/Wi-Fi_Network_Management_Cluster.md": "0ec8681371daca0f6916fdb2bf72d4321c618003c9379720f6cf7d8f3d584bf5",
+    "deps/SimuHome/docs/clusters/Keypad_Input_Cluster.md": "e1d4cd423c06e0307f86ed7f569eb9cbcbf7e102035e0d3f9ae1e99bc04fe044",
+    "deps/SimuHome/docs/clusters/Temperature_Measurement_Cluster.md": "a2ca699bed7caa2f784b65d6a41aa84318ce10f3965a329670afbc5f039a4369",
+    "deps/SimuHome/docs/clusters/Switch_Cluster.md": "ef364f34597b732425c3e011b70c062bb785f52661f964b19569ee51a8fb800f",
+    "deps/SimuHome/docs/clusters/Audio_Output_Cluster.md": "905884b4607b5a064a98d20833294081bf5ecc9862334c5ca0a43e46e2dcce3c",
+    "deps/SimuHome/docs/clusters/Laundry_Dryer_Controls_Cluster.md": "5ee8494ca6b29c785ef27902d33fbd27f477acc1bf1a359c9fdd0ec734394b2b"
+  },
+  "index_sha256": {
+    "index.faiss": "1202c8b3bf78cbcd5749fdf5ab69ccae77fb844756f1dc36da85a2027bb7ee43",
+    "index.pkl": "d5af439c6c7ba87d22f7586838b4395ef2400d90c27014021c3a213bcacfcea0"
+  },
+  "smoke_checks": [
+    {
+      "query": "LevelControl MoveToLevel command Level TransitionTime",
+      "response": {
+        "status": {
+          "code": 200,
+          "message": "OK"
+        },
+        "data": {
+          "text": "* The table row describes a command within the Level Control Cluster, specifically the \"MoveToLevelWithOnOff\" command. This command is identified by the ID '0x04' and is directed from the client to the server, indicating that it is initiated by the client and processed by the server. The command requires a response, as indicated by 'Response: Y', and has optional access control, denoted by 'Access: O'. The conformance rule for this command is 'M', meaning it is mandatory. This implies that the \"MoveToLevelWithOnOff\" command must always be implemented in any device or application that supports the Level Control Cluster, without any conditions or exceptions.\n\n* This table row pertains to the Level Control Cluster within the context of the State Change Table for Lighting. It describes the behavior of a lighting device when a \"MoveToLevel\" command is issued with a level parameter set to \"MID\" and a transition time of 2 seconds. The current level is \"MID,\" the \"EiO\" (Effect in Operation) is set to \"1,\" the \"OnOff\" attribute is \"FALSE,\" and the physical device is \"Off.\" The command does not change the device's state, as the \"Device Output Result\" indicates that the device \"Stays off.\" The conformance rule for this entry is not explicitly provided in the table row data, but based on the context, it implies that the described behavior is a mandatory requirement for devices implementing the Level Control Cluster, ensuring consistent behavior when the specified command is executed under these conditions.\n\n1.6.7.1. MoveToLevel Command\n\n_Table parsed from section 'Commands':_\n\n* In the Level Control Cluster, under the Commands section, the table row describes a command with the ID '0' named 'Level'. This command is of type 'uint8', which means it is an 8-bit unsigned integer, and it has a constraint that its maximum value is 254. The conformance rule for this command is 'M', indicating that it is mandatory. This means that the 'Level' command is always required to be implemented in any device or application that supports the Level Control Cluster, without any conditions or exceptions."
+        },
+        "error": null
+      }
+    },
+    {
+      "query": "FanControl FanMode attribute values",
+      "response": {
+        "status": {
+          "code": 200,
+          "message": "OK"
+        },
+        "data": {
+          "text": "## Attributes\n\n_Table parsed from section 'Attributes':_\n\n* The table row describes an attribute within the Fan Control Cluster, specifically the 'FanMode' attribute. This attribute is identified by the ID '0x0000' and is of the type 'FanModeEnum'. It is applicable to all devices within this cluster ('Constraint': 'all'), and its default value is set to '0'. The 'FanMode' attribute has read and write access, with the ability to be updated by the device itself ('Access': 'RW VO'). The 'Quality' field marked as 'N' indicates no specific quality constraints. The conformance rule for this attribute is 'M', meaning that the 'FanMode' attribute is mandatory and must always be implemented in any device that supports the Fan Control Cluster.\n\n* The table row describes an attribute within the Fan Control Cluster, specifically the \"FanModeSequence\" attribute, identified by the ID '0x0001'. This attribute is of the type 'FanModeSequenceEnum' and applies to all instances of the cluster, as indicated by the constraint 'all'. The quality 'F' suggests it is a fundamental attribute, with a default value of 'MS'. The access rights 'R V' imply that the attribute can be read and is volatile. The conformance rule 'M' indicates that the \"FanModeSequence\" attribute is mandatory, meaning it is always required to be implemented in any device that supports the Fan Control Cluster, without any conditions or exceptions.\n\n4.4.6.1. FanMode Attribute\nThis attribute SHALL indicate the current speed mode of the fan. This attribute MAY be written by\nthe client to request a different fan mode. A server SHALL return INVALID_IN_STATE to indicate\nthat the fan is not in a state where the FanMode can be changed to the requested value. A server\nMAY have FanMode values that it can never be set to. For example, where this cluster appears on\nthe same or another endpoint as other clusters with a system dependency, for example the Thermo\nstat cluster, attempting to set the FanMode attribute of this cluster to Off may not be allowed by the\nsystem.\nThis attribute SHALL be set to one of the values in FanModeEnum.\nWhen the FanMode attribute is successfully written to, the PercentSetting and SpeedSetting (if\npresent) attributes SHALL be set to appropriate values, as defined by the Section 4.4.6.3.1 and Sec\ntion 4.4.6.6.1 respectively, unless otherwise specified below."
+        },
+        "error": null
+      }
+    },
+    {
+      "query": "OnOff cluster On Off command",
+      "response": {
+        "status": {
+          "code": 200,
+          "message": "OK"
+        },
+        "data": {
+          "text": "effect on dependent commands.\nCommand execution SHALL NOT continue beyond the Options processing if all of these criteria are\ntrue:\n The On/Off cluster exists on the same endpoint as this cluster.\n The OnOff attribute of the On/Off cluster, on this endpoint, is FALSE.\n The value of the ExecuteIfOff bit is 0.\n3.2.7.11.1. ExecuteIfOff Bit\n 0 = Do not execute command if the OnOff attribute in the On/Off cluster is FALSE.\n 1 = Execute command if the OnOff attribute in the On/Off cluster is FALSE.\n3.2.7.12. EnhancedCurrentHue Attribute\nThis attribute SHALL indicate the non-equidistant steps along the CIE 1931 color triangle, and it\nprovides 16-bits precision.\nThe upper 8 bits of this attribute SHALL be used as an index in the implementation specific XY\nlookup table to provide the non-equidistant steps. The lower 8 bits SHALL be used to interpolate\nbetween these steps in a linear way in order to provide color zoom for the user.\n\n_Table parsed from section 'Commands':_\n\n* The table row describes a command within the On/Off Cluster, specifically the \"OnOffControl\" command. This command is identified by the ID '0' and is of the type 'OnOffControlBitmap', with a constraint indicating its value can range from 0 to 1. The conformance rule for this command is marked as 'M', which stands for Mandatory. This means that the \"OnOffControl\" command is always required to be implemented in any device or application that supports the On/Off Cluster, without any conditions or exceptions.\n\nthe minimum level allowed by the device, the OnOff attribute of the On/Off cluster on the same end\npoint, if implemented, SHALL be set to TRUE (On).\nIf any command that has the effect of setting the CurrentLevel attribute to the minimum level\nallowed by the device, the OnOff attribute of the On/Off cluster on the same endpoint, if imple\nmented, SHALL be set to FALSE (Off).\nThe StopWithOnOff command has identical data fields compared to the Stop command. Both Stop\ncommands are identical, because the dependency on On/Off is determined by the original com\nmand that is being stopped."
+        },
+        "error": null
+      }
+    }
+  ],
+  "indexing_cost": {
+    "embedding_tokens": 669800,
+    "duration_seconds": 70.44937001168728
+  },
+  "smoke_cost": {
+    "embedding_tokens": 57,
+    "duration_seconds": 0.37464012019336224
+  }
+}

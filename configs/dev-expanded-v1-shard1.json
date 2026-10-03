@@ -1,0 +1,634 @@
+[
+  {
+    "schema": "smarthome-task-v1",
+    "task_id": "dev-expanded-multiroom-1",
+    "split": "dev",
+    "seed": 2026100304,
+    "family": "multiroom",
+    "user_location": "living_room",
+    "instruction": "Turn on kitchen_on_off_light_3 in kitchen and turn off living_room_on_off_light_2 in living_room. Leave all other devices unchanged.",
+    "initial_home_config": {
+      "base_time": "2026-10-03 00:00:00",
+      "tick_interval": 0.1,
+      "fast_forward": false,
+      "enable_aggregators": true,
+      "max_ticks": null,
+      "rooms": {
+        "kitchen": {
+          "devices": [
+            {
+              "device_id": "kitchen_on_off_light_3",
+              "device_type": "on_off_light",
+              "attributes": {
+                "1.OnOff.OnOff": false
+              }
+            }
+          ],
+          "state": {
+            "temperature": 2400.0,
+            "humidity": 5000.0,
+            "illuminance": 100.0,
+            "pm10": 30.0
+          }
+        },
+        "living_room": {
+          "devices": [
+            {
+              "device_id": "living_room_on_off_light_7",
+              "device_type": "on_off_light",
+              "attributes": {
+                "1.OnOff.OnOff": true
+              }
+            },
+            {
+              "device_id": "living_room_on_off_light_2",
+              "device_type": "on_off_light",
+              "attributes": {
+                "1.OnOff.OnOff": true
+              }
+            }
+          ],
+          "state": {
+            "temperature": 2400.0,
+            "humidity": 5000.0,
+            "illuminance": 100.0,
+            "pm10": 30.0
+          }
+        }
+      }
+    },
+    "goals": [
+      {
+        "device_id": "living_room_on_off_light_7",
+        "attribute": "1.OnOff.OnOff",
+        "op": "eq",
+        "value": true
+      },
+      {
+        "device_id": "kitchen_on_off_light_3",
+        "attribute": "1.OnOff.OnOff",
+        "op": "eq",
+        "value": true
+      },
+      {
+        "device_id": "living_room_on_off_light_2",
+        "attribute": "1.OnOff.OnOff",
+        "op": "eq",
+        "value": false
+      }
+    ]
+  },
+  {
+    "schema": "smarthome-task-v1",
+    "task_id": "dev-expanded-group-1",
+    "split": "dev",
+    "seed": 2026100305,
+    "family": "group",
+    "user_location": "living_room",
+    "instruction": "Turn on all three lights in kitchen. Leave devices in living_room unchanged.",
+    "initial_home_config": {
+      "base_time": "2026-10-03 00:00:00",
+      "tick_interval": 0.1,
+      "fast_forward": false,
+      "enable_aggregators": true,
+      "max_ticks": null,
+      "rooms": {
+        "kitchen": {
+          "devices": [
+            {
+              "device_id": "kitchen_on_off_light_2",
+              "device_type": "on_off_light",
+              "attributes": {
+                "1.OnOff.OnOff": false
+              }
+            },
+            {
+              "device_id": "kitchen_on_off_light_4",
+              "device_type": "on_off_light",
+              "attributes": {
+                "1.OnOff.OnOff": false
+              }
+            },
+            {
+              "device_id": "kitchen_on_off_light_6",
+              "device_type": "on_off_light",
+              "attributes": {
+                "1.OnOff.OnOff": false
+              }
+            }
+          ],
+          "state": {
+            "temperature": 2400.0,
+            "humidity": 5000.0,
+            "illuminance": 100.0,
+            "pm10": 30.0
+          }
+        },
+        "living_room": {
+          "devices": [
+            {
+              "device_id": "living_room_on_off_light_7",
+              "device_type": "on_off_light",
+              "attributes": {
+                "1.OnOff.OnOff": true
+              }
+            }
+          ],
+          "state": {
+            "temperature": 2400.0,
+            "humidity": 5000.0,
+            "illuminance": 100.0,
+            "pm10": 30.0
+          }
+        }
+      }
+    },
+    "goals": [
+      {
+        "device_id": "living_room_on_off_light_7",
+        "attribute": "1.OnOff.OnOff",
+        "op": "eq",
+        "value": true
+      },
+      {
+        "device_id": "kitchen_on_off_light_2",
+        "attribute": "1.OnOff.OnOff",
+        "op": "eq",
+        "value": true
+      },
+      {
+        "device_id": "kitchen_on_off_light_4",
+        "attribute": "1.OnOff.OnOff",
+        "op": "eq",
+        "value": true
+      },
+      {
+        "device_id": "kitchen_on_off_light_6",
+        "attribute": "1.OnOff.OnOff",
+        "op": "eq",
+        "value": true
+      }
+    ]
+  },
+  {
+    "schema": "smarthome-task-v1",
+    "task_id": "dev-expanded-dimmer-1",
+    "split": "dev",
+    "seed": 2026100306,
+    "family": "dimmer",
+    "user_location": "living_room",
+    "instruction": "Turn on kitchen_dimmable_light_3 in kitchen and set its brightness to level 96 (out of 254), immediately without a transition. Leave all other devices unchanged.",
+    "initial_home_config": {
+      "base_time": "2026-10-03 00:00:00",
+      "tick_interval": 0.1,
+      "fast_forward": false,
+      "enable_aggregators": true,
+      "max_ticks": null,
+      "rooms": {
+        "kitchen": {
+          "devices": [
+            {
+              "device_id": "kitchen_dimmable_light_3",
+              "device_type": "dimmable_light",
+              "attributes": {
+                "1.OnOff.OnOff": false,
+                "1.LevelControl.CurrentLevel": 32
+              }
+            }
+          ],
+          "state": {
+            "temperature": 2400.0,
+            "humidity": 5000.0,
+            "illuminance": 100.0,
+            "pm10": 30.0
+          }
+        },
+        "living_room": {
+          "devices": [
+            {
+              "device_id": "living_room_on_off_light_7",
+              "device_type": "on_off_light",
+              "attributes": {
+                "1.OnOff.OnOff": true
+              }
+            }
+          ],
+          "state": {
+            "temperature": 2400.0,
+            "humidity": 5000.0,
+            "illuminance": 100.0,
+            "pm10": 30.0
+          }
+        }
+      }
+    },
+    "goals": [
+      {
+        "device_id": "living_room_on_off_light_7",
+        "attribute": "1.OnOff.OnOff",
+        "op": "eq",
+        "value": true
+      },
+      {
+        "device_id": "kitchen_dimmable_light_3",
+        "attribute": "1.OnOff.OnOff",
+        "op": "eq",
+        "value": true
+      },
+      {
+        "device_id": "kitchen_dimmable_light_3",
+        "attribute": "1.LevelControl.CurrentLevel",
+        "op": "eq",
+        "value": 96
+      }
+    ]
+  },
+  {
+    "schema": "smarthome-task-v1",
+    "task_id": "dev-expanded-fan-1",
+    "split": "dev",
+    "seed": 2026100307,
+    "family": "fan",
+    "user_location": "living_room",
+    "instruction": "Turn on kitchen_fan_2 in kitchen and set its fan speed to medium. Leave all other devices unchanged.",
+    "initial_home_config": {
+      "base_time": "2026-10-03 00:00:00",
+      "tick_interval": 0.1,
+      "fast_forward": false,
+      "enable_aggregators": true,
+      "max_ticks": null,
+      "rooms": {
+        "kitchen": {
+          "devices": [
+            {
+              "device_id": "kitchen_fan_2",
+              "device_type": "fan",
+              "attributes": {
+                "1.OnOff.OnOff": false
+              }
+            }
+          ],
+          "state": {
+            "temperature": 2400.0,
+            "humidity": 5000.0,
+            "illuminance": 100.0,
+            "pm10": 30.0
+          }
+        },
+        "living_room": {
+          "devices": [
+            {
+              "device_id": "living_room_on_off_light_7",
+              "device_type": "on_off_light",
+              "attributes": {
+                "1.OnOff.OnOff": true
+              }
+            }
+          ],
+          "state": {
+            "temperature": 2400.0,
+            "humidity": 5000.0,
+            "illuminance": 100.0,
+            "pm10": 30.0
+          }
+        }
+      }
+    },
+    "goals": [
+      {
+        "device_id": "living_room_on_off_light_7",
+        "attribute": "1.OnOff.OnOff",
+        "op": "eq",
+        "value": true
+      },
+      {
+        "device_id": "kitchen_fan_2",
+        "attribute": "1.OnOff.OnOff",
+        "op": "eq",
+        "value": true
+      },
+      {
+        "device_id": "kitchen_fan_2",
+        "attribute": "1.FanControl.FanMode",
+        "op": "eq",
+        "value": 2
+      }
+    ]
+  },
+  {
+    "schema": "smarthome-task-v1",
+    "task_id": "dev-expanded-multiroom-3",
+    "split": "dev",
+    "seed": 2026100312,
+    "family": "multiroom",
+    "user_location": "utility_room",
+    "instruction": "Turn on study_on_off_light_3 in study and turn off utility_room_on_off_light_2 in utility_room. Leave all other devices unchanged.",
+    "initial_home_config": {
+      "base_time": "2026-10-03 00:00:00",
+      "tick_interval": 0.1,
+      "fast_forward": false,
+      "enable_aggregators": true,
+      "max_ticks": null,
+      "rooms": {
+        "study": {
+          "devices": [
+            {
+              "device_id": "study_on_off_light_3",
+              "device_type": "on_off_light",
+              "attributes": {
+                "1.OnOff.OnOff": false
+              }
+            }
+          ],
+          "state": {
+            "temperature": 2400.0,
+            "humidity": 5000.0,
+            "illuminance": 100.0,
+            "pm10": 30.0
+          }
+        },
+        "utility_room": {
+          "devices": [
+            {
+              "device_id": "utility_room_on_off_light_7",
+              "device_type": "on_off_light",
+              "attributes": {
+                "1.OnOff.OnOff": true
+              }
+            },
+            {
+              "device_id": "utility_room_on_off_light_2",
+              "device_type": "on_off_light",
+              "attributes": {
+                "1.OnOff.OnOff": true
+              }
+            }
+          ],
+          "state": {
+            "temperature": 2400.0,
+            "humidity": 5000.0,
+            "illuminance": 100.0,
+            "pm10": 30.0
+          }
+        }
+      }
+    },
+    "goals": [
+      {
+        "device_id": "utility_room_on_off_light_7",
+        "attribute": "1.OnOff.OnOff",
+        "op": "eq",
+        "value": true
+      },
+      {
+        "device_id": "study_on_off_light_3",
+        "attribute": "1.OnOff.OnOff",
+        "op": "eq",
+        "value": true
+      },
+      {
+        "device_id": "utility_room_on_off_light_2",
+        "attribute": "1.OnOff.OnOff",
+        "op": "eq",
+        "value": false
+      }
+    ]
+  },
+  {
+    "schema": "smarthome-task-v1",
+    "task_id": "dev-expanded-group-3",
+    "split": "dev",
+    "seed": 2026100313,
+    "family": "group",
+    "user_location": "utility_room",
+    "instruction": "Turn on all three lights in study. Leave devices in utility_room unchanged.",
+    "initial_home_config": {
+      "base_time": "2026-10-03 00:00:00",
+      "tick_interval": 0.1,
+      "fast_forward": false,
+      "enable_aggregators": true,
+      "max_ticks": null,
+      "rooms": {
+        "study": {
+          "devices": [
+            {
+              "device_id": "study_on_off_light_2",
+              "device_type": "on_off_light",
+              "attributes": {
+                "1.OnOff.OnOff": false
+              }
+            },
+            {
+              "device_id": "study_on_off_light_4",
+              "device_type": "on_off_light",
+              "attributes": {
+                "1.OnOff.OnOff": false
+              }
+            },
+            {
+              "device_id": "study_on_off_light_6",
+              "device_type": "on_off_light",
+              "attributes": {
+                "1.OnOff.OnOff": false
+              }
+            }
+          ],
+          "state": {
+            "temperature": 2400.0,
+            "humidity": 5000.0,
+            "illuminance": 100.0,
+            "pm10": 30.0
+          }
+        },
+        "utility_room": {
+          "devices": [
+            {
+              "device_id": "utility_room_on_off_light_7",
+              "device_type": "on_off_light",
+              "attributes": {
+                "1.OnOff.OnOff": true
+              }
+            }
+          ],
+          "state": {
+            "temperature": 2400.0,
+            "humidity": 5000.0,
+            "illuminance": 100.0,
+            "pm10": 30.0
+          }
+        }
+      }
+    },
+    "goals": [
+      {
+        "device_id": "utility_room_on_off_light_7",
+        "attribute": "1.OnOff.OnOff",
+        "op": "eq",
+        "value": true
+      },
+      {
+        "device_id": "study_on_off_light_2",
+        "attribute": "1.OnOff.OnOff",
+        "op": "eq",
+        "value": true
+      },
+      {
+        "device_id": "study_on_off_light_4",
+        "attribute": "1.OnOff.OnOff",
+        "op": "eq",
+        "value": true
+      },
+      {
+        "device_id": "study_on_off_light_6",
+        "attribute": "1.OnOff.OnOff",
+        "op": "eq",
+        "value": true
+      }
+    ]
+  },
+  {
+    "schema": "smarthome-task-v1",
+    "task_id": "dev-expanded-dimmer-3",
+    "split": "dev",
+    "seed": 2026100314,
+    "family": "dimmer",
+    "user_location": "utility_room",
+    "instruction": "Turn on study_dimmable_light_3 in study and set its brightness to level 192 (out of 254), immediately without a transition. Leave all other devices unchanged.",
+    "initial_home_config": {
+      "base_time": "2026-10-03 00:00:00",
+      "tick_interval": 0.1,
+      "fast_forward": false,
+      "enable_aggregators": true,
+      "max_ticks": null,
+      "rooms": {
+        "study": {
+          "devices": [
+            {
+              "device_id": "study_dimmable_light_3",
+              "device_type": "dimmable_light",
+              "attributes": {
+                "1.OnOff.OnOff": false,
+                "1.LevelControl.CurrentLevel": 32
+              }
+            }
+          ],
+          "state": {
+            "temperature": 2400.0,
+            "humidity": 5000.0,
+            "illuminance": 100.0,
+            "pm10": 30.0
+          }
+        },
+        "utility_room": {
+          "devices": [
+            {
+              "device_id": "utility_room_on_off_light_7",
+              "device_type": "on_off_light",
+              "attributes": {
+                "1.OnOff.OnOff": true
+              }
+            }
+          ],
+          "state": {
+            "temperature": 2400.0,
+            "humidity": 5000.0,
+            "illuminance": 100.0,
+            "pm10": 30.0
+          }
+        }
+      }
+    },
+    "goals": [
+      {
+        "device_id": "utility_room_on_off_light_7",
+        "attribute": "1.OnOff.OnOff",
+        "op": "eq",
+        "value": true
+      },
+      {
+        "device_id": "study_dimmable_light_3",
+        "attribute": "1.OnOff.OnOff",
+        "op": "eq",
+        "value": true
+      },
+      {
+        "device_id": "study_dimmable_light_3",
+        "attribute": "1.LevelControl.CurrentLevel",
+        "op": "eq",
+        "value": 192
+      }
+    ]
+  },
+  {
+    "schema": "smarthome-task-v1",
+    "task_id": "dev-expanded-fan-3",
+    "split": "dev",
+    "seed": 2026100315,
+    "family": "fan",
+    "user_location": "utility_room",
+    "instruction": "Turn on study_fan_2 in study and set its fan speed to low. Leave all other devices unchanged.",
+    "initial_home_config": {
+      "base_time": "2026-10-03 00:00:00",
+      "tick_interval": 0.1,
+      "fast_forward": false,
+      "enable_aggregators": true,
+      "max_ticks": null,
+      "rooms": {
+        "study": {
+          "devices": [
+            {
+              "device_id": "study_fan_2",
+              "device_type": "fan",
+              "attributes": {
+                "1.OnOff.OnOff": false
+              }
+            }
+          ],
+          "state": {
+            "temperature": 2400.0,
+            "humidity": 5000.0,
+            "illuminance": 100.0,
+            "pm10": 30.0
+          }
+        },
+        "utility_room": {
+          "devices": [
+            {
+              "device_id": "utility_room_on_off_light_7",
+              "device_type": "on_off_light",
+              "attributes": {
+                "1.OnOff.OnOff": true
+              }
+            }
+          ],
+          "state": {
+            "temperature": 2400.0,
+            "humidity": 5000.0,
+            "illuminance": 100.0,
+            "pm10": 30.0
+          }
+        }
+      }
+    },
+    "goals": [
+      {
+        "device_id": "utility_room_on_off_light_7",
+        "attribute": "1.OnOff.OnOff",
+        "op": "eq",
+        "value": true
+      },
+      {
+        "device_id": "study_fan_2",
+        "attribute": "1.OnOff.OnOff",
+        "op": "eq",
+        "value": true
+      },
+      {
+        "device_id": "study_fan_2",
+        "attribute": "1.FanControl.FanMode",
+        "op": "eq",
+        "value": 1
+      }
+    ]
+  }
+]

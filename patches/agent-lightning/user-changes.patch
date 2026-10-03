@@ -1,0 +1,126 @@
+diff --git a/agentlightning/config/server.yaml b/agentlightning/config/server.yaml
+index 21ac156..aaca89d 100644
+--- a/agentlightning/config/server.yaml
++++ b/agentlightning/config/server.yaml
+@@ -9,3 +9,10 @@ default_proxy:
+     temperature: 1
+   val:
+     temperature: 0.7
++
++# Bound upstream connections independently of Agent concurrency.
++http_client:
++  max_connections: 100
++  max_keepalive_connections: 20
++  keepalive_expiry: 5.0
++  pool_timeout: 300.0
+diff --git a/agentlightning/controller/local_reconciler.py b/agentlightning/controller/local_reconciler.py
+index fcbd3a3..61c2ab9 100644
+--- a/agentlightning/controller/local_reconciler.py
++++ b/agentlightning/controller/local_reconciler.py
+@@ -138,7 +138,8 @@ class LocalReconciler:
+         params = httpx.QueryParams()
+         params = params.add("state_in", RolloutState.QUEUING.value)
+         params = params.add("state_in", RolloutState.RUNNING.value)
+-        params = params.add("limit", 50)
++        # Fetch enough tasks to fill configured pools larger than the default 50.
++        params = params.add("limit", max(50, self._pool_size))
+         response = await self._api.get("/api/rollouts", params=params)
+         response.raise_for_status()
+         rollouts = [Rollout.model_validate(item) for item in response.json()]
+diff --git a/agentlightning/server/app.py b/agentlightning/server/app.py
+index 97cacbb..c44f8f7 100644
+--- a/agentlightning/server/app.py
++++ b/agentlightning/server/app.py
+@@ -68,7 +68,16 @@ def create_app(config: Mapping[str, Any] | DictConfig | None = None) -> FastAPI:
+         app.state.proxy_pause_state = ProxyPauseState()
+ 
+         app.state.proxy_router = ProxyRouter(default_proxy)
+-        async with httpx.AsyncClient(timeout=httpx.Timeout(timeout=300.0)) as client:
++        http_config = server_config.get("http_client", {})
++        limits = httpx.Limits(
++            max_connections=int(http_config.get("max_connections", 100)),
++            max_keepalive_connections=int(http_config.get("max_keepalive_connections", 20)),
++            keepalive_expiry=float(http_config.get("keepalive_expiry", 5.0)),
++        )
++        timeout = httpx.Timeout(timeout=300.0, pool=float(http_config.get("pool_timeout", 300.0)))
++        log.info("Upstream HTTP connection pool", max_connections=limits.max_connections,
++                 max_keepalive_connections=limits.max_keepalive_connections, pool_timeout=timeout.pool)
++        async with httpx.AsyncClient(timeout=timeout, limits=limits) as client:
+             app.state.http_client = client
+             yield
+ 
+diff --git a/examples/gsm8k/run_local.sh b/examples/gsm8k/run_local.sh
+index f0e0ac3..999c34c 100755
+--- a/examples/gsm8k/run_local.sh
++++ b/examples/gsm8k/run_local.sh
+@@ -4,11 +4,24 @@
+ # Run GSM8K VERL training with Agent Lightning's local controller.
+ set -euo pipefail
+ 
++# Keep the proxy model name consistent with the trainer model path.
++MODEL_NAME="${GSM8K_MODEL:-Qwen/Qwen2.5-1.5B-Instruct}"
++ARGS=("$@")
++for ((i=0; i<${#ARGS[@]}; i++)); do
++    if [[ "${ARGS[i]}" == "--model" && $((i+1)) -lt ${#ARGS[@]} ]]; then
++        MODEL_NAME="${ARGS[i+1]}"
++    elif [[ "${ARGS[i]}" == --model=* ]]; then
++        MODEL_NAME="${ARGS[i]#--model=}"
++    fi
++done
++
+ AGL_SERVER_PORT=8181
+ AGL_KEY=dummy
+ LOG_SUFFIX="$(date +%Y%m%d-%H%M%S)-$$"
+-SERVER_LOG="/tmp/agl-gsm8k-server-$LOG_SUFFIX.log"
+-CONTROLLER_LOG="/tmp/agl-gsm8k-controller-$LOG_SUFFIX.log"
++LOG_DIR="${AGL_LOG_DIR:-/tmp}"
++mkdir -p "$LOG_DIR"
++SERVER_LOG="$LOG_DIR/agl-gsm8k-server-$LOG_SUFFIX.log"
++CONTROLLER_LOG="$LOG_DIR/agl-gsm8k-controller-$LOG_SUFFIX.log"
+ 
+ cleanup() {
+     pkill -f agl-server 2>/dev/null || true
+@@ -30,7 +43,11 @@ env LD_LIBRARY_PATH="${LD_LIBRARY_PATH:-}" \
+ agl-server \
+     port="$AGL_SERVER_PORT" \
+     key="$AGL_KEY" \
+-    default_proxy.model_name=Qwen/Qwen2.5-1.5B-Instruct \
++    default_proxy.model_name="$MODEL_NAME" \
++    http_client.max_connections="${AGL_HTTP_MAX_CONNECTIONS:-100}" \
++    http_client.max_keepalive_connections="${AGL_HTTP_MAX_KEEPALIVE:-20}" \
++    http_client.keepalive_expiry="${AGL_HTTP_KEEPALIVE_EXPIRY:-5}" \
++    http_client.pool_timeout="${AGL_HTTP_POOL_TIMEOUT:-300}" \
+     >"$SERVER_LOG" 2>&1 &
+ 
+ for _ in $(seq 1 60); do
+@@ -40,6 +57,8 @@ done
+ 
+ agl-controller \
+     runner_type=local \
++    local_runner.maximum_size="${AGL_LOCAL_MAXIMUM_SIZE:-50}" \
++    local_runner.poll_interval="${AGL_LOCAL_POLL_INTERVAL:-10}" \
+     agl_server.url="http://localhost:$AGL_SERVER_PORT" \
+     agl_server.key="$AGL_KEY" \
+     >"$CONTROLLER_LOG" 2>&1 &
+diff --git a/examples/gsm8k/train_gsm8k_agent.py b/examples/gsm8k/train_gsm8k_agent.py
+index 3d73e45..ea8de69 100644
+--- a/examples/gsm8k/train_gsm8k_agent.py
++++ b/examples/gsm8k/train_gsm8k_agent.py
+@@ -7,7 +7,7 @@ from collections.abc import Sequence
+ from pathlib import Path
+ from typing import Any, cast
+ 
+-from datasets import Dataset as HuggingFaceDataset
++import pyarrow.parquet as pq
+ from hydra import compose, initialize_config_dir
+ from omegaconf import OmegaConf
+ 
+@@ -142,7 +142,7 @@ def build_config(
+ def load_gsm8k_dataset(path: str) -> list[dict[str, str]]:
+     dataset = cast(
+         Sequence[dict[str, Any]],
+-        HuggingFaceDataset.from_parquet(path).to_list(),  # type: ignore
++        pq.read_table(path).to_pylist(),
+     )
+     return [
+         {

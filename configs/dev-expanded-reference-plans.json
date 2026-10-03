@@ -1,0 +1,406 @@
+{
+  "dev-expanded-multiroom-0": [
+    {
+      "tool": "execute_command",
+      "args": {
+        "device_id": "bedroom_on_off_light_3",
+        "endpoint_id": 1,
+        "cluster_id": "OnOff",
+        "command_id": "On",
+        "args": {}
+      }
+    },
+    {
+      "tool": "execute_command",
+      "args": {
+        "device_id": "study_on_off_light_2",
+        "endpoint_id": 1,
+        "cluster_id": "OnOff",
+        "command_id": "Off",
+        "args": {}
+      }
+    }
+  ],
+  "dev-expanded-group-0": [
+    {
+      "tool": "execute_command",
+      "args": {
+        "device_id": "bedroom_on_off_light_2",
+        "endpoint_id": 1,
+        "cluster_id": "OnOff",
+        "command_id": "Off",
+        "args": {}
+      }
+    },
+    {
+      "tool": "execute_command",
+      "args": {
+        "device_id": "bedroom_on_off_light_4",
+        "endpoint_id": 1,
+        "cluster_id": "OnOff",
+        "command_id": "Off",
+        "args": {}
+      }
+    },
+    {
+      "tool": "execute_command",
+      "args": {
+        "device_id": "bedroom_on_off_light_6",
+        "endpoint_id": 1,
+        "cluster_id": "OnOff",
+        "command_id": "Off",
+        "args": {}
+      }
+    }
+  ],
+  "dev-expanded-dimmer-0": [
+    {
+      "tool": "execute_command",
+      "args": {
+        "device_id": "bedroom_dimmable_light_3",
+        "endpoint_id": 1,
+        "cluster_id": "OnOff",
+        "command_id": "On",
+        "args": {}
+      }
+    },
+    {
+      "tool": "execute_command",
+      "args": {
+        "device_id": "bedroom_dimmable_light_3",
+        "endpoint_id": 1,
+        "cluster_id": "LevelControl",
+        "command_id": "MoveToLevel",
+        "args": {
+          "Level": 64,
+          "TransitionTime": 0
+        }
+      }
+    }
+  ],
+  "dev-expanded-fan-0": [
+    {
+      "tool": "execute_command",
+      "args": {
+        "device_id": "bedroom_fan_2",
+        "endpoint_id": 1,
+        "cluster_id": "OnOff",
+        "command_id": "On",
+        "args": {}
+      }
+    },
+    {
+      "tool": "write_attribute",
+      "args": {
+        "device_id": "bedroom_fan_2",
+        "endpoint_id": 1,
+        "cluster_id": "FanControl",
+        "attribute_id": "FanMode",
+        "value": 1
+      }
+    }
+  ],
+  "dev-expanded-multiroom-1": [
+    {
+      "tool": "execute_command",
+      "args": {
+        "device_id": "kitchen_on_off_light_3",
+        "endpoint_id": 1,
+        "cluster_id": "OnOff",
+        "command_id": "On",
+        "args": {}
+      }
+    },
+    {
+      "tool": "execute_command",
+      "args": {
+        "device_id": "living_room_on_off_light_2",
+        "endpoint_id": 1,
+        "cluster_id": "OnOff",
+        "command_id": "Off",
+        "args": {}
+      }
+    }
+  ],
+  "dev-expanded-group-1": [
+    {
+      "tool": "execute_command",
+      "args": {
+        "device_id": "kitchen_on_off_light_2",
+        "endpoint_id": 1,
+        "cluster_id": "OnOff",
+        "command_id": "On",
+        "args": {}
+      }
+    },
+    {
+      "tool": "execute_command",
+      "args": {
+        "device_id": "kitchen_on_off_light_4",
+        "endpoint_id": 1,
+        "cluster_id": "OnOff",
+        "command_id": "On",
+        "args": {}
+      }
+    },
+    {
+      "tool": "execute_command",
+      "args": {
+        "device_id": "kitchen_on_off_light_6",
+        "endpoint_id": 1,
+        "cluster_id": "OnOff",
+        "command_id": "On",
+        "args": {}
+      }
+    }
+  ],
+  "dev-expanded-dimmer-1": [
+    {
+      "tool": "execute_command",
+      "args": {
+        "device_id": "kitchen_dimmable_light_3",
+        "endpoint_id": 1,
+        "cluster_id": "OnOff",
+        "command_id": "On",
+        "args": {}
+      }
+    },
+    {
+      "tool": "execute_command",
+      "args": {
+        "device_id": "kitchen_dimmable_light_3",
+        "endpoint_id": 1,
+        "cluster_id": "LevelControl",
+        "command_id": "MoveToLevel",
+        "args": {
+          "Level": 96,
+          "TransitionTime": 0
+        }
+      }
+    }
+  ],
+  "dev-expanded-fan-1": [
+    {
+      "tool": "execute_command",
+      "args": {
+        "device_id": "kitchen_fan_2",
+        "endpoint_id": 1,
+        "cluster_id": "OnOff",
+        "command_id": "On",
+        "args": {}
+      }
+    },
+    {
+      "tool": "write_attribute",
+      "args": {
+        "device_id": "kitchen_fan_2",
+        "endpoint_id": 1,
+        "cluster_id": "FanControl",
+        "attribute_id": "FanMode",
+        "value": 2
+      }
+    }
+  ],
+  "dev-expanded-multiroom-2": [
+    {
+      "tool": "execute_command",
+      "args": {
+        "device_id": "bathroom_on_off_light_3",
+        "endpoint_id": 1,
+        "cluster_id": "OnOff",
+        "command_id": "On",
+        "args": {}
+      }
+    },
+    {
+      "tool": "execute_command",
+      "args": {
+        "device_id": "bedroom_on_off_light_2",
+        "endpoint_id": 1,
+        "cluster_id": "OnOff",
+        "command_id": "Off",
+        "args": {}
+      }
+    }
+  ],
+  "dev-expanded-group-2": [
+    {
+      "tool": "execute_command",
+      "args": {
+        "device_id": "bathroom_on_off_light_2",
+        "endpoint_id": 1,
+        "cluster_id": "OnOff",
+        "command_id": "Off",
+        "args": {}
+      }
+    },
+    {
+      "tool": "execute_command",
+      "args": {
+        "device_id": "bathroom_on_off_light_4",
+        "endpoint_id": 1,
+        "cluster_id": "OnOff",
+        "command_id": "Off",
+        "args": {}
+      }
+    },
+    {
+      "tool": "execute_command",
+      "args": {
+        "device_id": "bathroom_on_off_light_6",
+        "endpoint_id": 1,
+        "cluster_id": "OnOff",
+        "command_id": "Off",
+        "args": {}
+      }
+    }
+  ],
+  "dev-expanded-dimmer-2": [
+    {
+      "tool": "execute_command",
+      "args": {
+        "device_id": "bathroom_dimmable_light_3",
+        "endpoint_id": 1,
+        "cluster_id": "OnOff",
+        "command_id": "On",
+        "args": {}
+      }
+    },
+    {
+      "tool": "execute_command",
+      "args": {
+        "device_id": "bathroom_dimmable_light_3",
+        "endpoint_id": 1,
+        "cluster_id": "LevelControl",
+        "command_id": "MoveToLevel",
+        "args": {
+          "Level": 128,
+          "TransitionTime": 0
+        }
+      }
+    }
+  ],
+  "dev-expanded-fan-2": [
+    {
+      "tool": "execute_command",
+      "args": {
+        "device_id": "bathroom_fan_2",
+        "endpoint_id": 1,
+        "cluster_id": "OnOff",
+        "command_id": "On",
+        "args": {}
+      }
+    },
+    {
+      "tool": "write_attribute",
+      "args": {
+        "device_id": "bathroom_fan_2",
+        "endpoint_id": 1,
+        "cluster_id": "FanControl",
+        "attribute_id": "FanMode",
+        "value": 3
+      }
+    }
+  ],
+  "dev-expanded-multiroom-3": [
+    {
+      "tool": "execute_command",
+      "args": {
+        "device_id": "study_on_off_light_3",
+        "endpoint_id": 1,
+        "cluster_id": "OnOff",
+        "command_id": "On",
+        "args": {}
+      }
+    },
+    {
+      "tool": "execute_command",
+      "args": {
+        "device_id": "utility_room_on_off_light_2",
+        "endpoint_id": 1,
+        "cluster_id": "OnOff",
+        "command_id": "Off",
+        "args": {}
+      }
+    }
+  ],
+  "dev-expanded-group-3": [
+    {
+      "tool": "execute_command",
+      "args": {
+        "device_id": "study_on_off_light_2",
+        "endpoint_id": 1,
+        "cluster_id": "OnOff",
+        "command_id": "On",
+        "args": {}
+      }
+    },
+    {
+      "tool": "execute_command",
+      "args": {
+        "device_id": "study_on_off_light_4",
+        "endpoint_id": 1,
+        "cluster_id": "OnOff",
+        "command_id": "On",
+        "args": {}
+      }
+    },
+    {
+      "tool": "execute_command",
+      "args": {
+        "device_id": "study_on_off_light_6",
+        "endpoint_id": 1,
+        "cluster_id": "OnOff",
+        "command_id": "On",
+        "args": {}
+      }
+    }
+  ],
+  "dev-expanded-dimmer-3": [
+    {
+      "tool": "execute_command",
+      "args": {
+        "device_id": "study_dimmable_light_3",
+        "endpoint_id": 1,
+        "cluster_id": "OnOff",
+        "command_id": "On",
+        "args": {}
+      }
+    },
+    {
+      "tool": "execute_command",
+      "args": {
+        "device_id": "study_dimmable_light_3",
+        "endpoint_id": 1,
+        "cluster_id": "LevelControl",
+        "command_id": "MoveToLevel",
+        "args": {
+          "Level": 192,
+          "TransitionTime": 0
+        }
+      }
+    }
+  ],
+  "dev-expanded-fan-3": [
+    {
+      "tool": "execute_command",
+      "args": {
+        "device_id": "study_fan_2",
+        "endpoint_id": 1,
+        "cluster_id": "OnOff",
+        "command_id": "On",
+        "args": {}
+      }
+    },
+    {
+      "tool": "write_attribute",
+      "args": {
+        "device_id": "study_fan_2",
+        "endpoint_id": 1,
+        "cluster_id": "FanControl",
+        "attribute_id": "FanMode",
+        "value": 1
+      }
+    }
+  ]
+}

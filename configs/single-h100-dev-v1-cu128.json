@@ -1,0 +1,21 @@
+{
+  "schema": "smarthome-parallel-dev-v1",
+  "harnesses": [
+    "upstream-react",
+    "structured-schema"
+  ],
+  "preflight": {
+    "suite": "configs/dev-expanded-v1.json",
+    "references": "configs/dev-expanded-reference-plans.json"
+  },
+  "shards": [
+    {
+      "gpu": "0",
+      "config": "configs/single-h100-dev-model-cu128.json",
+      "suite": "configs/dev-expanded-v1.json"
+    }
+  ],
+  "training": false,
+  "benchmark_used": false,
+  "description": "One H100; original vs frozen schema-only, sequential rollouts"
+}

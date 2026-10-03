@@ -1,0 +1,912 @@
+{
+  "artifact_checks_passed": true,
+  "purpose": "diagnostic_only",
+  "requests": 72,
+  "episodes": 8,
+  "groups": [
+    {
+      "task_id": "dev-expanded-multiroom-0",
+      "path": "direct",
+      "requests": 9,
+      "unique_texts": 1,
+      "unique_actions": 1,
+      "unique_prompt_ids": 1,
+      "unique_response_ids": 1
+    },
+    {
+      "task_id": "dev-expanded-multiroom-0",
+      "path": "lightning",
+      "requests": 9,
+      "unique_texts": 1,
+      "unique_actions": 1,
+      "unique_prompt_ids": 1,
+      "unique_response_ids": 1
+    },
+    {
+      "task_id": "dev-expanded-group-0",
+      "path": "direct",
+      "requests": 9,
+      "unique_texts": 1,
+      "unique_actions": 1,
+      "unique_prompt_ids": 1,
+      "unique_response_ids": 1
+    },
+    {
+      "task_id": "dev-expanded-group-0",
+      "path": "lightning",
+      "requests": 9,
+      "unique_texts": 1,
+      "unique_actions": 1,
+      "unique_prompt_ids": 1,
+      "unique_response_ids": 1
+    },
+    {
+      "task_id": "dev-expanded-dimmer-0",
+      "path": "direct",
+      "requests": 9,
+      "unique_texts": 1,
+      "unique_actions": 1,
+      "unique_prompt_ids": 1,
+      "unique_response_ids": 1
+    },
+    {
+      "task_id": "dev-expanded-dimmer-0",
+      "path": "lightning",
+      "requests": 9,
+      "unique_texts": 1,
+      "unique_actions": 1,
+      "unique_prompt_ids": 1,
+      "unique_response_ids": 1
+    },
+    {
+      "task_id": "dev-expanded-fan-0",
+      "path": "direct",
+      "requests": 9,
+      "unique_texts": 1,
+      "unique_actions": 1,
+      "unique_prompt_ids": 1,
+      "unique_response_ids": 1
+    },
+    {
+      "task_id": "dev-expanded-fan-0",
+      "path": "lightning",
+      "requests": 9,
+      "unique_texts": 1,
+      "unique_actions": 1,
+      "unique_prompt_ids": 1,
+      "unique_response_ids": 1
+    }
+  ],
+  "paired_requests": [
+    {
+      "block": 1,
+      "task_id": "dev-expanded-multiroom-0",
+      "repeat": 0,
+      "same_text": true,
+      "same_action": true,
+      "same_prompt_ids": true,
+      "same_response_ids": true
+    },
+    {
+      "block": 1,
+      "task_id": "dev-expanded-multiroom-0",
+      "repeat": 1,
+      "same_text": true,
+      "same_action": true,
+      "same_prompt_ids": true,
+      "same_response_ids": true
+    },
+    {
+      "block": 1,
+      "task_id": "dev-expanded-multiroom-0",
+      "repeat": 2,
+      "same_text": true,
+      "same_action": true,
+      "same_prompt_ids": true,
+      "same_response_ids": true
+    },
+    {
+      "block": 1,
+      "task_id": "dev-expanded-group-0",
+      "repeat": 0,
+      "same_text": true,
+      "same_action": true,
+      "same_prompt_ids": true,
+      "same_response_ids": true
+    },
+    {
+      "block": 1,
+      "task_id": "dev-expanded-group-0",
+      "repeat": 1,
+      "same_text": true,
+      "same_action": true,
+      "same_prompt_ids": true,
+      "same_response_ids": true
+    },
+    {
+      "block": 1,
+      "task_id": "dev-expanded-group-0",
+      "repeat": 2,
+      "same_text": true,
+      "same_action": true,
+      "same_prompt_ids": true,
+      "same_response_ids": true
+    },
+    {
+      "block": 1,
+      "task_id": "dev-expanded-dimmer-0",
+      "repeat": 0,
+      "same_text": true,
+      "same_action": true,
+      "same_prompt_ids": true,
+      "same_response_ids": true
+    },
+    {
+      "block": 1,
+      "task_id": "dev-expanded-dimmer-0",
+      "repeat": 1,
+      "same_text": true,
+      "same_action": true,
+      "same_prompt_ids": true,
+      "same_response_ids": true
+    },
+    {
+      "block": 1,
+      "task_id": "dev-expanded-dimmer-0",
+      "repeat": 2,
+      "same_text": true,
+      "same_action": true,
+      "same_prompt_ids": true,
+      "same_response_ids": true
+    },
+    {
+      "block": 1,
+      "task_id": "dev-expanded-fan-0",
+      "repeat": 0,
+      "same_text": true,
+      "same_action": true,
+      "same_prompt_ids": true,
+      "same_response_ids": true
+    },
+    {
+      "block": 1,
+      "task_id": "dev-expanded-fan-0",
+      "repeat": 1,
+      "same_text": true,
+      "same_action": true,
+      "same_prompt_ids": true,
+      "same_response_ids": true
+    },
+    {
+      "block": 1,
+      "task_id": "dev-expanded-fan-0",
+      "repeat": 2,
+      "same_text": true,
+      "same_action": true,
+      "same_prompt_ids": true,
+      "same_response_ids": true
+    },
+    {
+      "block": 2,
+      "task_id": "dev-expanded-multiroom-0",
+      "repeat": 0,
+      "same_text": true,
+      "same_action": true,
+      "same_prompt_ids": true,
+      "same_response_ids": true
+    },
+    {
+      "block": 2,
+      "task_id": "dev-expanded-multiroom-0",
+      "repeat": 1,
+      "same_text": true,
+      "same_action": true,
+      "same_prompt_ids": true,
+      "same_response_ids": true
+    },
+    {
+      "block": 2,
+      "task_id": "dev-expanded-multiroom-0",
+      "repeat": 2,
+      "same_text": true,
+      "same_action": true,
+      "same_prompt_ids": true,
+      "same_response_ids": true
+    },
+    {
+      "block": 2,
+      "task_id": "dev-expanded-group-0",
+      "repeat": 0,
+      "same_text": true,
+      "same_action": true,
+      "same_prompt_ids": true,
+      "same_response_ids": true
+    },
+    {
+      "block": 2,
+      "task_id": "dev-expanded-group-0",
+      "repeat": 1,
+      "same_text": true,
+      "same_action": true,
+      "same_prompt_ids": true,
+      "same_response_ids": true
+    },
+    {
+      "block": 2,
+      "task_id": "dev-expanded-group-0",
+      "repeat": 2,
+      "same_text": true,
+      "same_action": true,
+      "same_prompt_ids": true,
+      "same_response_ids": true
+    },
+    {
+      "block": 2,
+      "task_id": "dev-expanded-dimmer-0",
+      "repeat": 0,
+      "same_text": true,
+      "same_action": true,
+      "same_prompt_ids": true,
+      "same_response_ids": true
+    },
+    {
+      "block": 2,
+      "task_id": "dev-expanded-dimmer-0",
+      "repeat": 1,
+      "same_text": true,
+      "same_action": true,
+      "same_prompt_ids": true,
+      "same_response_ids": true
+    },
+    {
+      "block": 2,
+      "task_id": "dev-expanded-dimmer-0",
+      "repeat": 2,
+      "same_text": true,
+      "same_action": true,
+      "same_prompt_ids": true,
+      "same_response_ids": true
+    },
+    {
+      "block": 2,
+      "task_id": "dev-expanded-fan-0",
+      "repeat": 0,
+      "same_text": true,
+      "same_action": true,
+      "same_prompt_ids": true,
+      "same_response_ids": true
+    },
+    {
+      "block": 2,
+      "task_id": "dev-expanded-fan-0",
+      "repeat": 1,
+      "same_text": true,
+      "same_action": true,
+      "same_prompt_ids": true,
+      "same_response_ids": true
+    },
+    {
+      "block": 2,
+      "task_id": "dev-expanded-fan-0",
+      "repeat": 2,
+      "same_text": true,
+      "same_action": true,
+      "same_prompt_ids": true,
+      "same_response_ids": true
+    },
+    {
+      "block": 3,
+      "task_id": "dev-expanded-multiroom-0",
+      "repeat": 0,
+      "same_text": true,
+      "same_action": true,
+      "same_prompt_ids": true,
+      "same_response_ids": true
+    },
+    {
+      "block": 3,
+      "task_id": "dev-expanded-multiroom-0",
+      "repeat": 1,
+      "same_text": true,
+      "same_action": true,
+      "same_prompt_ids": true,
+      "same_response_ids": true
+    },
+    {
+      "block": 3,
+      "task_id": "dev-expanded-multiroom-0",
+      "repeat": 2,
+      "same_text": true,
+      "same_action": true,
+      "same_prompt_ids": true,
+      "same_response_ids": true
+    },
+    {
+      "block": 3,
+      "task_id": "dev-expanded-group-0",
+      "repeat": 0,
+      "same_text": true,
+      "same_action": true,
+      "same_prompt_ids": true,
+      "same_response_ids": true
+    },
+    {
+      "block": 3,
+      "task_id": "dev-expanded-group-0",
+      "repeat": 1,
+      "same_text": true,
+      "same_action": true,
+      "same_prompt_ids": true,
+      "same_response_ids": true
+    },
+    {
+      "block": 3,
+      "task_id": "dev-expanded-group-0",
+      "repeat": 2,
+      "same_text": true,
+      "same_action": true,
+      "same_prompt_ids": true,
+      "same_response_ids": true
+    },
+    {
+      "block": 3,
+      "task_id": "dev-expanded-dimmer-0",
+      "repeat": 0,
+      "same_text": true,
+      "same_action": true,
+      "same_prompt_ids": true,
+      "same_response_ids": true
+    },
+    {
+      "block": 3,
+      "task_id": "dev-expanded-dimmer-0",
+      "repeat": 1,
+      "same_text": true,
+      "same_action": true,
+      "same_prompt_ids": true,
+      "same_response_ids": true
+    },
+    {
+      "block": 3,
+      "task_id": "dev-expanded-dimmer-0",
+      "repeat": 2,
+      "same_text": true,
+      "same_action": true,
+      "same_prompt_ids": true,
+      "same_response_ids": true
+    },
+    {
+      "block": 3,
+      "task_id": "dev-expanded-fan-0",
+      "repeat": 0,
+      "same_text": true,
+      "same_action": true,
+      "same_prompt_ids": true,
+      "same_response_ids": true
+    },
+    {
+      "block": 3,
+      "task_id": "dev-expanded-fan-0",
+      "repeat": 1,
+      "same_text": true,
+      "same_action": true,
+      "same_prompt_ids": true,
+      "same_response_ids": true
+    },
+    {
+      "block": 3,
+      "task_id": "dev-expanded-fan-0",
+      "repeat": 2,
+      "same_text": true,
+      "same_action": true,
+      "same_prompt_ids": true,
+      "same_response_ids": true
+    }
+  ],
+  "chains": [
+    {
+      "task_id": "dev-expanded-multiroom-0",
+      "initial_goal_states_equal": true,
+      "first_backend_request_equal": true,
+      "first_divergence_turn": {
+        "action": null,
+        "model_action": null,
+        "observation": null,
+        "state": 1,
+        "checks": null
+      },
+      "summaries": {
+        "direct": {
+          "mode": "direct",
+          "harness": "upstream-react",
+          "task_id": "dev-expanded-multiroom-0",
+          "execution_completed": true,
+          "goal_success": true,
+          "success": true,
+          "finished": true,
+          "steps": 7,
+          "model_calls": 7,
+          "tool_calls": 6,
+          "tool_feedbacks": 6,
+          "metrics_version": 4,
+          "model_rejections_without_feedback": 0,
+          "invalid_actions": 0,
+          "infrastructure_errors": 0,
+          "total_tokens": 35340,
+          "reward": 1.0279933333333333,
+          "checks": [
+            {
+              "device_id": "study_on_off_light_7",
+              "attribute": "1.OnOff.OnOff",
+              "op": "eq",
+              "value": false,
+              "actual": false,
+              "satisfied": true
+            },
+            {
+              "device_id": "bedroom_on_off_light_3",
+              "attribute": "1.OnOff.OnOff",
+              "op": "eq",
+              "value": true,
+              "actual": true,
+              "satisfied": true
+            },
+            {
+              "device_id": "study_on_off_light_2",
+              "attribute": "1.OnOff.OnOff",
+              "op": "eq",
+              "value": false,
+              "actual": false,
+              "satisfied": true
+            }
+          ],
+          "duration_seconds": 19.860575417988002,
+          "error": null,
+          "training": false,
+          "baseline_id": "B0-ReAct-v1",
+          "run_purpose": "p1_paired_dev_schema",
+          "task_failure_is_data": true,
+          "task_failure": false
+        },
+        "lightning": {
+          "mode": "lightning",
+          "harness": "upstream-react",
+          "task_id": "dev-expanded-multiroom-0",
+          "execution_completed": true,
+          "goal_success": true,
+          "success": true,
+          "finished": true,
+          "steps": 7,
+          "model_calls": 7,
+          "tool_calls": 6,
+          "tool_feedbacks": 6,
+          "metrics_version": 4,
+          "model_rejections_without_feedback": 0,
+          "invalid_actions": 0,
+          "infrastructure_errors": 0,
+          "total_tokens": 35340,
+          "reward": 1.0279933333333333,
+          "checks": [
+            {
+              "device_id": "study_on_off_light_7",
+              "attribute": "1.OnOff.OnOff",
+              "op": "eq",
+              "value": false,
+              "actual": false,
+              "satisfied": true
+            },
+            {
+              "device_id": "bedroom_on_off_light_3",
+              "attribute": "1.OnOff.OnOff",
+              "op": "eq",
+              "value": true,
+              "actual": true,
+              "satisfied": true
+            },
+            {
+              "device_id": "study_on_off_light_2",
+              "attribute": "1.OnOff.OnOff",
+              "op": "eq",
+              "value": false,
+              "actual": false,
+              "satisfied": true
+            }
+          ],
+          "duration_seconds": 17.338612500578165,
+          "error": null,
+          "training": false,
+          "baseline_id": "B0-ReAct-v1",
+          "run_purpose": "p1_paired_dev_schema",
+          "task_failure_is_data": true,
+          "task_failure": false
+        }
+      }
+    },
+    {
+      "task_id": "dev-expanded-group-0",
+      "initial_goal_states_equal": true,
+      "first_backend_request_equal": true,
+      "first_divergence_turn": {
+        "action": null,
+        "model_action": null,
+        "observation": null,
+        "state": 1,
+        "checks": null
+      },
+      "summaries": {
+        "direct": {
+          "mode": "direct",
+          "harness": "upstream-react",
+          "task_id": "dev-expanded-group-0",
+          "execution_completed": true,
+          "goal_success": true,
+          "success": true,
+          "finished": true,
+          "steps": 6,
+          "model_calls": 6,
+          "tool_calls": 5,
+          "tool_feedbacks": 5,
+          "metrics_version": 4,
+          "model_rejections_without_feedback": 0,
+          "invalid_actions": 0,
+          "infrastructure_errors": 0,
+          "total_tokens": 28786,
+          "reward": 1.061214,
+          "checks": [
+            {
+              "device_id": "study_on_off_light_7",
+              "attribute": "1.OnOff.OnOff",
+              "op": "eq",
+              "value": false,
+              "actual": false,
+              "satisfied": true
+            },
+            {
+              "device_id": "bedroom_on_off_light_2",
+              "attribute": "1.OnOff.OnOff",
+              "op": "eq",
+              "value": false,
+              "actual": false,
+              "satisfied": true
+            },
+            {
+              "device_id": "bedroom_on_off_light_4",
+              "attribute": "1.OnOff.OnOff",
+              "op": "eq",
+              "value": false,
+              "actual": false,
+              "satisfied": true
+            },
+            {
+              "device_id": "bedroom_on_off_light_6",
+              "attribute": "1.OnOff.OnOff",
+              "op": "eq",
+              "value": false,
+              "actual": false,
+              "satisfied": true
+            }
+          ],
+          "duration_seconds": 16.072597316466272,
+          "error": null,
+          "training": false,
+          "baseline_id": "B0-ReAct-v1",
+          "run_purpose": "p1_paired_dev_schema",
+          "task_failure_is_data": true,
+          "task_failure": false
+        },
+        "lightning": {
+          "mode": "lightning",
+          "harness": "upstream-react",
+          "task_id": "dev-expanded-group-0",
+          "execution_completed": true,
+          "goal_success": true,
+          "success": true,
+          "finished": true,
+          "steps": 6,
+          "model_calls": 6,
+          "tool_calls": 5,
+          "tool_feedbacks": 5,
+          "metrics_version": 4,
+          "model_rejections_without_feedback": 0,
+          "invalid_actions": 0,
+          "infrastructure_errors": 0,
+          "total_tokens": 28786,
+          "reward": 1.061214,
+          "checks": [
+            {
+              "device_id": "study_on_off_light_7",
+              "attribute": "1.OnOff.OnOff",
+              "op": "eq",
+              "value": false,
+              "actual": false,
+              "satisfied": true
+            },
+            {
+              "device_id": "bedroom_on_off_light_2",
+              "attribute": "1.OnOff.OnOff",
+              "op": "eq",
+              "value": false,
+              "actual": false,
+              "satisfied": true
+            },
+            {
+              "device_id": "bedroom_on_off_light_4",
+              "attribute": "1.OnOff.OnOff",
+              "op": "eq",
+              "value": false,
+              "actual": false,
+              "satisfied": true
+            },
+            {
+              "device_id": "bedroom_on_off_light_6",
+              "attribute": "1.OnOff.OnOff",
+              "op": "eq",
+              "value": false,
+              "actual": false,
+              "satisfied": true
+            }
+          ],
+          "duration_seconds": 14.227023073472083,
+          "error": null,
+          "training": false,
+          "baseline_id": "B0-ReAct-v1",
+          "run_purpose": "p1_paired_dev_schema",
+          "task_failure_is_data": true,
+          "task_failure": false
+        }
+      }
+    },
+    {
+      "task_id": "dev-expanded-dimmer-0",
+      "initial_goal_states_equal": true,
+      "first_backend_request_equal": true,
+      "first_divergence_turn": {
+        "action": null,
+        "model_action": null,
+        "observation": null,
+        "state": 1,
+        "checks": null
+      },
+      "summaries": {
+        "direct": {
+          "mode": "direct",
+          "harness": "upstream-react",
+          "task_id": "dev-expanded-dimmer-0",
+          "execution_completed": true,
+          "goal_success": false,
+          "success": false,
+          "finished": true,
+          "steps": 10,
+          "model_calls": 10,
+          "tool_calls": 9,
+          "tool_feedbacks": 9,
+          "metrics_version": 4,
+          "model_rejections_without_feedback": 0,
+          "invalid_actions": 6,
+          "infrastructure_errors": 0,
+          "total_tokens": 59603,
+          "reward": -0.6929363333333334,
+          "checks": [
+            {
+              "device_id": "study_on_off_light_7",
+              "attribute": "1.OnOff.OnOff",
+              "op": "eq",
+              "value": false,
+              "actual": false,
+              "satisfied": true
+            },
+            {
+              "device_id": "bedroom_dimmable_light_3",
+              "attribute": "1.OnOff.OnOff",
+              "op": "eq",
+              "value": true,
+              "actual": true,
+              "satisfied": true
+            },
+            {
+              "device_id": "bedroom_dimmable_light_3",
+              "attribute": "1.LevelControl.CurrentLevel",
+              "op": "eq",
+              "value": 64,
+              "actual": 32,
+              "satisfied": false
+            }
+          ],
+          "duration_seconds": 38.853299148380756,
+          "error": null,
+          "training": false,
+          "baseline_id": "B0-ReAct-v1",
+          "run_purpose": "p1_paired_dev_schema",
+          "task_failure_is_data": true,
+          "task_failure": false
+        },
+        "lightning": {
+          "mode": "lightning",
+          "harness": "upstream-react",
+          "task_id": "dev-expanded-dimmer-0",
+          "execution_completed": true,
+          "goal_success": false,
+          "success": false,
+          "finished": true,
+          "steps": 10,
+          "model_calls": 10,
+          "tool_calls": 9,
+          "tool_feedbacks": 9,
+          "metrics_version": 4,
+          "model_rejections_without_feedback": 0,
+          "invalid_actions": 6,
+          "infrastructure_errors": 0,
+          "total_tokens": 59603,
+          "reward": -0.6929363333333334,
+          "checks": [
+            {
+              "device_id": "study_on_off_light_7",
+              "attribute": "1.OnOff.OnOff",
+              "op": "eq",
+              "value": false,
+              "actual": false,
+              "satisfied": true
+            },
+            {
+              "device_id": "bedroom_dimmable_light_3",
+              "attribute": "1.OnOff.OnOff",
+              "op": "eq",
+              "value": true,
+              "actual": true,
+              "satisfied": true
+            },
+            {
+              "device_id": "bedroom_dimmable_light_3",
+              "attribute": "1.LevelControl.CurrentLevel",
+              "op": "eq",
+              "value": 64,
+              "actual": 32,
+              "satisfied": false
+            }
+          ],
+          "duration_seconds": 40.0777573119849,
+          "error": null,
+          "training": false,
+          "baseline_id": "B0-ReAct-v1",
+          "run_purpose": "p1_paired_dev_schema",
+          "task_failure_is_data": true,
+          "task_failure": false
+        }
+      }
+    },
+    {
+      "task_id": "dev-expanded-fan-0",
+      "initial_goal_states_equal": true,
+      "first_backend_request_equal": true,
+      "first_divergence_turn": {
+        "action": null,
+        "model_action": null,
+        "observation": null,
+        "state": 1,
+        "checks": null
+      },
+      "summaries": {
+        "direct": {
+          "mode": "direct",
+          "harness": "upstream-react",
+          "task_id": "dev-expanded-fan-0",
+          "execution_completed": true,
+          "goal_success": true,
+          "success": true,
+          "finished": true,
+          "steps": 5,
+          "model_calls": 5,
+          "tool_calls": 4,
+          "tool_feedbacks": 4,
+          "metrics_version": 4,
+          "model_rejections_without_feedback": 0,
+          "invalid_actions": 0,
+          "infrastructure_errors": 0,
+          "total_tokens": 24881,
+          "reward": 1.0584523333333333,
+          "checks": [
+            {
+              "device_id": "study_on_off_light_7",
+              "attribute": "1.OnOff.OnOff",
+              "op": "eq",
+              "value": false,
+              "actual": false,
+              "satisfied": true
+            },
+            {
+              "device_id": "bedroom_fan_2",
+              "attribute": "1.OnOff.OnOff",
+              "op": "eq",
+              "value": true,
+              "actual": true,
+              "satisfied": true
+            },
+            {
+              "device_id": "bedroom_fan_2",
+              "attribute": "1.FanControl.FanMode",
+              "op": "eq",
+              "value": 1,
+              "actual": 1,
+              "satisfied": true
+            }
+          ],
+          "duration_seconds": 13.257923602126539,
+          "error": null,
+          "training": false,
+          "baseline_id": "B0-ReAct-v1",
+          "run_purpose": "p1_paired_dev_schema",
+          "task_failure_is_data": true,
+          "task_failure": false
+        },
+        "lightning": {
+          "mode": "lightning",
+          "harness": "upstream-react",
+          "task_id": "dev-expanded-fan-0",
+          "execution_completed": true,
+          "goal_success": true,
+          "success": true,
+          "finished": true,
+          "steps": 5,
+          "model_calls": 5,
+          "tool_calls": 4,
+          "tool_feedbacks": 4,
+          "metrics_version": 4,
+          "model_rejections_without_feedback": 0,
+          "invalid_actions": 0,
+          "infrastructure_errors": 0,
+          "total_tokens": 24881,
+          "reward": 1.0584523333333333,
+          "checks": [
+            {
+              "device_id": "study_on_off_light_7",
+              "attribute": "1.OnOff.OnOff",
+              "op": "eq",
+              "value": false,
+              "actual": false,
+              "satisfied": true
+            },
+            {
+              "device_id": "bedroom_fan_2",
+              "attribute": "1.OnOff.OnOff",
+              "op": "eq",
+              "value": true,
+              "actual": true,
+              "satisfied": true
+            },
+            {
+              "device_id": "bedroom_fan_2",
+              "attribute": "1.FanControl.FanMode",
+              "op": "eq",
+              "value": 1,
+              "actual": 1,
+              "satisfied": true
+            }
+          ],
+          "duration_seconds": 12.81966082379222,
+          "error": null,
+          "training": false,
+          "baseline_id": "B0-ReAct-v1",
+          "run_purpose": "p1_paired_dev_schema",
+          "task_failure_is_data": true,
+          "task_failure": false
+        }
+      }
+    }
+  ],
+  "cost": {
+    "fixed_prompt_tokens": 311760,
+    "fixed_completion_tokens": 5742,
+    "fixed_latency_seconds": 155.8343835696578,
+    "chain_model_calls": 56,
+    "chain_tokens": 297220,
+    "chain_duration_seconds": 172.50744919478893
+  },
+  "limits": "Order, warm state and restart co-vary; differences do not identify a causal mechanism.",
+  "additional_pre_retrieval_chain_cost": {
+    "episodes": 8,
+    "model_calls": 56,
+    "tokens": 297220,
+    "duration_seconds": 169.64858572091907
+  },
+  "chain_run": "/XYAIFS00/HDD_POOL/nsccgz_ywang/nsccgz_ywang_wzh/zhengrj/agent/smarthome_agent_rl/runs/p1-chain-retrieval-20261003-01"
+}

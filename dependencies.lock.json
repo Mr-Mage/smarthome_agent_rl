@@ -1,0 +1,19 @@
+{
+  "SimuHome": {
+    "repository": "https://github.com/holi-lab/SimuHome.git",
+    "commit": "83d28837b69f0cbf1bc02ed5334cb8b561a9d54d",
+    "path": "deps/SimuHome",
+    "modified": false
+  },
+  "agent-lightning": {
+    "repository": "https://github.com/microsoft/agent-lightning.git",
+    "commit": "d381995396274039f2bb1cbe5ff42ac8067f4e47",
+    "path": "../agent-lightning",
+    "modified": true,
+    "patch": "patches/agent-lightning/user-changes.patch",
+    "additional_files": [
+      "patches/agent-lightning/tests/server/test_http_limits.py"
+    ],
+    "note": "Preserved existing user changes; do not reapply on the current server checkout."
+  }
+}

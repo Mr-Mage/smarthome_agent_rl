@@ -1,0 +1,43 @@
+{
+  "simulator_url": "http://127.0.0.1:20080/api",
+  "gateway_url": "http://127.0.0.1:20181",
+  "model_endpoint": "http://127.0.0.1:20000/v1",
+  "served_model": "smarthome-qwen",
+  "seed": 20261003,
+  "model_seed": 42,
+  "max_steps": 20,
+  "model_context": 32768,
+  "reward": {
+    "success": 1.0,
+    "progress": 0.2,
+    "invalid": 0.1,
+    "action_cost": 0.01,
+    "token_cost_per_1k": 0.001
+  },
+  "model_path": "../models/Qwen2.5-1.5B-Instruct",
+  "tensor_parallel_size": 1,
+  "gpu_memory_utilization": 0.2,
+  "engine_seed": 0,
+  "model_python": "/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/anaconda3/envs/qwen36-vllm/bin/python",
+  "model_startup_timeout": 900,
+  "runtime_note": "Existing qwen36-vllm CUDA12.8 backend; Lightning remains original v1.0.2 environment. Backend differs from previous CUDA13 vLLM0.12 trials.",
+  "model_log_requests_flag": "--no-enable-log-requests",
+  "baseline_id": "B0-ReAct-v1",
+  "run_purpose": "engineering_fallback_1.5b",
+  "target_model": "Qwen/Qwen3.5-9B",
+  "generation": {
+    "temperature": 0.7,
+    "top_p": 0.8,
+    "max_tokens": 2048,
+    "presence_penalty": 1.5,
+    "extra_body": {
+      "top_k": 20,
+      "min_p": 0.0,
+      "repetition_penalty": 1.0,
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    }
+  },
+  "lightning_agent_class": "smarthome_agent_rl.baseline:BaselineAgent"
+}

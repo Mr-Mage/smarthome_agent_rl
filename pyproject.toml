@@ -1,0 +1,13 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "smarthome-agent-rl"
+version = "0.3.0"
+description = "Pristine SimuHome ReAct, external structured harness and paired Lightning rollouts"
+requires-python = ">=3.12"
+dependencies = ["httpx>=0.28,<1", "openai>=2,<3"]
+
+[tool.setuptools.packages.find]
+include = ["smarthome_agent_rl*"]
