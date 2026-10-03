@@ -1,0 +1,23 @@
+{
+  "seed": 20261004,
+  "source_counts": {
+    "qt1:feasible": 50,
+    "qt1:infeasible": 50,
+    "qt2:feasible": 50,
+    "qt2:infeasible": 50,
+    "qt3:feasible": 50,
+    "qt3:infeasible": 50,
+    "qt4-1:feasible": 50,
+    "qt4-1:infeasible": 50,
+    "qt4-2:feasible": 50,
+    "qt4-2:infeasible": 50,
+    "qt4-3:feasible": 50,
+    "qt4-3:infeasible": 50
+  },
+  "excluded_from_final": [
+    "qt1_feasible_seed_1",
+    "qt3_feasible_seed_1",
+    "qt3_feasible_seed_2",
+    "qt3_feasible_seed_3"
+  ]
+}

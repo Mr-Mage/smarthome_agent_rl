@@ -38,7 +38,8 @@ def inventory(model):
     model = model.resolve()
     index = json.loads((model / 'model.safetensors.index.json').read_text())
     shards = sorted(set(index['weight_map'].values()))
-    required = shards + ['config.json', 'tokenizer_config.json']
+    required = sorted(set(shards + [p.name for p in model.iterdir() if p.is_file() and (
+        p.suffix in ('.json', '.jinja', '.txt') and p.name != 'download-verification.json')]))
     files = []
     for name in required:
         path = model / name
@@ -64,6 +65,7 @@ def main():
     run.mkdir(parents=True, exist_ok=True)
     if args.action == 'inventory':
         save(run / 'judge-inventory.json', inventory(Path(config['judge_path'])))
+        save(run / 'actor-inventory.json', inventory(ROOT / config['actor_path']))
         return
     if args.action == 'probe':
         probe(config, run)
