@@ -106,6 +106,8 @@ def main():
             'model_endpoint': f"http://127.0.0.1:{workflow['actor_port']}/v1",
             'judge_endpoint': f"http://127.0.0.1:{config['judge_port']}/v1",
             'embedding_endpoint': f"http://127.0.0.1:{config['embedding_port']}"}
+        if args.phase == 'final':
+            episode_config['protocol_frozen_commit'] = commit
         if mode == 'direct':
             with output.with_suffix('.log').open('w') as log:
                 try:

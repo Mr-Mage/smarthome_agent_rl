@@ -103,9 +103,7 @@ def report(run):
                 for item in protocol['schedule']), 'successes': sum(metrics[(item['task']['id'], variant)]['success']
                 for item in protocol['schedule'] if (item['task']['query_type'], item['task']['case']) == (qt, case))}
                 for qt, case in STRATA}}
-    pairs = {}
-    reference = variants[0]
-    for variant in variants[1:]:
+    def compare(reference, variant):
         baseline = [metrics[(item['task']['id'], reference)] for item in protocol['schedule']]
         comparison = [metrics[(item['task']['id'], variant)] for item in protocol['schedule']]
         result = mcnemar([r['success'] for r in baseline], [r['success'] for r in comparison])
@@ -114,15 +112,22 @@ def report(run):
             if (item['task']['query_type'], item['task']['case']) == (qt, case)] for qt, case in STRATA]
         result['success_delta_ci95'] = bootstrap_ci(differences)
         result['actor_token_delta'] = sum(b['actor_tokens'] - a['actor_tokens'] for a, b in zip(baseline, comparison)) / len(baseline)
-        pairs[variant] = result
+        return result
+    reference = variants[0]
+    pairs = {variant: compare(reference, variant) for variant in variants[1:]}
     adjusted = holm({v: result['p_exact'] for v, result in pairs.items()})
     for variant, result in pairs.items():
         result['p_holm'] = adjusted[variant]
+    mechanism = {}
+    for baseline_variant, comparison_variant in [('G', 'GC'), ('GV', 'Full')]:
+        if baseline_variant in variants and comparison_variant in variants:
+            mechanism[comparison_variant + '-' + baseline_variant] = compare(baseline_variant, comparison_variant)
     manifest = {str(path.relative_to(run)): digest(path) for path in run.rglob('*')
                 if path.is_file() and path.name not in ('report.json', 'report.md', 'artifact_manifest.json')}
     (run / 'artifact_manifest.json').write_text(json.dumps(manifest, indent=2), encoding='utf-8')
     result = {'verified': True, 'phase': protocol['phase'], 'commit': protocol['commit'],
         'reference': reference, 'arms': summary, 'paired': pairs, 'artifact_files': len(manifest),
+        'exploratory_context_pairs': mechanism,
         'judge_panel': 'Three seeds from one local model/service, not three independent judges',
         'limitations': 'Preserves original live virtual-time behavior; task failures stay in denominator.'}
     (run / 'report.json').write_text(json.dumps(result, indent=2), encoding='utf-8')

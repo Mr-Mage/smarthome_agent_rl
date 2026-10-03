@@ -15,6 +15,20 @@ def digest(path):
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
 
+def task_failure_kind(error, calls=()):
+    if not error or error['type'] != 'AgentExecutionError':
+        return None
+    message = error['message'].lower()
+    for term, kind in [('explicit finish', 'step_limit'), ('consecutive failures', 'output_rejections'),
+                       ('polling budget', 'workflow_poll_limit')]:
+        if term in message:
+            return kind
+    if calls and calls[-1]['status'] in (400, 413) and any(term in message for term in (
+            'maximum context length', 'reduce the length of the input messages', 'parameter=input_tokens')):
+        return 'actor_context_limit'
+    return None
+
+
 def select(benchmark, *, seed=20261004, dev_count=10, final_count=16, exposed=()):
     groups = defaultdict(list)
     exposed = KNOWN_EXPOSURES | set(exposed)

@@ -7,6 +7,7 @@ import os
 from pathlib import Path
 import sys
 import time
+import subprocess
 from threading import Lock
 
 import httpx
@@ -19,10 +20,16 @@ from src.agents.tools import ToolConfig, set_tool_config
 from src.pipelines.episode_evaluation import runner
 from smarthome_agent_rl.generation import install_generation_options
 from smarthome_agent_rl.retrieval import load_retrieval
+from smarthome_agent_rl.benchmark import task_failure_kind
 
 
 def main(mode):
     config = json.loads(os.environ['SMARTHOME_CONFIG'])
+    if config.get('protocol_frozen_commit'):
+        commit = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip()
+        dirty = subprocess.check_output(['git', 'status', '--porcelain'], cwd=ROOT, text=True).strip()
+        if commit != config['protocol_frozen_commit'] or dirty:
+            raise RuntimeError('Final source changed after protocol freeze')
     task = json.loads(os.environ['SMARTHOME_TASK'])
     output = Path(os.environ['SMARTHOME_OUTPUT'])
     output.mkdir(parents=True, exist_ok=False)
@@ -104,20 +111,21 @@ def main(mode):
         save('error.json', error)
     finally:
         runner._build_agent = original
-        task_failure = error is not None and error['type'] == 'AgentExecutionError' and any(
-            term in error['message'] for term in ('explicit finish', 'consecutive failures', 'polling budget'))
+        failure_kind = task_failure_kind(error, calls)
+        task_failure = failure_kind is not None
         score = result['evaluation_result']['score'] if result else None
         tokens = lambda rows: sum(r['response'].get('usage', {}).get('total_tokens', 0) for r in rows)
         summary = {'task_id': task['id'], 'variant': variant, 'mode': mode,
             'official_score': score, 'evaluator_called': result is not None,
             'success': score == 1, 'task_failure': task_failure, 'error': error,
+            'task_failure_kind': failure_kind,
             'infrastructure_error': error is not None and not task_failure,
             'actor_model_calls': len(calls), 'actor_tokens': tokens(calls),
             'judge_model_calls': len(judges), 'judge_tokens': tokens(judges),
             'duration_seconds': time.monotonic() - started}
         save('summary.json', summary)
         if error is None or task_failure:
-            emit('reward', {'value': float(score == 1), 'source': 'official_simuhome_evaluator',
+            emit('reward', {'value': float(score == 1), 'source': 'official_simuhome_evaluator' if result else failure_kind,
                 'evaluator_called': result is not None})
         print(json.dumps(summary, ensure_ascii=False), flush=True)
         actor._client.close()
