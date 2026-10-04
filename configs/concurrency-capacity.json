@@ -87,7 +87,15 @@
     "judge_max_num_seqs": 32,
     "actor_enforce_eager": true,
     "actor_prefix_caching": false,
-    "actor_gpu_memory_utilization": 0.8
+    "actor_gpu_memory_utilization": 0.8,
+    "actor_extra_args": [
+      "--gdn-prefill-backend",
+      "triton"
+    ],
+    "judge_extra_args": [
+      "--gdn-prefill-backend",
+      "triton"
+    ]
   },
   "kernel_cache_root": "work/concurrency-capacity/kernel-cache"
 }
