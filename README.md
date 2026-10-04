@@ -1,11 +1,13 @@
 # SmartHome Agent Harness
 
-在原 SimuHome ReAct 与 Agent Lightning 上比较 Guard、Verify/Repair、Context 三类机制。
-使用 Qwen3.5-9B actor、本地 Qwen3.6-35B-A3B judge 和官方 12 类 benchmark。
+原 SimuHome ReAct + Agent Lightning；Qwen3.5-9B actor，本地 Qwen3.6-35B-A3B judge。
+四卡分工：GPU 0/1 两路独立 actor；GPU 2/3 共享 TP2 judge；CPU BGE 检索。
 
-- 开发约定：`AGENTS.md`
-- 功能节点：`PLAN.md`；结果：`docs/nodes/`
-- 环境与上游版本：`dependencies.lock.json`，用户 Lightning 补丁：`patches/`
-- 历史资料：`docs/archive/pre-mvp/`；大文件证据不入 Git。
+已完成 N0–N7：600 dev + 768 final。final 成功数：B0 66/192, G 76/192, GC 69/192, Full 73/192。
+开发记录：`docs/nodes/`；约定：`AGENTS.md`；历史资料：`docs/archive/pre-mvp/`。
+结果与证据：`runs/harness-mvp/primary-v1/`、`outputs/harness-mvp/`；原始失败保留，主实验不混入额外诊断。
 
-服务器通过 `ssh h100` 访问；激活已有 `../activate-agent-lightning.sh`，模型使用 `qwen36-vllm`，模拟器与 episode 使用各自 venv。不得混用或改写环境。
+服务器：`ssh h100`，激活已有 `../activate-agent-lightning.sh`；模型用 qwen36-vllm，episode/模拟器用各自 venv，环境与用户上游补丁保留。
+
+运行入口：`scripts/harness_services.py`、`scripts/run_benchmark_suite.py`、`scripts/report_benchmark.py`。
+独立复核：`python scripts/verify_benchmark.py <run-dir>`；冻结：`work/harness-mvp/final-freeze.json`。
