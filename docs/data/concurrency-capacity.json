@@ -1,5 +1,5 @@
 {
-  "status": "in_progress",
+  "status": "complete",
   "target_episodes": 1368,
   "target_seconds": 3600,
   "purpose": "inference_capacity_and_episode_acceptance",
@@ -305,7 +305,7 @@
     }
   ],
   "gate_seconds": 3000,
-  "selected_config": "configs/harness-concurrent.json",
+  "selected_config": "configs/harness-concurrent-fixed.json",
   "gate_passed": true,
   "acceptance": {
     "status": "invalid",
@@ -316,5 +316,164 @@
     "final_completed": 0,
     "elapsed_seconds": 1016.5313537270122,
     "reason": "Original simulator TypeError on model-supplied nested string args during fast_forward_to; evaluator score=-1. Entire round rejected."
+  },
+  "acceptance_v2": {
+    "complete": true,
+    "episodes": 1368,
+    "elapsed_seconds": 2630.514428330993,
+    "within_one_hour": true,
+    "timing_scope": "fresh service start through final verification",
+    "stages": [
+      {
+        "stage": "service_startup",
+        "seconds": 525.4379721139849
+      },
+      {
+        "stage": "inference_probe",
+        "seconds": 4.434221269009868
+      },
+      {
+        "stage": "dev600",
+        "seconds": 925.647264284984
+      },
+      {
+        "stage": "model_inventory",
+        "seconds": 925.6525971119991,
+        "overlaps": "dev600",
+        "duration_includes_join_wait": true
+      },
+      {
+        "stage": "dev_report",
+        "seconds": 11.601699654012918
+      },
+      {
+        "stage": "dev_verify",
+        "seconds": 4.392451668012654
+      },
+      {
+        "stage": "freeze",
+        "seconds": 0.44640652602538466
+      },
+      {
+        "stage": "final768",
+        "seconds": 1138.5550580529962
+      },
+      {
+        "stage": "final_report",
+        "seconds": 14.10210655699484
+      },
+      {
+        "stage": "final_verify",
+        "seconds": 5.8712810759898275
+      }
+    ],
+    "config": {
+      "seed": 20261004,
+      "model_python": "/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/anaconda3/envs/qwen36-vllm/bin/python",
+      "judge_path": "/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/zhengrj/models/Qwen3.6-35B-A3B",
+      "actor_path": "../models/Qwen3.5-9B",
+      "actor_model": "smarthome-qwen35-9b",
+      "judge_model": "smarthome-qwen36-judge",
+      "judge_port": 20300,
+      "embedding_port": 20200,
+      "actor_context": 32768,
+      "judge_context": 65536,
+      "startup_timeout": 1200,
+      "workflows": [
+        {
+          "id": 0,
+          "gpus": [
+            0
+          ],
+          "actor_port": 20000,
+          "simulator_port": 20080,
+          "gateway_port": 20181
+        },
+        {
+          "id": 1,
+          "gpus": [
+            1
+          ],
+          "actor_port": 20001,
+          "simulator_port": 20081,
+          "gateway_port": 20182
+        }
+      ],
+      "judge_gpus": [
+        2,
+        3
+      ],
+      "model_seed": 42,
+      "engine_seed": 0,
+      "max_steps": 20,
+      "generation": {
+        "temperature": 0.7,
+        "top_p": 0.8,
+        "max_tokens": 2048,
+        "presence_penalty": 1.5,
+        "extra_body": {
+          "top_k": 20,
+          "min_p": 0.0,
+          "repetition_penalty": 1.0,
+          "chat_template_kwargs": {
+            "enable_thinking": false
+          }
+        }
+      },
+      "judge_generation": {
+        "temperature": 0.0,
+        "max_tokens": 512,
+        "extra_body": {
+          "chat_template_kwargs": {
+            "enable_thinking": false
+          }
+        }
+      },
+      "judge_seeds": [
+        42,
+        43,
+        44
+      ],
+      "variants_dev": [
+        "B0",
+        "G",
+        "GV",
+        "GC",
+        "Full"
+      ],
+      "variants_final": [
+        "B0",
+        "G",
+        "GC",
+        "Full"
+      ],
+      "recovery_per_action": 2,
+      "extra_queries_max": 40,
+      "slots_per_actor": 16,
+      "simulator_port_base": 21000,
+      "inference": {
+        "actor_max_num_seqs": 32,
+        "judge_max_num_seqs": 32,
+        "actor_enforce_eager": false,
+        "actor_prefix_caching": true,
+        "actor_gpu_memory_utilization": 0.8,
+        "actor_extra_args": [
+          "--gdn-prefill-backend",
+          "triton"
+        ],
+        "judge_extra_args": [
+          "--gdn-prefill-backend",
+          "triton"
+        ]
+      },
+      "kernel_cache_root": "work/concurrency-capacity/kernel-cache",
+      "dispatch_policy": "workflow-first",
+      "simulator_commit": "e202971348348e1bb56651245185ecb3a0e6b12d"
+    },
+    "rerun_purpose": "performance acceptance; original final remains historical",
+    "source": "runs/concurrency-capacity/acceptance-v2",
+    "timing_report_sha256": "b14ee74d896adee7fb0cade0d6e241b45ef0ca8037dfc247fcfe1444fac32971",
+    "dev_verified_files": 5797,
+    "final_verified_files": 7350
   }
 }
