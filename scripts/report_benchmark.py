@@ -95,6 +95,13 @@ def report(run):
     if protocol['phase'] == 'align':
         raise ValueError('Alignment is a diagnostic, not a benchmark report')
     variants = protocol['variants']
+    default_seed = protocol['config']['model_seed']
+    seeds = protocol.get('actor_seeds', [default_seed])
+    primary_seed = protocol['config'].get('primary_actor_seed', seeds[0])
+    if primary_seed not in seeds:
+        raise ValueError('Primary actor seed must be included in this run')
+    def key(item, variant):
+        return item['task']['id'], variant, item.get('actor_seed', default_seed)
     metrics = {}
     for item in protocol['schedule']:
         for variant in item['variants']:
@@ -102,12 +109,14 @@ def report(run):
             record = episode_metrics(directory)
             if record['task_id'] != item['task']['id'] or record['variant'] != variant:
                 raise ValueError('Artifact task/variant identity mismatch')
-            metrics[(item['task']['id'], variant)] = record
+            if record.get('actor_seed', default_seed) != key(item, variant)[2] or key(item, variant) in metrics:
+                raise ValueError('Duplicate episode or actor seed identity mismatch')
+            metrics[key(item, variant)] = record
     if len(metrics) != protocol['expected_episodes'] or len(metrics) != completion['episodes']:
         raise ValueError('Missing or duplicate episode evidence')
     summary = {}
     for variant in variants:
-        records = [metrics[(item['task']['id'], variant)] for item in protocol['schedule']]
+        records = [metrics[key(item, variant)] for item in protocol['schedule']]
         success_records = [r for r in records if r['success']]
         numeric = ['actor_tokens', 'judge_tokens', 'actor_model_calls', 'judge_model_calls',
             'invalid_proposed', 'invalid_reached_executor', 'structured_rejections',
@@ -116,20 +125,24 @@ def report(run):
             'actor_latency', 'judge_latency', 'extra_query_latency']
         summary[variant] = {'episodes': len(records), 'successes': len(success_records),
             'success_rate': len(success_records) / len(records), 'unfinished': sum(r['task_failure'] for r in records),
+            'unique_tasks': len({i['task']['id'] for i in protocol['schedule']}),
+            'by_actor_seed': {str(seed): {'episodes': sum(key(i, variant)[2] == seed for i in protocol['schedule']),
+                'successes': sum(metrics[key(i, variant)]['success'] for i in protocol['schedule'] if key(i, variant)[2] == seed)} for seed in seeds},
             'evaluator_errors': sum(r['official_score'] == -1 for r in records),
             'all_totals': {m: sum(r[m] for r in records) for m in numeric},
             'successful_means': {m: sum(r[m] for r in success_records) / len(success_records)
                                  if success_records else None for m in numeric},
             'categories': {qt + ':' + case: {'episodes': sum((item['task']['query_type'], item['task']['case']) == (qt, case)
-                for item in protocol['schedule']), 'successes': sum(metrics[(item['task']['id'], variant)]['success']
+                for item in protocol['schedule']), 'successes': sum(metrics[key(item, variant)]['success']
                 for item in protocol['schedule'] if (item['task']['query_type'], item['task']['case']) == (qt, case))}
                 for qt, case in STRATA}}
-    def compare(reference, variant):
-        baseline = [metrics[(item['task']['id'], reference)] for item in protocol['schedule']]
-        comparison = [metrics[(item['task']['id'], variant)] for item in protocol['schedule']]
+    def compare(reference, variant, seed=primary_seed):
+        items = [i for i in protocol['schedule'] if key(i, variant)[2] == seed]
+        baseline = [metrics[key(item, reference)] for item in items]
+        comparison = [metrics[key(item, variant)] for item in items]
         result = mcnemar([r['success'] for r in baseline], [r['success'] for r in comparison])
-        differences = [[int(metrics[(item['task']['id'], variant)]['success']) -
-            int(metrics[(item['task']['id'], reference)]['success']) for item in protocol['schedule']
+        differences = [[int(metrics[key(item, variant)]['success']) -
+            int(metrics[key(item, reference)]['success']) for item in items
             if (item['task']['query_type'], item['task']['case']) == (qt, case)] for qt, case in STRATA]
         result['success_delta_ci95'] = bootstrap_ci(differences)
         result['actor_token_delta'] = sum(b['actor_tokens'] - a['actor_tokens'] for a, b in zip(baseline, comparison)) / len(baseline)
@@ -139,6 +152,16 @@ def report(run):
     adjusted = holm({v: result['p_exact'] for v, result in pairs.items()})
     for variant, result in pairs.items():
         result['p_holm'] = adjusted[variant]
+    repeated = {}
+    if len(seeds) > 1:
+        unique = {i['task']['id']: i for i in protocol['schedule']}
+        for variant in variants[1:]:
+            differences = [[sum(int(metrics[(item['task']['id'], variant, seed)]['success']) -
+                int(metrics[(item['task']['id'], reference, seed)]['success']) for seed in seeds) / len(seeds)
+                for item in unique.values() if (item['task']['query_type'], item['task']['case']) == (qt, case)] for qt, case in STRATA]
+            repeated[variant] = {'task_clustered_delta_ci95': bootstrap_ci(differences),
+                'by_actor_seed': {str(seed): compare(reference, variant, seed) for seed in seeds},
+                'independent_tasks': len(unique), 'repeated_runs_per_task': len(seeds)}
     mechanism = {}
     for baseline_variant, comparison_variant in [('G', 'GC'), ('GV', 'Full')]:
         if baseline_variant in variants and comparison_variant in variants:
@@ -152,6 +175,8 @@ def report(run):
         'metric_definitions': {'invalid_reached_executor': 'Immediate errors after run_tool dispatch; excludes parser/unknown-tool rejections and auxiliary queries',
             'invalid_proposed': 'Preexecution rejections plus immediate errors from proposed calls; recovery-budget blocks excluded'},
         'reference': reference, 'arms': summary, 'paired': pairs, 'artifact_files': len(manifest),
+        'primary_actor_seed': primary_seed, 'repeated_seed_diagnostics': repeated,
+        'statistical_unit': 'task; primary McNemar uses one predeclared actor seed; repeat CI resamples task clusters within categories',
         'exploratory_context_pairs': mechanism,
         'judge_panel': 'Three seeds from one local model/service, not three independent judges',
         'limitations': 'Preserves original live virtual-time behavior; task failures stay in denominator.'}

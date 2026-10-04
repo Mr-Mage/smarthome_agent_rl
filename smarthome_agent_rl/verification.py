@@ -1,4 +1,42 @@
 """Local action postconditions only; never infer the benchmark's hidden success goals."""
+import copy
+
+
+def expected_effect_v2(tool, arguments, before):
+    if tool == 'write_attribute':
+        value = arguments['value']
+        old = before.get('endpoints', {}).get(str(arguments['endpoint_id']), {}).get('clusters', {}).get(
+            arguments['cluster_id'], {}).get('attributes', {}).get(arguments['attribute_id'], {}).get('value')
+        # Public setters may coerce values. Without an exact contract, do not
+        # declare a false mismatch merely because the accepted types differ.
+        if value is None or old is not None and type(value) is not type(old):
+            return {}
+    original = expected_effect(tool, arguments, before)
+    if original or tool != 'execute_command':
+        return original
+    endpoint, cluster, command, args = (arguments['endpoint_id'], arguments['cluster_id'],
+        arguments['command_id'], arguments['args'])
+    if cluster == 'OperationalState' and command == 'Start':
+        return {(endpoint, cluster, 'OperationalState'): 1}
+    if cluster == 'LaundryWasherMode' and command == 'ChangeToMode':
+        return {(endpoint, cluster, 'CurrentMode'): args['new_mode']}
+    if cluster == 'FanControl' and command == 'Step':
+        # Public cluster code on a detached snapshot; no simulator I/O or time advance.
+        from src.simulator.domain.clusters.fan_control import FanControlCluster
+        attrs = before.get('endpoints', {}).get(str(endpoint), {}).get('clusters', {}).get(cluster, {}).get('attributes', {})
+        if 'FanModeSequence' not in attrs or 'PercentSetting' not in attrs:
+            return {}
+        shadow = FanControlCluster(fan_mode_sequence=attrs['FanModeSequence']['value'])
+        shadow.attributes.update({k: copy.deepcopy(v['value']) for k, v in attrs.items()})
+        try:
+            result = shadow._step(**args)
+        except (TypeError, ValueError):
+            return {}
+        if result.success:
+            return {(endpoint, cluster, 'PercentSetting'): shadow.attributes['PercentSetting']}
+    return {}
+
+
 def expected_effect(tool, arguments, before):
     if tool == 'write_attribute':
         return {(arguments['endpoint_id'], arguments['cluster_id'], arguments['attribute_id']): arguments['value']}

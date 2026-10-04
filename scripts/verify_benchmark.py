@@ -36,6 +36,8 @@ def verify(run):
                 contract_path = episode_directory(run, item, variant) / 'contract.json'
                 if contract_path.exists():
                     config = json.loads(contract_path.read_text())['config']
+                    if 'actor_seed' in item and config['model_seed'] != item['actor_seed']:
+                        failures.append({'task': item['task']['id'], 'variant': variant, 'problem': 'actor seed isolation mismatch'})
                     if config['simulator_url'] != f"http://127.0.0.1:{slot['simulator_port']}/api" or (
                         config['model_endpoint'] != f"http://127.0.0.1:{slot['actor_port']}/v1"):
                         failures.append({'task': item['task']['id'], 'variant': variant, 'problem': 'episode endpoint isolation mismatch'})

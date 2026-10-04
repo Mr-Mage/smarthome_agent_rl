@@ -90,3 +90,67 @@ class LedgerProvider:
             'original_characters': original_size, 'managed_characters': managed_size, 'used': used,
             'facts': len(ledger['facts']), 'errors_retained': len(ledger['errors']), 'epoch': ledger['epoch']})
         return self.inner.generate(converted if used else messages, response_format=response_format)
+
+
+def compact_ledger(executor, recent_turns=()):
+    """Keep source evidence in audit files; render current versions without duplicating recent pairs."""
+    ledger = build_ledger(executor.observations, executor.audit, executor.structured_audit)
+    catalog_turn = max((o['turn'] for o in executor.observations if o['tool'] in ('add_device', 'remove_device')
+        and o['response'].get('status', {}).get('code') == 200), default=-1)
+    facts = []
+    for fact in ledger['facts'].values():
+        source = fact['source']
+        if source['turn'] in recent_turns:
+            continue
+        catalog_stale = source['tool'] in ('get_rooms', 'get_room_devices', 'get_device_structure') and source['turn'] < catalog_turn
+        facts.append({'tool': source['tool'], 'args': source['arguments'], 'turn': source['turn'],
+            'stale': fact['stale'] or catalog_stale, 'data': fact['response'].get('data'),
+            'source_index': source['observation_index']})
+    receipts = []
+    for receipt in ledger['action_receipts']:
+        if receipt['source']['turn'] in recent_turns:
+            continue
+        if 'verification' in receipt:
+            receipts.append({'turn': receipt['source']['turn'], 'verification': receipt['verification']})
+        else:
+            source = receipt['source']
+            receipts.append({'turn': source['turn'], 'tool': source['tool'], 'args': source['arguments'],
+                'data': receipt['response'].get('data'),
+                'registration_only': receipt['workflow_registration_is_not_future_success']})
+    errors = []
+    for error in ledger['errors']:
+        source = error['source']
+        errors.append({'turn': source['turn'], 'tool': source.get('tool'), 'args': source.get('arguments'),
+            'error': error.get('guard_error', error.get('output_schema_error', error.get('response')))})
+    return {'facts': facts, 'receipts': receipts, 'errors': errors,
+        'rule': 'Observations are historical. Stale values require fresh public queries for current preconditions. Workflow registration proves no future success.'}
+
+
+class CompactLedgerProvider:
+    def __init__(self, inner, executor, token_count_fn=None):
+        self.inner, self.executor, self.token_count_fn = inner, executor, token_count_fn
+
+    def generate(self, messages, response_format=None):
+        start = max(i for i, m in enumerate(messages) if 'This is your actual task.' in m.content)
+        history = messages[start + 1:]
+        assistant_indices = [i for i, m in enumerate(history) if m.role == 'assistant']
+        recent = history[assistant_indices[-2]:] if len(assistant_indices) >= 2 else history
+        recent_turns = range(max(1, len(assistant_indices) - 1), len(assistant_indices) + 1)
+        ledger = compact_ledger(self.executor, recent_turns)
+        prompt = 'COMPACT PUBLIC OBSERVATIONS:\n' + json.dumps(ledger, ensure_ascii=False, separators=(',', ':'))
+        converted = [*messages[:start + 1], ChatMessage(role='user', content=prompt), *recent]
+        original_size = sum(len(m.content) for m in messages)
+        managed_size = sum(len(m.content) for m in converted)
+        used = len(assistant_indices) > 2 and managed_size < original_size
+        raw_tokens = managed_tokens = None
+        if used and self.token_count_fn:
+            raw_tokens = self.token_count_fn(messages)
+            managed_tokens = self.token_count_fn(converted)
+            used = managed_tokens < raw_tokens
+        self.executor.context_audit.append({'version': 2, 'turn': len(assistant_indices) + 1,
+            'original_characters': original_size, 'managed_characters': managed_size, 'used': used,
+            'estimated_original_tokens': raw_tokens, 'estimated_managed_tokens': managed_tokens,
+            'token_scope': 'Model chat tokenizer including generation prompt; HTTP usage remains authoritative',
+            'facts': len(ledger['facts']), 'errors_retained': len(ledger['errors']),
+            'recent_pairs': min(2, len(assistant_indices)), 'historical_versions_in_audit_only': True})
+        return self.inner.generate(converted if used else messages, response_format=response_format)

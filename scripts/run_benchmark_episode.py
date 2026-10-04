@@ -86,6 +86,13 @@ def main(mode):
         if kind in ('observation', 'finish', 'rejected_action'):
             emit('environment_step', event)
     original = runner._build_agent
+    def count_tokens(messages):
+        response = client.post(config['model_endpoint'].removesuffix('/v1') + '/tokenize',
+            json={'model': config['served_model'], 'messages': [asdict(m) for m in messages],
+                  'add_generation_prompt': True, 'chat_template_kwargs':
+                  config['generation'].get('extra_body', {}).get('chat_template_kwargs', {})})
+        response.raise_for_status()
+        return response.json()['count']
     def build(llm, *, max_steps, strategy):
         if variant == 'B0':
             agent = original(llm, max_steps=max_steps, strategy=strategy)
@@ -94,7 +101,8 @@ def main(mode):
             from smarthome_agent_rl.harness_agent import HarnessAgent
             agent = HarnessAgent(llm, variant=variant, max_steps=max_steps, trace_fn=trace,
                 audit_fn=lambda data: save('harness_audit.json', data),
-                repair_limit=config['recovery_per_action'], query_limit=config['extra_queries_max'])
+                repair_limit=config['recovery_per_action'], query_limit=config['extra_queries_max'],
+                policy=config.get('variant_policies', {}).get(variant), token_count_fn=count_tokens)
         return agent
     runner._build_agent = build
     save('contract.json', {'config': config, 'task_identity': task, 'mode': mode,
@@ -115,7 +123,7 @@ def main(mode):
         task_failure = failure_kind is not None
         score = result['evaluation_result']['score'] if result else None
         tokens = lambda rows: sum(r['response'].get('usage', {}).get('total_tokens', 0) for r in rows)
-        summary = {'task_id': task['id'], 'variant': variant, 'mode': mode,
+        summary = {'task_id': task['id'], 'variant': variant, 'mode': mode, 'actor_seed': config['model_seed'],
             'official_score': score, 'evaluator_called': result is not None,
             'success': score == 1, 'task_failure': task_failure, 'error': error,
             'task_failure_kind': failure_kind,

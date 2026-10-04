@@ -20,7 +20,7 @@ import httpx
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from smarthome_agent_rl.benchmark import digest, schedule
-from smarthome_agent_rl.concurrency import execution_slots, dispatch_items
+from smarthome_agent_rl.concurrency import execution_slots, dispatch_items, seeded_schedule
 
 
 def main():
@@ -30,6 +30,8 @@ def main():
     parser.add_argument('--run-dir', required=True)
     parser.add_argument('--config', default='configs/harness-mvp.json')
     parser.add_argument('--freeze', help='Required frozen protocol for final')
+    parser.add_argument('--manifest', help='Explicit official manifest; its identity is recorded and frozen')
+    parser.add_argument('--actor-seeds', nargs='+', type=int)
     args = parser.parse_args()
     config = json.loads((ROOT / args.config).read_text())
     slots = execution_slots(config)
@@ -37,12 +39,17 @@ def main():
     if args.phase == 'align' and slot_count != 1:
         raise ValueError('Transport alignment uses one isolated slot per actor')
     manifest_name = 'smoke' if args.phase in ('align', 'smoke') else args.phase
-    manifest_path = ROOT / f'configs/benchmark-mvp/{manifest_name}.json'
+    manifest_path = ROOT / (args.manifest or f"{config.get('manifest_dir', 'configs/benchmark-mvp')}/{manifest_name}.json")
     manifest = json.loads(manifest_path.read_text())
+    if manifest['split'] != manifest_name:
+        raise ValueError('Manifest split differs from requested phase')
     rows = manifest['tasks'][:2] if args.phase == 'align' else manifest['tasks']
     variants = args.variants or (config['variants_dev'] if args.phase == 'dev' else
         config['variants_final'] if args.phase == 'final' else ['B0'])
-    if len(variants) != len(set(variants)) or set(variants) - set(config['variants_dev']):
+    actor_seeds = args.actor_seeds or config.get('actor_seeds', [config['model_seed']])
+    if args.phase == 'align' and len(actor_seeds) != 1:
+        raise ValueError('Transport alignment requires one actor seed')
+    if len(variants) != len(set(variants)) or set(variants) - (set(config['variants_dev']) | set(config['variants_final'])):
         raise ValueError('Unknown or repeated variant')
     if args.phase == 'align' and variants != ['B0']:
         raise ValueError('Baseline alignment only')
@@ -53,7 +60,8 @@ def main():
         freeze = json.loads((ROOT / args.freeze).read_text())
         dirty = subprocess.check_output(['git', 'status', '--porcelain'], cwd=ROOT, text=True)
         if dirty or freeze['commit'] != commit or freeze['config_sha256'] != digest(ROOT / args.config) or (
-            freeze['manifest_sha256'] != digest(manifest_path)) or variants != config['variants_final']:
+            freeze['manifest_sha256'] != digest(manifest_path)) or variants != config['variants_final'] or (
+            actor_seeds != freeze.get('actor_seeds', [config['model_seed']])):
             raise ValueError('Final code/config/manifest/arms differ from frozen protocol')
     run = ROOT / args.run_dir
     run.mkdir(parents=True, exist_ok=False)
@@ -62,15 +70,18 @@ def main():
         temporary = run / (name + '.' + uuid.uuid4().hex + '.tmp')
         temporary.write_text(json.dumps(value, ensure_ascii=False, indent=2), encoding='utf-8')
         temporary.replace(run / name)
-    job_schedule = schedule(rows, variants, actors=len(config['workflows']))
+    job_schedule = seeded_schedule(rows, variants, actor_seeds, actors=len(config['workflows']))
+    if len(actor_seeds) == 1 and actor_seeds[0] != config['model_seed']:
+        job_schedule = [{**item, 'actor_seed': actor_seeds[0]} for item in job_schedule]
     dispatch_policy = config.get('dispatch_policy', 'manifest')
     dispatch_order = dispatch_items(job_schedule, dispatch_policy)
     if slot_count > 1:
         for item in job_schedule:
             item['variant_workflows'] = {}
     protocol = {'phase': args.phase, 'config': config, 'commit': commit,
-        'manifest_sha256': digest(manifest_path), 'variants': variants,
-        'expected_episodes': len(rows) * len(variants) * (2 if args.phase == 'align' else 1),
+        'manifest_sha256': digest(manifest_path), 'manifest_path': str(manifest_path.relative_to(ROOT)),
+        'variants': variants, 'actor_seeds': actor_seeds,
+        'expected_episodes': len(job_schedule) * len(variants) * (2 if args.phase == 'align' else 1),
         'retry_failed_episodes': False, 'schedule': job_schedule,
         'execution_slots': slots, 'scheduler': 'actor-affine-queue-v2' if slot_count > 1 else 'paired-v1',
         'dispatch_policy': dispatch_policy, 'dispatch_order': [i['task']['id'] for i in dispatch_order]}
@@ -129,10 +140,12 @@ def main():
             headers={'Authorization': f'Bearer {key}'}, json=value)
         response.raise_for_status()
         return response.json()
-    def execute(workflow, task, variant, mode):
-        output = run / f"worker{workflow['id']}" / task['id'] / variant / mode
+    def execute(workflow, task, variant, mode, actor_seed=None):
+        base = run / f'seed{actor_seed}' if actor_seed is not None else run
+        output = base / f"worker{workflow['id']}" / task['id'] / variant / mode
         output.parent.mkdir(parents=True, exist_ok=True)
         episode_config = {**config, 'served_model': config['actor_model'], 'variant': variant,
+            'model_seed': actor_seed if actor_seed is not None else actor_seeds[0],
             'simulator_url': f"http://127.0.0.1:{workflow['simulator_port']}/api",
             'model_endpoint': f"http://127.0.0.1:{workflow['actor_port']}/v1",
             'judge_endpoint': f"http://127.0.0.1:{config['judge_port']}/v1",
@@ -203,13 +216,13 @@ def main():
                         item['variant_workflows'][variant] = workflow['id']
                         save('protocol.json', protocol)
                 if args.phase == 'align':
-                    execute(workflow, item['task'], variant, 'direct')
-                results.append(execute(workflow, item['task'], variant, 'lightning'))
+                    execute(workflow, item['task'], variant, 'direct', item.get('actor_seed'))
+                results.append(execute(workflow, item['task'], variant, 'lightning', item.get('actor_seed')))
                 with schedule_lock:
                     completed.append(results[-1])
-                    save('progress.json', {'completed': len(completed), 'expected': len(rows) * len(variants),
+                    save('progress.json', {'completed': len(completed), 'expected': len(job_schedule) * len(variants),
                         'elapsed_seconds': time.monotonic() - suite_started,
-                        'last': {'task_id': item['task']['id'], 'variant': variant, 'slot': workflow['id']}})
+                        'last': {'task_id': item['task']['id'], 'variant': variant, 'actor_seed': item.get('actor_seed', actor_seeds[0]), 'slot': workflow['id']}})
                 if args.phase == 'align':
                     parent = run / f"worker{workflow['id']}" / item['task']['id'] / variant
                     calls = {mode: json.loads((parent / mode / 'model_calls.json').read_text())

@@ -41,4 +41,15 @@ def execution_slots(config):
 
 def episode_directory(run, item, variant):
     worker = item.get('variant_workflows', {}).get(variant, item['workflow'])
-    return Path(run) / f'worker{worker}' / item['task']['id'] / variant / 'lightning'
+    base = Path(run) / f"seed{item['actor_seed']}" if 'actor_seed' in item else Path(run)
+    return base / f'worker{worker}' / item['task']['id'] / variant / 'lightning'
+
+
+def seeded_schedule(rows, variants, actor_seeds, actors=2):
+    from smarthome_agent_rl.benchmark import schedule
+    if not actor_seeds or len(actor_seeds) != len(set(actor_seeds)) or any(type(s) is not int for s in actor_seeds):
+        raise ValueError('Distinct integer actor seeds required')
+    if len(actor_seeds) == 1:
+        return schedule(rows, variants, actors)
+    return [{**item, 'actor_seed': seed} for ordinal, seed in enumerate(actor_seeds)
+        for item in schedule(rows, variants if ordinal % 2 == 0 else list(reversed(variants)), actors)]

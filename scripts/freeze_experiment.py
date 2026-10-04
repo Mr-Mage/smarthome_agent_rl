@@ -22,17 +22,23 @@ def main():
     parser.add_argument('--services', default='work/harness-mvp/services-v3')
     parser.add_argument('--inventory', default='work/harness-mvp/inventory-v2')
     parser.add_argument('--config', default='configs/harness-mvp.json')
+    parser.add_argument('--final-manifest')
     args = parser.parse_args()
     if git(ROOT, 'status', '--porcelain'):
         raise RuntimeError('Commit all implementation/configuration changes before freezing')
     config = json.loads((ROOT / args.config).read_text())
     dev = ROOT / args.dev_run
+    manifest_dir = config.get('manifest_dir', 'configs/benchmark-mvp')
+    final_manifest = ROOT / (args.final_manifest or f'{manifest_dir}/final.json')
+    dev_manifest = ROOT / f'{manifest_dir}/dev.json'
+    seeds = config.get('actor_seeds', [config['model_seed']])
+    dev_count = len(json.loads(dev_manifest.read_text())['tasks']) * len(seeds)
     report = json.loads((dev / 'report.json').read_text())
     if not report['verified'] or report['phase'] != 'dev' or set(report['arms']) != set(config['variants_dev']) or any(
-            arm['episodes'] != 120 or arm['evaluator_errors'] for arm in report['arms'].values()):
-        raise ValueError('Complete verified 600-episode dev protocol required before final')
+            arm['episodes'] != dev_count or arm['evaluator_errors'] for arm in report['arms'].values()):
+        raise ValueError('Complete verified dev protocol required before final')
     protocol = json.loads((dev / 'protocol.json').read_text())
-    if protocol['config'] != config or protocol['manifest_sha256'] != digest(ROOT / 'configs/benchmark-mvp/dev.json'):
+    if protocol['config'] != config or protocol['manifest_sha256'] != digest(dev_manifest) or protocol.get('actor_seeds', seeds) != seeds:
         raise ValueError('Dev configuration or task manifest changed')
     source_identity = json.loads((dev / 'source_identity.json').read_text())
     source_changes = {name: {'dev_sha256': expected, 'frozen_sha256': digest(ROOT / name)}
@@ -61,7 +67,8 @@ def main():
                    for name in ('actor', 'judge')}
     record = {'schema': 'harness-final-freeze-v1', 'commit': git(ROOT, 'rev-parse', 'HEAD'),
         'config_sha256': digest(ROOT / args.config),
-        'manifest_sha256': digest(ROOT / 'configs/benchmark-mvp/final.json'),
+        'manifest_sha256': digest(final_manifest), 'manifest_path': str(final_manifest.relative_to(ROOT)),
+        'actor_seeds': seeds,
         'dev_report_sha256': digest(dev / 'report.json'), 'dev_run': args.dev_run,
         'dev_commit': protocol['commit'], 'dev_runtime_source_identity_matches': True,
         'reporting_only_source_changes': source_changes,
@@ -70,7 +77,7 @@ def main():
             subprocess.check_output(['git', '-C', str(lightning), 'diff', 'HEAD'])).hexdigest(),
         'services_config_sha256': digest(services / 'config.json'),
         'judge_probe_sha256': digest(services / 'inference-probe.json'),
-        'primary_comparisons': ['G-B0', 'GC-B0', 'Full-B0'], 'multiplicity': 'Holm',
+        'primary_comparisons': [v + '-' + config['variants_final'][0] for v in config['variants_final'][1:]], 'multiplicity': 'Holm',
         'unfinished_task_score': 0, 'infrastructure_policy': 'Stop; preserve entire failed round; no selective rerun',
         'judge_panel_independent_models': False,
         'hardware': subprocess.check_output(['nvidia-smi', '--query-gpu=index,name,uuid,driver_version',

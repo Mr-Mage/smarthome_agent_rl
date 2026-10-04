@@ -13,7 +13,7 @@ from src.agents.types import ChatMessage
 
 from smarthome_agent_rl.guard import ToolGuard, GuardError, command_contracts, public_power_rules, harness_schemas
 from smarthome_agent_rl.structured import StructuredProvider, tool_schemas
-from smarthome_agent_rl.verification import expected_effect, verify_effect
+from smarthome_agent_rl.verification import expected_effect, expected_effect_v2, verify_effect
 
 ROOT = Path(__file__).resolve().parents[1]
 MUTATIONS = {'execute_command', 'write_attribute', 'schedule_workflow', 'cancel_workflow',
@@ -25,13 +25,14 @@ def ok(response):
 
 
 class GuardedExecutor:
-    def __init__(self, *, verify=False, repair_limit=2, query_limit=40, audit_fn=None, dispatch=run_tool):
+    def __init__(self, *, verify=False, verification_version=1, repair_limit=2, query_limit=40, audit_fn=None, dispatch=run_tool):
         contracts, sources = command_contracts(ROOT / 'deps/SimuHome/src/simulator/domain/clusters')
         power_rules, device_sources = public_power_rules(ROOT / 'deps/SimuHome/src/simulator/domain/devices')
         sources.update(device_sources)
         sources['api/schemas.py'] = hashlib.sha256((ROOT / 'deps/SimuHome/src/simulator/api/schemas.py').read_bytes()).hexdigest()
         self.guard = ToolGuard(harness_schemas(tool_schemas()), contracts, power_rules)
         self.sources, self.verify = sources, verify
+        self.verification_version = verification_version
         self.repair_limit, self.query_limit, self.audit_fn, self.dispatch = repair_limit, query_limit, audit_fn, dispatch
         self.audit, self.actual, self.failures, self.observations = [], [], {}, []
         self.extra_queries, self.turn = 0, 0
@@ -106,27 +107,39 @@ class GuardedExecutor:
                         record['uncovered'].append('workflow_device_not_queried:' + device)
                 record['uncovered'].append('future_state_preconditions')
             response = self.call(tool, arguments)
+            simulator_failed = not ok(response)
             record['reached_executor'] = True
             failed = not ok(response)
             if self.verify and ok(response):
                 verification = {'status': 'not_applicable', 'verified': None}
                 if tool in ('execute_command', 'write_attribute'):
-                    query = self.call('get_device_structure', {'device_id': arguments['device_id']}, extra=True)
-                    verification = verify_effect(expected_effect(tool, arguments, before), query['data'], response) if query and ok(query) else {
-                        'status': 'query_unavailable', 'verified': None}
+                    effects = (expected_effect_v2 if self.verification_version == 2 else expected_effect)(tool, arguments, before)
+                    metadata = response.get('data') or {}
+                    if self.verification_version == 2 and metadata.get('unchanged'):
+                        verification = {'status': 'no_effect', 'verified': None}
+                    elif self.verification_version == 2 and (not effects or metadata.get('duration', 0) > 0 or metadata.get('suppressed')):
+                        verification = verify_effect(effects, before, response)
+                    else:
+                        query = self.call('get_device_structure', {'device_id': arguments['device_id']}, extra=True)
+                        verification = verify_effect(effects, query['data'], response) if query and ok(query) else {
+                            'status': 'query_unavailable', 'verified': None}
                 elif tool in ('schedule_workflow', 'cancel_workflow'):
                     workflow_id = response.get('data', {}).get('workflow_id', arguments.get('workflow_id'))
-                    query = self.call('get_workflow_status', {'workflow_id': workflow_id}, extra=True) if workflow_id else None
+                    query = self.call('get_workflow_status', {'workflow_id': workflow_id}, extra=True) if workflow_id and (
+                        self.verification_version == 1 or tool == 'cancel_workflow') else None
                     verification = {'status': 'registration_only' if tool == 'schedule_workflow' else 'cancellation',
                         'verified': None, 'public_status': query, 'future_success_verified': False}
                 record['verification'] = verification
                 failed |= verification.get('verified') is False
                 response = {**response, 'harness_verification': verification}
+                if self.verification_version == 2 and verification.get('verified') is False:
+                    response = {**response, 'error': {'type': 'harness_postcondition',
+                        'detail': verification, 'repair': 'Query public state and correct the action; do not claim success.'}}
             if failed:
                 self.failures[key] = self.failures.get(key, 0) + 1
             else:
                 record['recovered'] = bool(self.failures.pop(key, 0))
-            record['simulator_error'] = not ok(response)
+            record['simulator_error'] = simulator_failed
             return response
         except GuardError as exc:
             record.update({'blocked': True, 'layer': exc.layer, 'detail': exc.detail,
@@ -142,17 +155,20 @@ class GuardedExecutor:
 
 class HarnessAgent:
     def __init__(self, llm, *, variant, max_steps, trace_fn=None, audit_fn=None,
-                 repair_limit=2, query_limit=40):
-        if variant not in ('G', 'GV', 'GC', 'Full'):
+                 repair_limit=2, query_limit=40, policy=None, token_count_fn=None):
+        if variant not in ('G', 'GV', 'GC', 'Full', 'GV2', 'GC2', 'Candidate'):
             raise ValueError(variant)
-        self.executor = GuardedExecutor(verify=variant in ('GV', 'Full'), audit_fn=audit_fn,
+        policy = policy or {'verify': variant in ('GV', 'Full', 'GV2'),
+            'verification_version': 2 if variant == 'GV2' else 1,
+            'context_version': 2 if variant == 'GC2' else 1 if variant in ('GC', 'Full') else 0}
+        self.executor = GuardedExecutor(verify=policy['verify'], verification_version=policy['verification_version'], audit_fn=audit_fn,
                                        repair_limit=repair_limit, query_limit=query_limit)
         provider = StructuredProvider(llm, finish_guard=False, recovery=False, guidance=False,
                                       audit_fn=self.executor.record_structured)
         provider.schemas = self.executor.guard.schemas
-        if variant in ('GC', 'Full'):
-            from smarthome_agent_rl.context import LedgerProvider
-            provider = LedgerProvider(provider, self.executor)
+        if policy['context_version']:
+            from smarthome_agent_rl.context import LedgerProvider, CompactLedgerProvider
+            provider = CompactLedgerProvider(provider, self.executor, token_count_fn) if policy['context_version'] == 2 else LedgerProvider(provider, self.executor)
         self.agent = ReActAgent(provider, config=ReActConfig(max_steps=max_steps,
             show_assistant_raw=True, trace_fn=trace_fn))
 
