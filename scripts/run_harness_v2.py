@@ -11,7 +11,7 @@ import time
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from smarthome_agent_rl.benchmark import digest
-from smarthome_agent_rl.experiment_v2 import module_selection, integration_selection, unique_policies
+from smarthome_agent_rl.experiment_v2 import module_selection, integration_selection, unique_policies, service_identity
 from harness_services import validate_resources
 
 
@@ -21,6 +21,7 @@ def main():
     parser.add_argument('--stage', choices=['modules', 'finalize'], required=True)
     parser.add_argument('--config', default='configs/harness-v2-modules.json')
     parser.add_argument('--after-acceptance', help='Wait for complete N8 acceptance and released service ports')
+    parser.add_argument('--reuse-services', help='Reuse this experiment-owned resident model deployment')
     args = parser.parse_args()
     if subprocess.check_output(['git', 'status', '--porcelain'], cwd=ROOT, text=True).strip():
         raise RuntimeError('Clean committed source required')
@@ -29,7 +30,7 @@ def main():
     config = json.loads(config_path.read_text())
     gates_path = ROOT / 'configs/harness-v2-protocol.json'
     gates = json.loads(gates_path.read_text())
-    service_dir = run / 'services'
+    service_dir = ROOT / args.reuse_services if args.reuse_services else run / 'services'
     inventory = run / 'inventory'
     def save(path, data):
         path.write_text(json.dumps(data, indent=2), encoding='utf-8')
@@ -77,20 +78,31 @@ def main():
                         time.sleep(3)
             run.mkdir(parents=True, exist_ok=False)
             # Do not silently compete with another suite on the shared ports.
-            validate_resources(config)
             save(run / 'protocol-gates.json', gates)
-            service_dir.mkdir(exist_ok=True)
-            with (service_dir / 'supervisor.log').open('w') as stream:
-                process = subprocess.Popen([sys.executable, ROOT / 'scripts/harness_services.py', 'start',
-                    '--config', str(config_path), '--run-dir', str(service_dir)], cwd=ROOT,
-                    stdin=subprocess.DEVNULL, stdout=stream, stderr=subprocess.STDOUT, start_new_session=True)
-            state('service_startup', supervisor=process.pid)
-            deadline = time.monotonic() + config['startup_timeout']
-            while not (service_dir / 'ready').exists():
-                if process.poll() is not None or time.monotonic() > deadline:
-                    raise RuntimeError('Service startup failed; inspect supervisor.log')
-                time.sleep(3)
-            command('harness_services.py', 'probe', '--config', config_path, '--run-dir', service_dir)
+            if args.reuse_services:
+                deployed = json.loads((service_dir / 'config.json').read_text())
+                pid = int((service_dir / 'supervisor.pid').read_text())
+                if not (service_dir / 'ready').exists() or not Path(f'/proc/{pid}').exists() or (
+                        service_identity(deployed) != service_identity(config)):
+                    raise ValueError('Resident model deployment is not compatible or alive')
+                save(run / 'service-reuse.json', {'services': str(service_dir), 'supervisor': pid,
+                    'services_config_sha256': digest(service_dir / 'config.json'),
+                    'purpose': 'Complete dev rerun after enum representation correction; no selective episodes'})
+                command('harness_services.py', 'probe', '--config', config_path, '--run-dir', run / 'reuse-probe')
+            else:
+                validate_resources(config)
+                service_dir.mkdir(exist_ok=True)
+                with (service_dir / 'supervisor.log').open('w') as stream:
+                    process = subprocess.Popen([sys.executable, ROOT / 'scripts/harness_services.py', 'start',
+                        '--config', str(config_path), '--run-dir', str(service_dir)], cwd=ROOT,
+                        stdin=subprocess.DEVNULL, stdout=stream, stderr=subprocess.STDOUT, start_new_session=True)
+                state('service_startup', supervisor=process.pid)
+                deadline = time.monotonic() + config['startup_timeout']
+                while not (service_dir / 'ready').exists():
+                    if process.poll() is not None or time.monotonic() > deadline:
+                        raise RuntimeError('Service startup failed; inspect supervisor.log')
+                    time.sleep(3)
+                command('harness_services.py', 'probe', '--config', config_path, '--run-dir', service_dir)
             with (run / 'inventory.log').open('w') as stream:
                 inventory_process = subprocess.Popen([sys.executable, ROOT / 'scripts/harness_services.py',
                     'inventory', '--config', str(config_path), '--run-dir', str(inventory)], cwd=ROOT,
@@ -99,6 +111,12 @@ def main():
             report = suite('dev', run / 'modules', config_path)
             if inventory_process.wait() != 0:
                 raise RuntimeError('Model inventory failed')
+            if args.reuse_services:
+                previous = service_dir.parent / 'inventory'
+                for name in ('actor', 'judge'):
+                    if json.loads((inventory / (name + '-inventory.json')).read_text())['identity'] != json.loads(
+                            (previous / (name + '-inventory.json')).read_text())['identity']:
+                        raise ValueError('Model files differ from resident deployment inventory')
             decision = module_selection(report, gates)
             save(run / 'module-selection.json', {'decision': decision, 'report_sha256': digest(run / 'modules/report.json'),
                 'gates_sha256': digest(gates_path)})
@@ -107,6 +125,8 @@ def main():
             save(run / 'integration-config.json', integrated)
             state('modules_complete', decision=decision, services_remain_resident=True)
         else:
+            if (run / 'service-reuse.json').exists():
+                service_dir = Path(json.loads((run / 'service-reuse.json').read_text())['services'])
             if json.loads((run / 'state.json').read_text())['stage'] != 'modules_complete':
                 raise ValueError('Verified modules must precede integration')
             if json.loads((run / 'protocol-gates.json').read_text()) != gates:

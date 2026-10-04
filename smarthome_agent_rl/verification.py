@@ -42,6 +42,36 @@ def expected_effect_v2(tool, arguments, before):
     return {}
 
 
+def enum_code(value, metadata):
+    """Normalize only a public enum mapping, including numeric strings accepted by setters."""
+    if metadata.get('type') != 'enum':
+        return value
+    values = metadata.get('enum_values', {})
+    if isinstance(value, str):
+        if value in values:
+            return values[value]
+        try:
+            number = int(value)
+        except ValueError:
+            return value
+        if number in values.values():
+            return number
+    return value
+
+
+def verify_effect_v2(expectations, after, result):
+    normalized = copy.deepcopy(after)
+    expected = {}
+    for key, value in expectations.items():
+        endpoint, cluster, attribute = key
+        metadata = normalized.get('endpoints', {}).get(str(endpoint), {}).get('clusters', {}).get(
+            cluster, {}).get('attributes', {}).get(attribute, {})
+        if 'value' in metadata:
+            metadata['value'] = enum_code(metadata['value'], metadata)
+        expected[key] = enum_code(value, metadata)
+    return verify_effect(expected, normalized, result)
+
+
 def expected_effect(tool, arguments, before):
     if tool == 'write_attribute':
         return {(arguments['endpoint_id'], arguments['cluster_id'], arguments['attribute_id']): arguments['value']}

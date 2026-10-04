@@ -7,7 +7,7 @@ from src.agents.types import ChatMessage
 from src.simulator.domain.clusters.fan_control import FanControlCluster
 from src.simulator.domain.clusters.operational_state import OperationalStateCluster
 from src.simulator.domain.clusters.laundry_washer_mode import LaundryWasherModeCluster
-from smarthome_agent_rl.verification import expected_effect_v2, verify_effect
+from smarthome_agent_rl.verification import expected_effect_v2, verify_effect, verify_effect_v2
 from smarthome_agent_rl.harness_agent import GuardedExecutor
 from smarthome_agent_rl.context import compact_ledger, CompactLedgerProvider
 from smarthome_agent_rl.concurrency import seeded_schedule, episode_directory
@@ -74,6 +74,21 @@ class HarnessV2Tests(unittest.TestCase):
         self.assertTrue(cluster._start().success)
         cluster.on_time_tick()
         self.assertEqual(cluster.attributes['OperationalState'], 0)
+
+    def test_public_enum_names_and_numeric_strings_compare_by_declared_mapping(self):
+        cluster = OperationalStateCluster(supported_commands=['Start'])
+        self.assertTrue(cluster._start().success)
+        after = structure(cluster)
+        metadata = after['endpoints']['1']['clusters']['OperationalState']['attributes']['OperationalState']
+        metadata['value'] = 'RUNNING'
+        original = copy.deepcopy(after)
+        key = (1, 'OperationalState', 'OperationalState')
+        for value in (1, '1', 'RUNNING'):
+            self.assertTrue(verify_effect_v2({key: value}, after, {'data': {}})['verified'])
+        self.assertFalse(verify_effect_v2({key: 0}, after, {'data': {}})['verified'])
+        self.assertEqual(after, original)
+        metadata['enum_values'] = {}
+        self.assertFalse(verify_effect_v2({key: 1}, after, {'data': {}})['verified'])
 
     def test_mismatch_is_feedback_but_actual_simulator_return_remains_unchanged(self):
         cluster = OperationalStateCluster(supported_commands=['Start', 'Stop'])

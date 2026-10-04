@@ -13,7 +13,7 @@ from src.agents.types import ChatMessage
 
 from smarthome_agent_rl.guard import ToolGuard, GuardError, command_contracts, public_power_rules, harness_schemas
 from smarthome_agent_rl.structured import StructuredProvider, tool_schemas
-from smarthome_agent_rl.verification import expected_effect, expected_effect_v2, verify_effect
+from smarthome_agent_rl.verification import expected_effect, expected_effect_v2, verify_effect, verify_effect_v2
 
 ROOT = Path(__file__).resolve().parents[1]
 MUTATIONS = {'execute_command', 'write_attribute', 'schedule_workflow', 'cancel_workflow',
@@ -111,6 +111,7 @@ class GuardedExecutor:
             record['reached_executor'] = True
             failed = not ok(response)
             if self.verify and ok(response):
+                verifier = verify_effect_v2 if self.verification_version == 2 else verify_effect
                 verification = {'status': 'not_applicable', 'verified': None}
                 if tool in ('execute_command', 'write_attribute'):
                     effects = (expected_effect_v2 if self.verification_version == 2 else expected_effect)(tool, arguments, before)
@@ -118,10 +119,10 @@ class GuardedExecutor:
                     if self.verification_version == 2 and metadata.get('unchanged'):
                         verification = {'status': 'no_effect', 'verified': None}
                     elif self.verification_version == 2 and (not effects or metadata.get('duration', 0) > 0 or metadata.get('suppressed')):
-                        verification = verify_effect(effects, before, response)
+                        verification = verifier(effects, before, response)
                     else:
                         query = self.call('get_device_structure', {'device_id': arguments['device_id']}, extra=True)
-                        verification = verify_effect(effects, query['data'], response) if query and ok(query) else {
+                        verification = verifier(effects, query['data'], response) if query and ok(query) else {
                             'status': 'query_unavailable', 'verified': None}
                 elif tool in ('schedule_workflow', 'cancel_workflow'):
                     workflow_id = response.get('data', {}).get('workflow_id', arguments.get('workflow_id'))
