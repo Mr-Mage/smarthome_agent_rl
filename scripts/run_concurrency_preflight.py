@@ -42,7 +42,11 @@ def main():
     def stop():
         nonlocal supervisor
         if supervisor is not None:
-            os.kill(supervisor, signal.SIGTERM)
+            try:
+                os.kill(supervisor, signal.SIGTERM)
+            except ProcessLookupError:
+                supervisor = None
+                return
             deadline = time.monotonic() + 90
             while time.monotonic() < deadline:
                 try:
@@ -98,14 +102,20 @@ def main():
         for label, graph in [('prefix', False), ('graph-prefix', True)]:
             candidate = copy.deepcopy(config)
             candidate['inference'].update(actor_prefix_caching=True, actor_enforce_eager=not graph)
-            current_path = start(label, candidate)
-            state('capacity', label=label, levels=levels)
-            command('benchmark_capacity.py', '--config', current_path, '--run-dir', run / label / 'replay',
-                '--concurrency', *levels)
-            rows = json.loads((run / label / 'replay/report.json').read_text())['stages']
-            stages.append({'label': label, 'config': candidate,
-                'capacity': max(rows, key=lambda row: row['output_tokens_per_second'])})
-            stop()
+            try:
+                current_path = start(label, candidate)
+                state('capacity', label=label, levels=levels)
+                command('benchmark_capacity.py', '--config', current_path, '--run-dir', run / label / 'replay',
+                    '--concurrency', *levels)
+                rows = json.loads((run / label / 'replay/report.json').read_text())['stages']
+                stages.append({'label': label, 'config': candidate,
+                    'capacity': max(rows, key=lambda row: row['output_tokens_per_second'])})
+            except Exception as exc:
+                (run / label / 'rejected.json').write_text(json.dumps({'error': str(exc),
+                    'eligible': False, 'config': candidate}, indent=2))
+                state('candidate_rejected', label=label, error=str(exc))
+            finally:
+                stop()
         # Only successful configurations are eligible; all measured stages stay in their own directories.
         stages.sort(key=lambda row: row['capacity']['output_tokens_per_second'], reverse=True)
         chosen = stages[0]
