@@ -1,0 +1,19 @@
+{
+  "dev_manifest": "configs/benchmark-v2/dev.json",
+  "final_manifest": "configs/benchmark-v2/final.json",
+  "actor_seeds": [42, 43, 44],
+  "judge_seeds": [42, 43, 44],
+  "module_variants": ["G", "GV", "GC", "GV2", "GC2"],
+  "integration_variants": ["G", "Full", "Candidate"],
+  "verification_gate": {"sr_delta_min": 0.0, "extra_queries_reference": "GV", "actor_token_ratio_max": 1.1},
+  "context_gate": {"sr_delta_min": -0.02, "actor_token_ratio_max": 0.9},
+  "integration_selection": {"success_tie_tolerance": 0.01, "tie_breakers": ["actor_tokens", "extra_queries", "variant_name"]},
+  "formal_reference": "B0",
+  "formal_primary_actor_seed": 42,
+  "formal_variants": ["B0", "G", "Full", "Candidate"],
+  "duplicate_policies_run_once": true,
+  "statistical_unit": "task; repeated seeds are clustered",
+  "formal_primary_tests": "exact McNemar, stratified paired bootstrap, Holm across non-reference variants",
+  "formal_repeats": "actor seeds 43 and 44 are reliability diagnostics; no retuning",
+  "infrastructure_failure": "Reject entire round, preserve evidence, no selective rerun"
+}
