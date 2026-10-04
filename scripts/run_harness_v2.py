@@ -20,6 +20,7 @@ def main():
     parser.add_argument('--run-dir', required=True)
     parser.add_argument('--stage', choices=['modules', 'finalize'], required=True)
     parser.add_argument('--config', default='configs/harness-v2-modules.json')
+    parser.add_argument('--after-acceptance', help='Wait for complete N8 acceptance and released service ports')
     args = parser.parse_args()
     if subprocess.check_output(['git', 'status', '--porcelain'], cwd=ROOT, text=True).strip():
         raise RuntimeError('Clean committed source required')
@@ -53,6 +54,27 @@ def main():
     inventory_process = None
     try:
         if args.stage == 'modules':
+            if args.after_acceptance:
+                acceptance = ROOT / args.after_acceptance
+                while not (acceptance / 'timing-report.json').exists():
+                    if (acceptance / 'failure.json').exists():
+                        raise RuntimeError('N8 acceptance failed; v2 was not started')
+                    owner = json.loads((acceptance / 'state.json').read_text())['pid']
+                    if not Path(f'/proc/{owner}').exists():
+                        raise RuntimeError('N8 owner exited without complete acceptance')
+                    time.sleep(5)
+                timing = json.loads((acceptance / 'timing-report.json').read_text())
+                if not timing['complete'] or not timing['within_one_hour']:
+                    raise ValueError('N8 has not passed the one-hour gate')
+                deadline = time.monotonic() + 120
+                while True:
+                    try:
+                        validate_resources(config)
+                        break
+                    except OSError:
+                        if time.monotonic() >= deadline:
+                            raise RuntimeError('N8 did not release shared ports')
+                        time.sleep(3)
             run.mkdir(parents=True, exist_ok=False)
             # Do not silently compete with another suite on the shared ports.
             validate_resources(config)
