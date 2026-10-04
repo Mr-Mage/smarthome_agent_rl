@@ -35,6 +35,7 @@ def validate_resources(config):
         raise ValueError('Expected disjoint four-GPU and port allocation')
     for port in ports:
         with socket.socket() as probe:
+            probe.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             probe.bind(('127.0.0.1', port))
 
 
@@ -74,7 +75,11 @@ def main():
     if args.action == 'probe':
         probe(config, run)
         return
-    validate_resources(config)
+    try:
+        validate_resources(config)
+    except Exception as exc:
+        save(run / 'failure.json', {'type': type(exc).__name__, 'message': str(exc)})
+        raise
     if (run / 'services.json').exists():
         raise FileExistsError('Use a fresh run directory; keep previous failure evidence')
     owned, handles, state = [], [], []

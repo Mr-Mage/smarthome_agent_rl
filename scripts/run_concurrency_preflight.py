@@ -84,6 +84,10 @@ def main():
             if (service_dir / 'failure.json').exists():
                 raise RuntimeError((service_dir / 'failure.json').read_text())
             os.kill(supervisor, 0)
+            status = Path(f'/proc/{supervisor}/stat')
+            if not status.exists() or status.read_text().split(') ', 1)[1].startswith('Z'):
+                raise RuntimeError('Service supervisor exited before readiness: ' +
+                    (service_dir / 'supervisor.log').read_text(errors='replace')[-3000:])
             if time.monotonic() > deadline:
                 raise TimeoutError('Services did not become ready')
             time.sleep(3)
@@ -118,8 +122,35 @@ def main():
                 stop()
         # Only successful configurations are eligible; all measured stages stay in their own directories.
         stages.sort(key=lambda row: row['capacity']['output_tokens_per_second'], reverse=True)
+        if stages[0]['capacity']['output_tokens_per_second'] < 770 or stages[0]['capacity']['input_tokens_per_second'] < 19800:
+            # Test the same judge weights/context on one H100; an OOM rejects this allocation.
+            candidate = copy.deepcopy(stages[0]['config'])
+            actor = {**candidate['workflows'][0], 'id': 2, 'gpus': [2],
+                'actor_port': 20002, 'simulator_port': 20082, 'gateway_port': 20183}
+            candidate['workflows'].append(actor)
+            candidate['judge_gpus'] = [3]
+            candidate['inference'].update(judge_gpu_memory_utilization=.94, judge_max_num_seqs=12)
+            cache = ROOT / candidate['kernel_cache_root']
+            import shutil
+            shutil.copytree(cache / 'actor0', cache / 'actor2', dirs_exist_ok=True)
+            try:
+                current_path = start('three-actors', candidate)
+                state('capacity', label='three-actors', levels=[6, 12, 24, 48])
+                command('benchmark_capacity.py', '--config', current_path, '--run-dir', run / 'three-actors/replay',
+                    '--concurrency', 6, 12, 24, 48)
+                rows = json.loads((run / 'three-actors/replay/report.json').read_text())['stages']
+                stages.append({'label': 'three-actors', 'config': candidate,
+                    'capacity': max(rows, key=lambda row: row['output_tokens_per_second'])})
+            except Exception as exc:
+                (run / 'three-actors/rejected.json').write_text(json.dumps({'error': str(exc),
+                    'eligible': False, 'config': candidate}, indent=2))
+                state('candidate_rejected', label='three-actors', error=str(exc))
+            finally:
+                stop()
+            stages.sort(key=lambda row: row['capacity']['output_tokens_per_second'], reverse=True)
         chosen = stages[0]
-        pilot_levels = sorted({max(2, chosen['capacity']['concurrency'] // 2), chosen['capacity']['concurrency']})
+        actor_count = len(chosen['config']['workflows'])
+        pilot_levels = sorted({max(actor_count, chosen['capacity']['concurrency'] // 2), chosen['capacity']['concurrency']})
         pilot_config = copy.deepcopy(chosen['config'])
         pilot_config['slots_per_actor'] = max(pilot_levels) // len(pilot_config['workflows'])
         current_path = start('pilot-services', pilot_config)

@@ -273,6 +273,7 @@ def main():
         pending_simulators = []
         for slot in slots:
             with socket.socket() as probe:
+                probe.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
                 probe.bind(('127.0.0.1', slot['simulator_port']))
             simulator = launch(f"simulator{slot['id']}", [ROOT / '.venv-simuhome/bin/python',
                 '-m', 'uvicorn', 'src.simulator.api.app:app', '--host', '127.0.0.1',
