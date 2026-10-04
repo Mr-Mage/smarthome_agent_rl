@@ -23,6 +23,7 @@ if __name__ == '__main__':
     parser.add_argument('--report', required=True)
     parser.add_argument('--selection', required=True)
     parser.add_argument('--inventory', required=True)
+    parser.add_argument('--guard-baseline-report', default='runs/harness-v2/primary-v2/integration/report.json')
     parser.add_argument('--output', required=True)
     args = parser.parse_args()
     config_path = ROOT / 'configs/harness-validation-protocol.json'
@@ -30,10 +31,19 @@ if __name__ == '__main__':
     report = json.loads((ROOT / args.report).read_text())
     selection = json.loads((ROOT / args.selection).read_text())
     inventory = json.loads((ROOT / args.inventory).read_text())
+    guard_report = json.loads((ROOT / args.guard_baseline_report).read_text())
+    if guard_report['phase'] != 'dev' or guard_report['reference'] != 'B0' or not guard_report['verified']:
+        raise ValueError('G-B0 power planning must use verified dev evidence')
     pair = report['paired']['TimePlan']
     independent = report['arms']['G']['unique_tasks']
     q = (pair['wins'] + pair['losses']) / independent
     n = required_tasks(q, config['minimum_meaningful_sr_delta'], config['desired_power'], config['familywise_alpha'] / 2)
+    guard_pair = guard_report['paired']['G']
+    guard_q = (guard_pair['wins'] + guard_pair['losses']) / guard_report['arms']['G']['unique_tasks']
+    guard_n = required_tasks(guard_q, config['minimum_meaningful_sr_delta'], config['desired_power'], config['familywise_alpha'] / 2)
+    comparison_estimates = {'TimePlan-G': {'dev_discordance': q, 'required_tasks': n},
+                            'G-B0': {'dev_discordance': guard_q, 'required_tasks': guard_n}}
+    n = max(n, guard_n)
     enhancement = selection['winner'] != 'G'
     enough = inventory['remaining_tasks'] >= n
     result = {'admitted': enhancement and enough, 'selected_candidate': selection['winner'],
@@ -42,12 +52,13 @@ if __name__ == '__main__':
         'balanced_twelve_class_max': min(inventory['remaining_by_category'].values()) * 12,
         'dev_primary_discordance': q, 'dev_independent_tasks': independent,
         'target_delta': config['minimum_meaningful_sr_delta'], 'desired_power': config['desired_power'],
+        'comparison_estimates': comparison_estimates,
         'reasons': (["No development enhancement passed frozen gates"] if not enhancement else []) +
                    (["Unused official pool is too small for the predeclared sample-size estimate"] if not enough else []),
         'decision': 'Freeze selected dev strategy; no final run or extra modules when admission fails; proceed to N20 archive',
-        'limitations': 'Normal approximation for planning, not an exact achieved-power calculation. G-B0 comparison also needs its own discordance estimate before any admissible final. Shared official generator does not prove independent template families.',
+        'limitations': 'Normal approximation for planning, not an exact achieved-power calculation. Historical dev G-B0 discordance is an estimate; both comparisons use conservative Holm alpha=0.025. Shared official generator does not prove independent template families.',
         'evidence_sha256': {name: digest(ROOT / name) for name in
-            (args.report, args.selection, args.inventory, str(config_path.relative_to(ROOT)))}}
+            (args.report, args.selection, args.inventory, args.guard_baseline_report, str(config_path.relative_to(ROOT)))}}
     output = ROOT / args.output
     output.parent.mkdir(parents=True, exist_ok=True)
     if output.exists():
