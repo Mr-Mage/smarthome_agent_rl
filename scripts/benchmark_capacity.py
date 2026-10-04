@@ -44,6 +44,7 @@ def main():
     parser.add_argument('--run-dir', required=True)
     parser.add_argument('--concurrency', nargs='+', type=int, default=[2, 4, 8, 16, 32])
     parser.add_argument('--seconds', type=int, default=180)
+    parser.add_argument('--try64', action='store_true')
     args = parser.parse_args()
     config = json.loads((ROOT / args.config).read_text())
     run = ROOT / args.run_dir
@@ -75,7 +76,15 @@ def main():
     with ThreadPoolExecutor(max_workers=len(endpoints)) as pool:
         list(pool.map(warm, endpoints))
     summaries = []
+    if args.try64 and args.concurrency[-1] == 32:
+        args.concurrency.append(64)
     for concurrency in args.concurrency:
+        if concurrency == 64 and args.try64:
+            by_level = {row['concurrency']: row for row in summaries}
+            if not (16 in by_level and 32 in by_level and
+                by_level[32]['output_tokens_per_second'] >= by_level[16]['output_tokens_per_second'] * 1.05):
+                (run / '64-skipped.json').write_text(json.dumps({'reason': '32-way output throughput grew less than 5% over 16'}))
+                continue
         if concurrency < len(endpoints) or concurrency % len(endpoints):
             raise ValueError('Concurrency must be a positive multiple of actor count')
         directory = run / str(concurrency)

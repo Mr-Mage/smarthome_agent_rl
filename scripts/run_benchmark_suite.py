@@ -5,18 +5,22 @@ import hashlib
 import json
 import os
 from pathlib import Path
+from queue import Queue, Empty
 import signal
 import shutil
 import socket
 import subprocess
 import sys
+from threading import Lock, Event
 import time
+import uuid
 
 import httpx
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from smarthome_agent_rl.benchmark import digest, schedule
+from smarthome_agent_rl.concurrency import execution_slots
 
 
 def main():
@@ -28,6 +32,10 @@ def main():
     parser.add_argument('--freeze', help='Required frozen protocol for final')
     args = parser.parse_args()
     config = json.loads((ROOT / args.config).read_text())
+    slots = execution_slots(config)
+    slot_count = config.get('slots_per_actor', 1)
+    if args.phase == 'align' and slot_count != 1:
+        raise ValueError('Transport alignment uses one isolated slot per actor')
     manifest_name = 'smoke' if args.phase in ('align', 'smoke') else args.phase
     manifest_path = ROOT / f'configs/benchmark-mvp/{manifest_name}.json'
     manifest = json.loads(manifest_path.read_text())
@@ -49,13 +57,21 @@ def main():
             raise ValueError('Final code/config/manifest/arms differ from frozen protocol')
     run = ROOT / args.run_dir
     run.mkdir(parents=True, exist_ok=False)
+    suite_started = time.monotonic()
     def save(name, value):
-        (run / name).write_text(json.dumps(value, ensure_ascii=False, indent=2), encoding='utf-8')
-    job_schedule = schedule(rows, variants)
-    save('protocol.json', {'phase': args.phase, 'config': config, 'commit': commit,
+        temporary = run / (name + '.' + uuid.uuid4().hex + '.tmp')
+        temporary.write_text(json.dumps(value, ensure_ascii=False, indent=2), encoding='utf-8')
+        temporary.replace(run / name)
+    job_schedule = schedule(rows, variants, actors=len(config['workflows']))
+    if slot_count > 1:
+        for item in job_schedule:
+            item['variant_workflows'] = {}
+    protocol = {'phase': args.phase, 'config': config, 'commit': commit,
         'manifest_sha256': digest(manifest_path), 'variants': variants,
         'expected_episodes': len(rows) * len(variants) * (2 if args.phase == 'align' else 1),
-        'retry_failed_episodes': False, 'schedule': job_schedule})
+        'retry_failed_episodes': False, 'schedule': job_schedule,
+        'execution_slots': slots, 'scheduler': 'actor-affine-queue-v2' if slot_count > 1 else 'paired-v1'}
+    save('protocol.json', protocol)
     # Capture the exact working sources, including any not-yet-committed development changes.
     save('source_identity.json', {str(path.relative_to(ROOT)): digest(path) for directory in
         ('scripts', 'smarthome_agent_rl') for path in (ROOT / directory).rglob('*.py')})
@@ -70,7 +86,14 @@ def main():
         raise RuntimeError('Official evaluator/simulator must remain pristine at the manifest revision')
     services, handles, commands = [], [], []
     key = 'smarthome-local-rollout'
-    client = httpx.Client(trust_env=False, timeout=30)
+    client = httpx.Client(trust_env=False, timeout=30,
+        limits=httpx.Limits(max_connections=max(100, len(slots) * 4), max_keepalive_connections=max(20, len(slots) * 2)))
+    job_queues = {w['id']: Queue() for w in config['workflows']}
+    for item in job_schedule:
+        for variant in item['variants']:
+            job_queues[item['workflow']].put((item, variant))
+    schedule_lock, halt = Lock(), Event()
+    completed = []
     def launch(name, command, cwd, environment=None):
         log = (run / f'{name}.log').open('w')
         handles.append(log)
@@ -160,13 +183,25 @@ def main():
         return summary
     def workflow_jobs(workflow):
         results = []
-        for item in job_schedule:
-            if item['workflow'] != workflow['id']:
-                continue
-            for variant in item['variants']:
+        jobs = job_queues[workflow['actor_id']]
+        while not halt.is_set():
+            try:
+                item, variant = jobs.get_nowait()
+            except Empty:
+                break
+            try:
+                if slot_count > 1:
+                    with schedule_lock:
+                        item['variant_workflows'][variant] = workflow['id']
+                        save('protocol.json', protocol)
                 if args.phase == 'align':
                     execute(workflow, item['task'], variant, 'direct')
                 results.append(execute(workflow, item['task'], variant, 'lightning'))
+                with schedule_lock:
+                    completed.append(results[-1])
+                    save('progress.json', {'completed': len(completed), 'expected': len(rows) * len(variants),
+                        'elapsed_seconds': time.monotonic() - suite_started,
+                        'last': {'task_id': item['task']['id'], 'variant': variant, 'slot': workflow['id']}})
                 if args.phase == 'align':
                     parent = run / f"worker{workflow['id']}" / item['task']['id'] / variant
                     calls = {mode: json.loads((parent / mode / 'model_calls.json').read_text())
@@ -188,6 +223,11 @@ def main():
                         'model_calls': {k: len(v) for k, v in calls.items()},
                         'frozen_request_pairs': len(frozen_records), 'frozen_pairs_identical': True,
                         'live_simulator_clock_unchanged': True}))
+            except Exception:
+                halt.set()
+                raise
+            finally:
+                jobs.task_done()
         return results
     def fixed_replay(workflow, packet, parent):
         records = []
@@ -230,15 +270,22 @@ def main():
                 raise RuntimeError(f'Frozen direct/Gateway token or text divergence: {parent}')
         return records
     try:
+        pending_simulators = []
+        for slot in slots:
+            with socket.socket() as probe:
+                probe.bind(('127.0.0.1', slot['simulator_port']))
+            simulator = launch(f"simulator{slot['id']}", [ROOT / '.venv-simuhome/bin/python',
+                '-m', 'uvicorn', 'src.simulator.api.app:app', '--host', '127.0.0.1',
+                '--port', slot['simulator_port']], ROOT / 'deps/SimuHome',
+                {'OMP_NUM_THREADS': '1', 'OPENBLAS_NUM_THREADS': '1'})
+            pending_simulators.append((slot, simulator))
+        with ThreadPoolExecutor(max_workers=len(slots)) as pool:
+            list(pool.map(lambda pair: wait(f"http://127.0.0.1:{pair[0]['simulator_port']}/api/__health__", pair[1], 180), pending_simulators))
         for workflow in config['workflows']:
-            for port in (workflow['simulator_port'], workflow['gateway_port']):
+            for port in (workflow['gateway_port'],):
                 with socket.socket() as probe:
                     probe.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
                     probe.bind(('127.0.0.1', port))
-            simulator = launch(f"simulator{workflow['id']}", [ROOT / '.venv-simuhome/bin/python',
-                '-m', 'uvicorn', 'src.simulator.api.app:app', '--host', '127.0.0.1',
-                '--port', workflow['simulator_port']], ROOT / 'deps/SimuHome')
-            wait(f"http://127.0.0.1:{workflow['simulator_port']}/api/__health__", simulator)
             gateway = launch(f"gateway{workflow['id']}", [Path(sys.executable).parent / 'agl-server',
                 'host=127.0.0.1', f"port={workflow['gateway_port']}", f'key={key}',
                 f"default_proxy.model_name={config['actor_model']}",
@@ -247,14 +294,17 @@ def main():
             api(workflow, 'POST', '/api/models', [{'model': config['actor_model'],
                 'endpoint': f"http://127.0.0.1:{workflow['actor_port']}/v1", 'version': 0}])
             launch(f"controller{workflow['id']}", [Path(sys.executable).parent / 'agl-controller',
-                'runner_type=local', 'local_runner.maximum_size=1', 'local_runner.poll_interval=1',
+                'runner_type=local', f'local_runner.maximum_size={slot_count}', 'local_runner.poll_interval=1',
                 f"agl_server.url=http://127.0.0.1:{workflow['gateway_port']}", f'agl_server.key={key}'], ROOT,
                 {'PYTHONPATH': str(ROOT), 'OPENAI_API_KEY': 'local-unused'})
-        with ThreadPoolExecutor(max_workers=2) as pool:
-            all_results = list(pool.map(workflow_jobs, config['workflows']))
+        startup_seconds = time.monotonic() - suite_started
+        with ThreadPoolExecutor(max_workers=len(slots)) as pool:
+            all_results = list(pool.map(workflow_jobs, slots))
         results = [row for workflow_result in all_results for row in workflow_result]
         save('completion.json', {'complete': True, 'episodes': len(results),
-            'successes': sum(row['success'] for row in results), 'results': results})
+            'successes': sum(row['success'] for row in results), 'results': results,
+            'startup_seconds': startup_seconds, 'elapsed_seconds': time.monotonic() - suite_started,
+            'execution_concurrency': len(slots)})
     except Exception as exc:
         save('failure.json', {'type': type(exc).__name__, 'message': str(exc)})
         raise

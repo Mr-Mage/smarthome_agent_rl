@@ -27,6 +27,20 @@ def verify(run):
     for item in protocol['schedule']:
         for variant in item['variants']:
             expected_summaries.append(str((episode_directory(run, item, variant) / 'summary.json').relative_to(run)).replace('\\', '/'))
+            if protocol.get('scheduler') == 'actor-affine-queue-v2':
+                worker = item.get('variant_workflows', {}).get(variant)
+                slot = next((s for s in protocol['execution_slots'] if s['id'] == worker), None)
+                if slot is None or slot['actor_id'] != item['workflow']:
+                    failures.append({'task': item['task']['id'], 'variant': variant, 'problem': 'paired actor affinity violated'})
+                    continue
+                contract_path = episode_directory(run, item, variant) / 'contract.json'
+                if contract_path.exists():
+                    config = json.loads(contract_path.read_text())['config']
+                    if config['simulator_url'] != f"http://127.0.0.1:{slot['simulator_port']}/api" or (
+                        config['model_endpoint'] != f"http://127.0.0.1:{slot['actor_port']}/v1"):
+                        failures.append({'task': item['task']['id'], 'variant': variant, 'problem': 'episode endpoint isolation mismatch'})
+                else:
+                    failures.append({'task': item['task']['id'], 'variant': variant, 'problem': 'missing isolation contract'})
     if set(expected_summaries) != {name for name in manifest if name.endswith('/summary.json')}:
         failures.append({'problem': 'missing/extra episode summary'})
     if completion['episodes'] != protocol['expected_episodes'] or not completion['complete']:

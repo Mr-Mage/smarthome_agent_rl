@@ -95,6 +95,8 @@ def main():
     signal.signal(signal.SIGTERM, stop)
     signal.signal(signal.SIGINT, stop)
     save(run / 'config.json', config)
+    service_started = time.monotonic()
+    save(run / 'timing.json', {'started_unix': time.time(), 'startup_seconds': None})
     (run / 'supervisor.pid').write_text(str(os.getpid()))
     try:
         retrieval = json.loads((ROOT / 'configs/p1-qwen35-9b-retrieval.json').read_text())['retrieval']
@@ -140,6 +142,9 @@ def main():
                             pass
                 save(run / 'services.json', state)
                 if all(item['ready'] for item in state):
+                    if not (run / 'ready').exists():
+                        save(run / 'timing.json', {'startup_seconds': time.monotonic() - service_started,
+                            'ready_unix': time.time()})
                     (run / 'ready').touch()
                 elif time.monotonic() > deadline:
                     raise TimeoutError('Service startup timeout')
