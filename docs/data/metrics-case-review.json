@@ -1,0 +1,222 @@
+{
+  "schema": "metrics-case-review-v1",
+  "quality_scope": "Frozen final192, primary actor seed42; three-seed repetition is a diagnostic",
+  "latency_scope": "Capacity smoke24 x B0/G x 3 actor seeds; each level 144 repeated episodes",
+  "case_scope": "Existing development trajectories only; no new final-based tuning",
+  "evidence_sha256": {
+    "runs\\harness-v2\\dev-diagnostics\\metrics-case-review-v1.json": "b73b035c5deaa7218433ea200efa38661e583e4f927f721ed533367e04cbd96e",
+    "runs\\harness-v2\\primary-v2\\final\\report.json": "3d9e23070599e424269faf74ddc12b9519d16f8475684198021df5f567a446a2"
+  },
+  "primary_metrics": {
+    "B0": {
+      "episodes": 192,
+      "successes": 60,
+      "success_rate": 0.3125,
+      "invalid_proposed": 121,
+      "invalid_executed": 96,
+      "actor_tokens_per_episode": 41015.364583333336,
+      "actor_tokens_per_success_including_failures": 131249.16666666666,
+      "extra_queries": 0
+    },
+    "G": {
+      "episodes": 192,
+      "successes": 69,
+      "success_rate": 0.359375,
+      "invalid_proposed": 127,
+      "invalid_executed": 16,
+      "actor_tokens_per_episode": 43730.072916666664,
+      "actor_tokens_per_success_including_failures": 121683.68115942029,
+      "extra_queries": 295
+    },
+    "Full": {
+      "episodes": 192,
+      "successes": 71,
+      "success_rate": 0.3697916666666667,
+      "invalid_proposed": 131,
+      "invalid_executed": 18,
+      "actor_tokens_per_episode": 45521.395833333336,
+      "actor_tokens_per_success_including_failures": 123100.11267605633,
+      "extra_queries": 553
+    }
+  },
+  "capacity_latency": {
+    "64": {
+      "all": {
+        "episodes": 144,
+        "duration_p50": 18.471814902484766,
+        "duration_p95": 185.086393666896,
+        "duration_max": 223.54969995800639,
+        "duration_mean": 41.11589562434933,
+        "actor_http_roundtrip_share": 0.4823011492881366,
+        "actor_http_roundtrip_mean": 19.830243713634747,
+        "prompt_tokens": 5934669,
+        "output_tokens": 213721,
+        "actor_calls_mean": 6.715277777777778
+      },
+      "workflow": {
+        "episodes": 72,
+        "duration_p50": 52.21949500399933,
+        "duration_p95": 200.48261031464062,
+        "duration_max": 223.54969995800639,
+        "duration_mean": 71.14378037644605,
+        "actor_http_roundtrip_share": 0.4256297666590137,
+        "actor_http_roundtrip_mean": 30.28091064086685,
+        "prompt_tokens": 3699458,
+        "output_tokens": 154452,
+        "actor_calls_mean": 8.152777777777779
+      },
+      "other": {
+        "episodes": 72,
+        "duration_p50": 8.518293824992725,
+        "duration_p95": 28.967527763197726,
+        "duration_max": 61.72265686900937,
+        "duration_mean": 11.088010872252603,
+        "actor_http_roundtrip_share": 0.8459205978842192,
+        "actor_http_roundtrip_mean": 9.379576786402644,
+        "prompt_tokens": 2235211,
+        "output_tokens": 59269,
+        "actor_calls_mean": 5.277777777777778
+      },
+      "sampled_gpu_utilization_mean": 37.44230769230769,
+      "sampled_gpu_utilization_max": 100.0,
+      "limitations": "Actor HTTP time includes Gateway/network/queue; GPU samples include startup and long tail; not pure compute time"
+    },
+    "128": {
+      "all": {
+        "episodes": 144,
+        "duration_p50": 23.944778186501935,
+        "duration_p95": 176.87633088328718,
+        "duration_max": 267.90507108101156,
+        "duration_mean": 46.28772084388179,
+        "actor_http_roundtrip_share": 0.5624931767133328,
+        "actor_http_roundtrip_mean": 26.036527140295018,
+        "prompt_tokens": 6075188,
+        "output_tokens": 225656,
+        "actor_calls_mean": 6.881944444444445
+      },
+      "workflow": {
+        "episodes": 72,
+        "duration_p50": 61.366177156509366,
+        "duration_p95": 194.80222668855137,
+        "duration_max": 267.90507108101156,
+        "duration_mean": 75.16674912765302,
+        "actor_http_roundtrip_share": 0.4875645731321144,
+        "actor_http_roundtrip_mean": 36.648643952152874,
+        "prompt_tokens": 3844585,
+        "output_tokens": 166209,
+        "actor_calls_mean": 8.402777777777779
+      },
+      "other": {
+        "episodes": 72,
+        "duration_p50": 12.747421358493739,
+        "duration_p95": 37.061156569606105,
+        "duration_max": 51.939086277008755,
+        "duration_mean": 17.408692560110566,
+        "actor_http_roundtrip_share": 0.886017733679777,
+        "actor_http_roundtrip_mean": 15.42441032843716,
+        "prompt_tokens": 2230603,
+        "output_tokens": 59447,
+        "actor_calls_mean": 5.361111111111111
+      },
+      "sampled_gpu_utilization_mean": 17.0546875,
+      "sampled_gpu_utilization_max": 100.0,
+      "limitations": "Actor HTTP time includes Gateway/network/queue; GPU samples include startup and long tail; not pure compute time"
+    }
+  },
+  "cases": {
+    "qt4-3_feasible_seed_21": {
+      "actor_seed": 42,
+      "query": "I have a video call in five minutes and need some dishwasher noise but I don't want the dryer ding to cut in. Start and run dishwasher 1 in the kitchen now and pause dishwasher 1 in the kitchen when dryer 1 in the utility room finishes.",
+      "success": true,
+      "actor_calls": 12,
+      "actor_tokens": 79828,
+      "evidence": "runs/harness-v2/primary-v2/integration/seed42/worker11/qt4-3_feasible_seed_21/G/lightning",
+      "command_sequence": [
+        {
+          "turn": 6,
+          "command": "Start",
+          "status": 400
+        },
+        {
+          "turn": 8,
+          "command": "Start",
+          "status": 400
+        },
+        {
+          "turn": 9,
+          "command": "On",
+          "status": 200
+        },
+        {
+          "turn": 10,
+          "command": "Start",
+          "status": 200
+        }
+      ]
+    },
+    "qt4-1_feasible_seed_48": {
+      "actor_seed": 42,
+      "query": "While I am rinsing a bowl in the kitchen I just remembered the little office sprout needs light so turn on office light 1 in the office 22 minutes from now. While I am filling a thermos at the kitchen sink I want the drink chilled fast and brought back to normal for storage so set kitchen refrigerator 1 to 1.0°C 30 minutes from now and set it to 5.0°C 21 minutes after the previous action.",
+      "success": false,
+      "actor_calls": 8,
+      "actor_tokens": 47913,
+      "evidence": "runs/harness-v2/primary-v2/integration/seed42/worker1/qt4-1_feasible_seed_48/G/lightning",
+      "intended_offsets_minutes": [
+        22,
+        30,
+        51
+      ],
+      "actual_registered_workflow": [
+        {
+          "start_time": "2025-08-23 17:42:08",
+          "steps": [
+            {
+              "tool": "execute_command",
+              "args": {
+                "device_id": "office_on_off_light_1",
+                "endpoint_id": 1,
+                "cluster_id": "OnOff",
+                "command_id": "On",
+                "args": {}
+              }
+            },
+            {
+              "tool": "execute_command",
+              "args": {
+                "device_id": "kitchen_refrigerator_1",
+                "endpoint_id": 1,
+                "cluster_id": "TemperatureControl",
+                "command_id": "SetTemperature",
+                "args": {
+                  "target_temperature": 100
+                }
+              }
+            },
+            {
+              "tool": "execute_command",
+              "args": {
+                "device_id": "kitchen_refrigerator_1",
+                "endpoint_id": 1,
+                "cluster_id": "TemperatureControl",
+                "command_id": "SetTemperature",
+                "args": {
+                  "target_temperature": 500
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "satisfied_goals": 2,
+      "total_goals": 3
+    }
+  },
+  "limits": [
+    "Episode duration includes official evaluation, not user-visible response latency",
+    "Actor HTTP includes inference, queue, Gateway and network",
+    "GPU averages include simulator startup and idle tail",
+    "Actor tokens exclude judge/retrieval; per-success tokens include failed episodes",
+    "G success-rate improvement is not significant in the primary test",
+    "Cases illustrate behavior; counterfactual improvements are not measured"
+  ]
+}
