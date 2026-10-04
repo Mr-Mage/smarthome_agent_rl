@@ -25,6 +25,7 @@ def main():
     started = time.monotonic()
     stages = []
     supervisor = None
+    inventory_process = None
     def state(stage, **fields):
         record = {'stage': stage, 'pid': os.getpid(), 'elapsed_seconds': time.monotonic() - started, **fields}
         temporary = run / 'state.tmp'
@@ -54,8 +55,18 @@ def main():
         stages.append({'stage': 'service_startup', 'seconds': time.monotonic() - started})
         command('inference_probe', 'harness_services.py', 'probe', '--config', config_path, '--run-dir', service_dir)
         # Re-hash identities for this acceptance; never replace the historical inventories.
-        command('model_inventory', 'harness_services.py', 'inventory', '--config', config_path, '--run-dir', run / 'inventory')
+        inventory_started = time.monotonic()
+        with (run / 'inventory.log').open('w') as output:
+            inventory_process = subprocess.Popen([sys.executable, ROOT / 'scripts/harness_services.py',
+                'inventory', '--config', config_path, '--run-dir', run / 'inventory'],
+                cwd=ROOT, stdin=subprocess.DEVNULL, stdout=output, stderr=subprocess.STDOUT)
+        # Resident inference needs no model-file I/O; hash in parallel with dev,
+        # then require successful identities before freezing final.
         command('dev600', 'run_benchmark_suite.py', '--phase', 'dev', '--config', config_path, '--run-dir', run / 'dev')
+        if inventory_process.wait() != 0:
+            raise RuntimeError('Model identity inventory failed; see inventory.log')
+        stages.append({'stage': 'model_inventory', 'seconds': time.monotonic() - inventory_started,
+            'overlaps': 'dev600', 'duration_includes_join_wait': True})
         command('dev_report', 'report_benchmark.py', run / 'dev')
         command('dev_verify', 'verify_benchmark.py', run / 'dev')
         command('freeze', 'freeze_experiment.py', '--config', config_path, '--dev-run', run / 'dev',
@@ -76,6 +87,9 @@ def main():
             'elapsed_seconds': time.monotonic() - started}, indent=2))
         raise
     finally:
+        if inventory_process is not None and inventory_process.poll() is None:
+            inventory_process.terminate()
+            inventory_process.wait(timeout=30)
         if supervisor is not None and supervisor.poll() is None:
             os.kill(supervisor.pid, signal.SIGTERM)
             supervisor.wait(timeout=90)

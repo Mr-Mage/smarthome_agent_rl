@@ -1,94 +1,13 @@
 {
-  "purpose": "fixed_request_capacity_only",
-  "stages": [
-    {
-      "concurrency": 2,
-      "elapsed_seconds": 193.1651824330038,
-      "measurement_seconds": 180,
-      "drain_seconds": 13.165182433003793,
-      "requests": 75,
-      "errors": 0,
-      "requests_per_second": 0.3882687296713658,
-      "input_tokens_per_second": 2334.530448604032,
-      "output_tokens_per_second": 87.98169414353148,
-      "latency_p50": 2.86779521900462,
-      "latency_p95": 13.883301516005304
-    },
-    {
-      "concurrency": 4,
-      "elapsed_seconds": 218.51468835401465,
-      "measurement_seconds": 180,
-      "drain_seconds": 38.51468835401465,
-      "requests": 136,
-      "errors": 0,
-      "requests_per_second": 0.6223837904190085,
-      "input_tokens_per_second": 3734.6230871120606,
-      "output_tokens_per_second": 143.21691706737403,
-      "latency_p50": 3.1804362984839827,
-      "latency_p95": 19.230654532002518
-    },
-    {
-      "concurrency": 8,
-      "elapsed_seconds": 213.6236594459915,
-      "measurement_seconds": 180,
-      "drain_seconds": 33.62365944599151,
-      "requests": 255,
-      "errors": 0,
-      "requests_per_second": 1.1936880056324908,
-      "input_tokens_per_second": 7219.097379004935,
-      "output_tokens_per_second": 276.38792516297707,
-      "latency_p50": 3.363467370014405,
-      "latency_p95": 17.786206874996424
-    },
-    {
-      "concurrency": 16,
-      "elapsed_seconds": 218.80103904299904,
-      "measurement_seconds": 180,
-      "drain_seconds": 38.80103904299904,
-      "requests": 446,
-      "errors": 0,
-      "requests_per_second": 2.038381544944819,
-      "input_tokens_per_second": 12318.355579062505,
-      "output_tokens_per_second": 471.9584534500599,
-      "latency_p50": 3.634286341490224,
-      "latency_p95": 19.565471301000798
-    },
-    {
-      "concurrency": 32,
-      "elapsed_seconds": 220.44687819801038,
-      "measurement_seconds": 180,
-      "drain_seconds": 40.44687819801038,
-      "requests": 779,
-      "errors": 0,
-      "requests_per_second": 3.5337311481466505,
-      "input_tokens_per_second": 21379.254895896895,
-      "output_tokens_per_second": 811.6014228121411,
-      "latency_p50": 4.293540388986003,
-      "latency_p95": 25.16682140500052
-    },
-    {
-      "concurrency": 64,
-      "elapsed_seconds": 230.99333156298962,
-      "measurement_seconds": 180,
-      "drain_seconds": 50.993331562989624,
-      "requests": 969,
-      "errors": 0,
-      "requests_per_second": 4.194926292648249,
-      "input_tokens_per_second": 25420.192696769653,
-      "output_tokens_per_second": 975.1710080798343,
-      "latency_p50": 7.253534599993145,
-      "latency_p95": 39.52116127600311
-    }
-  ],
-  "source": "runs/concurrency-capacity/preflight-v4/eager/replay/report.json",
-  "source_sha256": "2e679e279cce7c78a14737b8c10869acd2857435af3afde424acd4ce16cb889c",
   "status": "in_progress",
-  "service_startup_seconds": 162.50034303800203,
   "target_episodes": 1368,
   "target_seconds": 3600,
+  "purpose": "inference_capacity_and_episode_acceptance",
+  "service_startup_seconds": 162.50034303800203,
   "cases": {
     "eager": {
-      "purpose": "fixed_request_capacity_only",
+      "source": "runs/concurrency-capacity/preflight-v4/eager/replay/report.json",
+      "source_sha256": "2e679e279cce7c78a14737b8c10869acd2857435af3afde424acd4ce16cb889c",
       "stages": [
         {
           "concurrency": 2,
@@ -168,12 +87,11 @@
           "latency_p50": 7.253534599993145,
           "latency_p95": 39.52116127600311
         }
-      ],
-      "source": "runs/concurrency-capacity/preflight-v4/eager/replay/report.json",
-      "source_sha256": "2e679e279cce7c78a14737b8c10869acd2857435af3afde424acd4ce16cb889c"
+      ]
     },
     "prefix": {
-      "purpose": "fixed_request_capacity_only",
+      "source": "runs/concurrency-capacity/preflight-v4/prefix/replay/report.json",
+      "source_sha256": "d3025275205750b8390257e31ac3dbd68a339cd5c8765bf37580cc97c6fff1b6",
       "stages": [
         {
           "concurrency": 32,
@@ -205,117 +123,28 @@
           "peak_kv_cache_fraction": 0.09837225760792645,
           "preemptions": 0.0
         }
-      ],
-      "source": "runs/concurrency-capacity/preflight-v4/prefix/replay/report.json",
-      "source_sha256": "d3025275205750b8390257e31ac3dbd68a339cd5c8765bf37580cc97c6fff1b6"
-    }
-  },
-  "preflight_v4": {
-    "inference_stages": [
-      {
-        "label": "graph-prefix",
-        "config": {
-          "seed": 20261004,
-          "model_python": "/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/anaconda3/envs/qwen36-vllm/bin/python",
-          "judge_path": "/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/zhengrj/models/Qwen3.6-35B-A3B",
-          "actor_path": "../models/Qwen3.5-9B",
-          "actor_model": "smarthome-qwen35-9b",
-          "judge_model": "smarthome-qwen36-judge",
-          "judge_port": 20300,
-          "embedding_port": 20200,
-          "actor_context": 32768,
-          "judge_context": 65536,
-          "startup_timeout": 1200,
-          "workflows": [
-            {
-              "id": 0,
-              "gpus": [
-                0
-              ],
-              "actor_port": 20000,
-              "simulator_port": 20080,
-              "gateway_port": 20181
-            },
-            {
-              "id": 1,
-              "gpus": [
-                1
-              ],
-              "actor_port": 20001,
-              "simulator_port": 20081,
-              "gateway_port": 20182
-            }
-          ],
-          "judge_gpus": [
-            2,
-            3
-          ],
-          "model_seed": 42,
-          "engine_seed": 0,
-          "max_steps": 20,
-          "generation": {
-            "temperature": 0.7,
-            "top_p": 0.8,
-            "max_tokens": 2048,
-            "presence_penalty": 1.5,
-            "extra_body": {
-              "top_k": 20,
-              "min_p": 0.0,
-              "repetition_penalty": 1.0,
-              "chat_template_kwargs": {
-                "enable_thinking": false
-              }
-            }
-          },
-          "judge_generation": {
-            "temperature": 0.0,
-            "max_tokens": 512,
-            "extra_body": {
-              "chat_template_kwargs": {
-                "enable_thinking": false
-              }
-            }
-          },
-          "judge_seeds": [
-            42,
-            43,
-            44
-          ],
-          "variants_dev": [
-            "B0",
-            "G",
-            "GV",
-            "GC",
-            "Full"
-          ],
-          "variants_final": [
-            "B0",
-            "G",
-            "GC",
-            "Full"
-          ],
-          "recovery_per_action": 2,
-          "extra_queries_max": 40,
-          "slots_per_actor": 16,
-          "simulator_port_base": 21000,
-          "inference": {
-            "actor_max_num_seqs": 32,
-            "judge_max_num_seqs": 32,
-            "actor_enforce_eager": false,
-            "actor_prefix_caching": true,
-            "actor_gpu_memory_utilization": 0.8,
-            "actor_extra_args": [
-              "--gdn-prefill-backend",
-              "triton"
-            ],
-            "judge_extra_args": [
-              "--gdn-prefill-backend",
-              "triton"
-            ]
-          },
-          "kernel_cache_root": "work/concurrency-capacity/kernel-cache"
+      ]
+    },
+    "graph-prefix": {
+      "source": "runs/concurrency-capacity/preflight-v4/graph-prefix/replay/report.json",
+      "source_sha256": "5dd965e7440925d0aaacd68cc3832708f5fedfa2e60dcc938db123ee5059987d",
+      "stages": [
+        {
+          "concurrency": 32,
+          "elapsed_seconds": 190.33779987099115,
+          "measurement_seconds": 180,
+          "drain_seconds": 10.337799870991148,
+          "requests": 1718,
+          "errors": 0,
+          "requests_per_second": 9.026057888472186,
+          "input_tokens_per_second": 54662.615660430885,
+          "output_tokens_per_second": 2169.3063610058525,
+          "latency_p50": 1.8253263429942308,
+          "latency_p95": 11.332048073003534,
+          "peak_kv_cache_fraction": 0.06603773584905659,
+          "preemptions": 0.0
         },
-        "capacity": {
+        {
           "concurrency": 64,
           "elapsed_seconds": 197.07606405197293,
           "measurement_seconds": 180,
@@ -330,515 +159,11 @@
           "peak_kv_cache_fraction": 0.09869375907111755,
           "preemptions": 0.0
         }
-      },
-      {
-        "label": "prefix",
-        "config": {
-          "seed": 20261004,
-          "model_python": "/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/anaconda3/envs/qwen36-vllm/bin/python",
-          "judge_path": "/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/zhengrj/models/Qwen3.6-35B-A3B",
-          "actor_path": "../models/Qwen3.5-9B",
-          "actor_model": "smarthome-qwen35-9b",
-          "judge_model": "smarthome-qwen36-judge",
-          "judge_port": 20300,
-          "embedding_port": 20200,
-          "actor_context": 32768,
-          "judge_context": 65536,
-          "startup_timeout": 1200,
-          "workflows": [
-            {
-              "id": 0,
-              "gpus": [
-                0
-              ],
-              "actor_port": 20000,
-              "simulator_port": 20080,
-              "gateway_port": 20181
-            },
-            {
-              "id": 1,
-              "gpus": [
-                1
-              ],
-              "actor_port": 20001,
-              "simulator_port": 20081,
-              "gateway_port": 20182
-            }
-          ],
-          "judge_gpus": [
-            2,
-            3
-          ],
-          "model_seed": 42,
-          "engine_seed": 0,
-          "max_steps": 20,
-          "generation": {
-            "temperature": 0.7,
-            "top_p": 0.8,
-            "max_tokens": 2048,
-            "presence_penalty": 1.5,
-            "extra_body": {
-              "top_k": 20,
-              "min_p": 0.0,
-              "repetition_penalty": 1.0,
-              "chat_template_kwargs": {
-                "enable_thinking": false
-              }
-            }
-          },
-          "judge_generation": {
-            "temperature": 0.0,
-            "max_tokens": 512,
-            "extra_body": {
-              "chat_template_kwargs": {
-                "enable_thinking": false
-              }
-            }
-          },
-          "judge_seeds": [
-            42,
-            43,
-            44
-          ],
-          "variants_dev": [
-            "B0",
-            "G",
-            "GV",
-            "GC",
-            "Full"
-          ],
-          "variants_final": [
-            "B0",
-            "G",
-            "GC",
-            "Full"
-          ],
-          "recovery_per_action": 2,
-          "extra_queries_max": 40,
-          "slots_per_actor": 16,
-          "simulator_port_base": 21000,
-          "inference": {
-            "actor_max_num_seqs": 32,
-            "judge_max_num_seqs": 32,
-            "actor_enforce_eager": true,
-            "actor_prefix_caching": true,
-            "actor_gpu_memory_utilization": 0.8,
-            "actor_extra_args": [
-              "--gdn-prefill-backend",
-              "triton"
-            ],
-            "judge_extra_args": [
-              "--gdn-prefill-backend",
-              "triton"
-            ]
-          },
-          "kernel_cache_root": "work/concurrency-capacity/kernel-cache"
-        },
-        "capacity": {
-          "concurrency": 64,
-          "elapsed_seconds": 227.81359752599383,
-          "measurement_seconds": 180,
-          "drain_seconds": 47.81359752599383,
-          "requests": 1273,
-          "errors": 0,
-          "requests_per_second": 5.5879017487301175,
-          "input_tokens_per_second": 33840.10912307535,
-          "output_tokens_per_second": 1304.926497928114,
-          "latency_p50": 4.935633234999841,
-          "latency_p95": 33.30123769000056,
-          "peak_kv_cache_fraction": 0.09837225760792645,
-          "preemptions": 0.0
-        }
-      },
-      {
-        "label": "eager",
-        "config": {
-          "seed": 20261004,
-          "model_python": "/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/anaconda3/envs/qwen36-vllm/bin/python",
-          "judge_path": "/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/zhengrj/models/Qwen3.6-35B-A3B",
-          "actor_path": "../models/Qwen3.5-9B",
-          "actor_model": "smarthome-qwen35-9b",
-          "judge_model": "smarthome-qwen36-judge",
-          "judge_port": 20300,
-          "embedding_port": 20200,
-          "actor_context": 32768,
-          "judge_context": 65536,
-          "startup_timeout": 1200,
-          "workflows": [
-            {
-              "id": 0,
-              "gpus": [
-                0
-              ],
-              "actor_port": 20000,
-              "simulator_port": 20080,
-              "gateway_port": 20181
-            },
-            {
-              "id": 1,
-              "gpus": [
-                1
-              ],
-              "actor_port": 20001,
-              "simulator_port": 20081,
-              "gateway_port": 20182
-            }
-          ],
-          "judge_gpus": [
-            2,
-            3
-          ],
-          "model_seed": 42,
-          "engine_seed": 0,
-          "max_steps": 20,
-          "generation": {
-            "temperature": 0.7,
-            "top_p": 0.8,
-            "max_tokens": 2048,
-            "presence_penalty": 1.5,
-            "extra_body": {
-              "top_k": 20,
-              "min_p": 0.0,
-              "repetition_penalty": 1.0,
-              "chat_template_kwargs": {
-                "enable_thinking": false
-              }
-            }
-          },
-          "judge_generation": {
-            "temperature": 0.0,
-            "max_tokens": 512,
-            "extra_body": {
-              "chat_template_kwargs": {
-                "enable_thinking": false
-              }
-            }
-          },
-          "judge_seeds": [
-            42,
-            43,
-            44
-          ],
-          "variants_dev": [
-            "B0",
-            "G",
-            "GV",
-            "GC",
-            "Full"
-          ],
-          "variants_final": [
-            "B0",
-            "G",
-            "GC",
-            "Full"
-          ],
-          "recovery_per_action": 2,
-          "extra_queries_max": 40,
-          "slots_per_actor": 16,
-          "simulator_port_base": 21000,
-          "inference": {
-            "actor_max_num_seqs": 32,
-            "judge_max_num_seqs": 32,
-            "actor_enforce_eager": true,
-            "actor_prefix_caching": false,
-            "actor_gpu_memory_utilization": 0.8,
-            "actor_extra_args": [
-              "--gdn-prefill-backend",
-              "triton"
-            ],
-            "judge_extra_args": [
-              "--gdn-prefill-backend",
-              "triton"
-            ]
-          },
-          "kernel_cache_root": "work/concurrency-capacity/kernel-cache"
-        },
-        "capacity": {
-          "concurrency": 64,
-          "elapsed_seconds": 230.99333156298962,
-          "measurement_seconds": 180,
-          "drain_seconds": 50.993331562989624,
-          "requests": 969,
-          "errors": 0,
-          "requests_per_second": 4.194926292648249,
-          "input_tokens_per_second": 25420.192696769653,
-          "output_tokens_per_second": 975.1710080798343,
-          "latency_p50": 7.253534599993145,
-          "latency_p95": 39.52116127600311
-        }
-      }
-    ],
-    "pilots": [
-      {
-        "concurrency": 32,
-        "elapsed_seconds": 271.5618964250025,
-        "episodes_per_minute": 26.51329253030324,
-        "predicted_dev_final_seconds": 3095.8056192450285,
-        "arms": {
-          "B0": {
-            "successes": 6,
-            "episodes": 24,
-            "unfinished": 0
-          },
-          "G": {
-            "successes": 6,
-            "episodes": 24,
-            "unfinished": 0
-          },
-          "GV": {
-            "successes": 6,
-            "episodes": 24,
-            "unfinished": 0
-          },
-          "GC": {
-            "successes": 7,
-            "episodes": 24,
-            "unfinished": 1
-          },
-          "Full": {
-            "successes": 7,
-            "episodes": 24,
-            "unfinished": 0
-          }
-        },
-        "config": {
-          "seed": 20261004,
-          "model_python": "/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/anaconda3/envs/qwen36-vllm/bin/python",
-          "judge_path": "/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/zhengrj/models/Qwen3.6-35B-A3B",
-          "actor_path": "../models/Qwen3.5-9B",
-          "actor_model": "smarthome-qwen35-9b",
-          "judge_model": "smarthome-qwen36-judge",
-          "judge_port": 20300,
-          "embedding_port": 20200,
-          "actor_context": 32768,
-          "judge_context": 65536,
-          "startup_timeout": 1200,
-          "workflows": [
-            {
-              "id": 0,
-              "gpus": [
-                0
-              ],
-              "actor_port": 20000,
-              "simulator_port": 20080,
-              "gateway_port": 20181
-            },
-            {
-              "id": 1,
-              "gpus": [
-                1
-              ],
-              "actor_port": 20001,
-              "simulator_port": 20081,
-              "gateway_port": 20182
-            }
-          ],
-          "judge_gpus": [
-            2,
-            3
-          ],
-          "model_seed": 42,
-          "engine_seed": 0,
-          "max_steps": 20,
-          "generation": {
-            "temperature": 0.7,
-            "top_p": 0.8,
-            "max_tokens": 2048,
-            "presence_penalty": 1.5,
-            "extra_body": {
-              "top_k": 20,
-              "min_p": 0.0,
-              "repetition_penalty": 1.0,
-              "chat_template_kwargs": {
-                "enable_thinking": false
-              }
-            }
-          },
-          "judge_generation": {
-            "temperature": 0.0,
-            "max_tokens": 512,
-            "extra_body": {
-              "chat_template_kwargs": {
-                "enable_thinking": false
-              }
-            }
-          },
-          "judge_seeds": [
-            42,
-            43,
-            44
-          ],
-          "variants_dev": [
-            "B0",
-            "G",
-            "GV",
-            "GC",
-            "Full"
-          ],
-          "variants_final": [
-            "B0",
-            "G",
-            "GC",
-            "Full"
-          ],
-          "recovery_per_action": 2,
-          "extra_queries_max": 40,
-          "slots_per_actor": 16,
-          "simulator_port_base": 21000,
-          "inference": {
-            "actor_max_num_seqs": 32,
-            "judge_max_num_seqs": 32,
-            "actor_enforce_eager": false,
-            "actor_prefix_caching": true,
-            "actor_gpu_memory_utilization": 0.8,
-            "actor_extra_args": [
-              "--gdn-prefill-backend",
-              "triton"
-            ],
-            "judge_extra_args": [
-              "--gdn-prefill-backend",
-              "triton"
-            ]
-          },
-          "kernel_cache_root": "work/concurrency-capacity/kernel-cache"
-        }
-      },
-      {
-        "concurrency": 64,
-        "elapsed_seconds": 273.7556473510049,
-        "episodes_per_minute": 26.30082728765877,
-        "predicted_dev_final_seconds": 3120.8143798014557,
-        "arms": {
-          "B0": {
-            "successes": 7,
-            "episodes": 24,
-            "unfinished": 0
-          },
-          "G": {
-            "successes": 6,
-            "episodes": 24,
-            "unfinished": 1
-          },
-          "GV": {
-            "successes": 7,
-            "episodes": 24,
-            "unfinished": 1
-          },
-          "GC": {
-            "successes": 8,
-            "episodes": 24,
-            "unfinished": 1
-          },
-          "Full": {
-            "successes": 6,
-            "episodes": 24,
-            "unfinished": 1
-          }
-        },
-        "config": {
-          "seed": 20261004,
-          "model_python": "/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/anaconda3/envs/qwen36-vllm/bin/python",
-          "judge_path": "/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/zhengrj/models/Qwen3.6-35B-A3B",
-          "actor_path": "../models/Qwen3.5-9B",
-          "actor_model": "smarthome-qwen35-9b",
-          "judge_model": "smarthome-qwen36-judge",
-          "judge_port": 20300,
-          "embedding_port": 20200,
-          "actor_context": 32768,
-          "judge_context": 65536,
-          "startup_timeout": 1200,
-          "workflows": [
-            {
-              "id": 0,
-              "gpus": [
-                0
-              ],
-              "actor_port": 20000,
-              "simulator_port": 20080,
-              "gateway_port": 20181
-            },
-            {
-              "id": 1,
-              "gpus": [
-                1
-              ],
-              "actor_port": 20001,
-              "simulator_port": 20081,
-              "gateway_port": 20182
-            }
-          ],
-          "judge_gpus": [
-            2,
-            3
-          ],
-          "model_seed": 42,
-          "engine_seed": 0,
-          "max_steps": 20,
-          "generation": {
-            "temperature": 0.7,
-            "top_p": 0.8,
-            "max_tokens": 2048,
-            "presence_penalty": 1.5,
-            "extra_body": {
-              "top_k": 20,
-              "min_p": 0.0,
-              "repetition_penalty": 1.0,
-              "chat_template_kwargs": {
-                "enable_thinking": false
-              }
-            }
-          },
-          "judge_generation": {
-            "temperature": 0.0,
-            "max_tokens": 512,
-            "extra_body": {
-              "chat_template_kwargs": {
-                "enable_thinking": false
-              }
-            }
-          },
-          "judge_seeds": [
-            42,
-            43,
-            44
-          ],
-          "variants_dev": [
-            "B0",
-            "G",
-            "GV",
-            "GC",
-            "Full"
-          ],
-          "variants_final": [
-            "B0",
-            "G",
-            "GC",
-            "Full"
-          ],
-          "recovery_per_action": 2,
-          "extra_queries_max": 40,
-          "slots_per_actor": 32,
-          "simulator_port_base": 21000,
-          "inference": {
-            "actor_max_num_seqs": 32,
-            "judge_max_num_seqs": 32,
-            "actor_enforce_eager": false,
-            "actor_prefix_caching": true,
-            "actor_gpu_memory_utilization": 0.8,
-            "actor_extra_args": [
-              "--gdn-prefill-backend",
-              "triton"
-            ],
-            "judge_extra_args": [
-              "--gdn-prefill-backend",
-              "triton"
-            ]
-          },
-          "kernel_cache_root": "work/concurrency-capacity/kernel-cache"
-        }
-      }
-    ],
-    "selected": {
+      ]
+    }
+  },
+  "pilots": [
+    {
       "concurrency": 32,
       "elapsed_seconds": 271.5618964250025,
       "episodes_per_minute": 26.51329253030324,
@@ -870,110 +195,116 @@
           "unfinished": 0
         }
       },
-      "config": {
-        "seed": 20261004,
-        "model_python": "/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/anaconda3/envs/qwen36-vllm/bin/python",
-        "judge_path": "/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/zhengrj/models/Qwen3.6-35B-A3B",
-        "actor_path": "../models/Qwen3.5-9B",
-        "actor_model": "smarthome-qwen35-9b",
-        "judge_model": "smarthome-qwen36-judge",
-        "judge_port": 20300,
-        "embedding_port": 20200,
-        "actor_context": 32768,
-        "judge_context": 65536,
-        "startup_timeout": 1200,
-        "workflows": [
-          {
-            "id": 0,
-            "gpus": [
-              0
-            ],
-            "actor_port": 20000,
-            "simulator_port": 20080,
-            "gateway_port": 20181
-          },
-          {
-            "id": 1,
-            "gpus": [
-              1
-            ],
-            "actor_port": 20001,
-            "simulator_port": 20081,
-            "gateway_port": 20182
-          }
-        ],
-        "judge_gpus": [
-          2,
-          3
-        ],
-        "model_seed": 42,
-        "engine_seed": 0,
-        "max_steps": 20,
-        "generation": {
-          "temperature": 0.7,
-          "top_p": 0.8,
-          "max_tokens": 2048,
-          "presence_penalty": 1.5,
-          "extra_body": {
-            "top_k": 20,
-            "min_p": 0.0,
-            "repetition_penalty": 1.0,
-            "chat_template_kwargs": {
-              "enable_thinking": false
-            }
-          }
-        },
-        "judge_generation": {
-          "temperature": 0.0,
-          "max_tokens": 512,
-          "extra_body": {
-            "chat_template_kwargs": {
-              "enable_thinking": false
-            }
-          }
-        },
-        "judge_seeds": [
-          42,
-          43,
-          44
-        ],
-        "variants_dev": [
-          "B0",
-          "G",
-          "GV",
-          "GC",
-          "Full"
-        ],
-        "variants_final": [
-          "B0",
-          "G",
-          "GC",
-          "Full"
-        ],
-        "recovery_per_action": 2,
-        "extra_queries_max": 40,
-        "slots_per_actor": 16,
-        "simulator_port_base": 21000,
-        "inference": {
-          "actor_max_num_seqs": 32,
-          "judge_max_num_seqs": 32,
-          "actor_enforce_eager": false,
-          "actor_prefix_caching": true,
-          "actor_gpu_memory_utilization": 0.8,
-          "actor_extra_args": [
-            "--gdn-prefill-backend",
-            "triton"
-          ],
-          "judge_extra_args": [
-            "--gdn-prefill-backend",
-            "triton"
-          ]
-        },
-        "kernel_cache_root": "work/concurrency-capacity/kernel-cache",
-        "dispatch_policy": "workflow-first"
-      }
+      "dispatch_policy": "manifest",
+      "source": "runs/concurrency-capacity/preflight-v4/pilot-32/episodes"
     },
-    "within_50_minute_projection": false,
-    "actual_full_run_required": true
-  }
+    {
+      "concurrency": 64,
+      "elapsed_seconds": 273.7556473510049,
+      "episodes_per_minute": 26.30082728765877,
+      "predicted_dev_final_seconds": 3120.8143798014557,
+      "arms": {
+        "B0": {
+          "successes": 7,
+          "episodes": 24,
+          "unfinished": 0
+        },
+        "G": {
+          "successes": 6,
+          "episodes": 24,
+          "unfinished": 1
+        },
+        "GV": {
+          "successes": 7,
+          "episodes": 24,
+          "unfinished": 1
+        },
+        "GC": {
+          "successes": 8,
+          "episodes": 24,
+          "unfinished": 1
+        },
+        "Full": {
+          "successes": 6,
+          "episodes": 24,
+          "unfinished": 1
+        }
+      },
+      "dispatch_policy": "manifest",
+      "source": "runs/concurrency-capacity/preflight-v4/pilot-64/episodes"
+    },
+    {
+      "concurrency": 32,
+      "elapsed_seconds": 230.86144162001438,
+      "episodes_per_minute": 31.187538072515444,
+      "predicted_dev_final_seconds": 2631.820434468164,
+      "arms": {
+        "B0": {
+          "successes": 6,
+          "episodes": 24,
+          "unfinished": 0
+        },
+        "G": {
+          "successes": 6,
+          "episodes": 24,
+          "unfinished": 0
+        },
+        "GV": {
+          "successes": 7,
+          "episodes": 24,
+          "unfinished": 0
+        },
+        "GC": {
+          "successes": 5,
+          "episodes": 24,
+          "unfinished": 0
+        },
+        "Full": {
+          "successes": 6,
+          "episodes": 24,
+          "unfinished": 0
+        }
+      },
+      "dispatch_policy": "workflow-first",
+      "source": "runs/concurrency-capacity/preflight-v5/pilot-32/episodes"
+    },
+    {
+      "concurrency": 64,
+      "elapsed_seconds": 282.2328085039917,
+      "episodes_per_minute": 25.510854100075925,
+      "predicted_dev_final_seconds": 3217.4540169455054,
+      "arms": {
+        "B0": {
+          "successes": 8,
+          "episodes": 24,
+          "unfinished": 0
+        },
+        "G": {
+          "successes": 7,
+          "episodes": 24,
+          "unfinished": 0
+        },
+        "GV": {
+          "successes": 7,
+          "episodes": 24,
+          "unfinished": 0
+        },
+        "GC": {
+          "successes": 6,
+          "episodes": 24,
+          "unfinished": 0
+        },
+        "Full": {
+          "successes": 6,
+          "episodes": 24,
+          "unfinished": 0
+        }
+      },
+      "dispatch_policy": "workflow-first",
+      "source": "runs/concurrency-capacity/preflight-v5/pilot-64/episodes"
+    }
+  ],
+  "gate_seconds": 3000,
+  "selected_config": "configs/harness-concurrent.json",
+  "gate_passed": true
 }
