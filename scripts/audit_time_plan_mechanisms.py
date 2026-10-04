@@ -60,6 +60,7 @@ def audit(run):
             totals['uncovered_step_refs'] += proposal.get('time_refs', []).count('uncovered')
             if recorded:
                 unique['T'].add(item['task']['id'])
+                totals['T_reason_' + proposal.get('detail', 'unknown')] += 1
                 entry['events'].append({'module': 'T', 'turn': proposal['turn'], 'arguments': proposal['arguments'],
                     'refs': proposal.get('time_refs', []), 'deterministic_result': failure,
                     'online_record': proposal.get('detail'), 'replay_agrees': bool(failure) == recorded,
