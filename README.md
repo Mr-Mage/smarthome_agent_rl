@@ -15,4 +15,4 @@ N13正式seed42：B0/G/旧Full成功60/69/71（各192）；G非法执行96→16�
 冻结配置：[Guard v3](configs/guard-v3.json)、[TimePlan](configs/time-plan.json)。每轮四卡配对，预声明种子42/43/44；先smoke再dev，普通任务失败留在分母，基础设施故障整阶段无效。
 阶段核验：`python scripts/verify_benchmark.py <阶段目录>`；统计：`scripts/report_benchmark.py`；收据：`scripts/summarize_node_experiments.py`。
 保留证据：`runs/harness-v2/primary-v2/`、`runs/guard-v3/n15-v1/`、`runs/time-plan/`。历史结果与论文参照见实验报表；judge三票来自同一模型，不是三个独立judge。
-最新归档：`outputs/harness-post-n15/review-v2/`，28,310个有效阶段文件与107份审阅收据核验通过；失败成本有缺usage记录，详见[N20](docs/nodes/N20.md)。机器索引：[TimePlan及准入](docs/data/time-plan.json)。
+最新归档：`outputs/harness-post-n15/review-v2/`，28,310个有效阶段文件与109份审阅收据核验通过；失败成本有缺usage记录，详见[N20](docs/nodes/N20.md)。机器索引：[TimePlan及准入](docs/data/time-plan.json)。
