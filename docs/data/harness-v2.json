@@ -1,0 +1,3650 @@
+{
+  "complete": true,
+  "frozen_commit": "5c2e7621bfd4ecd3529e0fca27d314761458fdab",
+  "primary_actor_seed": 42,
+  "actor_seeds": [
+    42,
+    43,
+    44
+  ],
+  "candidate_alias": "G",
+  "raw_artifacts_preserved": true,
+  "reports": {
+    "module_original": {
+      "source": "runs/harness-v2/primary-v1/modules/report.json",
+      "sha256": "7abb70ddbcd1c1da6dd6c58091f13ecb0d8615ab8f3d459e6740df8910c1d908",
+      "verified": true,
+      "phase": "dev",
+      "commit": "77519daf20c265b8145b0a98732ef0f51913ed95",
+      "arms": {
+        "G": {
+          "episodes": 360,
+          "successes": 132,
+          "success_rate": 0.36666666666666664,
+          "unfinished": 6,
+          "unique_tasks": 120,
+          "by_actor_seed": {
+            "42": {
+              "episodes": 120,
+              "successes": 41,
+              "all_totals": {
+                "actor_tokens": 5328554,
+                "judge_tokens": 435243,
+                "actor_model_calls": 846,
+                "judge_model_calls": 207,
+                "invalid_proposed": 71,
+                "invalid_reached_executor": 14,
+                "structured_rejections": 14,
+                "executed_tool_calls": 670,
+                "guard_blocked": 43,
+                "extra_queries": 183,
+                "verification_failures": 0,
+                "recovered_actions": 34,
+                "recovery_budget_blocked": 0,
+                "duration_seconds": 4894.454948557221,
+                "retrieval_tokens": 444,
+                "actor_latency": 2605.685329975473,
+                "judge_latency": 69.99833042535465,
+                "extra_query_latency": 11.504934323893394,
+                "tokenization_calls": 0,
+                "tokenization_latency": 0
+              }
+            },
+            "43": {
+              "episodes": 120,
+              "successes": 44,
+              "all_totals": {
+                "actor_tokens": 5703360,
+                "judge_tokens": 411996,
+                "actor_model_calls": 871,
+                "judge_model_calls": 207,
+                "invalid_proposed": 106,
+                "invalid_reached_executor": 22,
+                "structured_rejections": 15,
+                "executed_tool_calls": 671,
+                "guard_blocked": 69,
+                "extra_queries": 191,
+                "verification_failures": 0,
+                "recovered_actions": 37,
+                "recovery_budget_blocked": 0,
+                "duration_seconds": 4595.6366585060605,
+                "retrieval_tokens": 409,
+                "actor_latency": 2651.262424572167,
+                "judge_latency": 65.70119856367819,
+                "extra_query_latency": 10.338254785980098,
+                "tokenization_calls": 0,
+                "tokenization_latency": 0
+              }
+            },
+            "44": {
+              "episodes": 120,
+              "successes": 47,
+              "all_totals": {
+                "actor_tokens": 5565277,
+                "judge_tokens": 435165,
+                "actor_model_calls": 863,
+                "judge_model_calls": 204,
+                "invalid_proposed": 76,
+                "invalid_reached_executor": 13,
+                "structured_rejections": 5,
+                "executed_tool_calls": 681,
+                "guard_blocked": 58,
+                "extra_queries": 195,
+                "verification_failures": 0,
+                "recovered_actions": 36,
+                "recovery_budget_blocked": 0,
+                "duration_seconds": 4748.185425777134,
+                "retrieval_tokens": 409,
+                "actor_latency": 2519.805699321354,
+                "judge_latency": 68.5088108809432,
+                "extra_query_latency": 11.091748259757878,
+                "tokenization_calls": 0,
+                "tokenization_latency": 0
+              }
+            }
+          },
+          "evaluator_errors": 0,
+          "all_totals": {
+            "actor_tokens": 16597191,
+            "judge_tokens": 1282404,
+            "actor_model_calls": 2580,
+            "judge_model_calls": 618,
+            "invalid_proposed": 253,
+            "invalid_reached_executor": 49,
+            "structured_rejections": 34,
+            "executed_tool_calls": 2022,
+            "guard_blocked": 170,
+            "extra_queries": 569,
+            "verification_failures": 0,
+            "recovered_actions": 107,
+            "recovery_budget_blocked": 0,
+            "duration_seconds": 14238.277032840415,
+            "retrieval_tokens": 1262,
+            "actor_latency": 7776.753453868994,
+            "judge_latency": 204.20833986997604,
+            "extra_query_latency": 32.93493736963137,
+            "tokenization_calls": 0,
+            "tokenization_latency": 0
+          },
+          "successful_means": {
+            "actor_tokens": 35202.606060606064,
+            "judge_tokens": 2206.4772727272725,
+            "actor_model_calls": 5.833333333333333,
+            "judge_model_calls": 1.5454545454545454,
+            "invalid_proposed": 0.26515151515151514,
+            "invalid_reached_executor": 0.030303030303030304,
+            "structured_rejections": 0.030303030303030304,
+            "executed_tool_calls": 4.598484848484849,
+            "guard_blocked": 0.20454545454545456,
+            "extra_queries": 1.1893939393939394,
+            "verification_failures": 0.0,
+            "recovered_actions": 0.15151515151515152,
+            "recovery_budget_blocked": 0.0,
+            "duration_seconds": 25.568408558205135,
+            "retrieval_tokens": 1.9621212121212122,
+            "actor_latency": 14.380627660749076,
+            "judge_latency": 0.501866239498089,
+            "extra_query_latency": 0.06749583591634732,
+            "tokenization_calls": 0.0,
+            "tokenization_latency": 0.0
+          },
+          "categories": {
+            "qt1:feasible": {
+              "episodes": 30,
+              "successes": 17
+            },
+            "qt1:infeasible": {
+              "episodes": 30,
+              "successes": 20
+            },
+            "qt2:feasible": {
+              "episodes": 30,
+              "successes": 17
+            },
+            "qt2:infeasible": {
+              "episodes": 30,
+              "successes": 3
+            },
+            "qt3:feasible": {
+              "episodes": 30,
+              "successes": 21
+            },
+            "qt3:infeasible": {
+              "episodes": 30,
+              "successes": 18
+            },
+            "qt4-1:feasible": {
+              "episodes": 30,
+              "successes": 6
+            },
+            "qt4-1:infeasible": {
+              "episodes": 30,
+              "successes": 9
+            },
+            "qt4-2:feasible": {
+              "episodes": 30,
+              "successes": 18
+            },
+            "qt4-2:infeasible": {
+              "episodes": 30,
+              "successes": 0
+            },
+            "qt4-3:feasible": {
+              "episodes": 30,
+              "successes": 2
+            },
+            "qt4-3:infeasible": {
+              "episodes": 30,
+              "successes": 1
+            }
+          }
+        },
+        "GV": {
+          "episodes": 360,
+          "successes": 124,
+          "success_rate": 0.34444444444444444,
+          "unfinished": 3,
+          "unique_tasks": 120,
+          "by_actor_seed": {
+            "42": {
+              "episodes": 120,
+              "successes": 38,
+              "all_totals": {
+                "actor_tokens": 5562567,
+                "judge_tokens": 450924,
+                "actor_model_calls": 867,
+                "judge_model_calls": 210,
+                "invalid_proposed": 90,
+                "invalid_reached_executor": 20,
+                "structured_rejections": 12,
+                "executed_tool_calls": 673,
+                "guard_blocked": 63,
+                "extra_queries": 332,
+                "verification_failures": 0,
+                "recovered_actions": 36,
+                "recovery_budget_blocked": 5,
+                "duration_seconds": 4960.517209124053,
+                "retrieval_tokens": 205,
+                "actor_latency": 2612.0484758734237,
+                "judge_latency": 69.91386983988923,
+                "extra_query_latency": 25.19253217880032,
+                "tokenization_calls": 0,
+                "tokenization_latency": 0
+              }
+            },
+            "43": {
+              "episodes": 120,
+              "successes": 42,
+              "all_totals": {
+                "actor_tokens": 5058274,
+                "judge_tokens": 417687,
+                "actor_model_calls": 808,
+                "judge_model_calls": 204,
+                "invalid_proposed": 64,
+                "invalid_reached_executor": 13,
+                "structured_rejections": 8,
+                "executed_tool_calls": 637,
+                "guard_blocked": 44,
+                "extra_queries": 317,
+                "verification_failures": 0,
+                "recovered_actions": 35,
+                "recovery_budget_blocked": 1,
+                "duration_seconds": 4574.415885047114,
+                "retrieval_tokens": 145,
+                "actor_latency": 2267.5224297122913,
+                "judge_latency": 68.42382646296755,
+                "extra_query_latency": 25.07682598073734,
+                "tokenization_calls": 0,
+                "tokenization_latency": 0
+              }
+            },
+            "44": {
+              "episodes": 120,
+              "successes": 44,
+              "all_totals": {
+                "actor_tokens": 5318533,
+                "judge_tokens": 439620,
+                "actor_model_calls": 829,
+                "judge_model_calls": 210,
+                "invalid_proposed": 73,
+                "invalid_reached_executor": 12,
+                "structured_rejections": 17,
+                "executed_tool_calls": 647,
+                "guard_blocked": 46,
+                "extra_queries": 329,
+                "verification_failures": 0,
+                "recovered_actions": 29,
+                "recovery_budget_blocked": 2,
+                "duration_seconds": 5346.45118499393,
+                "retrieval_tokens": 204,
+                "actor_latency": 2684.816796401894,
+                "judge_latency": 70.40443825296825,
+                "extra_query_latency": 25.072010844101897,
+                "tokenization_calls": 0,
+                "tokenization_latency": 0
+              }
+            }
+          },
+          "evaluator_errors": 0,
+          "all_totals": {
+            "actor_tokens": 15939374,
+            "judge_tokens": 1308231,
+            "actor_model_calls": 2504,
+            "judge_model_calls": 624,
+            "invalid_proposed": 227,
+            "invalid_reached_executor": 45,
+            "structured_rejections": 37,
+            "executed_tool_calls": 1957,
+            "guard_blocked": 153,
+            "extra_queries": 978,
+            "verification_failures": 0,
+            "recovered_actions": 100,
+            "recovery_budget_blocked": 8,
+            "duration_seconds": 14881.384279165097,
+            "retrieval_tokens": 554,
+            "actor_latency": 7564.387701987609,
+            "judge_latency": 208.74213455582503,
+            "extra_query_latency": 75.34136900363956,
+            "tokenization_calls": 0,
+            "tokenization_latency": 0
+          },
+          "successful_means": {
+            "actor_tokens": 33445.99193548387,
+            "judge_tokens": 2674.766129032258,
+            "actor_model_calls": 5.629032258064516,
+            "judge_model_calls": 1.6935483870967742,
+            "invalid_proposed": 0.24193548387096775,
+            "invalid_reached_executor": 0.07258064516129033,
+            "structured_rejections": 0.04838709677419355,
+            "executed_tool_calls": 4.459677419354839,
+            "guard_blocked": 0.12096774193548387,
+            "extra_queries": 1.9838709677419355,
+            "verification_failures": 0.0,
+            "recovered_actions": 0.12903225806451613,
+            "recovery_budget_blocked": 0.0,
+            "duration_seconds": 20.12050317591873,
+            "retrieval_tokens": 0.8467741935483871,
+            "actor_latency": 13.761305531284316,
+            "judge_latency": 0.5568144438122192,
+            "extra_query_latency": 0.15147098724640184,
+            "tokenization_calls": 0.0,
+            "tokenization_latency": 0.0
+          },
+          "categories": {
+            "qt1:feasible": {
+              "episodes": 30,
+              "successes": 16
+            },
+            "qt1:infeasible": {
+              "episodes": 30,
+              "successes": 18
+            },
+            "qt2:feasible": {
+              "episodes": 30,
+              "successes": 12
+            },
+            "qt2:infeasible": {
+              "episodes": 30,
+              "successes": 7
+            },
+            "qt3:feasible": {
+              "episodes": 30,
+              "successes": 22
+            },
+            "qt3:infeasible": {
+              "episodes": 30,
+              "successes": 20
+            },
+            "qt4-1:feasible": {
+              "episodes": 30,
+              "successes": 1
+            },
+            "qt4-1:infeasible": {
+              "episodes": 30,
+              "successes": 7
+            },
+            "qt4-2:feasible": {
+              "episodes": 30,
+              "successes": 14
+            },
+            "qt4-2:infeasible": {
+              "episodes": 30,
+              "successes": 0
+            },
+            "qt4-3:feasible": {
+              "episodes": 30,
+              "successes": 5
+            },
+            "qt4-3:infeasible": {
+              "episodes": 30,
+              "successes": 2
+            }
+          }
+        },
+        "GC": {
+          "episodes": 360,
+          "successes": 133,
+          "success_rate": 0.36944444444444446,
+          "unfinished": 9,
+          "unique_tasks": 120,
+          "by_actor_seed": {
+            "42": {
+              "episodes": 120,
+              "successes": 45,
+              "all_totals": {
+                "actor_tokens": 5395156,
+                "judge_tokens": 458958,
+                "actor_model_calls": 858,
+                "judge_model_calls": 204,
+                "invalid_proposed": 80,
+                "invalid_reached_executor": 21,
+                "structured_rejections": 11,
+                "executed_tool_calls": 680,
+                "guard_blocked": 48,
+                "extra_queries": 197,
+                "verification_failures": 0,
+                "recovered_actions": 35,
+                "recovery_budget_blocked": 0,
+                "duration_seconds": 4981.701361797779,
+                "retrieval_tokens": 242,
+                "actor_latency": 2698.309164896171,
+                "judge_latency": 70.4092504629516,
+                "extra_query_latency": 11.7248205349606,
+                "tokenization_calls": 0,
+                "tokenization_latency": 0
+              }
+            },
+            "43": {
+              "episodes": 120,
+              "successes": 47,
+              "all_totals": {
+                "actor_tokens": 5420379,
+                "judge_tokens": 394722,
+                "actor_model_calls": 864,
+                "judge_model_calls": 207,
+                "invalid_proposed": 92,
+                "invalid_reached_executor": 16,
+                "structured_rejections": 11,
+                "executed_tool_calls": 670,
+                "guard_blocked": 65,
+                "extra_queries": 195,
+                "verification_failures": 0,
+                "recovered_actions": 48,
+                "recovery_budget_blocked": 0,
+                "duration_seconds": 4709.138596428937,
+                "retrieval_tokens": 697,
+                "actor_latency": 2562.9979996120674,
+                "judge_latency": 68.57973612408387,
+                "extra_query_latency": 11.572060178092215,
+                "tokenization_calls": 0,
+                "tokenization_latency": 0
+              }
+            },
+            "44": {
+              "episodes": 120,
+              "successes": 41,
+              "all_totals": {
+                "actor_tokens": 5616748,
+                "judge_tokens": 450369,
+                "actor_model_calls": 881,
+                "judge_model_calls": 201,
+                "invalid_proposed": 91,
+                "invalid_reached_executor": 18,
+                "structured_rejections": 19,
+                "executed_tool_calls": 693,
+                "guard_blocked": 54,
+                "extra_queries": 202,
+                "verification_failures": 0,
+                "recovered_actions": 38,
+                "recovery_budget_blocked": 0,
+                "duration_seconds": 5231.420648872969,
+                "retrieval_tokens": 301,
+                "actor_latency": 2975.494380227319,
+                "judge_latency": 66.7872393487778,
+                "extra_query_latency": 12.099832766951295,
+                "tokenization_calls": 0,
+                "tokenization_latency": 0
+              }
+            }
+          },
+          "evaluator_errors": 0,
+          "all_totals": {
+            "actor_tokens": 16432283,
+            "judge_tokens": 1304049,
+            "actor_model_calls": 2603,
+            "judge_model_calls": 612,
+            "invalid_proposed": 263,
+            "invalid_reached_executor": 55,
+            "structured_rejections": 41,
+            "executed_tool_calls": 2043,
+            "guard_blocked": 167,
+            "extra_queries": 594,
+            "verification_failures": 0,
+            "recovered_actions": 121,
+            "recovery_budget_blocked": 0,
+            "duration_seconds": 14922.260607099684,
+            "retrieval_tokens": 1240,
+            "actor_latency": 8236.801544735557,
+            "judge_latency": 205.77622593581327,
+            "extra_query_latency": 35.39671348000411,
+            "tokenization_calls": 0,
+            "tokenization_latency": 0
+          },
+          "successful_means": {
+            "actor_tokens": 31295.157894736843,
+            "judge_tokens": 2861.90977443609,
+            "actor_model_calls": 5.518796992481203,
+            "judge_model_calls": 1.6917293233082706,
+            "invalid_proposed": 0.3233082706766917,
+            "invalid_reached_executor": 0.07518796992481203,
+            "structured_rejections": 0.03759398496240601,
+            "executed_tool_calls": 4.2706766917293235,
+            "guard_blocked": 0.21052631578947367,
+            "extra_queries": 1.105263157894737,
+            "verification_failures": 0.0,
+            "recovered_actions": 0.17293233082706766,
+            "recovery_budget_blocked": 0.0,
+            "duration_seconds": 23.4366043525839,
+            "retrieval_tokens": 0.42857142857142855,
+            "actor_latency": 12.967398244841638,
+            "judge_latency": 0.5638947263963983,
+            "extra_query_latency": 0.06345260166016028,
+            "tokenization_calls": 0.0,
+            "tokenization_latency": 0.0
+          },
+          "categories": {
+            "qt1:feasible": {
+              "episodes": 30,
+              "successes": 18
+            },
+            "qt1:infeasible": {
+              "episodes": 30,
+              "successes": 21
+            },
+            "qt2:feasible": {
+              "episodes": 30,
+              "successes": 13
+            },
+            "qt2:infeasible": {
+              "episodes": 30,
+              "successes": 6
+            },
+            "qt3:feasible": {
+              "episodes": 30,
+              "successes": 21
+            },
+            "qt3:infeasible": {
+              "episodes": 30,
+              "successes": 21
+            },
+            "qt4-1:feasible": {
+              "episodes": 30,
+              "successes": 7
+            },
+            "qt4-1:infeasible": {
+              "episodes": 30,
+              "successes": 9
+            },
+            "qt4-2:feasible": {
+              "episodes": 30,
+              "successes": 14
+            },
+            "qt4-2:infeasible": {
+              "episodes": 30,
+              "successes": 0
+            },
+            "qt4-3:feasible": {
+              "episodes": 30,
+              "successes": 3
+            },
+            "qt4-3:infeasible": {
+              "episodes": 30,
+              "successes": 0
+            }
+          }
+        },
+        "GV2": {
+          "episodes": 360,
+          "successes": 127,
+          "success_rate": 0.3527777777777778,
+          "unfinished": 3,
+          "unique_tasks": 120,
+          "by_actor_seed": {
+            "42": {
+              "episodes": 120,
+              "successes": 42,
+              "all_totals": {
+                "actor_tokens": 5122842,
+                "judge_tokens": 418872,
+                "actor_model_calls": 810,
+                "judge_model_calls": 210,
+                "invalid_proposed": 71,
+                "invalid_reached_executor": 20,
+                "structured_rejections": 13,
+                "executed_tool_calls": 638,
+                "guard_blocked": 41,
+                "extra_queries": 239,
+                "verification_failures": 5,
+                "recovered_actions": 21,
+                "recovery_budget_blocked": 3,
+                "duration_seconds": 4767.6388517529995,
+                "retrieval_tokens": 99,
+                "actor_latency": 2496.661879332736,
+                "judge_latency": 71.51514230083558,
+                "extra_query_latency": 16.973037707124604,
+                "tokenization_calls": 0,
+                "tokenization_latency": 0
+              }
+            },
+            "43": {
+              "episodes": 120,
+              "successes": 42,
+              "all_totals": {
+                "actor_tokens": 5188062,
+                "judge_tokens": 423882,
+                "actor_model_calls": 821,
+                "judge_model_calls": 207,
+                "invalid_proposed": 84,
+                "invalid_reached_executor": 25,
+                "structured_rejections": 9,
+                "executed_tool_calls": 640,
+                "guard_blocked": 52,
+                "extra_queries": 253,
+                "verification_failures": 9,
+                "recovered_actions": 28,
+                "recovery_budget_blocked": 2,
+                "duration_seconds": 4689.457564549113,
+                "retrieval_tokens": 216,
+                "actor_latency": 2391.2518540121673,
+                "judge_latency": 71.4985331321659,
+                "extra_query_latency": 17.024245999840787,
+                "tokenization_calls": 0,
+                "tokenization_latency": 0
+              }
+            },
+            "44": {
+              "episodes": 120,
+              "successes": 43,
+              "all_totals": {
+                "actor_tokens": 5473195,
+                "judge_tokens": 386103,
+                "actor_model_calls": 845,
+                "judge_model_calls": 198,
+                "invalid_proposed": 89,
+                "invalid_reached_executor": 22,
+                "structured_rejections": 9,
+                "executed_tool_calls": 658,
+                "guard_blocked": 59,
+                "extra_queries": 276,
+                "verification_failures": 7,
+                "recovered_actions": 32,
+                "recovery_budget_blocked": 1,
+                "duration_seconds": 5025.710539420048,
+                "retrieval_tokens": 195,
+                "actor_latency": 2682.987515940942,
+                "judge_latency": 64.00318928604247,
+                "extra_query_latency": 18.44877731226734,
+                "tokenization_calls": 0,
+                "tokenization_latency": 0
+              }
+            }
+          },
+          "evaluator_errors": 0,
+          "all_totals": {
+            "actor_tokens": 15784099,
+            "judge_tokens": 1228857,
+            "actor_model_calls": 2476,
+            "judge_model_calls": 615,
+            "invalid_proposed": 244,
+            "invalid_reached_executor": 67,
+            "structured_rejections": 31,
+            "executed_tool_calls": 1936,
+            "guard_blocked": 152,
+            "extra_queries": 768,
+            "verification_failures": 21,
+            "recovered_actions": 81,
+            "recovery_budget_blocked": 6,
+            "duration_seconds": 14482.80695572216,
+            "retrieval_tokens": 510,
+            "actor_latency": 7570.901249285846,
+            "judge_latency": 207.01686471904395,
+            "extra_query_latency": 52.44606101923273,
+            "tokenization_calls": 0,
+            "tokenization_latency": 0
+          },
+          "successful_means": {
+            "actor_tokens": 33675.330708661415,
+            "judge_tokens": 2351.8582677165355,
+            "actor_model_calls": 5.661417322834645,
+            "judge_model_calls": 1.6299212598425197,
+            "invalid_proposed": 0.3228346456692913,
+            "invalid_reached_executor": 0.07086614173228346,
+            "structured_rejections": 0.023622047244094488,
+            "executed_tool_calls": 4.4015748031496065,
+            "guard_blocked": 0.23622047244094488,
+            "extra_queries": 1.9133858267716535,
+            "verification_failures": 0.047244094488188976,
+            "recovered_actions": 0.11023622047244094,
+            "recovery_budget_blocked": 0.007874015748031496,
+            "duration_seconds": 24.784800998362854,
+            "retrieval_tokens": 0.44881889763779526,
+            "actor_latency": 13.2525253057396,
+            "judge_latency": 0.5317717831484207,
+            "extra_query_latency": 0.13800915868610958,
+            "tokenization_calls": 0.0,
+            "tokenization_latency": 0.0
+          },
+          "categories": {
+            "qt1:feasible": {
+              "episodes": 30,
+              "successes": 17
+            },
+            "qt1:infeasible": {
+              "episodes": 30,
+              "successes": 18
+            },
+            "qt2:feasible": {
+              "episodes": 30,
+              "successes": 14
+            },
+            "qt2:infeasible": {
+              "episodes": 30,
+              "successes": 8
+            },
+            "qt3:feasible": {
+              "episodes": 30,
+              "successes": 21
+            },
+            "qt3:infeasible": {
+              "episodes": 30,
+              "successes": 20
+            },
+            "qt4-1:feasible": {
+              "episodes": 30,
+              "successes": 8
+            },
+            "qt4-1:infeasible": {
+              "episodes": 30,
+              "successes": 6
+            },
+            "qt4-2:feasible": {
+              "episodes": 30,
+              "successes": 12
+            },
+            "qt4-2:infeasible": {
+              "episodes": 30,
+              "successes": 0
+            },
+            "qt4-3:feasible": {
+              "episodes": 30,
+              "successes": 3
+            },
+            "qt4-3:infeasible": {
+              "episodes": 30,
+              "successes": 0
+            }
+          }
+        },
+        "GC2": {
+          "episodes": 360,
+          "successes": 124,
+          "success_rate": 0.34444444444444444,
+          "unfinished": 15,
+          "unique_tasks": 120,
+          "by_actor_seed": {
+            "42": {
+              "episodes": 120,
+              "successes": 38,
+              "all_totals": {
+                "actor_tokens": 5445018,
+                "judge_tokens": 444519,
+                "actor_model_calls": 900,
+                "judge_model_calls": 201,
+                "invalid_proposed": 102,
+                "invalid_reached_executor": 30,
+                "structured_rejections": 10,
+                "executed_tool_calls": 712,
+                "guard_blocked": 62,
+                "extra_queries": 224,
+                "verification_failures": 0,
+                "recovered_actions": 41,
+                "recovery_budget_blocked": 0,
+                "duration_seconds": 5132.411179833754,
+                "retrieval_tokens": 319,
+                "actor_latency": 2744.058852429356,
+                "judge_latency": 69.5213476139179,
+                "extra_query_latency": 13.008238496171543,
+                "tokenization_calls": 1004,
+                "tokenization_latency": 55.293880662473384
+              }
+            },
+            "43": {
+              "episodes": 120,
+              "successes": 38,
+              "all_totals": {
+                "actor_tokens": 5365350,
+                "judge_tokens": 358158,
+                "actor_model_calls": 891,
+                "judge_model_calls": 192,
+                "invalid_proposed": 94,
+                "invalid_reached_executor": 22,
+                "structured_rejections": 17,
+                "executed_tool_calls": 705,
+                "guard_blocked": 55,
+                "extra_queries": 190,
+                "verification_failures": 0,
+                "recovered_actions": 37,
+                "recovery_budget_blocked": 0,
+                "duration_seconds": 5381.862382342777,
+                "retrieval_tokens": 187,
+                "actor_latency": 2985.374004978279,
+                "judge_latency": 64.30802862386918,
+                "extra_query_latency": 10.693631508067483,
+                "tokenization_calls": 996,
+                "tokenization_latency": 52.31309197517112
+              }
+            },
+            "44": {
+              "episodes": 120,
+              "successes": 48,
+              "all_totals": {
+                "actor_tokens": 5508170,
+                "judge_tokens": 399390,
+                "actor_model_calls": 908,
+                "judge_model_calls": 198,
+                "invalid_proposed": 89,
+                "invalid_reached_executor": 22,
+                "structured_rejections": 8,
+                "executed_tool_calls": 724,
+                "guard_blocked": 59,
+                "extra_queries": 217,
+                "verification_failures": 0,
+                "recovered_actions": 44,
+                "recovery_budget_blocked": 0,
+                "duration_seconds": 5094.777796321141,
+                "retrieval_tokens": 419,
+                "actor_latency": 2859.052812414244,
+                "judge_latency": 62.97002936096396,
+                "extra_query_latency": 12.098512204218423,
+                "tokenization_calls": 1040,
+                "tokenization_latency": 57.96488884926657
+              }
+            }
+          },
+          "evaluator_errors": 0,
+          "all_totals": {
+            "actor_tokens": 16318538,
+            "judge_tokens": 1202067,
+            "actor_model_calls": 2699,
+            "judge_model_calls": 591,
+            "invalid_proposed": 285,
+            "invalid_reached_executor": 74,
+            "structured_rejections": 35,
+            "executed_tool_calls": 2141,
+            "guard_blocked": 176,
+            "extra_queries": 631,
+            "verification_failures": 0,
+            "recovered_actions": 122,
+            "recovery_budget_blocked": 0,
+            "duration_seconds": 15609.051358497672,
+            "retrieval_tokens": 925,
+            "actor_latency": 8588.48566982188,
+            "judge_latency": 196.79940559875104,
+            "extra_query_latency": 35.80038220845745,
+            "tokenization_calls": 3040,
+            "tokenization_latency": 165.57186148691108
+          },
+          "successful_means": {
+            "actor_tokens": 30392.104838709678,
+            "judge_tokens": 2449.0887096774195,
+            "actor_model_calls": 5.483870967741935,
+            "judge_model_calls": 1.7661290322580645,
+            "invalid_proposed": 0.2903225806451613,
+            "invalid_reached_executor": 0.0967741935483871,
+            "structured_rejections": 0.024193548387096774,
+            "executed_tool_calls": 4.290322580645161,
+            "guard_blocked": 0.1693548387096774,
+            "extra_queries": 1.153225806451613,
+            "verification_failures": 0.0,
+            "recovered_actions": 0.16129032258064516,
+            "recovery_budget_blocked": 0.0,
+            "duration_seconds": 20.150995751192713,
+            "retrieval_tokens": 0.5887096774193549,
+            "actor_latency": 13.04709490077878,
+            "judge_latency": 0.5704444722728259,
+            "extra_query_latency": 0.06162109493039503,
+            "tokenization_calls": 4.661290322580645,
+            "tokenization_latency": 0.25263969222860105
+          },
+          "categories": {
+            "qt1:feasible": {
+              "episodes": 30,
+              "successes": 18
+            },
+            "qt1:infeasible": {
+              "episodes": 30,
+              "successes": 19
+            },
+            "qt2:feasible": {
+              "episodes": 30,
+              "successes": 13
+            },
+            "qt2:infeasible": {
+              "episodes": 30,
+              "successes": 4
+            },
+            "qt3:feasible": {
+              "episodes": 30,
+              "successes": 20
+            },
+            "qt3:infeasible": {
+              "episodes": 30,
+              "successes": 20
+            },
+            "qt4-1:feasible": {
+              "episodes": 30,
+              "successes": 3
+            },
+            "qt4-1:infeasible": {
+              "episodes": 30,
+              "successes": 9
+            },
+            "qt4-2:feasible": {
+              "episodes": 30,
+              "successes": 11
+            },
+            "qt4-2:infeasible": {
+              "episodes": 30,
+              "successes": 0
+            },
+            "qt4-3:feasible": {
+              "episodes": 30,
+              "successes": 4
+            },
+            "qt4-3:infeasible": {
+              "episodes": 30,
+              "successes": 3
+            }
+          }
+        }
+      },
+      "paired": {
+        "GV": {
+          "wins": 8,
+          "losses": 11,
+          "p_exact": 0.6476058959960938,
+          "success_delta": -0.025,
+          "success_delta_ci95": [
+            -0.09166666666666666,
+            0.041666666666666664
+          ],
+          "actor_token_delta": 1950.1083333333333,
+          "p_holm": 1.0
+        },
+        "GC": {
+          "wins": 10,
+          "losses": 6,
+          "p_exact": 0.454498291015625,
+          "success_delta": 0.03333333333333333,
+          "success_delta_ci95": [
+            -0.025,
+            0.1
+          ],
+          "actor_token_delta": 555.0166666666667,
+          "p_holm": 1.0
+        },
+        "GV2": {
+          "wins": 10,
+          "losses": 9,
+          "p_exact": 1.0,
+          "success_delta": 0.008333333333333333,
+          "success_delta_ci95": [
+            -0.058333333333333334,
+            0.075
+          ],
+          "actor_token_delta": -1714.2666666666667,
+          "p_holm": 1.0
+        },
+        "GC2": {
+          "wins": 7,
+          "losses": 10,
+          "p_exact": 0.629058837890625,
+          "success_delta": -0.025,
+          "success_delta_ci95": [
+            -0.09166666666666666,
+            0.041666666666666664
+          ],
+          "actor_token_delta": 970.5333333333333,
+          "p_holm": 1.0
+        }
+      },
+      "artifact_files": 17768,
+      "primary_actor_seed": 42,
+      "repeated_seed_diagnostics": {
+        "GV": {
+          "task_clustered_delta_ci95": [
+            -0.06666666666666667,
+            0.02222222222222222
+          ],
+          "by_actor_seed": {
+            "42": {
+              "wins": 8,
+              "losses": 11,
+              "p_exact": 0.6476058959960938,
+              "success_delta": -0.025,
+              "success_delta_ci95": [
+                -0.09166666666666666,
+                0.041666666666666664
+              ],
+              "actor_token_delta": 1950.1083333333333
+            },
+            "43": {
+              "wins": 9,
+              "losses": 11,
+              "p_exact": 0.8238029479980469,
+              "success_delta": -0.016666666666666666,
+              "success_delta_ci95": [
+                -0.08333333333333333,
+                0.05
+              ],
+              "actor_token_delta": -5375.716666666666
+            },
+            "44": {
+              "wins": 9,
+              "losses": 12,
+              "p_exact": 0.6636238098144531,
+              "success_delta": -0.025,
+              "success_delta_ci95": [
+                -0.1,
+                0.05
+              ],
+              "actor_token_delta": -2056.2
+            }
+          },
+          "independent_tasks": 120,
+          "repeated_runs_per_task": 3
+        },
+        "GC": {
+          "task_clustered_delta_ci95": [
+            -0.030555555555555555,
+            0.03611111111111111
+          ],
+          "by_actor_seed": {
+            "42": {
+              "wins": 10,
+              "losses": 6,
+              "p_exact": 0.454498291015625,
+              "success_delta": 0.03333333333333333,
+              "success_delta_ci95": [
+                -0.025,
+                0.1
+              ],
+              "actor_token_delta": 555.0166666666667
+            },
+            "43": {
+              "wins": 10,
+              "losses": 7,
+              "p_exact": 0.629058837890625,
+              "success_delta": 0.025,
+              "success_delta_ci95": [
+                -0.03333333333333333,
+                0.09166666666666666
+              ],
+              "actor_token_delta": -2358.175
+            },
+            "44": {
+              "wins": 7,
+              "losses": 13,
+              "p_exact": 0.26317596435546875,
+              "success_delta": -0.05,
+              "success_delta_ci95": [
+                -0.11666666666666667,
+                0.016666666666666666
+              ],
+              "actor_token_delta": 428.925
+            }
+          },
+          "independent_tasks": 120,
+          "repeated_runs_per_task": 3
+        },
+        "GV2": {
+          "task_clustered_delta_ci95": [
+            -0.05277777777777778,
+            0.027777777777777776
+          ],
+          "by_actor_seed": {
+            "42": {
+              "wins": 10,
+              "losses": 9,
+              "p_exact": 1.0,
+              "success_delta": 0.008333333333333333,
+              "success_delta_ci95": [
+                -0.058333333333333334,
+                0.075
+              ],
+              "actor_token_delta": -1714.2666666666667
+            },
+            "43": {
+              "wins": 9,
+              "losses": 11,
+              "p_exact": 0.8238029479980469,
+              "success_delta": -0.016666666666666666,
+              "success_delta_ci95": [
+                -0.08333333333333333,
+                0.05
+              ],
+              "actor_token_delta": -4294.15
+            },
+            "44": {
+              "wins": 9,
+              "losses": 13,
+              "p_exact": 0.5234670639038086,
+              "success_delta": -0.03333333333333333,
+              "success_delta_ci95": [
+                -0.10833333333333334,
+                0.041666666666666664
+              ],
+              "actor_token_delta": -767.35
+            }
+          },
+          "independent_tasks": 120,
+          "repeated_runs_per_task": 3
+        },
+        "GC2": {
+          "task_clustered_delta_ci95": [
+            -0.06111111111111111,
+            0.016666666666666666
+          ],
+          "by_actor_seed": {
+            "42": {
+              "wins": 7,
+              "losses": 10,
+              "p_exact": 0.629058837890625,
+              "success_delta": -0.025,
+              "success_delta_ci95": [
+                -0.09166666666666666,
+                0.041666666666666664
+              ],
+              "actor_token_delta": 970.5333333333333
+            },
+            "43": {
+              "wins": 7,
+              "losses": 13,
+              "p_exact": 0.26317596435546875,
+              "success_delta": -0.05,
+              "success_delta_ci95": [
+                -0.11666666666666667,
+                0.016666666666666666
+              ],
+              "actor_token_delta": -2816.75
+            },
+            "44": {
+              "wins": 12,
+              "losses": 11,
+              "p_exact": 1.0,
+              "success_delta": 0.008333333333333333,
+              "success_delta_ci95": [
+                -0.06666666666666667,
+                0.08333333333333333
+              ],
+              "actor_token_delta": -475.89166666666665
+            }
+          },
+          "independent_tasks": 120,
+          "repeated_runs_per_task": 3
+        }
+      },
+      "statistical_unit": "task; primary McNemar uses one predeclared actor seed; repeat CI resamples task clusters within categories"
+    },
+    "modules": {
+      "source": "runs/harness-v2/primary-v2/modules/report.json",
+      "sha256": "bed28b4fb310f66bc97b9a06706a48f37a6edd193ae980b969d8feb5fd60ffd7",
+      "verified": true,
+      "phase": "dev",
+      "commit": "0d18965607fab7a71f2959a322502462d969e437",
+      "arms": {
+        "G": {
+          "episodes": 360,
+          "successes": 136,
+          "success_rate": 0.37777777777777777,
+          "unfinished": 4,
+          "unique_tasks": 120,
+          "by_actor_seed": {
+            "42": {
+              "episodes": 120,
+              "successes": 42,
+              "all_totals": {
+                "actor_tokens": 5338852,
+                "judge_tokens": 456975,
+                "actor_model_calls": 825,
+                "judge_model_calls": 210,
+                "invalid_proposed": 57,
+                "invalid_reached_executor": 15,
+                "structured_rejections": 6,
+                "executed_tool_calls": 664,
+                "guard_blocked": 36,
+                "extra_queries": 178,
+                "verification_failures": 0,
+                "recovered_actions": 33,
+                "recovery_budget_blocked": 0,
+                "duration_seconds": 4827.037307358027,
+                "retrieval_tokens": 288,
+                "actor_latency": 2470.4103645343857,
+                "judge_latency": 74.13285522311344,
+                "extra_query_latency": 10.210794752871152,
+                "tokenization_calls": 0,
+                "tokenization_latency": 0
+              }
+            },
+            "43": {
+              "episodes": 120,
+              "successes": 47,
+              "all_totals": {
+                "actor_tokens": 5161312,
+                "judge_tokens": 411291,
+                "actor_model_calls": 832,
+                "judge_model_calls": 210,
+                "invalid_proposed": 76,
+                "invalid_reached_executor": 22,
+                "structured_rejections": 10,
+                "executed_tool_calls": 660,
+                "guard_blocked": 44,
+                "extra_queries": 182,
+                "verification_failures": 0,
+                "recovered_actions": 33,
+                "recovery_budget_blocked": 0,
+                "duration_seconds": 4643.885145096981,
+                "retrieval_tokens": 201,
+                "actor_latency": 2420.4839988155873,
+                "judge_latency": 69.43102956487564,
+                "extra_query_latency": 10.764340731984703,
+                "tokenization_calls": 0,
+                "tokenization_latency": 0
+              }
+            },
+            "44": {
+              "episodes": 120,
+              "successes": 47,
+              "all_totals": {
+                "actor_tokens": 5200993,
+                "judge_tokens": 452067,
+                "actor_model_calls": 826,
+                "judge_model_calls": 210,
+                "invalid_proposed": 82,
+                "invalid_reached_executor": 18,
+                "structured_rejections": 10,
+                "executed_tool_calls": 642,
+                "guard_blocked": 54,
+                "extra_queries": 185,
+                "verification_failures": 0,
+                "recovered_actions": 31,
+                "recovery_budget_blocked": 0,
+                "duration_seconds": 4430.790222700947,
+                "retrieval_tokens": 365,
+                "actor_latency": 2484.761926480045,
+                "judge_latency": 68.6350663821504,
+                "extra_query_latency": 10.68842786285677,
+                "tokenization_calls": 0,
+                "tokenization_latency": 0
+              }
+            }
+          },
+          "evaluator_errors": 0,
+          "all_totals": {
+            "actor_tokens": 15701157,
+            "judge_tokens": 1320333,
+            "actor_model_calls": 2483,
+            "judge_model_calls": 630,
+            "invalid_proposed": 215,
+            "invalid_reached_executor": 55,
+            "structured_rejections": 26,
+            "executed_tool_calls": 1966,
+            "guard_blocked": 134,
+            "extra_queries": 545,
+            "verification_failures": 0,
+            "recovered_actions": 97,
+            "recovery_budget_blocked": 0,
+            "duration_seconds": 13901.712675155955,
+            "retrieval_tokens": 854,
+            "actor_latency": 7375.656289830018,
+            "judge_latency": 212.19895117013948,
+            "extra_query_latency": 31.663563347712625,
+            "tokenization_calls": 0,
+            "tokenization_latency": 0
+          },
+          "successful_means": {
+            "actor_tokens": 32612.933823529413,
+            "judge_tokens": 2558.889705882353,
+            "actor_model_calls": 5.639705882352941,
+            "judge_model_calls": 1.6102941176470589,
+            "invalid_proposed": 0.25735294117647056,
+            "invalid_reached_executor": 0.07352941176470588,
+            "structured_rejections": 0.022058823529411766,
+            "executed_tool_calls": 4.455882352941177,
+            "guard_blocked": 0.16176470588235295,
+            "extra_queries": 1.0955882352941178,
+            "verification_failures": 0.0,
+            "recovered_actions": 0.1323529411764706,
+            "recovery_budget_blocked": 0.0,
+            "duration_seconds": 23.80019688009441,
+            "retrieval_tokens": 0.0,
+            "actor_latency": 12.884908131626991,
+            "judge_latency": 0.533208225889693,
+            "extra_query_latency": 0.05814209429359728,
+            "tokenization_calls": 0.0,
+            "tokenization_latency": 0.0
+          },
+          "categories": {
+            "qt1:feasible": {
+              "episodes": 30,
+              "successes": 18
+            },
+            "qt1:infeasible": {
+              "episodes": 30,
+              "successes": 21
+            },
+            "qt2:feasible": {
+              "episodes": 30,
+              "successes": 12
+            },
+            "qt2:infeasible": {
+              "episodes": 30,
+              "successes": 5
+            },
+            "qt3:feasible": {
+              "episodes": 30,
+              "successes": 23
+            },
+            "qt3:infeasible": {
+              "episodes": 30,
+              "successes": 20
+            },
+            "qt4-1:feasible": {
+              "episodes": 30,
+              "successes": 7
+            },
+            "qt4-1:infeasible": {
+              "episodes": 30,
+              "successes": 8
+            },
+            "qt4-2:feasible": {
+              "episodes": 30,
+              "successes": 19
+            },
+            "qt4-2:infeasible": {
+              "episodes": 30,
+              "successes": 0
+            },
+            "qt4-3:feasible": {
+              "episodes": 30,
+              "successes": 2
+            },
+            "qt4-3:infeasible": {
+              "episodes": 30,
+              "successes": 1
+            }
+          }
+        },
+        "GV": {
+          "episodes": 360,
+          "successes": 126,
+          "success_rate": 0.35,
+          "unfinished": 4,
+          "unique_tasks": 120,
+          "by_actor_seed": {
+            "42": {
+              "episodes": 120,
+              "successes": 41,
+              "all_totals": {
+                "actor_tokens": 5572304,
+                "judge_tokens": 430962,
+                "actor_model_calls": 861,
+                "judge_model_calls": 207,
+                "invalid_proposed": 72,
+                "invalid_reached_executor": 18,
+                "structured_rejections": 7,
+                "executed_tool_calls": 687,
+                "guard_blocked": 49,
+                "extra_queries": 318,
+                "verification_failures": 0,
+                "recovered_actions": 34,
+                "recovery_budget_blocked": 2,
+                "duration_seconds": 4834.372486882057,
+                "retrieval_tokens": 389,
+                "actor_latency": 2561.651157468121,
+                "judge_latency": 93.06043336709263,
+                "extra_query_latency": 24.559593741956633,
+                "tokenization_calls": 0,
+                "tokenization_latency": 0
+              }
+            },
+            "43": {
+              "episodes": 120,
+              "successes": 42,
+              "all_totals": {
+                "actor_tokens": 5343497,
+                "judge_tokens": 406878,
+                "actor_model_calls": 833,
+                "judge_model_calls": 204,
+                "invalid_proposed": 87,
+                "invalid_reached_executor": 15,
+                "structured_rejections": 12,
+                "executed_tool_calls": 639,
+                "guard_blocked": 62,
+                "extra_queries": 343,
+                "verification_failures": 0,
+                "recovered_actions": 37,
+                "recovery_budget_blocked": 2,
+                "duration_seconds": 4959.528345708037,
+                "retrieval_tokens": 200,
+                "actor_latency": 2723.836150779418,
+                "judge_latency": 68.7860842559021,
+                "extra_query_latency": 26.02891364201787,
+                "tokenization_calls": 0,
+                "tokenization_latency": 0
+              }
+            },
+            "44": {
+              "episodes": 120,
+              "successes": 43,
+              "all_totals": {
+                "actor_tokens": 5652076,
+                "judge_tokens": 427662,
+                "actor_model_calls": 851,
+                "judge_model_calls": 201,
+                "invalid_proposed": 85,
+                "invalid_reached_executor": 15,
+                "structured_rejections": 16,
+                "executed_tool_calls": 661,
+                "guard_blocked": 55,
+                "extra_queries": 348,
+                "verification_failures": 1,
+                "recovered_actions": 36,
+                "recovery_budget_blocked": 1,
+                "duration_seconds": 5145.398265459895,
+                "retrieval_tokens": 528,
+                "actor_latency": 2854.3876769514463,
+                "judge_latency": 67.67186043204856,
+                "extra_query_latency": 26.210203167807776,
+                "tokenization_calls": 0,
+                "tokenization_latency": 0
+              }
+            }
+          },
+          "evaluator_errors": 0,
+          "all_totals": {
+            "actor_tokens": 16567877,
+            "judge_tokens": 1265502,
+            "actor_model_calls": 2545,
+            "judge_model_calls": 612,
+            "invalid_proposed": 244,
+            "invalid_reached_executor": 48,
+            "structured_rejections": 35,
+            "executed_tool_calls": 1987,
+            "guard_blocked": 166,
+            "extra_queries": 1009,
+            "verification_failures": 1,
+            "recovered_actions": 107,
+            "recovery_budget_blocked": 5,
+            "duration_seconds": 14939.299098049989,
+            "retrieval_tokens": 1117,
+            "actor_latency": 8139.874985198985,
+            "judge_latency": 229.51837805504329,
+            "extra_query_latency": 76.79871055178228,
+            "tokenization_calls": 0,
+            "tokenization_latency": 0
+          },
+          "successful_means": {
+            "actor_tokens": 32650.73015873016,
+            "judge_tokens": 2530.714285714286,
+            "actor_model_calls": 5.515873015873016,
+            "judge_model_calls": 1.7142857142857142,
+            "invalid_proposed": 0.24603174603174602,
+            "invalid_reached_executor": 0.06349206349206349,
+            "structured_rejections": 0.015873015873015872,
+            "executed_tool_calls": 4.333333333333333,
+            "guard_blocked": 0.16666666666666666,
+            "extra_queries": 2.0,
+            "verification_failures": 0.007936507936507936,
+            "recovered_actions": 0.15873015873015872,
+            "recovery_budget_blocked": 0.0,
+            "duration_seconds": 23.973751376102594,
+            "retrieval_tokens": 0.746031746031746,
+            "actor_latency": 12.404642714947899,
+            "judge_latency": 0.7744880466496051,
+            "extra_query_latency": 0.15496574724573522,
+            "tokenization_calls": 0.0,
+            "tokenization_latency": 0.0
+          },
+          "categories": {
+            "qt1:feasible": {
+              "episodes": 30,
+              "successes": 17
+            },
+            "qt1:infeasible": {
+              "episodes": 30,
+              "successes": 21
+            },
+            "qt2:feasible": {
+              "episodes": 30,
+              "successes": 7
+            },
+            "qt2:infeasible": {
+              "episodes": 30,
+              "successes": 6
+            },
+            "qt3:feasible": {
+              "episodes": 30,
+              "successes": 20
+            },
+            "qt3:infeasible": {
+              "episodes": 30,
+              "successes": 19
+            },
+            "qt4-1:feasible": {
+              "episodes": 30,
+              "successes": 7
+            },
+            "qt4-1:infeasible": {
+              "episodes": 30,
+              "successes": 7
+            },
+            "qt4-2:feasible": {
+              "episodes": 30,
+              "successes": 16
+            },
+            "qt4-2:infeasible": {
+              "episodes": 30,
+              "successes": 0
+            },
+            "qt4-3:feasible": {
+              "episodes": 30,
+              "successes": 4
+            },
+            "qt4-3:infeasible": {
+              "episodes": 30,
+              "successes": 2
+            }
+          }
+        },
+        "GC": {
+          "episodes": 360,
+          "successes": 128,
+          "success_rate": 0.35555555555555557,
+          "unfinished": 7,
+          "unique_tasks": 120,
+          "by_actor_seed": {
+            "42": {
+              "episodes": 120,
+              "successes": 42,
+              "all_totals": {
+                "actor_tokens": 5535968,
+                "judge_tokens": 448356,
+                "actor_model_calls": 867,
+                "judge_model_calls": 204,
+                "invalid_proposed": 93,
+                "invalid_reached_executor": 22,
+                "structured_rejections": 11,
+                "executed_tool_calls": 677,
+                "guard_blocked": 60,
+                "extra_queries": 218,
+                "verification_failures": 0,
+                "recovered_actions": 38,
+                "recovery_budget_blocked": 0,
+                "duration_seconds": 5325.583283059037,
+                "retrieval_tokens": 266,
+                "actor_latency": 2972.5823935660883,
+                "judge_latency": 72.65190615042229,
+                "extra_query_latency": 12.953554756793892,
+                "tokenization_calls": 0,
+                "tokenization_latency": 0
+              }
+            },
+            "43": {
+              "episodes": 120,
+              "successes": 44,
+              "all_totals": {
+                "actor_tokens": 5039801,
+                "judge_tokens": 399717,
+                "actor_model_calls": 823,
+                "judge_model_calls": 207,
+                "invalid_proposed": 77,
+                "invalid_reached_executor": 19,
+                "structured_rejections": 8,
+                "executed_tool_calls": 647,
+                "guard_blocked": 50,
+                "extra_queries": 196,
+                "verification_failures": 0,
+                "recovered_actions": 37,
+                "recovery_budget_blocked": 0,
+                "duration_seconds": 4462.258951899101,
+                "retrieval_tokens": 134,
+                "actor_latency": 2334.610796656576,
+                "judge_latency": 69.43060222294298,
+                "extra_query_latency": 11.509767043753527,
+                "tokenization_calls": 0,
+                "tokenization_latency": 0
+              }
+            },
+            "44": {
+              "episodes": 120,
+              "successes": 42,
+              "all_totals": {
+                "actor_tokens": 5581121,
+                "judge_tokens": 412902,
+                "actor_model_calls": 886,
+                "judge_model_calls": 195,
+                "invalid_proposed": 99,
+                "invalid_reached_executor": 27,
+                "structured_rejections": 9,
+                "executed_tool_calls": 698,
+                "guard_blocked": 63,
+                "extra_queries": 235,
+                "verification_failures": 0,
+                "recovered_actions": 36,
+                "recovery_budget_blocked": 0,
+                "duration_seconds": 5067.557225260884,
+                "retrieval_tokens": 179,
+                "actor_latency": 2903.9075269712775,
+                "judge_latency": 69.07798270205967,
+                "extra_query_latency": 22.547403805801878,
+                "tokenization_calls": 0,
+                "tokenization_latency": 0
+              }
+            }
+          },
+          "evaluator_errors": 0,
+          "all_totals": {
+            "actor_tokens": 16156890,
+            "judge_tokens": 1260975,
+            "actor_model_calls": 2576,
+            "judge_model_calls": 606,
+            "invalid_proposed": 269,
+            "invalid_reached_executor": 68,
+            "structured_rejections": 28,
+            "executed_tool_calls": 2022,
+            "guard_blocked": 173,
+            "extra_queries": 649,
+            "verification_failures": 0,
+            "recovered_actions": 111,
+            "recovery_budget_blocked": 0,
+            "duration_seconds": 14855.399460219021,
+            "retrieval_tokens": 579,
+            "actor_latency": 8211.100717193942,
+            "judge_latency": 211.16049107542494,
+            "extra_query_latency": 47.0107256063493,
+            "tokenization_calls": 0,
+            "tokenization_latency": 0
+          },
+          "successful_means": {
+            "actor_tokens": 30956.5,
+            "judge_tokens": 2519.7890625,
+            "actor_model_calls": 5.4921875,
+            "judge_model_calls": 1.640625,
+            "invalid_proposed": 0.2421875,
+            "invalid_reached_executor": 0.0234375,
+            "structured_rejections": 0.015625,
+            "executed_tool_calls": 4.2734375,
+            "guard_blocked": 0.203125,
+            "extra_queries": 1.0859375,
+            "verification_failures": 0.0,
+            "recovered_actions": 0.125,
+            "recovery_budget_blocked": 0.0,
+            "duration_seconds": 24.59832525057027,
+            "retrieval_tokens": 0.4921875,
+            "actor_latency": 12.649383984297629,
+            "judge_latency": 0.5792649538620935,
+            "extra_query_latency": 0.058848547406569196,
+            "tokenization_calls": 0.0,
+            "tokenization_latency": 0.0
+          },
+          "categories": {
+            "qt1:feasible": {
+              "episodes": 30,
+              "successes": 17
+            },
+            "qt1:infeasible": {
+              "episodes": 30,
+              "successes": 19
+            },
+            "qt2:feasible": {
+              "episodes": 30,
+              "successes": 10
+            },
+            "qt2:infeasible": {
+              "episodes": 30,
+              "successes": 6
+            },
+            "qt3:feasible": {
+              "episodes": 30,
+              "successes": 21
+            },
+            "qt3:infeasible": {
+              "episodes": 30,
+              "successes": 20
+            },
+            "qt4-1:feasible": {
+              "episodes": 30,
+              "successes": 8
+            },
+            "qt4-1:infeasible": {
+              "episodes": 30,
+              "successes": 7
+            },
+            "qt4-2:feasible": {
+              "episodes": 30,
+              "successes": 17
+            },
+            "qt4-2:infeasible": {
+              "episodes": 30,
+              "successes": 0
+            },
+            "qt4-3:feasible": {
+              "episodes": 30,
+              "successes": 2
+            },
+            "qt4-3:infeasible": {
+              "episodes": 30,
+              "successes": 1
+            }
+          }
+        },
+        "GV2": {
+          "episodes": 360,
+          "successes": 127,
+          "success_rate": 0.3527777777777778,
+          "unfinished": 2,
+          "unique_tasks": 120,
+          "by_actor_seed": {
+            "42": {
+              "episodes": 120,
+              "successes": 44,
+              "all_totals": {
+                "actor_tokens": 5312050,
+                "judge_tokens": 491493,
+                "actor_model_calls": 837,
+                "judge_model_calls": 210,
+                "invalid_proposed": 83,
+                "invalid_reached_executor": 20,
+                "structured_rejections": 8,
+                "executed_tool_calls": 654,
+                "guard_blocked": 55,
+                "extra_queries": 250,
+                "verification_failures": 0,
+                "recovered_actions": 39,
+                "recovery_budget_blocked": 0,
+                "duration_seconds": 5150.563417290832,
+                "retrieval_tokens": 279,
+                "actor_latency": 2633.4529187094304,
+                "judge_latency": 128.8649650477746,
+                "extra_query_latency": 17.66828768205596,
+                "tokenization_calls": 0,
+                "tokenization_latency": 0
+              }
+            },
+            "43": {
+              "episodes": 120,
+              "successes": 38,
+              "all_totals": {
+                "actor_tokens": 5415167,
+                "judge_tokens": 421200,
+                "actor_model_calls": 848,
+                "judge_model_calls": 204,
+                "invalid_proposed": 93,
+                "invalid_reached_executor": 24,
+                "structured_rejections": 13,
+                "executed_tool_calls": 658,
+                "guard_blocked": 58,
+                "extra_queries": 266,
+                "verification_failures": 0,
+                "recovered_actions": 41,
+                "recovery_budget_blocked": 2,
+                "duration_seconds": 5032.138849370967,
+                "retrieval_tokens": 389,
+                "actor_latency": 2578.870770104113,
+                "judge_latency": 68.00832260897732,
+                "extra_query_latency": 18.274386447912548,
+                "tokenization_calls": 0,
+                "tokenization_latency": 0
+              }
+            },
+            "44": {
+              "episodes": 120,
+              "successes": 45,
+              "all_totals": {
+                "actor_tokens": 5707861,
+                "judge_tokens": 495096,
+                "actor_model_calls": 865,
+                "judge_model_calls": 210,
+                "invalid_proposed": 87,
+                "invalid_reached_executor": 24,
+                "structured_rejections": 13,
+                "executed_tool_calls": 681,
+                "guard_blocked": 52,
+                "extra_queries": 269,
+                "verification_failures": 0,
+                "recovered_actions": 33,
+                "recovery_budget_blocked": 2,
+                "duration_seconds": 5085.5783133949735,
+                "retrieval_tokens": 361,
+                "actor_latency": 2810.7115539038496,
+                "judge_latency": 71.99555099094869,
+                "extra_query_latency": 17.883751688874327,
+                "tokenization_calls": 0,
+                "tokenization_latency": 0
+              }
+            }
+          },
+          "evaluator_errors": 0,
+          "all_totals": {
+            "actor_tokens": 16435078,
+            "judge_tokens": 1407789,
+            "actor_model_calls": 2550,
+            "judge_model_calls": 624,
+            "invalid_proposed": 263,
+            "invalid_reached_executor": 68,
+            "structured_rejections": 34,
+            "executed_tool_calls": 1993,
+            "guard_blocked": 165,
+            "extra_queries": 785,
+            "verification_failures": 0,
+            "recovered_actions": 113,
+            "recovery_budget_blocked": 4,
+            "duration_seconds": 15268.280580056773,
+            "retrieval_tokens": 1029,
+            "actor_latency": 8023.035242717393,
+            "judge_latency": 268.8688386477006,
+            "extra_query_latency": 53.826425818842836,
+            "tokenization_calls": 0,
+            "tokenization_latency": 0
+          },
+          "successful_means": {
+            "actor_tokens": 32580.212598425198,
+            "judge_tokens": 2963.551181102362,
+            "actor_model_calls": 5.669291338582677,
+            "judge_model_calls": 1.6299212598425197,
+            "invalid_proposed": 0.23622047244094488,
+            "invalid_reached_executor": 0.031496062992125984,
+            "structured_rejections": 0.007874015748031496,
+            "executed_tool_calls": 4.456692913385827,
+            "guard_blocked": 0.2047244094488189,
+            "extra_queries": 1.6929133858267718,
+            "verification_failures": 0.0,
+            "recovered_actions": 0.12598425196850394,
+            "recovery_budget_blocked": 0.007874015748031496,
+            "duration_seconds": 24.18761929027451,
+            "retrieval_tokens": 0.5826771653543307,
+            "actor_latency": 13.077283221308882,
+            "judge_latency": 0.6523844098888143,
+            "extra_query_latency": 0.1223427911019081,
+            "tokenization_calls": 0.0,
+            "tokenization_latency": 0.0
+          },
+          "categories": {
+            "qt1:feasible": {
+              "episodes": 30,
+              "successes": 17
+            },
+            "qt1:infeasible": {
+              "episodes": 30,
+              "successes": 20
+            },
+            "qt2:feasible": {
+              "episodes": 30,
+              "successes": 13
+            },
+            "qt2:infeasible": {
+              "episodes": 30,
+              "successes": 7
+            },
+            "qt3:feasible": {
+              "episodes": 30,
+              "successes": 21
+            },
+            "qt3:infeasible": {
+              "episodes": 30,
+              "successes": 17
+            },
+            "qt4-1:feasible": {
+              "episodes": 30,
+              "successes": 7
+            },
+            "qt4-1:infeasible": {
+              "episodes": 30,
+              "successes": 7
+            },
+            "qt4-2:feasible": {
+              "episodes": 30,
+              "successes": 15
+            },
+            "qt4-2:infeasible": {
+              "episodes": 30,
+              "successes": 0
+            },
+            "qt4-3:feasible": {
+              "episodes": 30,
+              "successes": 2
+            },
+            "qt4-3:infeasible": {
+              "episodes": 30,
+              "successes": 1
+            }
+          }
+        },
+        "GC2": {
+          "episodes": 360,
+          "successes": 116,
+          "success_rate": 0.32222222222222224,
+          "unfinished": 14,
+          "unique_tasks": 120,
+          "by_actor_seed": {
+            "42": {
+              "episodes": 120,
+              "successes": 36,
+              "all_totals": {
+                "actor_tokens": 5486076,
+                "judge_tokens": 428016,
+                "actor_model_calls": 893,
+                "judge_model_calls": 198,
+                "invalid_proposed": 118,
+                "invalid_reached_executor": 20,
+                "structured_rejections": 25,
+                "executed_tool_calls": 675,
+                "guard_blocked": 73,
+                "extra_queries": 207,
+                "verification_failures": 0,
+                "recovered_actions": 42,
+                "recovery_budget_blocked": 0,
+                "duration_seconds": 5747.765691693843,
+                "retrieval_tokens": 311,
+                "actor_latency": 3347.471320921817,
+                "judge_latency": 83.30613768618787,
+                "extra_query_latency": 12.148945077031385,
+                "tokenization_calls": 1010,
+                "tokenization_latency": 52.150153189577395
+              }
+            },
+            "43": {
+              "episodes": 120,
+              "successes": 36,
+              "all_totals": {
+                "actor_tokens": 5318359,
+                "judge_tokens": 367047,
+                "actor_model_calls": 884,
+                "judge_model_calls": 195,
+                "invalid_proposed": 94,
+                "invalid_reached_executor": 18,
+                "structured_rejections": 18,
+                "executed_tool_calls": 694,
+                "guard_blocked": 58,
+                "extra_queries": 200,
+                "verification_failures": 0,
+                "recovered_actions": 35,
+                "recovery_budget_blocked": 0,
+                "duration_seconds": 5128.710550393851,
+                "retrieval_tokens": 317,
+                "actor_latency": 2809.7143732305267,
+                "judge_latency": 61.22760801578988,
+                "extra_query_latency": 11.10790475588874,
+                "tokenization_calls": 966,
+                "tokenization_latency": 47.890902182261925
+              }
+            },
+            "44": {
+              "episodes": 120,
+              "successes": 44,
+              "all_totals": {
+                "actor_tokens": 5415580,
+                "judge_tokens": 434505,
+                "actor_model_calls": 881,
+                "judge_model_calls": 204,
+                "invalid_proposed": 98,
+                "invalid_reached_executor": 23,
+                "structured_rejections": 17,
+                "executed_tool_calls": 690,
+                "guard_blocked": 58,
+                "extra_queries": 222,
+                "verification_failures": 0,
+                "recovered_actions": 33,
+                "recovery_budget_blocked": 0,
+                "duration_seconds": 5083.801911505958,
+                "retrieval_tokens": 434,
+                "actor_latency": 2910.3920685606136,
+                "judge_latency": 68.23514452381642,
+                "extra_query_latency": 12.44654614891624,
+                "tokenization_calls": 994,
+                "tokenization_latency": 51.720185287704226
+              }
+            }
+          },
+          "evaluator_errors": 0,
+          "all_totals": {
+            "actor_tokens": 16220015,
+            "judge_tokens": 1229568,
+            "actor_model_calls": 2658,
+            "judge_model_calls": 597,
+            "invalid_proposed": 310,
+            "invalid_reached_executor": 61,
+            "structured_rejections": 60,
+            "executed_tool_calls": 2059,
+            "guard_blocked": 189,
+            "extra_queries": 629,
+            "verification_failures": 0,
+            "recovered_actions": 110,
+            "recovery_budget_blocked": 0,
+            "duration_seconds": 15960.278153593652,
+            "retrieval_tokens": 1062,
+            "actor_latency": 9067.577762712957,
+            "judge_latency": 212.76889022579417,
+            "extra_query_latency": 35.703395981836366,
+            "tokenization_calls": 2970,
+            "tokenization_latency": 151.76124065954355
+          },
+          "successful_means": {
+            "actor_tokens": 29217.612068965518,
+            "judge_tokens": 2719.0344827586205,
+            "actor_model_calls": 5.275862068965517,
+            "judge_model_calls": 1.8103448275862069,
+            "invalid_proposed": 0.2413793103448276,
+            "invalid_reached_executor": 0.017241379310344827,
+            "structured_rejections": 0.034482758620689655,
+            "executed_tool_calls": 4.043103448275862,
+            "guard_blocked": 0.1896551724137931,
+            "extra_queries": 0.9913793103448276,
+            "verification_failures": 0.0,
+            "recovered_actions": 0.12931034482758622,
+            "recovery_budget_blocked": 0.0,
+            "duration_seconds": 22.872449477644015,
+            "retrieval_tokens": 0.6637931034482759,
+            "actor_latency": 12.39926196956141,
+            "judge_latency": 0.5765144114138193,
+            "extra_query_latency": 0.05494980477469026,
+            "tokenization_calls": 4.413793103448276,
+            "tokenization_latency": 0.22454977788834968
+          },
+          "categories": {
+            "qt1:feasible": {
+              "episodes": 30,
+              "successes": 18
+            },
+            "qt1:infeasible": {
+              "episodes": 30,
+              "successes": 19
+            },
+            "qt2:feasible": {
+              "episodes": 30,
+              "successes": 7
+            },
+            "qt2:infeasible": {
+              "episodes": 30,
+              "successes": 7
+            },
+            "qt3:feasible": {
+              "episodes": 30,
+              "successes": 21
+            },
+            "qt3:infeasible": {
+              "episodes": 30,
+              "successes": 17
+            },
+            "qt4-1:feasible": {
+              "episodes": 30,
+              "successes": 7
+            },
+            "qt4-1:infeasible": {
+              "episodes": 30,
+              "successes": 9
+            },
+            "qt4-2:feasible": {
+              "episodes": 30,
+              "successes": 10
+            },
+            "qt4-2:infeasible": {
+              "episodes": 30,
+              "successes": 0
+            },
+            "qt4-3:feasible": {
+              "episodes": 30,
+              "successes": 1
+            },
+            "qt4-3:infeasible": {
+              "episodes": 30,
+              "successes": 0
+            }
+          }
+        }
+      },
+      "paired": {
+        "GV": {
+          "wins": 7,
+          "losses": 8,
+          "p_exact": 1.0,
+          "success_delta": -0.008333333333333333,
+          "success_delta_ci95": [
+            -0.06666666666666667,
+            0.058333333333333334
+          ],
+          "actor_token_delta": 1945.4333333333334,
+          "p_holm": 1.0
+        },
+        "GC": {
+          "wins": 8,
+          "losses": 8,
+          "p_exact": 1.0,
+          "success_delta": 0.0,
+          "success_delta_ci95": [
+            -0.058333333333333334,
+            0.058333333333333334
+          ],
+          "actor_token_delta": 1642.6333333333334,
+          "p_holm": 1.0
+        },
+        "GV2": {
+          "wins": 10,
+          "losses": 8,
+          "p_exact": 0.8145294189453125,
+          "success_delta": 0.016666666666666666,
+          "success_delta_ci95": [
+            -0.05,
+            0.08333333333333333
+          ],
+          "actor_token_delta": -223.35,
+          "p_holm": 1.0
+        },
+        "GC2": {
+          "wins": 6,
+          "losses": 12,
+          "p_exact": 0.237884521484375,
+          "success_delta": -0.05,
+          "success_delta_ci95": [
+            -0.10833333333333334,
+            0.016666666666666666
+          ],
+          "actor_token_delta": 1226.8666666666666,
+          "p_holm": 0.9515380859375
+        }
+      },
+      "artifact_files": 17774,
+      "primary_actor_seed": 42,
+      "repeated_seed_diagnostics": {
+        "GV": {
+          "task_clustered_delta_ci95": [
+            -0.06388888888888888,
+            0.008333333333333333
+          ],
+          "by_actor_seed": {
+            "42": {
+              "wins": 7,
+              "losses": 8,
+              "p_exact": 1.0,
+              "success_delta": -0.008333333333333333,
+              "success_delta_ci95": [
+                -0.06666666666666667,
+                0.058333333333333334
+              ],
+              "actor_token_delta": 1945.4333333333334
+            },
+            "43": {
+              "wins": 4,
+              "losses": 9,
+              "p_exact": 0.266845703125,
+              "success_delta": -0.041666666666666664,
+              "success_delta_ci95": [
+                -0.09166666666666666,
+                0.008333333333333333
+              ],
+              "actor_token_delta": 1518.2083333333333
+            },
+            "44": {
+              "wins": 5,
+              "losses": 9,
+              "p_exact": 0.4239501953125,
+              "success_delta": -0.03333333333333333,
+              "success_delta_ci95": [
+                -0.09166666666666666,
+                0.025
+              ],
+              "actor_token_delta": 3759.025
+            }
+          },
+          "independent_tasks": 120,
+          "repeated_runs_per_task": 3
+        },
+        "GC": {
+          "task_clustered_delta_ci95": [
+            -0.058333333333333334,
+            0.013888888888888888
+          ],
+          "by_actor_seed": {
+            "42": {
+              "wins": 8,
+              "losses": 8,
+              "p_exact": 1.0,
+              "success_delta": 0.0,
+              "success_delta_ci95": [
+                -0.058333333333333334,
+                0.058333333333333334
+              ],
+              "actor_token_delta": 1642.6333333333334
+            },
+            "43": {
+              "wins": 5,
+              "losses": 8,
+              "p_exact": 0.5810546875,
+              "success_delta": -0.025,
+              "success_delta_ci95": [
+                -0.08333333333333333,
+                0.03333333333333333
+              ],
+              "actor_token_delta": -1012.5916666666667
+            },
+            "44": {
+              "wins": 5,
+              "losses": 10,
+              "p_exact": 0.3017578125,
+              "success_delta": -0.041666666666666664,
+              "success_delta_ci95": [
+                -0.10833333333333334,
+                0.016666666666666666
+              ],
+              "actor_token_delta": 3167.733333333333
+            }
+          },
+          "independent_tasks": 120,
+          "repeated_runs_per_task": 3
+        },
+        "GV2": {
+          "task_clustered_delta_ci95": [
+            -0.058333333333333334,
+            0.008333333333333333
+          ],
+          "by_actor_seed": {
+            "42": {
+              "wins": 10,
+              "losses": 8,
+              "p_exact": 0.8145294189453125,
+              "success_delta": 0.016666666666666666,
+              "success_delta_ci95": [
+                -0.05,
+                0.08333333333333333
+              ],
+              "actor_token_delta": -223.35
+            },
+            "43": {
+              "wins": 1,
+              "losses": 10,
+              "p_exact": 0.01171875,
+              "success_delta": -0.075,
+              "success_delta_ci95": [
+                -0.125,
+                -0.025
+              ],
+              "actor_token_delta": 2115.4583333333335
+            },
+            "44": {
+              "wins": 6,
+              "losses": 8,
+              "p_exact": 0.79052734375,
+              "success_delta": -0.016666666666666666,
+              "success_delta_ci95": [
+                -0.075,
+                0.041666666666666664
+              ],
+              "actor_token_delta": 4223.9
+            }
+          },
+          "independent_tasks": 120,
+          "repeated_runs_per_task": 3
+        },
+        "GC2": {
+          "task_clustered_delta_ci95": [
+            -0.08888888888888888,
+            -0.019444444444444445
+          ],
+          "by_actor_seed": {
+            "42": {
+              "wins": 6,
+              "losses": 12,
+              "p_exact": 0.237884521484375,
+              "success_delta": -0.05,
+              "success_delta_ci95": [
+                -0.10833333333333334,
+                0.016666666666666666
+              ],
+              "actor_token_delta": 1226.8666666666666
+            },
+            "43": {
+              "wins": 3,
+              "losses": 14,
+              "p_exact": 0.012725830078125,
+              "success_delta": -0.09166666666666666,
+              "success_delta_ci95": [
+                -0.15833333333333333,
+                -0.03333333333333333
+              ],
+              "actor_token_delta": 1308.725
+            },
+            "44": {
+              "wins": 4,
+              "losses": 7,
+              "p_exact": 0.548828125,
+              "success_delta": -0.025,
+              "success_delta_ci95": [
+                -0.075,
+                0.025
+              ],
+              "actor_token_delta": 1788.225
+            }
+          },
+          "independent_tasks": 120,
+          "repeated_runs_per_task": 3
+        }
+      },
+      "statistical_unit": "task; primary McNemar uses one predeclared actor seed; repeat CI resamples task clusters within categories"
+    },
+    "integration": {
+      "source": "runs/harness-v2/primary-v2/integration/report.json",
+      "sha256": "c216190823567e408f127ff5661011412e4386ea2f9203ee3c97f2f9cf85139d",
+      "verified": true,
+      "phase": "dev",
+      "commit": "5c2e7621bfd4ecd3529e0fca27d314761458fdab",
+      "arms": {
+        "B0": {
+          "episodes": 360,
+          "successes": 120,
+          "success_rate": 0.3333333333333333,
+          "unfinished": 7,
+          "unique_tasks": 120,
+          "by_actor_seed": {
+            "42": {
+              "episodes": 120,
+              "successes": 43,
+              "all_totals": {
+                "actor_tokens": 5609086,
+                "judge_tokens": 412407,
+                "actor_model_calls": 882,
+                "judge_model_calls": 201,
+                "invalid_proposed": 88,
+                "invalid_reached_executor": 71,
+                "structured_rejections": 17,
+                "executed_tool_calls": 747,
+                "guard_blocked": 0,
+                "extra_queries": 0,
+                "verification_failures": 0,
+                "recovered_actions": 0,
+                "recovery_budget_blocked": 0,
+                "duration_seconds": 4976.145199989871,
+                "retrieval_tokens": 269,
+                "actor_latency": 2559.486466425209,
+                "judge_latency": 62.16331815117155,
+                "extra_query_latency": 0,
+                "tokenization_calls": 0,
+                "tokenization_latency": 0
+              }
+            },
+            "43": {
+              "episodes": 120,
+              "successes": 37,
+              "all_totals": {
+                "actor_tokens": 5403415,
+                "judge_tokens": 416235,
+                "actor_model_calls": 846,
+                "judge_model_calls": 198,
+                "invalid_proposed": 103,
+                "invalid_reached_executor": 82,
+                "structured_rejections": 21,
+                "executed_tool_calls": 708,
+                "guard_blocked": 0,
+                "extra_queries": 0,
+                "verification_failures": 0,
+                "recovered_actions": 0,
+                "recovery_budget_blocked": 0,
+                "duration_seconds": 5081.796010289865,
+                "retrieval_tokens": 338,
+                "actor_latency": 2526.888910666021,
+                "judge_latency": 71.4428454641311,
+                "extra_query_latency": 0,
+                "tokenization_calls": 0,
+                "tokenization_latency": 0
+              }
+            },
+            "44": {
+              "episodes": 120,
+              "successes": 40,
+              "all_totals": {
+                "actor_tokens": 5593796,
+                "judge_tokens": 442758,
+                "actor_model_calls": 859,
+                "judge_model_calls": 207,
+                "invalid_proposed": 81,
+                "invalid_reached_executor": 68,
+                "structured_rejections": 13,
+                "executed_tool_calls": 728,
+                "guard_blocked": 0,
+                "extra_queries": 0,
+                "verification_failures": 0,
+                "recovered_actions": 0,
+                "recovery_budget_blocked": 0,
+                "duration_seconds": 5226.777440528007,
+                "retrieval_tokens": 244,
+                "actor_latency": 2578.823297150375,
+                "judge_latency": 70.33638234078535,
+                "extra_query_latency": 0,
+                "tokenization_calls": 0,
+                "tokenization_latency": 0
+              }
+            }
+          },
+          "evaluator_errors": 0,
+          "all_totals": {
+            "actor_tokens": 16606297,
+            "judge_tokens": 1271400,
+            "actor_model_calls": 2587,
+            "judge_model_calls": 606,
+            "invalid_proposed": 272,
+            "invalid_reached_executor": 221,
+            "structured_rejections": 51,
+            "executed_tool_calls": 2183,
+            "guard_blocked": 0,
+            "extra_queries": 0,
+            "verification_failures": 0,
+            "recovered_actions": 0,
+            "recovery_budget_blocked": 0,
+            "duration_seconds": 15284.718650807743,
+            "retrieval_tokens": 851,
+            "actor_latency": 7665.198674241605,
+            "judge_latency": 203.942545956088,
+            "extra_query_latency": 0,
+            "tokenization_calls": 0,
+            "tokenization_latency": 0
+          },
+          "successful_means": {
+            "actor_tokens": 30736.783333333333,
+            "judge_tokens": 2453.875,
+            "actor_model_calls": 5.441666666666666,
+            "judge_model_calls": 1.725,
+            "invalid_proposed": 0.25,
+            "invalid_reached_executor": 0.20833333333333334,
+            "structured_rejections": 0.041666666666666664,
+            "executed_tool_calls": 4.4,
+            "guard_blocked": 0.0,
+            "extra_queries": 0.0,
+            "verification_failures": 0.0,
+            "recovered_actions": 0.0,
+            "recovery_budget_blocked": 0.0,
+            "duration_seconds": 18.755801063816275,
+            "retrieval_tokens": 0.85,
+            "actor_latency": 12.191514656022385,
+            "judge_latency": 0.5837516725422272,
+            "extra_query_latency": 0.0,
+            "tokenization_calls": 0.0,
+            "tokenization_latency": 0.0
+          },
+          "categories": {
+            "qt1:feasible": {
+              "episodes": 30,
+              "successes": 17
+            },
+            "qt1:infeasible": {
+              "episodes": 30,
+              "successes": 19
+            },
+            "qt2:feasible": {
+              "episodes": 30,
+              "successes": 13
+            },
+            "qt2:infeasible": {
+              "episodes": 30,
+              "successes": 7
+            },
+            "qt3:feasible": {
+              "episodes": 30,
+              "successes": 23
+            },
+            "qt3:infeasible": {
+              "episodes": 30,
+              "successes": 18
+            },
+            "qt4-1:feasible": {
+              "episodes": 30,
+              "successes": 3
+            },
+            "qt4-1:infeasible": {
+              "episodes": 30,
+              "successes": 8
+            },
+            "qt4-2:feasible": {
+              "episodes": 30,
+              "successes": 11
+            },
+            "qt4-2:infeasible": {
+              "episodes": 30,
+              "successes": 0
+            },
+            "qt4-3:feasible": {
+              "episodes": 30,
+              "successes": 1
+            },
+            "qt4-3:infeasible": {
+              "episodes": 30,
+              "successes": 0
+            }
+          }
+        },
+        "G": {
+          "episodes": 360,
+          "successes": 133,
+          "success_rate": 0.36944444444444446,
+          "unfinished": 3,
+          "unique_tasks": 120,
+          "by_actor_seed": {
+            "42": {
+              "episodes": 120,
+              "successes": 44,
+              "all_totals": {
+                "actor_tokens": 5123163,
+                "judge_tokens": 415995,
+                "actor_model_calls": 825,
+                "judge_model_calls": 207,
+                "invalid_proposed": 77,
+                "invalid_reached_executor": 10,
+                "structured_rejections": 13,
+                "executed_tool_calls": 639,
+                "guard_blocked": 54,
+                "extra_queries": 168,
+                "verification_failures": 0,
+                "recovered_actions": 34,
+                "recovery_budget_blocked": 0,
+                "duration_seconds": 4987.904895351967,
+                "retrieval_tokens": 281,
+                "actor_latency": 2603.468639480998,
+                "judge_latency": 65.68745990033494,
+                "extra_query_latency": 9.47262243196019,
+                "tokenization_calls": 0,
+                "tokenization_latency": 0
+              }
+            },
+            "43": {
+              "episodes": 120,
+              "successes": 48,
+              "all_totals": {
+                "actor_tokens": 5327518,
+                "judge_tokens": 374262,
+                "actor_model_calls": 847,
+                "judge_model_calls": 207,
+                "invalid_proposed": 89,
+                "invalid_reached_executor": 19,
+                "structured_rejections": 10,
+                "executed_tool_calls": 658,
+                "guard_blocked": 60,
+                "extra_queries": 195,
+                "verification_failures": 0,
+                "recovered_actions": 45,
+                "recovery_budget_blocked": 0,
+                "duration_seconds": 4817.483224231808,
+                "retrieval_tokens": 170,
+                "actor_latency": 2447.7281677629217,
+                "judge_latency": 63.57199177626171,
+                "extra_query_latency": 11.22250916500343,
+                "tokenization_calls": 0,
+                "tokenization_latency": 0
+              }
+            },
+            "44": {
+              "episodes": 120,
+              "successes": 41,
+              "all_totals": {
+                "actor_tokens": 5417590,
+                "judge_tokens": 435858,
+                "actor_model_calls": 849,
+                "judge_model_calls": 204,
+                "invalid_proposed": 98,
+                "invalid_reached_executor": 29,
+                "structured_rejections": 11,
+                "executed_tool_calls": 661,
+                "guard_blocked": 58,
+                "extra_queries": 191,
+                "verification_failures": 0,
+                "recovered_actions": 35,
+                "recovery_budget_blocked": 0,
+                "duration_seconds": 4853.755143425922,
+                "retrieval_tokens": 242,
+                "actor_latency": 2571.7728464511747,
+                "judge_latency": 69.65704711599392,
+                "extra_query_latency": 10.296234144101618,
+                "tokenization_calls": 0,
+                "tokenization_latency": 0
+              }
+            }
+          },
+          "evaluator_errors": 0,
+          "all_totals": {
+            "actor_tokens": 15868271,
+            "judge_tokens": 1226115,
+            "actor_model_calls": 2521,
+            "judge_model_calls": 618,
+            "invalid_proposed": 264,
+            "invalid_reached_executor": 58,
+            "structured_rejections": 34,
+            "executed_tool_calls": 1958,
+            "guard_blocked": 172,
+            "extra_queries": 554,
+            "verification_failures": 0,
+            "recovered_actions": 114,
+            "recovery_budget_blocked": 0,
+            "duration_seconds": 14659.143263009697,
+            "retrieval_tokens": 693,
+            "actor_latency": 7622.969653695094,
+            "judge_latency": 198.91649879259057,
+            "extra_query_latency": 30.991365741065238,
+            "tokenization_calls": 0,
+            "tokenization_latency": 0
+          },
+          "successful_means": {
+            "actor_tokens": 31563.593984962405,
+            "judge_tokens": 2553.7894736842104,
+            "actor_model_calls": 5.556390977443609,
+            "judge_model_calls": 1.6466165413533835,
+            "invalid_proposed": 0.2857142857142857,
+            "invalid_reached_executor": 0.06015037593984962,
+            "structured_rejections": 0.015037593984962405,
+            "executed_tool_calls": 4.330827067669173,
+            "guard_blocked": 0.21052631578947367,
+            "extra_queries": 1.0827067669172932,
+            "verification_failures": 0.0,
+            "recovered_actions": 0.13533834586466165,
+            "recovery_budget_blocked": 0.0,
+            "duration_seconds": 21.56045642418085,
+            "retrieval_tokens": 0.2932330827067669,
+            "actor_latency": 12.599939185298176,
+            "judge_latency": 0.5221295547012951,
+            "extra_query_latency": 0.06196148305911662,
+            "tokenization_calls": 0.0,
+            "tokenization_latency": 0.0
+          },
+          "categories": {
+            "qt1:feasible": {
+              "episodes": 30,
+              "successes": 17
+            },
+            "qt1:infeasible": {
+              "episodes": 30,
+              "successes": 21
+            },
+            "qt2:feasible": {
+              "episodes": 30,
+              "successes": 14
+            },
+            "qt2:infeasible": {
+              "episodes": 30,
+              "successes": 5
+            },
+            "qt3:feasible": {
+              "episodes": 30,
+              "successes": 21
+            },
+            "qt3:infeasible": {
+              "episodes": 30,
+              "successes": 19
+            },
+            "qt4-1:feasible": {
+              "episodes": 30,
+              "successes": 4
+            },
+            "qt4-1:infeasible": {
+              "episodes": 30,
+              "successes": 9
+            },
+            "qt4-2:feasible": {
+              "episodes": 30,
+              "successes": 17
+            },
+            "qt4-2:infeasible": {
+              "episodes": 30,
+              "successes": 0
+            },
+            "qt4-3:feasible": {
+              "episodes": 30,
+              "successes": 4
+            },
+            "qt4-3:infeasible": {
+              "episodes": 30,
+              "successes": 2
+            }
+          }
+        },
+        "Full": {
+          "episodes": 360,
+          "successes": 126,
+          "success_rate": 0.35,
+          "unfinished": 7,
+          "unique_tasks": 120,
+          "by_actor_seed": {
+            "42": {
+              "episodes": 120,
+              "successes": 43,
+              "all_totals": {
+                "actor_tokens": 5544073,
+                "judge_tokens": 395316,
+                "actor_model_calls": 865,
+                "judge_model_calls": 201,
+                "invalid_proposed": 91,
+                "invalid_reached_executor": 17,
+                "structured_rejections": 16,
+                "executed_tool_calls": 671,
+                "guard_blocked": 60,
+                "extra_queries": 344,
+                "verification_failures": 1,
+                "recovered_actions": 36,
+                "recovery_budget_blocked": 2,
+                "duration_seconds": 5074.629188532941,
+                "retrieval_tokens": 309,
+                "actor_latency": 2805.764532290981,
+                "judge_latency": 65.60222078612424,
+                "extra_query_latency": 26.457607861142606,
+                "tokenization_calls": 0,
+                "tokenization_latency": 0
+              }
+            },
+            "43": {
+              "episodes": 120,
+              "successes": 41,
+              "all_totals": {
+                "actor_tokens": 5517755,
+                "judge_tokens": 424287,
+                "actor_model_calls": 863,
+                "judge_model_calls": 201,
+                "invalid_proposed": 97,
+                "invalid_reached_executor": 19,
+                "structured_rejections": 20,
+                "executed_tool_calls": 666,
+                "guard_blocked": 59,
+                "extra_queries": 351,
+                "verification_failures": 1,
+                "recovered_actions": 36,
+                "recovery_budget_blocked": 1,
+                "duration_seconds": 5216.9075940401235,
+                "retrieval_tokens": 303,
+                "actor_latency": 2881.0046475576237,
+                "judge_latency": 64.3699962674873,
+                "extra_query_latency": 26.883196957060136,
+                "tokenization_calls": 0,
+                "tokenization_latency": 0
+              }
+            },
+            "44": {
+              "episodes": 120,
+              "successes": 42,
+              "all_totals": {
+                "actor_tokens": 5403827,
+                "judge_tokens": 430032,
+                "actor_model_calls": 846,
+                "judge_model_calls": 210,
+                "invalid_proposed": 95,
+                "invalid_reached_executor": 19,
+                "structured_rejections": 27,
+                "executed_tool_calls": 649,
+                "guard_blocked": 52,
+                "extra_queries": 304,
+                "verification_failures": 0,
+                "recovered_actions": 32,
+                "recovery_budget_blocked": 3,
+                "duration_seconds": 5169.074353301112,
+                "retrieval_tokens": 245,
+                "actor_latency": 2893.0815213830792,
+                "judge_latency": 65.41952837695135,
+                "extra_query_latency": 23.440420775034,
+                "tokenization_calls": 0,
+                "tokenization_latency": 0
+              }
+            }
+          },
+          "evaluator_errors": 0,
+          "all_totals": {
+            "actor_tokens": 16465655,
+            "judge_tokens": 1249635,
+            "actor_model_calls": 2574,
+            "judge_model_calls": 612,
+            "invalid_proposed": 283,
+            "invalid_reached_executor": 55,
+            "structured_rejections": 63,
+            "executed_tool_calls": 1986,
+            "guard_blocked": 171,
+            "extra_queries": 999,
+            "verification_failures": 2,
+            "recovered_actions": 104,
+            "recovery_budget_blocked": 6,
+            "duration_seconds": 15460.611135874176,
+            "retrieval_tokens": 857,
+            "actor_latency": 8579.850701231684,
+            "judge_latency": 195.39174543056288,
+            "extra_query_latency": 76.78122559323674,
+            "tokenization_calls": 0,
+            "tokenization_latency": 0
+          },
+          "successful_means": {
+            "actor_tokens": 33026.142857142855,
+            "judge_tokens": 2591.6666666666665,
+            "actor_model_calls": 5.666666666666667,
+            "judge_model_calls": 1.7142857142857142,
+            "invalid_proposed": 0.31746031746031744,
+            "invalid_reached_executor": 0.07142857142857142,
+            "structured_rejections": 0.03968253968253968,
+            "executed_tool_calls": 4.420634920634921,
+            "guard_blocked": 0.20634920634920634,
+            "extra_queries": 2.0476190476190474,
+            "verification_failures": 0.015873015873015872,
+            "recovered_actions": 0.1349206349206349,
+            "recovery_budget_blocked": 0.0,
+            "duration_seconds": 19.975499320254865,
+            "retrieval_tokens": 0.6190476190476191,
+            "actor_latency": 13.327965794382006,
+            "judge_latency": 0.5461048533405928,
+            "extra_query_latency": 0.1585485005942044,
+            "tokenization_calls": 0.0,
+            "tokenization_latency": 0.0
+          },
+          "categories": {
+            "qt1:feasible": {
+              "episodes": 30,
+              "successes": 18
+            },
+            "qt1:infeasible": {
+              "episodes": 30,
+              "successes": 22
+            },
+            "qt2:feasible": {
+              "episodes": 30,
+              "successes": 13
+            },
+            "qt2:infeasible": {
+              "episodes": 30,
+              "successes": 4
+            },
+            "qt3:feasible": {
+              "episodes": 30,
+              "successes": 21
+            },
+            "qt3:infeasible": {
+              "episodes": 30,
+              "successes": 18
+            },
+            "qt4-1:feasible": {
+              "episodes": 30,
+              "successes": 2
+            },
+            "qt4-1:infeasible": {
+              "episodes": 30,
+              "successes": 10
+            },
+            "qt4-2:feasible": {
+              "episodes": 30,
+              "successes": 14
+            },
+            "qt4-2:infeasible": {
+              "episodes": 30,
+              "successes": 0
+            },
+            "qt4-3:feasible": {
+              "episodes": 30,
+              "successes": 4
+            },
+            "qt4-3:infeasible": {
+              "episodes": 30,
+              "successes": 0
+            }
+          }
+        }
+      },
+      "paired": {
+        "G": {
+          "wins": 11,
+          "losses": 10,
+          "p_exact": 1.0,
+          "success_delta": 0.008333333333333333,
+          "success_delta_ci95": [
+            -0.058333333333333334,
+            0.075
+          ],
+          "actor_token_delta": -4049.358333333333,
+          "p_holm": 1.0
+        },
+        "Full": {
+          "wins": 13,
+          "losses": 13,
+          "p_exact": 1.0,
+          "success_delta": 0.0,
+          "success_delta_ci95": [
+            -0.08333333333333333,
+            0.08333333333333333
+          ],
+          "actor_token_delta": -541.775,
+          "p_holm": 1.0
+        }
+      },
+      "artifact_files": 10193,
+      "primary_actor_seed": 42,
+      "repeated_seed_diagnostics": {
+        "G": {
+          "task_clustered_delta_ci95": [
+            -0.0027777777777777775,
+            0.07777777777777778
+          ],
+          "by_actor_seed": {
+            "42": {
+              "wins": 11,
+              "losses": 10,
+              "p_exact": 1.0,
+              "success_delta": 0.008333333333333333,
+              "success_delta_ci95": [
+                -0.058333333333333334,
+                0.075
+              ],
+              "actor_token_delta": -4049.358333333333
+            },
+            "43": {
+              "wins": 15,
+              "losses": 4,
+              "p_exact": 0.0192108154296875,
+              "success_delta": 0.09166666666666666,
+              "success_delta_ci95": [
+                0.025,
+                0.15833333333333333
+              ],
+              "actor_token_delta": -632.475
+            },
+            "44": {
+              "wins": 5,
+              "losses": 4,
+              "p_exact": 1.0,
+              "success_delta": 0.008333333333333333,
+              "success_delta_ci95": [
+                -0.041666666666666664,
+                0.058333333333333334
+              ],
+              "actor_token_delta": -1468.3833333333334
+            }
+          },
+          "independent_tasks": 120,
+          "repeated_runs_per_task": 3
+        },
+        "Full": {
+          "task_clustered_delta_ci95": [
+            -0.02222222222222222,
+            0.058333333333333334
+          ],
+          "by_actor_seed": {
+            "42": {
+              "wins": 13,
+              "losses": 13,
+              "p_exact": 1.0,
+              "success_delta": 0.0,
+              "success_delta_ci95": [
+                -0.08333333333333333,
+                0.08333333333333333
+              ],
+              "actor_token_delta": -541.775
+            },
+            "43": {
+              "wins": 11,
+              "losses": 7,
+              "p_exact": 0.480682373046875,
+              "success_delta": 0.03333333333333333,
+              "success_delta_ci95": [
+                -0.03333333333333333,
+                0.1
+              ],
+              "actor_token_delta": 952.8333333333334
+            },
+            "44": {
+              "wins": 8,
+              "losses": 6,
+              "p_exact": 0.79052734375,
+              "success_delta": 0.016666666666666666,
+              "success_delta_ci95": [
+                -0.041666666666666664,
+                0.075
+              ],
+              "actor_token_delta": -1583.075
+            }
+          },
+          "independent_tasks": 120,
+          "repeated_runs_per_task": 3
+        }
+      },
+      "statistical_unit": "task; primary McNemar uses one predeclared actor seed; repeat CI resamples task clusters within categories"
+    },
+    "final": {
+      "source": "runs/harness-v2/primary-v2/final/report.json",
+      "sha256": "3d9e23070599e424269faf74ddc12b9519d16f8475684198021df5f567a446a2",
+      "verified": true,
+      "phase": "final",
+      "commit": "5c2e7621bfd4ecd3529e0fca27d314761458fdab",
+      "arms": {
+        "B0": {
+          "episodes": 576,
+          "successes": 175,
+          "success_rate": 0.3038194444444444,
+          "unfinished": 15,
+          "unique_tasks": 192,
+          "by_actor_seed": {
+            "42": {
+              "episodes": 192,
+              "successes": 60,
+              "all_totals": {
+                "actor_tokens": 7874950,
+                "judge_tokens": 646266,
+                "actor_model_calls": 1297,
+                "judge_model_calls": 327,
+                "invalid_proposed": 121,
+                "invalid_reached_executor": 96,
+                "structured_rejections": 25,
+                "executed_tool_calls": 1084,
+                "guard_blocked": 0,
+                "extra_queries": 0,
+                "verification_failures": 0,
+                "recovered_actions": 0,
+                "recovery_budget_blocked": 0,
+                "duration_seconds": 7475.398963989865,
+                "retrieval_tokens": 288,
+                "actor_latency": 3769.5766540942423,
+                "judge_latency": 106.04370814282447,
+                "extra_query_latency": 0,
+                "tokenization_calls": 0,
+                "tokenization_latency": 0
+              }
+            },
+            "43": {
+              "episodes": 192,
+              "successes": 57,
+              "all_totals": {
+                "actor_tokens": 8669260,
+                "judge_tokens": 698370,
+                "actor_model_calls": 1375,
+                "judge_model_calls": 321,
+                "invalid_proposed": 135,
+                "invalid_reached_executor": 117,
+                "structured_rejections": 18,
+                "executed_tool_calls": 1169,
+                "guard_blocked": 0,
+                "extra_queries": 0,
+                "verification_failures": 0,
+                "recovered_actions": 0,
+                "recovery_budget_blocked": 0,
+                "duration_seconds": 7876.815498724842,
+                "retrieval_tokens": 766,
+                "actor_latency": 4002.4063162488455,
+                "judge_latency": 111.85461800385383,
+                "extra_query_latency": 0,
+                "tokenization_calls": 0,
+                "tokenization_latency": 0
+              }
+            },
+            "44": {
+              "episodes": 192,
+              "successes": 58,
+              "all_totals": {
+                "actor_tokens": 8450769,
+                "judge_tokens": 624876,
+                "actor_model_calls": 1343,
+                "judge_model_calls": 315,
+                "invalid_proposed": 126,
+                "invalid_reached_executor": 97,
+                "structured_rejections": 29,
+                "executed_tool_calls": 1129,
+                "guard_blocked": 0,
+                "extra_queries": 0,
+                "verification_failures": 0,
+                "recovered_actions": 0,
+                "recovery_budget_blocked": 0,
+                "duration_seconds": 7900.379671600094,
+                "retrieval_tokens": 499,
+                "actor_latency": 3858.178289978998,
+                "judge_latency": 100.20803930785041,
+                "extra_query_latency": 0,
+                "tokenization_calls": 0,
+                "tokenization_latency": 0
+              }
+            }
+          },
+          "evaluator_errors": 0,
+          "all_totals": {
+            "actor_tokens": 24994979,
+            "judge_tokens": 1969512,
+            "actor_model_calls": 4015,
+            "judge_model_calls": 963,
+            "invalid_proposed": 382,
+            "invalid_reached_executor": 310,
+            "structured_rejections": 72,
+            "executed_tool_calls": 3382,
+            "guard_blocked": 0,
+            "extra_queries": 0,
+            "verification_failures": 0,
+            "recovered_actions": 0,
+            "recovery_budget_blocked": 0,
+            "duration_seconds": 23252.5941343148,
+            "retrieval_tokens": 1553,
+            "actor_latency": 11630.161260322086,
+            "judge_latency": 318.1063654545287,
+            "extra_query_latency": 0,
+            "tokenization_calls": 0,
+            "tokenization_latency": 0
+          },
+          "successful_means": {
+            "actor_tokens": 31595.742857142857,
+            "judge_tokens": 2819.4514285714286,
+            "actor_model_calls": 5.537142857142857,
+            "judge_model_calls": 1.7314285714285715,
+            "invalid_proposed": 0.2342857142857143,
+            "invalid_reached_executor": 0.21714285714285714,
+            "structured_rejections": 0.017142857142857144,
+            "executed_tool_calls": 4.52,
+            "guard_blocked": 0.0,
+            "extra_queries": 0.0,
+            "verification_failures": 0.0,
+            "recovered_actions": 0.0,
+            "recovery_budget_blocked": 0.0,
+            "duration_seconds": 21.386764054702528,
+            "retrieval_tokens": 1.1828571428571428,
+            "actor_latency": 12.636155783293237,
+            "judge_latency": 0.5898722018215007,
+            "extra_query_latency": 0.0,
+            "tokenization_calls": 0.0,
+            "tokenization_latency": 0.0
+          },
+          "categories": {
+            "qt1:feasible": {
+              "episodes": 48,
+              "successes": 29
+            },
+            "qt1:infeasible": {
+              "episodes": 48,
+              "successes": 26
+            },
+            "qt2:feasible": {
+              "episodes": 48,
+              "successes": 10
+            },
+            "qt2:infeasible": {
+              "episodes": 48,
+              "successes": 10
+            },
+            "qt3:feasible": {
+              "episodes": 48,
+              "successes": 37
+            },
+            "qt3:infeasible": {
+              "episodes": 48,
+              "successes": 27
+            },
+            "qt4-1:feasible": {
+              "episodes": 48,
+              "successes": 10
+            },
+            "qt4-1:infeasible": {
+              "episodes": 48,
+              "successes": 9
+            },
+            "qt4-2:feasible": {
+              "episodes": 48,
+              "successes": 14
+            },
+            "qt4-2:infeasible": {
+              "episodes": 48,
+              "successes": 0
+            },
+            "qt4-3:feasible": {
+              "episodes": 48,
+              "successes": 3
+            },
+            "qt4-3:infeasible": {
+              "episodes": 48,
+              "successes": 0
+            }
+          }
+        },
+        "G": {
+          "episodes": 576,
+          "successes": 204,
+          "success_rate": 0.3541666666666667,
+          "unfinished": 6,
+          "unique_tasks": 192,
+          "by_actor_seed": {
+            "42": {
+              "episodes": 192,
+              "successes": 69,
+              "all_totals": {
+                "actor_tokens": 8396174,
+                "judge_tokens": 667155,
+                "actor_model_calls": 1344,
+                "judge_model_calls": 321,
+                "invalid_proposed": 127,
+                "invalid_reached_executor": 16,
+                "structured_rejections": 19,
+                "executed_tool_calls": 1044,
+                "guard_blocked": 92,
+                "extra_queries": 295,
+                "verification_failures": 0,
+                "recovered_actions": 57,
+                "recovery_budget_blocked": 0,
+                "duration_seconds": 7538.632590503083,
+                "retrieval_tokens": 471,
+                "actor_latency": 4097.347073593148,
+                "judge_latency": 103.52209870799561,
+                "extra_query_latency": 17.16550503016333,
+                "tokenization_calls": 0,
+                "tokenization_latency": 0
+              }
+            },
+            "43": {
+              "episodes": 192,
+              "successes": 69,
+              "all_totals": {
+                "actor_tokens": 8553166,
+                "judge_tokens": 758763,
+                "actor_model_calls": 1338,
+                "judge_model_calls": 330,
+                "invalid_proposed": 134,
+                "invalid_reached_executor": 20,
+                "structured_rejections": 17,
+                "executed_tool_calls": 1033,
+                "guard_blocked": 97,
+                "extra_queries": 289,
+                "verification_failures": 0,
+                "recovered_actions": 63,
+                "recovery_budget_blocked": 0,
+                "duration_seconds": 7662.426880765939,
+                "retrieval_tokens": 588,
+                "actor_latency": 4151.96356995526,
+                "judge_latency": 110.50031869206578,
+                "extra_query_latency": 16.53454722405877,
+                "tokenization_calls": 0,
+                "tokenization_latency": 0
+              }
+            },
+            "44": {
+              "episodes": 192,
+              "successes": 66,
+              "all_totals": {
+                "actor_tokens": 8586040,
+                "judge_tokens": 618747,
+                "actor_model_calls": 1318,
+                "judge_model_calls": 327,
+                "invalid_proposed": 134,
+                "invalid_reached_executor": 17,
+                "structured_rejections": 18,
+                "executed_tool_calls": 1009,
+                "guard_blocked": 99,
+                "extra_queries": 295,
+                "verification_failures": 0,
+                "recovered_actions": 63,
+                "recovery_budget_blocked": 0,
+                "duration_seconds": 7735.3697510079655,
+                "retrieval_tokens": 483,
+                "actor_latency": 4216.984713664453,
+                "judge_latency": 106.1958946287341,
+                "extra_query_latency": 17.011075331945904,
+                "tokenization_calls": 0,
+                "tokenization_latency": 0
+              }
+            }
+          },
+          "evaluator_errors": 0,
+          "all_totals": {
+            "actor_tokens": 25535380,
+            "judge_tokens": 2044665,
+            "actor_model_calls": 4000,
+            "judge_model_calls": 978,
+            "invalid_proposed": 395,
+            "invalid_reached_executor": 53,
+            "structured_rejections": 54,
+            "executed_tool_calls": 3086,
+            "guard_blocked": 288,
+            "extra_queries": 879,
+            "verification_failures": 0,
+            "recovered_actions": 183,
+            "recovery_budget_blocked": 0,
+            "duration_seconds": 22936.429222276987,
+            "retrieval_tokens": 1542,
+            "actor_latency": 12466.29535721286,
+            "judge_latency": 320.2183120287955,
+            "extra_query_latency": 50.711127586168004,
+            "tokenization_calls": 0,
+            "tokenization_latency": 0
+          },
+          "successful_means": {
+            "actor_tokens": 35274.970588235294,
+            "judge_tokens": 2578.470588235294,
+            "actor_model_calls": 5.9411764705882355,
+            "judge_model_calls": 1.588235294117647,
+            "invalid_proposed": 0.37745098039215685,
+            "invalid_reached_executor": 0.0392156862745098,
+            "structured_rejections": 0.024509803921568627,
+            "executed_tool_calls": 4.598039215686274,
+            "guard_blocked": 0.3137254901960784,
+            "extra_queries": 1.2647058823529411,
+            "verification_failures": 0.0,
+            "recovered_actions": 0.21568627450980393,
+            "recovery_budget_blocked": 0.0,
+            "duration_seconds": 28.241707339539598,
+            "retrieval_tokens": 0.29411764705882354,
+            "actor_latency": 15.223516287655038,
+            "judge_latency": 0.519384468848704,
+            "extra_query_latency": 0.07243996545131427,
+            "tokenization_calls": 0.0,
+            "tokenization_latency": 0.0
+          },
+          "categories": {
+            "qt1:feasible": {
+              "episodes": 48,
+              "successes": 30
+            },
+            "qt1:infeasible": {
+              "episodes": 48,
+              "successes": 29
+            },
+            "qt2:feasible": {
+              "episodes": 48,
+              "successes": 10
+            },
+            "qt2:infeasible": {
+              "episodes": 48,
+              "successes": 7
+            },
+            "qt3:feasible": {
+              "episodes": 48,
+              "successes": 41
+            },
+            "qt3:infeasible": {
+              "episodes": 48,
+              "successes": 29
+            },
+            "qt4-1:feasible": {
+              "episodes": 48,
+              "successes": 18
+            },
+            "qt4-1:infeasible": {
+              "episodes": 48,
+              "successes": 12
+            },
+            "qt4-2:feasible": {
+              "episodes": 48,
+              "successes": 23
+            },
+            "qt4-2:infeasible": {
+              "episodes": 48,
+              "successes": 0
+            },
+            "qt4-3:feasible": {
+              "episodes": 48,
+              "successes": 4
+            },
+            "qt4-3:infeasible": {
+              "episodes": 48,
+              "successes": 1
+            }
+          }
+        },
+        "Full": {
+          "episodes": 576,
+          "successes": 205,
+          "success_rate": 0.3559027777777778,
+          "unfinished": 3,
+          "unique_tasks": 192,
+          "by_actor_seed": {
+            "42": {
+              "episodes": 192,
+              "successes": 71,
+              "all_totals": {
+                "actor_tokens": 8740108,
+                "judge_tokens": 756711,
+                "actor_model_calls": 1364,
+                "judge_model_calls": 324,
+                "invalid_proposed": 131,
+                "invalid_reached_executor": 18,
+                "structured_rejections": 26,
+                "executed_tool_calls": 1048,
+                "guard_blocked": 100,
+                "extra_queries": 553,
+                "verification_failures": 1,
+                "recovered_actions": 63,
+                "recovery_budget_blocked": 13,
+                "duration_seconds": 8473.473363526835,
+                "retrieval_tokens": 495,
+                "actor_latency": 4671.617548876879,
+                "judge_latency": 109.24650208107778,
+                "extra_query_latency": 43.54143204164575,
+                "tokenization_calls": 0,
+                "tokenization_latency": 0
+              }
+            },
+            "43": {
+              "episodes": 192,
+              "successes": 67,
+              "all_totals": {
+                "actor_tokens": 8964677,
+                "judge_tokens": 746061,
+                "actor_model_calls": 1363,
+                "judge_model_calls": 324,
+                "invalid_proposed": 147,
+                "invalid_reached_executor": 27,
+                "structured_rejections": 20,
+                "executed_tool_calls": 1031,
+                "guard_blocked": 115,
+                "extra_queries": 524,
+                "verification_failures": 0,
+                "recovered_actions": 62,
+                "recovery_budget_blocked": 15,
+                "duration_seconds": 8276.755833542877,
+                "retrieval_tokens": 491,
+                "actor_latency": 4613.13367672704,
+                "judge_latency": 116.87930091560702,
+                "extra_query_latency": 39.712214483792195,
+                "tokenization_calls": 0,
+                "tokenization_latency": 0
+              }
+            },
+            "44": {
+              "episodes": 192,
+              "successes": 67,
+              "all_totals": {
+                "actor_tokens": 8751169,
+                "judge_tokens": 701976,
+                "actor_model_calls": 1355,
+                "judge_model_calls": 327,
+                "invalid_proposed": 134,
+                "invalid_reached_executor": 21,
+                "structured_rejections": 19,
+                "executed_tool_calls": 1042,
+                "guard_blocked": 102,
+                "extra_queries": 539,
+                "verification_failures": 0,
+                "recovered_actions": 64,
+                "recovery_budget_blocked": 8,
+                "duration_seconds": 8257.984142668982,
+                "retrieval_tokens": 385,
+                "actor_latency": 4495.618361705419,
+                "judge_latency": 111.15020714918501,
+                "extra_query_latency": 41.69573882216355,
+                "tokenization_calls": 0,
+                "tokenization_latency": 0
+              }
+            }
+          },
+          "evaluator_errors": 0,
+          "all_totals": {
+            "actor_tokens": 26455954,
+            "judge_tokens": 2204748,
+            "actor_model_calls": 4082,
+            "judge_model_calls": 975,
+            "invalid_proposed": 412,
+            "invalid_reached_executor": 66,
+            "structured_rejections": 65,
+            "executed_tool_calls": 3121,
+            "guard_blocked": 317,
+            "extra_queries": 1616,
+            "verification_failures": 1,
+            "recovered_actions": 189,
+            "recovery_budget_blocked": 36,
+            "duration_seconds": 25008.213339738693,
+            "retrieval_tokens": 1371,
+            "actor_latency": 13780.369587309338,
+            "judge_latency": 337.2760101458698,
+            "extra_query_latency": 124.94938534760149,
+            "tokenization_calls": 0,
+            "tokenization_latency": 0
+          },
+          "successful_means": {
+            "actor_tokens": 34731.19512195122,
+            "judge_tokens": 2589.380487804878,
+            "actor_model_calls": 5.819512195121951,
+            "judge_model_calls": 1.6536585365853658,
+            "invalid_proposed": 0.3121951219512195,
+            "invalid_reached_executor": 0.04390243902439024,
+            "structured_rejections": 0.03902439024390244,
+            "executed_tool_calls": 4.546341463414634,
+            "guard_blocked": 0.23414634146341465,
+            "extra_queries": 2.4097560975609755,
+            "verification_failures": 0.0,
+            "recovered_actions": 0.2048780487804878,
+            "recovery_budget_blocked": 0.004878048780487805,
+            "duration_seconds": 28.12542801322898,
+            "retrieval_tokens": 0.6292682926829268,
+            "actor_latency": 14.353913135096153,
+            "judge_latency": 0.5715033264286964,
+            "extra_query_latency": 0.18459516816286983,
+            "tokenization_calls": 0.0,
+            "tokenization_latency": 0.0
+          },
+          "categories": {
+            "qt1:feasible": {
+              "episodes": 48,
+              "successes": 32
+            },
+            "qt1:infeasible": {
+              "episodes": 48,
+              "successes": 33
+            },
+            "qt2:feasible": {
+              "episodes": 48,
+              "successes": 8
+            },
+            "qt2:infeasible": {
+              "episodes": 48,
+              "successes": 10
+            },
+            "qt3:feasible": {
+              "episodes": 48,
+              "successes": 38
+            },
+            "qt3:infeasible": {
+              "episodes": 48,
+              "successes": 26
+            },
+            "qt4-1:feasible": {
+              "episodes": 48,
+              "successes": 19
+            },
+            "qt4-1:infeasible": {
+              "episodes": 48,
+              "successes": 11
+            },
+            "qt4-2:feasible": {
+              "episodes": 48,
+              "successes": 20
+            },
+            "qt4-2:infeasible": {
+              "episodes": 48,
+              "successes": 0
+            },
+            "qt4-3:feasible": {
+              "episodes": 48,
+              "successes": 7
+            },
+            "qt4-3:infeasible": {
+              "episodes": 48,
+              "successes": 1
+            }
+          }
+        }
+      },
+      "paired": {
+        "G": {
+          "wins": 23,
+          "losses": 14,
+          "p_exact": 0.18774155899882317,
+          "success_delta": 0.046875,
+          "success_delta_ci95": [
+            -0.010416666666666666,
+            0.109375
+          ],
+          "actor_token_delta": 2714.7083333333335,
+          "p_holm": 0.21625804281211458
+        },
+        "Full": {
+          "wins": 25,
+          "losses": 14,
+          "p_exact": 0.10812902140605729,
+          "success_delta": 0.057291666666666664,
+          "success_delta_ci95": [
+            -0.005208333333333333,
+            0.11979166666666667
+          ],
+          "actor_token_delta": 4506.03125,
+          "p_holm": 0.21625804281211458
+        }
+      },
+      "artifact_files": 16241,
+      "primary_actor_seed": 42,
+      "repeated_seed_diagnostics": {
+        "G": {
+          "task_clustered_delta_ci95": [
+            0.012152777777777778,
+            0.09027777777777778
+          ],
+          "by_actor_seed": {
+            "42": {
+              "wins": 23,
+              "losses": 14,
+              "p_exact": 0.18774155899882317,
+              "success_delta": 0.046875,
+              "success_delta_ci95": [
+                -0.010416666666666666,
+                0.109375
+              ],
+              "actor_token_delta": 2714.7083333333335
+            },
+            "43": {
+              "wins": 23,
+              "losses": 11,
+              "p_exact": 0.05761267291381955,
+              "success_delta": 0.0625,
+              "success_delta_ci95": [
+                0.005208333333333333,
+                0.11979166666666667
+              ],
+              "actor_token_delta": -604.65625
+            },
+            "44": {
+              "wins": 22,
+              "losses": 14,
+              "p_exact": 0.2429849540349096,
+              "success_delta": 0.041666666666666664,
+              "success_delta_ci95": [
+                -0.020833333333333332,
+                0.10416666666666667
+              ],
+              "actor_token_delta": 704.5364583333334
+            }
+          },
+          "independent_tasks": 192,
+          "repeated_runs_per_task": 3
+        },
+        "Full": {
+          "task_clustered_delta_ci95": [
+            0.013888888888888888,
+            0.0920138888888889
+          ],
+          "by_actor_seed": {
+            "42": {
+              "wins": 25,
+              "losses": 14,
+              "p_exact": 0.10812902140605729,
+              "success_delta": 0.057291666666666664,
+              "success_delta_ci95": [
+                -0.005208333333333333,
+                0.11979166666666667
+              ],
+              "actor_token_delta": 4506.03125
+            },
+            "43": {
+              "wins": 24,
+              "losses": 14,
+              "p_exact": 0.14330665429588407,
+              "success_delta": 0.052083333333333336,
+              "success_delta_ci95": [
+                -0.010416666666666666,
+                0.11458333333333333
+              ],
+              "actor_token_delta": 1538.6302083333333
+            },
+            "44": {
+              "wins": 25,
+              "losses": 16,
+              "p_exact": 0.21102359760880063,
+              "success_delta": 0.046875,
+              "success_delta_ci95": [
+                -0.015625,
+                0.109375
+              ],
+              "actor_token_delta": 1564.5833333333333
+            }
+          },
+          "independent_tasks": 192,
+          "repeated_runs_per_task": 3
+        }
+      },
+      "statistical_unit": "task; primary McNemar uses one predeclared actor seed; repeat CI resamples task clusters within categories"
+    }
+  }
+}
