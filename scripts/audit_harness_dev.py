@@ -10,6 +10,7 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from smarthome_agent_rl.benchmark import STRATA, KNOWN_EXPOSURES, digest
+from smarthome_agent_rl.concurrency import episode_directory
 
 
 def freeze_holdout(root, output, seed=20261005):
@@ -72,7 +73,10 @@ def audit(run):
     if not report['verified'] or report['phase'] != 'dev':
         raise ValueError('Only a verified development run is eligible for diagnosis')
     counts, failures = defaultdict(Counter), []
-    for path in sorted(run.glob('worker*/*/*/lightning/summary.json')):
+    protocol = json.loads((run / 'protocol.json').read_text())
+    paths = [episode_directory(run, item, variant) / 'summary.json'
+             for item in protocol['schedule'] for variant in item['variants']]
+    for path in paths:
         row = json.loads(path.read_text())
         arm = counts[row['variant']]
         arm['episodes'] += 1
@@ -114,6 +118,8 @@ def audit(run):
                 'observed_events': sorted(labels), 'root_cause': 'unclassified',
                 'evidence': str(path.parent.relative_to(run)),
                 'note': 'Events are evidence, not an automatic causal attribution.'})
+    if set(counts) != set(report['arms']) or any(counts[v]['episodes'] != report['arms'][v]['episodes'] for v in counts):
+        raise ValueError('Audit coverage differs from verified report')
     return {'source': str(run), 'report_sha256': digest(run / 'report.json'),
         'arms': {k: dict(v) for k, v in counts.items()}, 'failed_episodes': failures,
         'limitations': 'Character counts are diagnostic estimates; HTTP usage supplies actual total input/output tokens. No final case content was inspected.'}
