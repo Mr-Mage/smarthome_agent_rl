@@ -15,6 +15,26 @@ import httpx
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def pressure(samples):
+    counters, peak_cache = {}, 0.0
+    for sample in samples:
+        for actor, lines in sample.items():
+            if not actor.startswith('actor'):
+                continue
+            for line in lines:
+                try:
+                    value = float(line.rsplit(' ', 1)[1])
+                except (ValueError, IndexError):
+                    continue
+                if 'cache_usage_perc' in line:
+                    peak_cache = max(peak_cache, value)
+                if 'num_preemptions' in line:
+                    key = (actor, line.rsplit(' ', 1)[0])
+                    counters.setdefault(key, []).append(value)
+    return {'peak_kv_cache_fraction': peak_cache,
+        'preemptions': sum(max(values) - min(values) for values in counters.values())}
+
+
 def corpus(source):
     groups = {}
     for path in sorted(source.glob('worker*/*/B0/lightning/model_calls.json')):
@@ -82,7 +102,8 @@ def main():
         if concurrency == 64 and args.try64:
             by_level = {row['concurrency']: row for row in summaries}
             if not (16 in by_level and 32 in by_level and
-                by_level[32]['output_tokens_per_second'] >= by_level[16]['output_tokens_per_second'] * 1.05):
+                by_level[32]['output_tokens_per_second'] >= by_level[16]['output_tokens_per_second'] * 1.05 and
+                by_level[32].get('preemptions', 0) == 0 and by_level[32].get('peak_kv_cache_fraction', 0) < .9):
                 (run / '64-skipped.json').write_text(json.dumps({'reason': '32-way output throughput grew less than 5% over 16'}))
                 continue
         if concurrency < len(endpoints) or concurrency % len(endpoints):
@@ -144,6 +165,7 @@ def main():
             'output_tokens_per_second': sum(r['usage']['completion_tokens'] for r in successful) / elapsed,
             'latency_p50': statistics.median(latencies) if latencies else None,
             'latency_p95': latencies[int((len(latencies) - 1) * .95)] if latencies else None}
+        summary.update(pressure(samples))
         (directory / 'summary.json').write_text(json.dumps(summary, indent=2))
         summaries.append(summary)
         (run / 'report.json').write_text(json.dumps({'purpose': 'fixed_request_capacity_only', 'stages': summaries}, indent=2))
