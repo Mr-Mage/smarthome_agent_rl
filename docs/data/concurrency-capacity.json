@@ -306,5 +306,15 @@
   ],
   "gate_seconds": 3000,
   "selected_config": "configs/harness-concurrent.json",
-  "gate_passed": true
+  "gate_passed": true,
+  "acceptance": {
+    "status": "invalid",
+    "commit": "bb489f2",
+    "source": "runs/concurrency-capacity/acceptance-v1",
+    "expected_episodes": 1368,
+    "dev_completed": 600,
+    "final_completed": 0,
+    "elapsed_seconds": 1016.5313537270122,
+    "reason": "Original simulator TypeError on model-supplied nested string args during fast_forward_to; evaluator score=-1. Entire round rejected."
+  }
 }

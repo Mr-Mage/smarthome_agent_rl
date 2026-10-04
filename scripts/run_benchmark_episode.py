@@ -119,12 +119,12 @@ def main(mode):
             'official_score': score, 'evaluator_called': result is not None,
             'success': score == 1, 'task_failure': task_failure, 'error': error,
             'task_failure_kind': failure_kind,
-            'infrastructure_error': error is not None and not task_failure,
+            'infrastructure_error': (error is not None and not task_failure) or score == -1,
             'actor_model_calls': len(calls), 'actor_tokens': tokens(calls),
             'judge_model_calls': len(judges), 'judge_tokens': tokens(judges),
             'duration_seconds': time.monotonic() - started}
         save('summary.json', summary)
-        if error is None or task_failure:
+        if (error is None and score != -1) or task_failure:
             emit('reward', {'value': float(score == 1), 'source': 'official_simuhome_evaluator' if result else failure_kind,
                 'evaluator_called': result is not None})
         print(json.dumps(summary, ensure_ascii=False), flush=True)
@@ -132,8 +132,8 @@ def main(mode):
         for judge in panel:
             judge._client.close()
         client.close()
-    if error is not None and not task_failure:
-        raise RuntimeError(f'Infrastructure failure: {error}')
+    if summary['infrastructure_error']:
+        raise RuntimeError(f'Infrastructure failure: {error or result["evaluation_result"]}')
 
 
 if __name__ == '__main__':
