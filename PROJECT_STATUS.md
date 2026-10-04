@@ -10,4 +10,4 @@ N12：完整模块1,800次+集成1,080次核验通过，Candidate=G，重复策�
 N13：新final1,728次核验通过，seed42 B0/G/Full=60/69/71（各192），两项Holm p=0.216，未显著。最终保留dev所选G，四卡已释放。
 证据：`runs/harness-v2/primary-v2/`；旧开发诊断保留在`primary-v1/`；汇总与限制见`docs/实验报表.md`。
 
-N14（待连通）：A800 judge 本机接口与两次推理探针通过；H100访问 `192.168.60.254:20300` 被拒绝，服务仅监听localhost。跨节点接入及四actor容量实验尚未开始，见 `docs/nodes/N14.md`。
+N14（服务验证通过）：A800 judge 已授权重启，监听 `0.0.0.0:20300`；H100访问 `192.168.60.254:20300` 的TCP、health、models及两次推理探针均通过。harness远端配置及四actor容量实验尚未开始，见 `docs/nodes/N14.md`。
