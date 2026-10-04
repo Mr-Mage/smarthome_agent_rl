@@ -39,7 +39,7 @@ class HarnessV2Tests(unittest.TestCase):
                             self.assertEqual(before, snapshot)
 
     def test_operational_start_and_washer_mode_match_real_commands(self):
-        operational = OperationalStateCluster()
+        operational = OperationalStateCluster(supported_commands=['Start', 'Stop'])
         before = structure(operational)
         effect = expected_effect_v2('execute_command', action('OperationalState', 'Start', {}), before)
         self.assertTrue(operational._start().success)
@@ -51,7 +51,7 @@ class HarnessV2Tests(unittest.TestCase):
         self.assertTrue(verify_effect(effect, structure(washer), {'data': {}})['verified'])
 
     def test_uncovered_command_avoids_postquery_and_workflow_receipt_claims_only_registration(self):
-        cluster = OperationalStateCluster()
+        cluster = OperationalStateCluster(supported_commands=['Start', 'Stop'])
         calls = []
         def dispatch(tool, arguments):
             calls.append(tool)
@@ -67,7 +67,7 @@ class HarnessV2Tests(unittest.TestCase):
         self.assertFalse(reply['harness_verification']['future_success_verified'])
 
     def test_mismatch_is_feedback_but_actual_simulator_return_remains_unchanged(self):
-        cluster = OperationalStateCluster()
+        cluster = OperationalStateCluster(supported_commands=['Start', 'Stop'])
         def dispatch(tool, arguments):
             return {'status': {'code': 200}, 'error': None, 'data': structure(cluster) if tool == 'get_device_structure' else {}}
         executor = GuardedExecutor(verify=True, verification_version=2, dispatch=dispatch)

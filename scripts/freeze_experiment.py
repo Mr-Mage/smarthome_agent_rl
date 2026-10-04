@@ -9,6 +9,7 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from smarthome_agent_rl.benchmark import digest
+from smarthome_agent_rl.experiment_v2 import service_identity, integration_selection
 
 
 def git(directory, *arguments):
@@ -23,6 +24,7 @@ def main():
     parser.add_argument('--inventory', default='work/harness-mvp/inventory-v2')
     parser.add_argument('--config', default='configs/harness-mvp.json')
     parser.add_argument('--final-manifest')
+    parser.add_argument('--selection', help='Predeclared dev selection allowing only final-arm deduplication')
     args = parser.parse_args()
     if git(ROOT, 'status', '--porcelain'):
         raise RuntimeError('Commit all implementation/configuration changes before freezing')
@@ -38,7 +40,18 @@ def main():
             arm['episodes'] != dev_count or arm['evaluator_errors'] for arm in report['arms'].values()):
         raise ValueError('Complete verified dev protocol required before final')
     protocol = json.loads((dev / 'protocol.json').read_text())
-    if protocol['config'] != config or protocol['manifest_sha256'] != digest(dev_manifest) or protocol.get('actor_seeds', seeds) != seeds:
+    dev_config = protocol['config']
+    selection = None
+    if args.selection:
+        selection = json.loads((ROOT / args.selection).read_text())
+        gates = json.loads((ROOT / 'configs/harness-v2-protocol.json').read_text())
+        expected = integration_selection(report, dev_config, gates)
+        if selection['decision'] != expected or selection['report_sha256'] != digest(dev / 'report.json'):
+            raise ValueError('Selection differs from predeclared dev gates')
+        if config['variants_final'] != expected['formal_variants']:
+            raise ValueError('Final arms differ from selected unique policies')
+        dev_config = {**dev_config, 'variants_final': config['variants_final']}
+    if dev_config != config or protocol['manifest_sha256'] != digest(dev_manifest) or protocol.get('actor_seeds', seeds) != seeds:
         raise ValueError('Dev configuration or task manifest changed')
     source_identity = json.loads((dev / 'source_identity.json').read_text())
     source_changes = {name: {'dev_sha256': expected, 'frozen_sha256': digest(ROOT / name)}
@@ -50,7 +63,7 @@ def main():
     if not (services / 'ready').exists():
         raise RuntimeError('Four-card service supervisor is not ready')
     service_config = json.loads((services / 'config.json').read_text())
-    if service_config != config:
+    if service_identity(service_config) != service_identity(config):
         raise ValueError('Running service allocation/model configuration differs from protocol')
     lock = json.loads((ROOT / 'dependencies.lock.json').read_text())
     sim = ROOT / lock['SimuHome']['path']
@@ -69,6 +82,7 @@ def main():
         'config_sha256': digest(ROOT / args.config),
         'manifest_sha256': digest(final_manifest), 'manifest_path': str(final_manifest.relative_to(ROOT)),
         'actor_seeds': seeds,
+        'selection': selection,
         'dev_report_sha256': digest(dev / 'report.json'), 'dev_run': args.dev_run,
         'dev_commit': protocol['commit'], 'dev_runtime_source_identity_matches': True,
         'reporting_only_source_changes': source_changes,
