@@ -1,0 +1,18 @@
+{
+  "node": "N19",
+  "scope": "Unused official single-query tasks only; no new benchmark or old-final reuse",
+  "minimum_meaningful_sr_delta": 0.05,
+  "desired_power": 0.8,
+  "familywise_alpha": 0.05,
+  "primary_comparisons": ["Candidate-G", "G-B0"],
+  "multiplicity": "Holm; sample-size planning uses worst-case two-sided alpha=0.025",
+  "primary_actor_seed": 42,
+  "diagnostic_actor_seeds": [43, 44],
+  "bootstrap_seed": 20261005,
+  "bootstrap_replicates": 10000,
+  "sample_size_method": "Paired normal approximation using dev discordance; q at least target delta; planning estimate, not an achieved-power claim",
+  "admission": "A development enhancement must pass frozen gates and unused official tasks must meet estimated sample size",
+  "stop": "If no enhancement or inadequate unused pool, do not run final or add modules; retain dev conclusions and archive",
+  "exposure_inventory": "runs/holdout-inventory/n19-v1/inventory.json",
+  "near_duplicate_limit": "Numeric-normalized query hashes are a narrow screen; same official generator/template origin prevents claiming independent benchmark families"
+}
