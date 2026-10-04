@@ -1,5 +1,27 @@
 """Execution slots share model services, never simulator state."""
 from pathlib import Path
+from urllib.parse import urlsplit
+
+
+def external_judge(config):
+    deployment = config.get('judge_deployment', 'local')
+    if deployment not in ('local', 'external'):
+        raise ValueError('judge_deployment must be local or external')
+    if deployment == 'external':
+        endpoint = config.get('judge_endpoint', '')
+        parts = urlsplit(endpoint)
+        if (parts.scheme not in ('http', 'https') or not parts.hostname or
+                parts.path.rstrip('/') != '/v1' or parts.query or parts.fragment or
+                parts.username or parts.password):
+            raise ValueError('External judge requires an HTTP(S) /v1 endpoint without credentials')
+        if config.get('judge_gpus') != []:
+            raise ValueError('External judge must not reserve local GPUs')
+    return deployment == 'external'
+
+
+def judge_endpoint(config):
+    return (config['judge_endpoint'].rstrip('/') if external_judge(config) else
+            f"http://127.0.0.1:{config['judge_port']}/v1")
 
 
 def dispatch_items(items, policy='manifest'):
@@ -33,7 +55,9 @@ def execution_slots(config):
                     config.get('simulator_port_base', 21000) + slot_id})
     ports = [slot['simulator_port'] for slot in slots] + [
         actor[key] for actor in actors for key in ('actor_port', 'gateway_port')]
-    ports += [config['judge_port'], config['embedding_port']]
+    ports += [config['embedding_port']]
+    if not external_judge(config):
+        ports.append(config['judge_port'])
     if len(ports) != len(set(ports)):
         raise ValueError('Execution simulator/model/gateway ports overlap')
     return slots

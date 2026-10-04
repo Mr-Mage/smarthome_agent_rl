@@ -20,7 +20,8 @@ def policy(config, variant):
 def service_identity(config):
     keys = ('model_python', 'actor_path', 'actor_model', 'actor_context', 'judge_path',
             'judge_model', 'judge_context', 'judge_gpus', 'judge_port', 'embedding_port',
-            'workflows', 'engine_seed', 'inference', 'kernel_cache_root')
+            'workflows', 'engine_seed', 'inference', 'kernel_cache_root',
+            'judge_deployment', 'judge_endpoint')
     return {key: config.get(key) for key in keys}
 
 

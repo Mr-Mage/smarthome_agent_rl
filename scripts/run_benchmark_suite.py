@@ -20,7 +20,7 @@ import httpx
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from smarthome_agent_rl.benchmark import digest, schedule
-from smarthome_agent_rl.concurrency import execution_slots, dispatch_items, seeded_schedule
+from smarthome_agent_rl.concurrency import execution_slots, dispatch_items, seeded_schedule, judge_endpoint
 
 
 def main():
@@ -148,7 +148,7 @@ def main():
             'model_seed': actor_seed if actor_seed is not None else actor_seeds[0],
             'simulator_url': f"http://127.0.0.1:{workflow['simulator_port']}/api",
             'model_endpoint': f"http://127.0.0.1:{workflow['actor_port']}/v1",
-            'judge_endpoint': f"http://127.0.0.1:{config['judge_port']}/v1",
+            'judge_endpoint': judge_endpoint(config),
             'embedding_endpoint': f"http://127.0.0.1:{config['embedding_port']}"}
         if args.phase == 'final':
             episode_config['protocol_frozen_commit'] = commit

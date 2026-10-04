@@ -16,7 +16,7 @@ import httpx
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-from smarthome_agent_rl.concurrency import execution_slots
+from smarthome_agent_rl.concurrency import execution_slots, external_judge, judge_endpoint
 
 
 def save(path, value):
@@ -28,8 +28,10 @@ def save(path, value):
 def validate_resources(config):
     gpus = config['judge_gpus'] + [gpu for w in config['workflows'] for gpu in w['gpus']]
     slots = execution_slots(config)
-    ports = [config['judge_port'], config['embedding_port']] + [
+    ports = [config['embedding_port']] + [
         w[k] for w in config['workflows'] for k in ('actor_port', 'gateway_port')]
+    if not external_judge(config):
+        ports.append(config['judge_port'])
     ports += [w['simulator_port'] for w in slots]
     if sorted(gpus) != [0, 1, 2, 3] or len(set(ports)) != len(ports):
         raise ValueError('Expected disjoint four-GPU and port allocation')
@@ -66,6 +68,7 @@ def main():
     parser.add_argument('--run-dir', default='work/harness-mvp/services')
     args = parser.parse_args()
     config = json.loads((ROOT / args.config).read_text())
+    external_judge(config)
     run = ROOT / args.run_dir
     run.mkdir(parents=True, exist_ok=True)
     if args.action == 'inventory':
@@ -77,6 +80,16 @@ def main():
         return
     try:
         validate_resources(config)
+        if external_judge(config):
+            with httpx.Client(trust_env=False, timeout=10) as client:
+                response = client.get(judge_endpoint(config) + '/models')
+                response.raise_for_status()
+                models = response.json()
+                model = next(row for row in models['data'] if row['id'] == config['judge_model'])
+                if model.get('max_model_len', 0) < config['judge_context']:
+                    raise ValueError('External judge context is smaller than requested')
+            save(run / 'external-judge.json', {'managed': False, 'endpoint': judge_endpoint(config),
+                'models': models, 'checked_unix': time.time()})
     except Exception as exc:
         save(run / 'failure.json', {'type': type(exc).__name__, 'message': str(exc)})
         raise
@@ -112,8 +125,9 @@ def main():
         deployments = [('actor' + str(w['id']), config['actor_path'], config['actor_model'],
                         w['gpus'], w['actor_port'], config['actor_context'], inference.get('actor_max_num_seqs', 1))
                        for w in config['workflows']]
-        deployments.append(('judge', config['judge_path'], config['judge_model'],
-                            config['judge_gpus'], config['judge_port'], config['judge_context'], inference.get('judge_max_num_seqs', 6)))
+        if not external_judge(config):
+            deployments.append(('judge', config['judge_path'], config['judge_model'],
+                                config['judge_gpus'], config['judge_port'], config['judge_context'], inference.get('judge_max_num_seqs', 6)))
         for name, path, model, gpus, port, context, sequences in deployments:
             cache_root = ROOT / config.get('kernel_cache_root', str(run.relative_to(ROOT)))
             environment = {'CUDA_VISIBLE_DEVICES': ','.join(map(str, gpus)),
@@ -147,7 +161,12 @@ def main():
                         except httpx.TransportError:
                             pass
                 save(run / 'services.json', state)
-                if all(item['ready'] for item in state):
+                remote_ready = True
+                if external_judge(config):
+                    remote_ready = client.get(judge_endpoint(config).removesuffix('/v1') + '/health').is_success
+                    if not remote_ready:
+                        raise RuntimeError('External judge health check failed')
+                if all(item['ready'] for item in state) and remote_ready:
                     if not (run / 'ready').exists():
                         save(run / 'timing.json', {'startup_seconds': time.monotonic() - service_started,
                             'ready_unix': time.time()})
@@ -173,12 +192,12 @@ def main():
 
 
 def probe(config, run):
-    def request(name, port, model, generation, prompt, seed, expected=None):
+    def request(name, endpoint, model, generation, prompt, seed, expected=None):
         body = {'model': model, 'messages': [{'role': 'user', 'content': prompt}],
                 'seed': seed, **{k: v for k, v in generation.items() if k != 'extra_body'},
                 **generation.get('extra_body', {})}
         with httpx.Client(trust_env=False, timeout=240) as client:
-            response = client.post(f'http://127.0.0.1:{port}/v1/chat/completions', json=body)
+            response = client.post(endpoint + '/chat/completions', json=body)
             response.raise_for_status()
             result = response.json()
         text = result['choices'][0]['message']['content']
@@ -186,16 +205,16 @@ def probe(config, run):
         if name == 'judge':
             assert text.strip().upper()[:1] == expected and '<think>' not in text
         return {'service': name, 'request': body, 'response': result}
-    tasks = [('actor' + str(w['id']), w['actor_port'], config['actor_model'], config['generation'],
+    tasks = [('actor' + str(w['id']), f"http://127.0.0.1:{w['actor_port']}/v1", config['actor_model'], config['generation'],
               'Reply with the single word READY.', 42) for w in config['workflows']]
     for seed in config['judge_seeds']:
         for answer, expected in [('4', 'A'), ('5', 'B')]:
-            tasks.append(('judge', config['judge_port'], config['judge_model'], config['judge_generation'],
+            tasks.append(('judge', judge_endpoint(config), config['judge_model'], config['judge_generation'],
                 f'Evaluate the answer: question 2+2, answer {answer}. Reply A if correct, B otherwise. Only one letter.', seed, expected))
     with ThreadPoolExecutor(max_workers=8) as pool:
         results = list(pool.map(lambda args: request(*args), tasks))
     save(run / 'inference-probe.json', {'passed': True, 'results': results})
-    print('Two actors and the three-vote local judge passed inference probes', flush=True)
+    print(f"{len(config['workflows'])} actors and the three-vote judge passed inference probes", flush=True)
 
 
 if __name__ == '__main__':
