@@ -3646,5 +3646,468 @@
       },
       "statistical_unit": "task; primary McNemar uses one predeclared actor seed; repeat CI resamples task clusters within categories"
     }
+  },
+  "final_readout": {
+    "primary_actor_seed": 42,
+    "categories": {
+      "B0:42:qt1:feasible": {
+        "episodes": 16,
+        "successes": 11
+      },
+      "G:42:qt1:feasible": {
+        "episodes": 16,
+        "successes": 9
+      },
+      "Full:42:qt1:feasible": {
+        "episodes": 16,
+        "successes": 12
+      },
+      "B0:42:qt1:infeasible": {
+        "episodes": 16,
+        "successes": 9
+      },
+      "G:42:qt1:infeasible": {
+        "episodes": 16,
+        "successes": 9
+      },
+      "Full:42:qt1:infeasible": {
+        "episodes": 16,
+        "successes": 11
+      },
+      "B0:42:qt2:feasible": {
+        "episodes": 16,
+        "successes": 2
+      },
+      "G:42:qt2:feasible": {
+        "episodes": 16,
+        "successes": 4
+      },
+      "Full:42:qt2:feasible": {
+        "episodes": 16,
+        "successes": 3
+      },
+      "B0:42:qt2:infeasible": {
+        "episodes": 16,
+        "successes": 4
+      },
+      "G:42:qt2:infeasible": {
+        "episodes": 16,
+        "successes": 2
+      },
+      "Full:42:qt2:infeasible": {
+        "episodes": 16,
+        "successes": 3
+      },
+      "B0:42:qt3:feasible": {
+        "episodes": 16,
+        "successes": 13
+      },
+      "G:42:qt3:feasible": {
+        "episodes": 16,
+        "successes": 14
+      },
+      "Full:42:qt3:feasible": {
+        "episodes": 16,
+        "successes": 13
+      },
+      "B0:42:qt3:infeasible": {
+        "episodes": 16,
+        "successes": 9
+      },
+      "G:42:qt3:infeasible": {
+        "episodes": 16,
+        "successes": 9
+      },
+      "Full:42:qt3:infeasible": {
+        "episodes": 16,
+        "successes": 9
+      },
+      "B0:42:qt4-1:feasible": {
+        "episodes": 16,
+        "successes": 3
+      },
+      "G:42:qt4-1:feasible": {
+        "episodes": 16,
+        "successes": 6
+      },
+      "Full:42:qt4-1:feasible": {
+        "episodes": 16,
+        "successes": 6
+      },
+      "B0:42:qt4-1:infeasible": {
+        "episodes": 16,
+        "successes": 4
+      },
+      "G:42:qt4-1:infeasible": {
+        "episodes": 16,
+        "successes": 5
+      },
+      "Full:42:qt4-1:infeasible": {
+        "episodes": 16,
+        "successes": 5
+      },
+      "B0:42:qt4-2:feasible": {
+        "episodes": 16,
+        "successes": 4
+      },
+      "G:42:qt4-2:feasible": {
+        "episodes": 16,
+        "successes": 9
+      },
+      "Full:42:qt4-2:feasible": {
+        "episodes": 16,
+        "successes": 8
+      },
+      "B0:42:qt4-2:infeasible": {
+        "episodes": 16,
+        "successes": 0
+      },
+      "G:42:qt4-2:infeasible": {
+        "episodes": 16,
+        "successes": 0
+      },
+      "Full:42:qt4-2:infeasible": {
+        "episodes": 16,
+        "successes": 0
+      },
+      "B0:42:qt4-3:feasible": {
+        "episodes": 16,
+        "successes": 1
+      },
+      "G:42:qt4-3:feasible": {
+        "episodes": 16,
+        "successes": 2
+      },
+      "Full:42:qt4-3:feasible": {
+        "episodes": 16,
+        "successes": 1
+      },
+      "B0:42:qt4-3:infeasible": {
+        "episodes": 16,
+        "successes": 0
+      },
+      "G:42:qt4-3:infeasible": {
+        "episodes": 16,
+        "successes": 0
+      },
+      "Full:42:qt4-3:infeasible": {
+        "episodes": 16,
+        "successes": 0
+      },
+      "Full:43:qt1:feasible": {
+        "episodes": 16,
+        "successes": 10
+      },
+      "G:43:qt1:feasible": {
+        "episodes": 16,
+        "successes": 12
+      },
+      "B0:43:qt1:feasible": {
+        "episodes": 16,
+        "successes": 10
+      },
+      "Full:43:qt1:infeasible": {
+        "episodes": 16,
+        "successes": 10
+      },
+      "G:43:qt1:infeasible": {
+        "episodes": 16,
+        "successes": 10
+      },
+      "B0:43:qt1:infeasible": {
+        "episodes": 16,
+        "successes": 8
+      },
+      "Full:43:qt2:feasible": {
+        "episodes": 16,
+        "successes": 4
+      },
+      "G:43:qt2:feasible": {
+        "episodes": 16,
+        "successes": 4
+      },
+      "B0:43:qt2:feasible": {
+        "episodes": 16,
+        "successes": 4
+      },
+      "Full:43:qt2:infeasible": {
+        "episodes": 16,
+        "successes": 4
+      },
+      "G:43:qt2:infeasible": {
+        "episodes": 16,
+        "successes": 3
+      },
+      "B0:43:qt2:infeasible": {
+        "episodes": 16,
+        "successes": 3
+      },
+      "Full:43:qt3:feasible": {
+        "episodes": 16,
+        "successes": 13
+      },
+      "G:43:qt3:feasible": {
+        "episodes": 16,
+        "successes": 13
+      },
+      "B0:43:qt3:feasible": {
+        "episodes": 16,
+        "successes": 13
+      },
+      "Full:43:qt3:infeasible": {
+        "episodes": 16,
+        "successes": 8
+      },
+      "G:43:qt3:infeasible": {
+        "episodes": 16,
+        "successes": 9
+      },
+      "B0:43:qt3:infeasible": {
+        "episodes": 16,
+        "successes": 9
+      },
+      "Full:43:qt4-1:feasible": {
+        "episodes": 16,
+        "successes": 7
+      },
+      "G:43:qt4-1:feasible": {
+        "episodes": 16,
+        "successes": 6
+      },
+      "B0:43:qt4-1:feasible": {
+        "episodes": 16,
+        "successes": 3
+      },
+      "Full:43:qt4-1:infeasible": {
+        "episodes": 16,
+        "successes": 3
+      },
+      "G:43:qt4-1:infeasible": {
+        "episodes": 16,
+        "successes": 4
+      },
+      "B0:43:qt4-1:infeasible": {
+        "episodes": 16,
+        "successes": 3
+      },
+      "Full:43:qt4-2:feasible": {
+        "episodes": 16,
+        "successes": 6
+      },
+      "G:43:qt4-2:feasible": {
+        "episodes": 16,
+        "successes": 7
+      },
+      "B0:43:qt4-2:feasible": {
+        "episodes": 16,
+        "successes": 4
+      },
+      "Full:43:qt4-2:infeasible": {
+        "episodes": 16,
+        "successes": 0
+      },
+      "G:43:qt4-2:infeasible": {
+        "episodes": 16,
+        "successes": 0
+      },
+      "B0:43:qt4-2:infeasible": {
+        "episodes": 16,
+        "successes": 0
+      },
+      "Full:43:qt4-3:feasible": {
+        "episodes": 16,
+        "successes": 2
+      },
+      "G:43:qt4-3:feasible": {
+        "episodes": 16,
+        "successes": 0
+      },
+      "B0:43:qt4-3:feasible": {
+        "episodes": 16,
+        "successes": 0
+      },
+      "Full:43:qt4-3:infeasible": {
+        "episodes": 16,
+        "successes": 0
+      },
+      "G:43:qt4-3:infeasible": {
+        "episodes": 16,
+        "successes": 1
+      },
+      "B0:43:qt4-3:infeasible": {
+        "episodes": 16,
+        "successes": 0
+      },
+      "B0:44:qt1:feasible": {
+        "episodes": 16,
+        "successes": 8
+      },
+      "G:44:qt1:feasible": {
+        "episodes": 16,
+        "successes": 9
+      },
+      "Full:44:qt1:feasible": {
+        "episodes": 16,
+        "successes": 10
+      },
+      "B0:44:qt1:infeasible": {
+        "episodes": 16,
+        "successes": 9
+      },
+      "G:44:qt1:infeasible": {
+        "episodes": 16,
+        "successes": 10
+      },
+      "Full:44:qt1:infeasible": {
+        "episodes": 16,
+        "successes": 12
+      },
+      "B0:44:qt2:feasible": {
+        "episodes": 16,
+        "successes": 4
+      },
+      "G:44:qt2:feasible": {
+        "episodes": 16,
+        "successes": 2
+      },
+      "Full:44:qt2:feasible": {
+        "episodes": 16,
+        "successes": 1
+      },
+      "B0:44:qt2:infeasible": {
+        "episodes": 16,
+        "successes": 3
+      },
+      "G:44:qt2:infeasible": {
+        "episodes": 16,
+        "successes": 2
+      },
+      "Full:44:qt2:infeasible": {
+        "episodes": 16,
+        "successes": 3
+      },
+      "B0:44:qt3:feasible": {
+        "episodes": 16,
+        "successes": 11
+      },
+      "G:44:qt3:feasible": {
+        "episodes": 16,
+        "successes": 14
+      },
+      "Full:44:qt3:feasible": {
+        "episodes": 16,
+        "successes": 12
+      },
+      "B0:44:qt3:infeasible": {
+        "episodes": 16,
+        "successes": 9
+      },
+      "G:44:qt3:infeasible": {
+        "episodes": 16,
+        "successes": 11
+      },
+      "Full:44:qt3:infeasible": {
+        "episodes": 16,
+        "successes": 9
+      },
+      "B0:44:qt4-1:feasible": {
+        "episodes": 16,
+        "successes": 4
+      },
+      "G:44:qt4-1:feasible": {
+        "episodes": 16,
+        "successes": 6
+      },
+      "Full:44:qt4-1:feasible": {
+        "episodes": 16,
+        "successes": 6
+      },
+      "B0:44:qt4-1:infeasible": {
+        "episodes": 16,
+        "successes": 2
+      },
+      "G:44:qt4-1:infeasible": {
+        "episodes": 16,
+        "successes": 3
+      },
+      "Full:44:qt4-1:infeasible": {
+        "episodes": 16,
+        "successes": 3
+      },
+      "B0:44:qt4-2:feasible": {
+        "episodes": 16,
+        "successes": 6
+      },
+      "G:44:qt4-2:feasible": {
+        "episodes": 16,
+        "successes": 7
+      },
+      "Full:44:qt4-2:feasible": {
+        "episodes": 16,
+        "successes": 6
+      },
+      "B0:44:qt4-2:infeasible": {
+        "episodes": 16,
+        "successes": 0
+      },
+      "G:44:qt4-2:infeasible": {
+        "episodes": 16,
+        "successes": 0
+      },
+      "Full:44:qt4-2:infeasible": {
+        "episodes": 16,
+        "successes": 0
+      },
+      "B0:44:qt4-3:feasible": {
+        "episodes": 16,
+        "successes": 2
+      },
+      "G:44:qt4-3:feasible": {
+        "episodes": 16,
+        "successes": 2
+      },
+      "Full:44:qt4-3:feasible": {
+        "episodes": 16,
+        "successes": 4
+      },
+      "B0:44:qt4-3:infeasible": {
+        "episodes": 16,
+        "successes": 0
+      },
+      "G:44:qt4-3:infeasible": {
+        "episodes": 16,
+        "successes": 0
+      },
+      "Full:44:qt4-3:infeasible": {
+        "episodes": 16,
+        "successes": 1
+      }
+    },
+    "reliability": {
+      "B0": {
+        "independent_tasks": 192,
+        "success_all_three": 33,
+        "success_any_seed": 84
+      },
+      "G": {
+        "independent_tasks": 192,
+        "success_all_three": 42,
+        "success_any_seed": 95
+      },
+      "Full": {
+        "independent_tasks": 192,
+        "success_all_three": 43,
+        "success_any_seed": 94
+      }
+    },
+    "note": "All-three success is empirical repeat reliability, not 576 independent tasks or a new primary test."
+  },
+  "archive": {
+    "total_verified_files": 76817,
+    "archive": "review-evidence.tar.gz",
+    "archive_sha256": "d3da23b96f1ccd8adbba6916037dbbb6e124e04cf1c872186349bc57ead22e09",
+    "archive_bytes": 3674518,
+    "raw_episodes_preserved": true,
+    "upstream_and_lightning_user_patch_unchanged": true
   }
 }
