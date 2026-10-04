@@ -17,7 +17,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from smarthome_agent_rl.benchmark import digest
 from smarthome_agent_rl.concurrency import execution_slots, external_judge, judge_endpoint
-from scripts.benchmark_capacity import pressure
+from benchmark_capacity import pressure
 
 
 def write(path, value):
