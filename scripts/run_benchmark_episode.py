@@ -86,12 +86,19 @@ def main(mode):
         if kind in ('observation', 'finish', 'rejected_action'):
             emit('environment_step', event)
     original = runner._build_agent
+    tokenization_calls = []
     def count_tokens(messages):
-        response = client.post(config['model_endpoint'].removesuffix('/v1') + '/tokenize',
-            json={'model': config['served_model'], 'messages': [asdict(m) for m in messages],
+        started = time.monotonic()
+        request = {'model': config['served_model'], 'messages': [asdict(m) for m in messages],
                   'add_generation_prompt': True, 'chat_template_kwargs':
-                  config['generation'].get('extra_body', {}).get('chat_template_kwargs', {})})
+                  config['generation'].get('extra_body', {}).get('chat_template_kwargs', {})}
+        response = client.post(config['model_endpoint'].removesuffix('/v1') + '/tokenize',
+            json=request)
         response.raise_for_status()
+        tokenization_calls.append({'count': response.json()['count'], 'status': response.status_code,
+            'duration_seconds': time.monotonic() - started,
+            'request_sha256': hashlib.sha256(json.dumps(request, sort_keys=True).encode()).hexdigest()})
+        save('tokenization_calls.json', tokenization_calls)
         return response.json()['count']
     def build(llm, *, max_steps, strategy):
         if variant == 'B0':

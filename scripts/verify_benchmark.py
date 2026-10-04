@@ -38,6 +38,10 @@ def verify(run):
                     config = json.loads(contract_path.read_text())['config']
                     if 'actor_seed' in item and config['model_seed'] != item['actor_seed']:
                         failures.append({'task': item['task']['id'], 'variant': variant, 'problem': 'actor seed isolation mismatch'})
+                    calls_path = contract_path.parent / 'model_calls.json'
+                    if calls_path.exists() and any(call['request'].get('seed') != config['model_seed']
+                            for call in json.loads(calls_path.read_text())):
+                        failures.append({'task': item['task']['id'], 'variant': variant, 'problem': 'HTTP actor seed differs from contract'})
                     if config['simulator_url'] != f"http://127.0.0.1:{slot['simulator_port']}/api" or (
                         config['model_endpoint'] != f"http://127.0.0.1:{slot['actor_port']}/v1"):
                         failures.append({'task': item['task']['id'], 'variant': variant, 'problem': 'episode endpoint isolation mismatch'})
@@ -45,6 +49,8 @@ def verify(run):
                     failures.append({'task': item['task']['id'], 'variant': variant, 'problem': 'missing isolation contract'})
     if set(expected_summaries) != {name for name in manifest if name.endswith('/summary.json')}:
         failures.append({'problem': 'missing/extra episode summary'})
+    if len(expected_summaries) != len(set(expected_summaries)) or len(expected_summaries) != protocol['expected_episodes']:
+        failures.append({'problem': 'duplicate schedule path or expected episode mismatch'})
     if completion['episodes'] != protocol['expected_episodes'] or not completion['complete']:
         failures.append({'problem': 'episode coverage mismatch'})
     result = {'verified': not failures, 'files': len(manifest),

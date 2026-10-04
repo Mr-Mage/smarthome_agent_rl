@@ -47,6 +47,7 @@ def episode_metrics(directory):
     calls = read(directory / 'model_calls.json')
     judges = read(directory / 'judge_calls.json') if (directory / 'judge_calls.json').exists() else []
     retrieval = read(directory / 'retrieval_calls.json') if (directory / 'retrieval_calls.json').exists() else []
+    tokenization = read(directory / 'tokenization_calls.json') if (directory / 'tokenization_calls.json').exists() else []
     audit_path = directory / 'harness_audit.json'
     if audit_path.exists():
         audit = read(audit_path)
@@ -84,7 +85,9 @@ def episode_metrics(directory):
         'extra_query_latency': extra_query_latency, 'retrieval_calls': len(retrieval),
         'retrieval_tokens': sum(row['input_tokens'] for row in retrieval),
         'actor_latency': sum(row['duration_seconds'] for row in calls),
-        'judge_latency': sum(row['duration_seconds'] for row in judges)}
+        'judge_latency': sum(row['duration_seconds'] for row in judges),
+        'tokenization_calls': len(tokenization),
+        'tokenization_latency': sum(row['duration_seconds'] for row in tokenization)}
 
 
 def report(run):
@@ -122,7 +125,7 @@ def report(run):
             'invalid_proposed', 'invalid_reached_executor', 'structured_rejections',
             'executed_tool_calls', 'guard_blocked', 'extra_queries',
             'verification_failures', 'recovered_actions', 'recovery_budget_blocked', 'duration_seconds', 'retrieval_tokens',
-            'actor_latency', 'judge_latency', 'extra_query_latency']
+            'actor_latency', 'judge_latency', 'extra_query_latency', 'tokenization_calls', 'tokenization_latency']
         summary[variant] = {'episodes': len(records), 'successes': len(success_records),
             'success_rate': len(success_records) / len(records), 'unfinished': sum(r['task_failure'] for r in records),
             'unique_tasks': len({i['task']['id'] for i in protocol['schedule']}),
