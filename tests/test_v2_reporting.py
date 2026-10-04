@@ -8,7 +8,7 @@ from unittest.mock import patch
 from scripts.report_benchmark import report
 from smarthome_agent_rl.benchmark import STRATA
 from smarthome_agent_rl.concurrency import seeded_schedule
-from smarthome_agent_rl.experiment_v2 import module_selection, integration_selection, service_identity
+from smarthome_agent_rl.experiment_v2 import module_selection, integration_selection, service_identity, unique_policies
 
 
 class V2ReportingTests(unittest.TestCase):
@@ -59,6 +59,13 @@ class V2ReportingTests(unittest.TestCase):
         self.assertEqual(selected['winner'], 'Candidate')
         self.assertEqual(selected['formal_variants'], ['B0', 'G', 'Full'])
         self.assertEqual(selected['aliases']['Candidate'], 'G')
+        unique, aliases = unique_policies(config, ['B0', 'G', 'Full', 'Candidate'])
+        self.assertEqual(unique, ['B0', 'G', 'Full'])
+        deduplicated = copy.deepcopy(integration)
+        deduplicated['arms']['G'] = deduplicated['arms'].pop('Candidate')
+        reused = integration_selection(deduplicated, config, gates)
+        self.assertEqual(reused['integration_aliases']['Candidate'], 'G')
+        self.assertEqual(reused['formal_variants'], ['B0', 'G', 'Full'])
         changed = copy.deepcopy(config)
         changed['actor_path'] = 'another-model'
         self.assertNotEqual(service_identity(config), service_identity(changed))

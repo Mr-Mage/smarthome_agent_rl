@@ -11,7 +11,7 @@ import time
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from smarthome_agent_rl.benchmark import digest
-from smarthome_agent_rl.experiment_v2 import module_selection, integration_selection
+from smarthome_agent_rl.experiment_v2 import module_selection, integration_selection, unique_policies
 from harness_services import validate_resources
 
 
@@ -121,6 +121,14 @@ def main():
                 'variant_policies': {**config['variant_policies'], 'Candidate': selected['decision']['candidate_policy']}}
             if integrated != expected or not (service_dir / 'ready').exists():
                 raise ValueError('Candidate policy or resident services changed')
+            unique, aliases = unique_policies(integrated, integrated['variants_dev'])
+            if unique != integrated['variants_dev']:
+                integrated = {**integrated, 'variants_dev': unique}
+                integration_path = run / 'integration-config-deduplicated.json'
+                if integration_path.exists():
+                    raise FileExistsError('Never replace a deduplicated experiment configuration')
+                save(integration_path, integrated)
+                save(run / 'integration-aliases.json', aliases)
             report = suite('dev', run / 'integration', integration_path)
             decision = integration_selection(report, integrated, gates)
             selection_path = run / 'integration-selection.json'

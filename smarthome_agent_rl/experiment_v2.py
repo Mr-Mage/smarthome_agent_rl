@@ -24,6 +24,16 @@ def service_identity(config):
     return {key: config.get(key) for key in keys}
 
 
+def unique_policies(config, variants):
+    representatives, aliases = [], {}
+    for variant in variants:
+        match = next((old for old in representatives if policy(config, old) == policy(config, variant)), None)
+        aliases[variant] = match or variant
+        if match is None:
+            representatives.append(variant)
+    return representatives, aliases
+
+
 def module_selection(report, gates):
     if not report['verified'] or report['phase'] != 'dev':
         raise ValueError('Verified dev evidence required')
@@ -47,20 +57,18 @@ def integration_selection(report, config, gates):
         raise ValueError('Verified dev evidence required')
     variants = gates['integration_variants']
     rows = report['arms']
-    if not set(variants) <= set(rows) or 'B0' not in rows:
+    aliases = {v: v if v in rows else next((old for old in rows if policy(config, old) == policy(config, v)), None)
+               for v in variants}
+    if None in aliases.values() or 'B0' not in rows:
         raise ValueError('Integration must include B0 calibration for final freeze')
+    rows = {**rows, **{v: rows[aliases[v]] for v in variants}}
     best = max(rows[v]['success_rate'] for v in variants)
     eligible = [v for v in variants if best - rows[v]['success_rate'] <=
                 gates['integration_selection']['success_tie_tolerance'] + 1e-12]
     winner = min(eligible, key=lambda v: (rows[v]['all_totals']['actor_tokens'],
                 rows[v]['all_totals']['extra_queries'], v))
     desired = ['B0', 'G', 'Full', winner]
-    representatives, aliases = [], {}
-    for variant in desired:
-        match = next((old for old in representatives if policy(config, old) == policy(config, variant)), None)
-        aliases[variant] = match or variant
-        if match is None:
-            representatives.append(variant)
+    representatives, formal_aliases = unique_policies(config, desired)
     return {'winner': winner, 'selected_policy': policy(config, winner),
-            'formal_variants': representatives, 'aliases': aliases,
+            'formal_variants': representatives, 'aliases': formal_aliases, 'integration_aliases': aliases,
             'selection_scope': 'dev only; no final tuning'}
