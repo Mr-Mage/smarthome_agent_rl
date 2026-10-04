@@ -46,6 +46,32 @@ class ConcurrencyTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 verify(root)
 
+    def test_cross_actor_assignment_is_rejected_even_with_valid_hashes(self):
+        from smarthome_agent_rl.benchmark import digest
+        self.config['slots_per_actor'] = 2
+        slots = execution_slots(self.config)
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            item = {'workflow': 0, 'task': {'id': 'paired'}, 'variants': ['B0', 'G'],
+                'variant_workflows': {'B0': 0, 'G': 2}}
+            manifest = {}
+            for variant in item['variants']:
+                directory = episode_directory(root, item, variant)
+                directory.mkdir(parents=True)
+                slot = slots[item['variant_workflows'][variant]]
+                (directory / 'summary.json').write_text('{}')
+                (directory / 'contract.json').write_text(json.dumps({'config': {
+                    'simulator_url': f"http://127.0.0.1:{slot['simulator_port']}/api",
+                    'model_endpoint': f"http://127.0.0.1:{slot['actor_port']}/v1"}}))
+                for path in directory.iterdir():
+                    manifest[path.relative_to(root).as_posix()] = digest(path)
+            (root / 'protocol.json').write_text(json.dumps({'schedule': [item], 'expected_episodes': 2,
+                'scheduler': 'actor-affine-queue-v2', 'execution_slots': slots}))
+            (root / 'completion.json').write_text(json.dumps({'complete': True, 'episodes': 2}))
+            (root / 'artifact_manifest.json').write_text(json.dumps(manifest))
+            with self.assertRaisesRegex(ValueError, 'verification failed'):
+                verify(root)
+
 
 if __name__ == '__main__':
     unittest.main()

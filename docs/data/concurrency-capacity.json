@@ -1,0 +1,37 @@
+{
+  "purpose": "fixed_request_capacity_only",
+  "stages": [
+    {
+      "concurrency": 2,
+      "elapsed_seconds": 193.1651824330038,
+      "measurement_seconds": 180,
+      "drain_seconds": 13.165182433003793,
+      "requests": 75,
+      "errors": 0,
+      "requests_per_second": 0.3882687296713658,
+      "input_tokens_per_second": 2334.530448604032,
+      "output_tokens_per_second": 87.98169414353148,
+      "latency_p50": 2.86779521900462,
+      "latency_p95": 13.883301516005304
+    },
+    {
+      "concurrency": 4,
+      "elapsed_seconds": 218.51468835401465,
+      "measurement_seconds": 180,
+      "drain_seconds": 38.51468835401465,
+      "requests": 136,
+      "errors": 0,
+      "requests_per_second": 0.6223837904190085,
+      "input_tokens_per_second": 3734.6230871120606,
+      "output_tokens_per_second": 143.21691706737403,
+      "latency_p50": 3.1804362984839827,
+      "latency_p95": 19.230654532002518
+    }
+  ],
+  "source": "runs/concurrency-capacity/preflight-v4/eager/replay/report.json",
+  "source_sha256": "e8013b05021b736e03cf80494cf1bc12cd28082029459ff1c684feaa995ceb40",
+  "status": "in_progress",
+  "service_startup_seconds": 162.50034303800203,
+  "target_episodes": 1368,
+  "target_seconds": 3600
+}
