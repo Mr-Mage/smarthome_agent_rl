@@ -5,6 +5,7 @@
 
 已完成 N0–N7：600 dev + 768 final。final 成功数：B0 66/192, G 76/192, GC 69/192, Full 73/192。
 开发记录：`docs/nodes/`；约定：`AGENTS.md`；历史资料：`docs/archive/pre-mvp/`。
+持续实验报表：[论文参照、9B 基线与节点结果](docs/实验报表.md)。
 结果与证据：`runs/harness-mvp/primary-v1/`、`outputs/harness-mvp/`；原始失败保留，主实验不混入额外诊断。
 结果解释见 `docs/nodes/N6.md`，独立验收见 `docs/nodes/N7.md`；judge 三票来自同一模型，保留原实时动力学。
 

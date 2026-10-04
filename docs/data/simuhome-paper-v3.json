@@ -1,0 +1,329 @@
+{
+  "source": "https://arxiv.org/html/2509.24282v3#S4.T2",
+  "table": 1,
+  "caption": "Table 1: Evaluation results show success rates (in %) across query types (QTs). F and IF refer to Feasible and Infeasible episodes, respectively. Superscripts S and J indicate results from simulator-based and LLM-as-a-Judge evaluation, respectively. Bold and underlined values indicate the best and second-best results per column.",
+  "html_sha256": "2f1a0285cc805ba43aa3c3412a99bc0c23f2934517bb23b1de473cb8d5bd60b3",
+  "categories": [
+    "qt1:feasible",
+    "qt1:infeasible",
+    "qt2:feasible",
+    "qt2:infeasible",
+    "qt3:feasible",
+    "qt3:infeasible",
+    "qt4-1:feasible",
+    "qt4-1:infeasible",
+    "qt4-2:feasible",
+    "qt4-2:infeasible",
+    "qt4-3:feasible",
+    "qt4-3:infeasible"
+  ],
+  "episodes_per_category": 50,
+  "rows": [
+    {
+      "model": "Llama3.2-1B-it",
+      "success_rates_pct": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "model": "Llama3.2-3B-it",
+      "success_rates_pct": [
+        10,
+        12,
+        0,
+        2,
+        4,
+        0,
+        2,
+        0,
+        2,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "model": "Gemma3-4B-it",
+      "success_rates_pct": [
+        44,
+        32,
+        12,
+        10,
+        28,
+        8,
+        0,
+        0,
+        2,
+        0,
+        0,
+        4
+      ]
+    },
+    {
+      "model": "Gemma3-4B-it (SFT)",
+      "success_rates_pct": [
+        52,
+        58,
+        22,
+        18,
+        24,
+        30,
+        4,
+        2,
+        4,
+        0,
+        0,
+        2
+      ]
+    },
+    {
+      "model": "Llama4-Scout",
+      "success_rates_pct": [
+        58,
+        42,
+        2,
+        22,
+        24,
+        34,
+        4,
+        4,
+        2,
+        2,
+        2,
+        0
+      ]
+    },
+    {
+      "model": "Llama4-Maverick",
+      "success_rates_pct": [
+        96,
+        78,
+        52,
+        36,
+        88,
+        74,
+        22,
+        14,
+        18,
+        10,
+        32,
+        8
+      ]
+    },
+    {
+      "model": "Qwen3-32B",
+      "success_rates_pct": [
+        82,
+        66,
+        62,
+        30,
+        52,
+        68,
+        18,
+        14,
+        14,
+        8,
+        16,
+        6
+      ]
+    },
+    {
+      "model": "Qwen3-32B (SFT)",
+      "success_rates_pct": [
+        82,
+        88,
+        64,
+        32,
+        58,
+        74,
+        26,
+        32,
+        20,
+        10,
+        12,
+        14
+      ]
+    },
+    {
+      "model": "Qwen3-235B-A22B",
+      "success_rates_pct": [
+        86,
+        74,
+        32,
+        36,
+        84,
+        70,
+        26,
+        18,
+        38,
+        34,
+        28,
+        48
+      ]
+    },
+    {
+      "model": "Gemma3-12B-it",
+      "success_rates_pct": [
+        78,
+        38,
+        14,
+        32,
+        32,
+        24,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "model": "Gemma3-27B-it",
+      "success_rates_pct": [
+        80,
+        48,
+        54,
+        24,
+        48,
+        44,
+        4,
+        2,
+        10,
+        8,
+        0,
+        6
+      ]
+    },
+    {
+      "model": "Gemini-2.5-Flash-Lite",
+      "success_rates_pct": [
+        78,
+        60,
+        44,
+        50,
+        50,
+        50,
+        8,
+        34,
+        10,
+        16,
+        16,
+        20
+      ]
+    },
+    {
+      "model": "Gemini-2.5-Flash",
+      "success_rates_pct": [
+        92,
+        86,
+        66,
+        54,
+        82,
+        74,
+        22,
+        44,
+        40,
+        32,
+        12,
+        32
+      ]
+    },
+    {
+      "model": "GPT-4.1-nano",
+      "success_rates_pct": [
+        58,
+        42,
+        6,
+        12,
+        30,
+        16,
+        2,
+        6,
+        6,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "model": "GPT-4.1-mini",
+      "success_rates_pct": [
+        96,
+        76,
+        62,
+        28,
+        64,
+        76,
+        26,
+        40,
+        40,
+        20,
+        10,
+        28
+      ]
+    },
+    {
+      "model": "GPT-4.1",
+      "success_rates_pct": [
+        98,
+        82,
+        44,
+        44,
+        84,
+        88,
+        50,
+        12,
+        46,
+        34,
+        34,
+        32
+      ]
+    },
+    {
+      "model": "Gemini-2.5-Pro",
+      "success_rates_pct": [
+        96,
+        78,
+        60,
+        56,
+        76,
+        72,
+        44,
+        94,
+        60,
+        76,
+        46,
+        50
+      ]
+    },
+    {
+      "model": "GPT-5.1",
+      "success_rates_pct": [
+        100,
+        94,
+        80,
+        50,
+        86,
+        92,
+        60,
+        100,
+        72,
+        92,
+        56,
+        44
+      ]
+    }
+  ]
+}
