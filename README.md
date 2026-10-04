@@ -13,3 +13,6 @@
 
 运行入口：`scripts/harness_services.py`、`scripts/run_benchmark_suite.py`、`scripts/report_benchmark.py`。
 独立复核：`python scripts/verify_benchmark.py <run-dir>`；冻结：`work/harness-mvp/final-freeze.json`。
+
+并发配置：`configs/harness-concurrent.json`，32 个独立模拟器槽、CUDA Graph 与前缀缓存、工作流优先调度。试跑 120 次用时 3 分 51 秒；完整计时首轮因上游 simulator 参数类型崩溃无效，待修复授权，见 [N8](docs/nodes/N8.md)。
+前置测量：`scripts/run_concurrency_preflight.py`；完整验收：`python scripts/run_timed_benchmark.py --config configs/harness-concurrent.json --run-dir runs/concurrency-capacity/<新目录>`。旧正式结果与失败轮全部保留。
