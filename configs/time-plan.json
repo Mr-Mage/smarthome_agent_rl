@@ -166,7 +166,7 @@
     "exclusions": "None; task failures retained; infrastructure invalidates entire stage; no selective rerun",
     "coverage": "Numeric minute-relative phrases only. Model chooses previous-action links and step-to-constraint mapping. Unknown semantics explicitly uncovered.",
     "runtime_changes": "Only time ledger/output metadata/schedule checks/finish receipts and timing; weights, generation, max_steps and simulator unchanged",
-    "revision": "finite-metadata-v2",
+    "revision": "finite-metadata-first-v3",
     "preflight_episode": "runs/time-plan/n16-v1/dev/seed42/worker0/qt4-1_feasible_seed_48/TimePlan/lightning"
   }
 }

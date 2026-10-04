@@ -26,6 +26,14 @@ For finish include one disposition per row: registered (a real registration rece
 infeasible (give a concrete reason), or uncovered (explain uncertainty). Registration is not future
 execution success. Today's power state is not a future scheduling precondition.
 """
+OUTPUT_CONTRACT = """\n[STRUCTURED HARNESS OUTPUT CONTRACT]
+Follow the CURRENT response schema, including its time metadata fields. This replaces
+earlier JSON examples. Emit metadata FIRST, followed by thought and call, e.g.:
+{"time_plan":{"t0":"now"},"time_refs":[],"time_dispositions":[],
+ "thought":"Discover devices","call":{"tool":"get_rooms","arguments":{}}}
+Only include time_plan when requested by the current schema. arguments is a JSON object.
+Do not end the response before all required fields are present.
+"""
 
 
 class TimePlan:
@@ -70,6 +78,11 @@ class TimePlan:
             body['properties']['time_plan'] = {'type': 'object', 'properties': properties,
                 'required': list(properties), 'additionalProperties': False}
             body['required'].append('time_plan')
+        # The model naturally stops after thought/call. Put required metadata before that suffix
+        # so constrained decoding does not force whitespace when it tries to close early.
+        order = [k for k in ('time_plan', 'time_refs', 'time_dispositions', 'thought', 'call') if k in body['properties']]
+        body['properties'] = {k: body['properties'][k] for k in order}
+        body['required'] = order
         return schema
 
     def consume(self, body):

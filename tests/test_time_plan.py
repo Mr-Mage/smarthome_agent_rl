@@ -72,6 +72,8 @@ class TimePlanTests(unittest.TestCase):
         self.assertEqual(plan['type'], 'object')
         self.assertEqual(plan['properties']['t0']['enum'], ['now'])
         self.assertEqual(plan['properties']['t1']['enum'], ['t0'])
+        self.assertEqual(list(schema['json_schema']['schema']['properties'])[:3],
+                         ['time_plan', 'time_refs', 'time_dispositions'])
         fresh.initialize('Turn on light 5 minutes after the previous action.', '2025-08-23 17:20:08')
         fresh.consume({'time_plan': {'t0': 'uncovered'}, 'time_refs': ['t0'], 'time_dispositions': []})
         fresh.check('schedule_workflow', {'start_time': '2025-08-23 17:42:00', 'steps': [{}]})

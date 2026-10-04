@@ -131,6 +131,9 @@ class StructuredProvider(LLMProvider):
                 pass
         finish_enabled = not self.finish_guard or successful_discovery
         contract = CONTRACT if self.guidance else BASIC_CONTRACT
+        if self.time_plan is not None and self.time_plan.rows:
+            from smarthome_agent_rl.time_plan import OUTPUT_CONTRACT
+            contract = OUTPUT_CONTRACT
         if not self.finish_guard:
             contract = contract.replace("Discovery is\nrequired before finish is available. ", "")
         converted = []
