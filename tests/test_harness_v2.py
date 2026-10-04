@@ -66,6 +66,15 @@ class HarnessV2Tests(unittest.TestCase):
         self.assertNotIn('get_workflow_status', calls)
         self.assertFalse(reply['harness_verification']['future_success_verified'])
 
+    def test_zero_countdown_start_is_not_a_false_persistent_state_assertion(self):
+        cluster = OperationalStateCluster(supported_commands=['Start'])
+        cluster.attributes['CountdownTime'] = 0
+        effect = expected_effect_v2('execute_command', action('OperationalState', 'Start', {}), structure(cluster))
+        self.assertEqual(effect, {})
+        self.assertTrue(cluster._start().success)
+        cluster.on_time_tick()
+        self.assertEqual(cluster.attributes['OperationalState'], 0)
+
     def test_mismatch_is_feedback_but_actual_simulator_return_remains_unchanged(self):
         cluster = OperationalStateCluster(supported_commands=['Start', 'Stop'])
         def dispatch(tool, arguments):

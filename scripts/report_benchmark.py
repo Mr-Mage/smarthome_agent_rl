@@ -130,7 +130,9 @@ def report(run):
             'success_rate': len(success_records) / len(records), 'unfinished': sum(r['task_failure'] for r in records),
             'unique_tasks': len({i['task']['id'] for i in protocol['schedule']}),
             'by_actor_seed': {str(seed): {'episodes': sum(key(i, variant)[2] == seed for i in protocol['schedule']),
-                'successes': sum(metrics[key(i, variant)]['success'] for i in protocol['schedule'] if key(i, variant)[2] == seed)} for seed in seeds},
+                'successes': sum(metrics[key(i, variant)]['success'] for i in protocol['schedule'] if key(i, variant)[2] == seed),
+                'all_totals': {m: sum(metrics[key(i, variant)][m] for i in protocol['schedule'] if key(i, variant)[2] == seed)
+                               for m in numeric}} for seed in seeds},
             'evaluator_errors': sum(r['official_score'] == -1 for r in records),
             'all_totals': {m: sum(r[m] for r in records) for m in numeric},
             'successful_means': {m: sum(r[m] for r in success_records) / len(success_records)

@@ -17,6 +17,11 @@ def expected_effect_v2(tool, arguments, before):
     endpoint, cluster, command, args = (arguments['endpoint_id'], arguments['cluster_id'],
         arguments['command_id'], arguments['args'])
     if cluster == 'OperationalState' and command == 'Start':
+        countdown = before.get('endpoints', {}).get(str(endpoint), {}).get('clusters', {}).get(
+            cluster, {}).get('attributes', {}).get('CountdownTime', {}).get('value')
+        if type(countdown) in (int, float) and countdown <= 0:
+            # A successful Start can finish on the next simulator tick.
+            return {}
         return {(endpoint, cluster, 'OperationalState'): 1}
     if cluster == 'LaundryWasherMode' and command == 'ChangeToMode':
         return {(endpoint, cluster, 'CurrentMode'): args['new_mode']}
