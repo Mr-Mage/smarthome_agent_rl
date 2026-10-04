@@ -10,7 +10,6 @@ import httpx
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from smarthome_agent_rl.time_plan import TimePlan, OUTPUT_CONTRACT
-from smarthome_agent_rl.structured import BASIC_CONTRACT
 
 
 if __name__ == '__main__':
@@ -31,7 +30,8 @@ if __name__ == '__main__':
         schema['json_schema']['schema']['required'] = [r for r in schema['json_schema']['schema']['required'] if r != key]
     request['response_format'] = plan.augment_schema(schema)
     request['messages'][-1]['content'] = plan.prompt()
-    request['messages'][0]['content'] = request['messages'][0]['content'].replace(BASIC_CONTRACT, OUTPUT_CONTRACT)
+    request['messages'][0]['content'] = request['messages'][0]['content'].split(
+        '\n[STRUCTURED HARNESS OUTPUT CONTRACT]', 1)[0] + OUTPUT_CONTRACT
     url = f"http://127.0.0.1:{config['workflows'][0]['actor_port']}/v1/chat/completions"
     started = time.monotonic()
     with httpx.Client(trust_env=False, timeout=300) as client:
