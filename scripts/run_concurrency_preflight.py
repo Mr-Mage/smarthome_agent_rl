@@ -16,6 +16,8 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--run-dir', default='runs/concurrency-capacity/preflight-v1')
     parser.add_argument('--config', default='configs/concurrency-capacity.json')
+    parser.add_argument('--pilot-only', action='store_true', help='Reuse measured inference configuration; test episode scheduling only')
+    parser.add_argument('--pilot-concurrency', nargs='+', type=int, default=[32, 64])
     parser.add_argument('--attach-services', help='Existing authorized eager supervisor to take ownership of')
     args = parser.parse_args()
     run = ROOT / args.run_dir
@@ -95,62 +97,70 @@ def main():
         return config_path
     stages = []
     try:
-        eager_path = start('eager', config, args.attach_services)
-        state('capacity', label='eager')
-        command('benchmark_capacity.py', '--config', eager_path, '--run-dir', run / 'eager/replay', '--try64')
-        eager = json.loads((run / 'eager/replay/report.json').read_text())['stages']
-        best = max(eager, key=lambda row: row['output_tokens_per_second'])
-        levels = sorted({max(2, best['concurrency'] // 2), best['concurrency']})
-        stages.append({'label': 'eager', 'config': copy.deepcopy(config), 'capacity': best})
-        stop()
-        for label, graph in [('prefix', False), ('graph-prefix', True)]:
-            candidate = copy.deepcopy(config)
-            candidate['inference'].update(actor_prefix_caching=True, actor_enforce_eager=not graph)
-            try:
-                current_path = start(label, candidate)
-                state('capacity', label=label, levels=levels)
-                command('benchmark_capacity.py', '--config', current_path, '--run-dir', run / label / 'replay',
-                    '--concurrency', *levels)
-                rows = json.loads((run / label / 'replay/report.json').read_text())['stages']
-                stages.append({'label': label, 'config': candidate,
-                    'capacity': max(rows, key=lambda row: row['output_tokens_per_second'])})
-            except Exception as exc:
-                (run / label / 'rejected.json').write_text(json.dumps({'error': str(exc),
-                    'eligible': False, 'config': candidate}, indent=2))
-                state('candidate_rejected', label=label, error=str(exc))
-            finally:
-                stop()
-        # Only successful configurations are eligible; all measured stages stay in their own directories.
-        stages.sort(key=lambda row: row['capacity']['output_tokens_per_second'], reverse=True)
-        if stages[0]['capacity']['output_tokens_per_second'] < 770 or stages[0]['capacity']['input_tokens_per_second'] < 19800:
-            # Test the same judge weights/context on one H100; an OOM rejects this allocation.
-            candidate = copy.deepcopy(stages[0]['config'])
-            actor = {**candidate['workflows'][0], 'id': 2, 'gpus': [2],
-                'actor_port': 20002, 'simulator_port': 20082, 'gateway_port': 20183}
-            candidate['workflows'].append(actor)
-            candidate['judge_gpus'] = [3]
-            candidate['inference'].update(judge_gpu_memory_utilization=.94, judge_max_num_seqs=12)
-            cache = ROOT / candidate['kernel_cache_root']
-            import shutil
-            shutil.copytree(cache / 'actor0', cache / 'actor2', dirs_exist_ok=True)
-            try:
-                current_path = start('three-actors', candidate)
-                state('capacity', label='three-actors', levels=[6, 12, 24, 48])
-                command('benchmark_capacity.py', '--config', current_path, '--run-dir', run / 'three-actors/replay',
-                    '--concurrency', 6, 12, 24, 48)
-                rows = json.loads((run / 'three-actors/replay/report.json').read_text())['stages']
-                stages.append({'label': 'three-actors', 'config': candidate,
-                    'capacity': max(rows, key=lambda row: row['output_tokens_per_second'])})
-            except Exception as exc:
-                (run / 'three-actors/rejected.json').write_text(json.dumps({'error': str(exc),
-                    'eligible': False, 'config': candidate}, indent=2))
-                state('candidate_rejected', label='three-actors', error=str(exc))
-            finally:
-                stop()
+        if args.pilot_only:
+            stages = [{'label': 'previously-measured', 'config': config,
+                'capacity': {'concurrency': max(args.pilot_concurrency)}}]
+        else:
+            eager_path = start('eager', config, args.attach_services)
+            state('capacity', label='eager')
+            command('benchmark_capacity.py', '--config', eager_path, '--run-dir', run / 'eager/replay', '--try64')
+            eager = json.loads((run / 'eager/replay/report.json').read_text())['stages']
+            best = max(eager, key=lambda row: row['output_tokens_per_second'])
+            levels = sorted({max(2, best['concurrency'] // 2), best['concurrency']})
+            stages.append({'label': 'eager', 'config': copy.deepcopy(config), 'capacity': best})
+            stop()
+            for label, graph in [('prefix', False), ('graph-prefix', True)]:
+                candidate = copy.deepcopy(config)
+                candidate['inference'].update(actor_prefix_caching=True, actor_enforce_eager=not graph)
+                try:
+                    current_path = start(label, candidate)
+                    state('capacity', label=label, levels=levels)
+                    command('benchmark_capacity.py', '--config', current_path, '--run-dir', run / label / 'replay',
+                        '--concurrency', *levels)
+                    rows = json.loads((run / label / 'replay/report.json').read_text())['stages']
+                    stages.append({'label': label, 'config': candidate,
+                        'capacity': max(rows, key=lambda row: row['output_tokens_per_second'])})
+                except Exception as exc:
+                    (run / label / 'rejected.json').write_text(json.dumps({'error': str(exc),
+                        'eligible': False, 'config': candidate}, indent=2))
+                    state('candidate_rejected', label=label, error=str(exc))
+                finally:
+                    stop()
+            # Only successful configurations are eligible; all measured stages stay in their own directories.
             stages.sort(key=lambda row: row['capacity']['output_tokens_per_second'], reverse=True)
+            if stages[0]['capacity']['output_tokens_per_second'] < 770 or stages[0]['capacity']['input_tokens_per_second'] < 19800:
+                # Test the same judge weights/context on one H100; an OOM rejects this allocation.
+                candidate = copy.deepcopy(stages[0]['config'])
+                actor = {**candidate['workflows'][0], 'id': 2, 'gpus': [2],
+                    'actor_port': 20002, 'simulator_port': 20082, 'gateway_port': 20183}
+                candidate['workflows'].append(actor)
+                candidate['judge_gpus'] = [3]
+                candidate['inference'].update(judge_gpu_memory_utilization=.94, judge_max_num_seqs=12)
+                cache = ROOT / candidate['kernel_cache_root']
+                import shutil
+                shutil.copytree(cache / 'actor0', cache / 'actor2', dirs_exist_ok=True)
+                try:
+                    current_path = start('three-actors', candidate)
+                    state('capacity', label='three-actors', levels=[6, 12, 24, 48])
+                    command('benchmark_capacity.py', '--config', current_path, '--run-dir', run / 'three-actors/replay',
+                        '--concurrency', 6, 12, 24, 48)
+                    rows = json.loads((run / 'three-actors/replay/report.json').read_text())['stages']
+                    stages.append({'label': 'three-actors', 'config': candidate,
+                        'capacity': max(rows, key=lambda row: row['output_tokens_per_second'])})
+                except Exception as exc:
+                    (run / 'three-actors/rejected.json').write_text(json.dumps({'error': str(exc),
+                        'eligible': False, 'config': candidate}, indent=2))
+                    state('candidate_rejected', label='three-actors', error=str(exc))
+                finally:
+                    stop()
+                stages.sort(key=lambda row: row['capacity']['output_tokens_per_second'], reverse=True)
         chosen = stages[0]
         actor_count = len(chosen['config']['workflows'])
         pilot_levels = sorted({max(actor_count, chosen['capacity']['concurrency'] // 2), chosen['capacity']['concurrency']})
+        if args.pilot_only:
+            pilot_levels = sorted(set(args.pilot_concurrency))
+        if any(level % actor_count or not actor_count <= level <= 32 * actor_count for level in pilot_levels):
+            raise ValueError('Pilot concurrency must assign 1-32 slots to each actor')
         pilot_config = copy.deepcopy(chosen['config'])
         pilot_config['slots_per_actor'] = max(pilot_levels) // len(pilot_config['workflows'])
         current_path = start('pilot-services', pilot_config)

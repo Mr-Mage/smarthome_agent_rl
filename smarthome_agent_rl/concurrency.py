@@ -2,6 +2,21 @@
 from pathlib import Path
 
 
+def dispatch_items(items, policy='manifest'):
+    """Reorder dispatch only; preserve frozen tasks, actor affinity and arm order."""
+    if policy == 'manifest':
+        return list(items)
+    if policy != 'workflow-first':
+        raise ValueError('Unknown dispatch policy')
+    def priority(item):
+        task = item['task']
+        workflow = task['query_type'].startswith('qt4-')
+        # Public category only: never consult final outcomes or case contents.
+        return (0 if workflow and task['case'] == 'feasible' else 1 if workflow else 2,
+                0 if task['query_type'] == 'qt4-1' else 1)
+    return sorted(items, key=priority)
+
+
 def execution_slots(config):
     count = config.get('slots_per_actor', 1)
     if type(count) is not int or not 1 <= count <= 32:

@@ -20,7 +20,7 @@ import httpx
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from smarthome_agent_rl.benchmark import digest, schedule
-from smarthome_agent_rl.concurrency import execution_slots
+from smarthome_agent_rl.concurrency import execution_slots, dispatch_items
 
 
 def main():
@@ -63,6 +63,8 @@ def main():
         temporary.write_text(json.dumps(value, ensure_ascii=False, indent=2), encoding='utf-8')
         temporary.replace(run / name)
     job_schedule = schedule(rows, variants, actors=len(config['workflows']))
+    dispatch_policy = config.get('dispatch_policy', 'manifest')
+    dispatch_order = dispatch_items(job_schedule, dispatch_policy)
     if slot_count > 1:
         for item in job_schedule:
             item['variant_workflows'] = {}
@@ -70,7 +72,8 @@ def main():
         'manifest_sha256': digest(manifest_path), 'variants': variants,
         'expected_episodes': len(rows) * len(variants) * (2 if args.phase == 'align' else 1),
         'retry_failed_episodes': False, 'schedule': job_schedule,
-        'execution_slots': slots, 'scheduler': 'actor-affine-queue-v2' if slot_count > 1 else 'paired-v1'}
+        'execution_slots': slots, 'scheduler': 'actor-affine-queue-v2' if slot_count > 1 else 'paired-v1',
+        'dispatch_policy': dispatch_policy, 'dispatch_order': [i['task']['id'] for i in dispatch_order]}
     save('protocol.json', protocol)
     # Capture the exact working sources, including any not-yet-committed development changes.
     save('source_identity.json', {str(path.relative_to(ROOT)): digest(path) for directory in
@@ -89,7 +92,7 @@ def main():
     client = httpx.Client(trust_env=False, timeout=30,
         limits=httpx.Limits(max_connections=max(100, len(slots) * 4), max_keepalive_connections=max(20, len(slots) * 2)))
     job_queues = {w['id']: Queue() for w in config['workflows']}
-    for item in job_schedule:
+    for item in dispatch_order:
         for variant in item['variants']:
             job_queues[item['workflow']].put((item, variant))
     schedule_lock, halt = Lock(), Event()

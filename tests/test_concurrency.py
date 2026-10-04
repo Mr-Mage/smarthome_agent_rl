@@ -4,11 +4,28 @@ from pathlib import Path
 import tempfile
 import unittest
 
-from smarthome_agent_rl.concurrency import execution_slots, episode_directory
+from smarthome_agent_rl.concurrency import execution_slots, episode_directory, dispatch_items
 from scripts.verify_benchmark import verify
 
 
 class ConcurrencyTests(unittest.TestCase):
+    def test_workflow_priority_preserves_pairing_and_manifest(self):
+        from smarthome_agent_rl.benchmark import schedule
+        rows = json.loads(Path('configs/benchmark-mvp/smoke.json').read_text())['tasks']
+        original = schedule(rows, ['B0', 'G', 'Full'])
+        snapshot = copy.deepcopy(original)
+        ordered = dispatch_items(original, 'workflow-first')
+        self.assertEqual(original, snapshot)
+        self.assertEqual({id(i) for i in original}, {id(i) for i in ordered})
+        self.assertEqual(ordered[0]['task']['query_type'], 'qt4-1')
+        self.assertEqual(ordered[0]['task']['case'], 'feasible')
+        self.assertEqual(dispatch_items(original), original)
+        for actor in (0, 1):
+            queue = [i for i in ordered if i['workflow'] == actor]
+            self.assertTrue(all(i['task']['query_type'].startswith('qt4-') for i in queue[:6]))
+        with self.assertRaises(ValueError):
+            dispatch_items(original, 'unknown')
+
     def setUp(self):
         self.config = json.loads(Path('configs/harness-mvp.json').read_text())
 
