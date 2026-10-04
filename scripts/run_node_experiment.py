@@ -105,6 +105,8 @@ def main():
                 raise TimeoutError('H100 service startup timeout')
             time.sleep(3)
         command('harness_services.py', 'probe', '--config', config_path, '--run-dir', services)
+        if config['node_experiment'].get('preflight_episode'):
+            command('preflight_time_plan.py', '--config', config_path, '--output', run / 'metadata-preflight.json')
         write(run / 'startup.json', {'seconds': time.monotonic() - began})
         thread = Thread(target=monitor, daemon=True)
         thread.start()

@@ -83,6 +83,7 @@ def episode_metrics(directory):
     if audit_path.exists() and audit.get('time_plan') is not None:
         ledger = audit['time_plan']
         time_diagnostics = {'time_constraints': len(ledger['table']),
+            'time_phrases_recognized': len(ledger.get('phrases', [])),
             'time_registration_rows': len(ledger['receipts']),
             'time_plan_blocks': sum(r.get('layer') == 'time_plan' for r in audit['proposals']),
             'time_uncovered_step_refs': sum(r.get('time_refs', []).count('uncovered') for r in audit['proposals']),
@@ -157,7 +158,7 @@ def report(run):
         summary[variant] = {'episodes': len(records), 'successes': len(success_records),
             'cost_latency': cost_summary(records),
             'time_plan_diagnostics': {k: sum(r.get(k, 0) for r in records) for k in
-                ('time_constraints', 'time_registration_rows', 'time_plan_blocks', 'time_uncovered_step_refs')},
+                ('time_phrases_recognized', 'time_constraints', 'time_registration_rows', 'time_plan_blocks', 'time_uncovered_step_refs')},
             'success_rate': len(success_records) / len(records), 'unfinished': sum(r['task_failure'] for r in records),
             'unique_tasks': len({i['task']['id'] for i in protocol['schedule']}),
             'by_actor_seed': {str(seed): {'episodes': sum(key(i, variant)[2] == seed for i in protocol['schedule']),

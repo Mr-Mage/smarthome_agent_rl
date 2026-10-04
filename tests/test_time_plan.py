@@ -14,7 +14,7 @@ class TimePlanTests(unittest.TestCase):
                              '30 minutes from now and 5°C 21 minutes after the previous action.',
                              '2025-08-23 17:20:08')
         self.body = {'thought': 'test', 'call': {'tool': 'get_rooms', 'arguments': {}},
-            'time_plan': [{'id': 't0', 'anchor': 'now'}, {'id': 't1', 'anchor': 'now'}, {'id': 't2', 'anchor': 't1'}],
+            'time_plan': {'t0': 'now', 't1': 'now', 't2': 't1'},
             'time_refs': [], 'time_dispositions': []}
         self.plan.consume(self.body)
 
@@ -51,7 +51,7 @@ class TimePlanTests(unittest.TestCase):
         self.assertEqual(plan.rows, [])
         plan.initialize('Turn on light 5 minutes from now', '2025-08-23 17:20:08')
         with self.assertRaises(ValueError):
-            plan.consume({'time_plan': [{'id': 't0', 'anchor': 't0'}]})
+            plan.consume({'time_plan': {'t0': 't0'}})
 
     def test_finish_gate_runs_in_provider_even_when_upstream_intercepts_finish(self):
         body = {'thought': 'done', 'call': {'tool': 'finish', 'arguments': {'answer': 'Scheduled'}},
@@ -62,3 +62,17 @@ class TimePlanTests(unittest.TestCase):
                                    ChatMessage(role='user', content='This is your actual task.')])
         self.assertEqual(result, '{}')
         self.assertIn('no actual receipt', provider.audit[-1]['validation_error'])
+
+    def test_finite_anchor_schema_prevents_unbounded_plan_rows_and_unknown_previous_is_uncovered(self):
+        fresh = TimePlan()
+        fresh.initialize('Turn on light 5 minutes from now and off 10 minutes after the previous action.',
+                         '2025-08-23 17:20:08')
+        schema = fresh.augment_schema({'json_schema': {'schema': {'properties': {}, 'required': []}}})
+        plan = schema['json_schema']['schema']['properties']['time_plan']
+        self.assertEqual(plan['type'], 'object')
+        self.assertEqual(plan['properties']['t0']['enum'], ['now'])
+        self.assertEqual(plan['properties']['t1']['enum'], ['t0'])
+        fresh.initialize('Turn on light 5 minutes after the previous action.', '2025-08-23 17:20:08')
+        fresh.consume({'time_plan': {'t0': 'uncovered'}, 'time_refs': ['t0'], 'time_dispositions': []})
+        fresh.check('schedule_workflow', {'start_time': '2025-08-23 17:42:00', 'steps': [{}]})
+        self.assertIsNone(fresh.table['t0']['due_time'])

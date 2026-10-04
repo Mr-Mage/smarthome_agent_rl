@@ -12,9 +12,14 @@ GUIDANCE = """
 The ledger below contains literal relative-time phrases from the USER query, not evaluation goals.
 On the first response assign an anchor for each row: 'now' for from-now, or the ID of an earlier
 action row for after-previous-action. Resolve which previous action the user means from the query.
+The metadata fields EXTEND the earlier two-field output example. time_plan is a fixed object
+mapping row IDs to anchors, e.g. {"t0":"now","t1":"t0"}; do not output a list or repeat rows.
 Return time_plan only when requested by the schema. time_refs maps EACH workflow step to its row
 ID, or 'uncovered' if the intent has no covered relative-time phrase. Different due times require
-separate workflows; all steps of one workflow start together. Use original task start, not later
+separate workflows; all steps of one workflow start together.
+For ordinary tools return time_refs: [] and time_dispositions: []. For schedule_workflow return
+time_dispositions: []; for finish return time_refs: [] and all row dispositions.
+Use original task start, not later
 get_current_time, for 'from now'. Do not invent delays inside steps. Check absolute times in the
 query as well: conflicting user constraints may be infeasible and should be explained.
 For finish include one disposition per row: registered (a real registration receipt exists),
@@ -47,24 +52,30 @@ class TimePlan:
     def augment_schema(self, schema):
         schema = copy.deepcopy(schema)
         body = schema['json_schema']['schema']
-        body['properties']['time_refs'] = {'type': 'array', 'items': {'type': 'string'}}
+        body['properties']['time_refs'] = {'type': 'array', 'maxItems': 32,
+            'items': {'type': 'string', 'enum': ['uncovered', *[r['id'] for r in self.rows]]}}
         body['properties']['time_dispositions'] = {'type': 'array', 'items': {'type': 'object',
-            'properties': {'id': {'type': 'string'}, 'status': {'type': 'string',
-                'enum': ['registered', 'infeasible', 'uncovered']}, 'reason': {'type': 'string'}},
+            'properties': {'id': {'type': 'string', 'enum': [r['id'] for r in self.rows]}, 'status': {'type': 'string',
+                'enum': ['registered', 'infeasible', 'uncovered']}, 'reason': {'type': 'string', 'maxLength': 512}},
             'required': ['id', 'status', 'reason'], 'additionalProperties': False}}
+        body['properties']['time_dispositions']['maxItems'] = len(self.rows)
         body['required'] += ['time_refs', 'time_dispositions']
         if self.rows and not self.table:
-            body['properties']['time_plan'] = {'type': 'array', 'items': {'type': 'object',
-                'properties': {'id': {'type': 'string'}, 'anchor': {'type': 'string'}},
-                'required': ['id', 'anchor'], 'additionalProperties': False}}
+            properties = {}
+            earlier = []
+            for row in self.rows:
+                properties[row['id']] = {'type': 'string', 'enum': ['now'] if row['relative'] == 'from now'
+                                         else earlier or ['uncovered']}
+                earlier = [*earlier, row['id']]
+            body['properties']['time_plan'] = {'type': 'object', 'properties': properties,
+                'required': list(properties), 'additionalProperties': False}
             body['required'].append('time_plan')
         return schema
 
     def consume(self, body):
         if self.rows and not self.table:
-            plan = body.pop('time_plan')
-            anchors = {r['id']: r['anchor'] for r in plan}
-            if len(anchors) != len(plan) or set(anchors) != {r['id'] for r in self.rows}:
+            anchors = body.pop('time_plan')
+            if not isinstance(anchors, dict) or set(anchors) != {r['id'] for r in self.rows}:
                 raise ValueError('time_plan must cover each literal relative-time phrase once')
             table = {}
             base = datetime.strptime(self.base_time, '%Y-%m-%d %H:%M:%S')
@@ -72,8 +83,14 @@ class TimePlan:
                 anchor = anchors[row['id']]
                 if row['relative'] == 'from now' and anchor != 'now':
                     raise ValueError('from-now must anchor to original public start time')
+                if row['relative'] != 'from now' and anchor == 'uncovered':
+                    table[row['id']] = {**row, 'anchor': anchor, 'due_time': None}
+                    continue
                 if row['relative'] != 'from now' and anchor not in table:
                     raise ValueError('after-previous-action must anchor to an earlier action row')
+                if anchor != 'now' and table[anchor]['due_time'] is None:
+                    table[row['id']] = {**row, 'anchor': anchor, 'due_time': None}
+                    continue
                 at = base if anchor == 'now' else datetime.strptime(table[anchor]['due_time'], '%Y-%m-%d %H:%M:%S')
                 table[row['id']] = {**row, 'anchor': anchor,
                     'due_time': (at + timedelta(minutes=row['minutes'])).strftime('%Y-%m-%d %H:%M:%S')}
@@ -94,7 +111,7 @@ class TimePlan:
                     continue
                 if ref not in self.table:
                     raise GuardError('time_plan', 'Unknown time constraint ID', ref=ref)
-                if arguments['start_time'] != self.table[ref]['due_time']:
+                if self.table[ref]['due_time'] is not None and arguments['start_time'] != self.table[ref]['due_time']:
                     raise GuardError('time_plan', 'Workflow time conflicts with explicit relative-time table',
                                      ref=ref, expected=self.table[ref]['due_time'])
         elif tool == 'finish':
@@ -122,5 +139,6 @@ class TimePlan:
                              if receipt['workflow_id'] != arguments['workflow_id']}
 
     def snapshot(self):
-        return {'table': self.table, 'receipts': self.receipts, 'turns': self.audit,
+        return {'phrases': self.rows, 'public_start_time': self.base_time,
+            'table': self.table, 'receipts': self.receipts, 'turns': self.audit,
             'coverage': 'Numeric minute-relative phrases; model resolves previous-action links and maps steps. No hidden goals.'}
