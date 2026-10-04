@@ -88,5 +88,6 @@
     "actor_enforce_eager": true,
     "actor_prefix_caching": false,
     "actor_gpu_memory_utilization": 0.8
-  }
+  },
+  "kernel_cache_root": "work/concurrency-capacity/kernel-cache"
 }

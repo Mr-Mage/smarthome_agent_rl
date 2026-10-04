@@ -110,11 +110,12 @@ def main():
         deployments.append(('judge', config['judge_path'], config['judge_model'],
                             config['judge_gpus'], config['judge_port'], config['judge_context'], inference.get('judge_max_num_seqs', 6)))
         for name, path, model, gpus, port, context, sequences in deployments:
+            cache_root = ROOT / config.get('kernel_cache_root', str(run.relative_to(ROOT)))
             environment = {'CUDA_VISIBLE_DEVICES': ','.join(map(str, gpus)),
                 'CUDA_HOME': '/usr/local/cuda-12.8', 'CUDA_PATH': '/usr/local/cuda-12.8',
-                'FLASHINFER_WORKSPACE_BASE': str(run / name / 'flashinfer'),
-                'VLLM_CACHE_ROOT': str(run / name / 'vllm'),
-                'TORCHINDUCTOR_CACHE_DIR': str(run / name / 'torchinductor'), 'MAX_JOBS': '8'}
+                'FLASHINFER_WORKSPACE_BASE': str(cache_root / name / 'flashinfer'),
+                'VLLM_CACHE_ROOT': str(cache_root / name / 'vllm'),
+                'TORCHINDUCTOR_CACHE_DIR': str(cache_root / name / 'torchinductor'), 'MAX_JOBS': '8'}
             command = [config['model_python'], '-m', 'vllm.entrypoints.openai.api_server',
                 '--model', (ROOT / path).resolve(), '--served-model-name', model,
                 '--host', '127.0.0.1', '--port', port, '--tensor-parallel-size', len(gpus),
