@@ -10,4 +10,4 @@ N12：完整模块1,800次+集成1,080次核验通过，Candidate=G，重复策�
 N13：新final1,728次核验通过，seed42 B0/G/Full=60/69/71（各192），两项Holm p=0.216，未显著。最终保留dev所选G，四卡已释放。
 证据：`runs/harness-v2/primary-v2/`；旧开发诊断保留在`primary-v1/`；汇总与限制见`docs/实验报表.md`。
 
-N14（服务验证通过）：A800 judge 已授权重启，监听 `0.0.0.0:20300`；H100访问 `192.168.60.254:20300` 的TCP、health、models及两次推理探针均通过。harness远端配置及四actor容量实验尚未开始，见 `docs/nodes/N14.md`。
+N14（容量试跑中）：A800常驻judge已接入harness；四个单卡9B后台对比64/128总槽，各smoke24×B0/G×3种子=144次，72项测试通过。driver PID1025761，产物`runs/concurrency-capacity/a800-four-actors-v1/`；尚无最终吞吐结论。下一主线为dead-front依赖与工作流能力检查消融，见`docs/后续实验方案.md`。
