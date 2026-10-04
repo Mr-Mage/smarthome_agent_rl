@@ -25,14 +25,16 @@ def ok(response):
 
 
 class GuardedExecutor:
-    def __init__(self, *, verify=False, verification_version=1, repair_limit=2, query_limit=40, audit_fn=None, dispatch=run_tool):
+    def __init__(self, *, verify=False, verification_version=1, repair_limit=2, query_limit=40,
+                 dead_front=False, workflow_all_devices=False, audit_fn=None, dispatch=run_tool):
         contracts, sources = command_contracts(ROOT / 'deps/SimuHome/src/simulator/domain/clusters')
-        power_rules, device_sources = public_power_rules(ROOT / 'deps/SimuHome/src/simulator/domain/devices')
+        power_rules, device_sources = public_power_rules(ROOT / 'deps/SimuHome/src/simulator/domain/devices', dead_front=dead_front)
         sources.update(device_sources)
         sources['api/schemas.py'] = hashlib.sha256((ROOT / 'deps/SimuHome/src/simulator/api/schemas.py').read_bytes()).hexdigest()
         self.guard = ToolGuard(harness_schemas(tool_schemas()), contracts, power_rules)
         self.sources, self.verify = sources, verify
         self.verification_version = verification_version
+        self.workflow_all_devices = workflow_all_devices
         self.repair_limit, self.query_limit, self.audit_fn, self.dispatch = repair_limit, query_limit, audit_fn, dispatch
         self.audit, self.actual, self.failures, self.observations = [], [], {}, []
         self.extra_queries, self.turn = 0, 0
@@ -90,16 +92,22 @@ class GuardedExecutor:
                     before = query['data']
                     record['uncovered'].extend(self.guard.capability(tool, arguments, before))
             elif tool == 'schedule_workflow':
-                # Future state is not today's precondition. One targeted query maximum per turn.
+                # Inspect only static capabilities; today's state cannot predict future state.
                 structures = {}
+                attempted = set()
                 queried = False
                 for step in arguments['steps']:
                     device = step['args']['device_id']
-                    if not queried:
+                    if (self.workflow_all_devices or not queried) and device not in attempted:
                         queried = True
+                        attempted.add(device)
                         query = self.call('get_device_structure', {'device_id': device}, extra=True)
                         if query is not None and ok(query):
                             structures[device] = query['data']
+                        elif self.workflow_all_devices and query is not None:
+                            raise GuardError('capability', 'Workflow device structure query failed', response=query)
+                        elif self.workflow_all_devices:
+                            record['uncovered'].append('prequery_budget_exhausted')
                     if device in structures:
                         record['uncovered'].extend(self.guard.capability(step['tool'], step['args'],
                             structures[device], state=False))
@@ -157,13 +165,15 @@ class GuardedExecutor:
 class HarnessAgent:
     def __init__(self, llm, *, variant, max_steps, trace_fn=None, audit_fn=None,
                  repair_limit=2, query_limit=40, policy=None, token_count_fn=None):
-        if variant not in ('G', 'GV', 'GC', 'Full', 'GV2', 'GC2', 'Candidate'):
+        if variant not in ('G', 'GV', 'GC', 'Full', 'GV2', 'GC2', 'Candidate', 'GD', 'GW', 'GDW', 'TimePlan'):
             raise ValueError(variant)
         policy = policy or {'verify': variant in ('GV', 'Full', 'GV2'),
             'verification_version': 2 if variant == 'GV2' else 1,
             'context_version': 2 if variant == 'GC2' else 1 if variant in ('GC', 'Full') else 0}
         self.executor = GuardedExecutor(verify=policy['verify'], verification_version=policy['verification_version'], audit_fn=audit_fn,
-                                       repair_limit=repair_limit, query_limit=query_limit)
+                                       repair_limit=repair_limit, query_limit=query_limit,
+                                       dead_front=policy.get('dead_front', False),
+                                       workflow_all_devices=policy.get('workflow_all_devices', False))
         provider = StructuredProvider(llm, finish_guard=False, recovery=False, guidance=False,
                                       audit_fn=self.executor.record_structured)
         provider.schemas = self.executor.guard.schemas

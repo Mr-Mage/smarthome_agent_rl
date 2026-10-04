@@ -8,6 +8,7 @@ from pathlib import Path
 import sys
 import time
 import subprocess
+import importlib
 from threading import Lock
 
 import httpx
@@ -21,6 +22,7 @@ from src.pipelines.episode_evaluation import runner
 from smarthome_agent_rl.generation import install_generation_options
 from smarthome_agent_rl.retrieval import load_retrieval
 from smarthome_agent_rl.benchmark import task_failure_kind
+from smarthome_agent_rl.profiling import PhaseProfile, TimedTime
 
 
 def main(mode):
@@ -35,6 +37,7 @@ def main(mode):
     output.mkdir(parents=True, exist_ok=False)
     def save(name, data):
         (output / name).write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding='utf-8')
+    profile = PhaseProfile(save)
     endpoint = os.environ['AGL_OPENAI_BASE_URL'] if mode == 'lightning' else config['model_endpoint']
     key = os.environ['AGL_KEY'] if mode == 'lightning' else 'local-unused'
     client = httpx.Client(trust_env=False, timeout=30)
@@ -80,7 +83,7 @@ def main(mode):
         db=load_retrieval(retrieval, output / 'retrieval_calls.json')))
     variant = config['variant']
     def trace(kind, payload):
-        event = {'event': kind, 'payload': payload}
+        event = {'event': kind, 'payload': payload, 'at_seconds': time.monotonic() - profile.origin}
         events.append(event)
         save('agent_events.json', events)
         if kind in ('observation', 'finish', 'rejected_action'):
@@ -110,8 +113,24 @@ def main(mode):
                 audit_fn=lambda data: save('harness_audit.json', data),
                 repair_limit=config['recovery_per_action'], query_limit=config['extra_queries_max'],
                 policy=config.get('variant_policies', {}).get(variant), token_count_fn=count_tokens)
-        return agent
+        import src.agents.strategies.react_agent as react_module
+        return profile.agent(agent, react_module)
     runner._build_agent = build
+    import src.agents.strategies.react_agent as react_module
+    evaluation_module = importlib.import_module(runner._EVALUATOR_REGISTRY[(task['query_type'], task['case'])])
+    original_evaluate = evaluation_module.evaluate
+    evaluation_module.evaluate = profile.wrap(original_evaluate, 'evaluator')
+    replaced_times = []
+    for module in (runner, react_module, evaluation_module):
+        if hasattr(module, 'time'):
+            replaced_times.append((module, module.time))
+            module.time = TimedTime(module.time, profile)
+    client_methods = []
+    for name in ('health', 'reset_simulation', 'get_home_state', 'fast_forward_to', 'get_workflow_status'):
+        if hasattr(runner.SmartHomeClient, name):
+            method = getattr(runner.SmartHomeClient, name)
+            client_methods.append((name, method))
+            setattr(runner.SmartHomeClient, name, profile.wrap(method, 'simulator_client', name))
     save('contract.json', {'config': config, 'task_identity': task, 'mode': mode,
         'evaluator': 'original run_single_config', 'upstream_source_modified': False,
         'agent_inputs': ['query', 'user_location', 'current_time'], 'training': False})
@@ -126,6 +145,11 @@ def main(mode):
         save('error.json', error)
     finally:
         runner._build_agent = original
+        evaluation_module.evaluate = original_evaluate
+        for module, original_time in replaced_times:
+            module.time = original_time
+        for name, method in client_methods:
+            setattr(runner.SmartHomeClient, name, method)
         failure_kind = task_failure_kind(error, calls)
         task_failure = failure_kind is not None
         score = result['evaluation_result']['score'] if result else None
@@ -139,6 +163,7 @@ def main(mode):
             'judge_model_calls': len(judges), 'judge_tokens': tokens(judges),
             'duration_seconds': time.monotonic() - started}
         save('summary.json', summary)
+        profile.flush(summary['duration_seconds'], started - profile.origin)
         if (error is None and score != -1) or task_failure:
             emit('reward', {'value': float(score == 1), 'source': 'official_simuhome_evaluator' if result else failure_kind,
                 'evaluator_called': result is not None})

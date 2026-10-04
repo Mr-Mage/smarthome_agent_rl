@@ -10,6 +10,7 @@ sys.path.insert(0, str(ROOT))
 from smarthome_agent_rl.benchmark import STRATA, digest
 from smarthome_agent_rl.concurrency import episode_directory
 from smarthome_agent_rl.paired_stats import mcnemar, bootstrap_ci, holm
+from smarthome_agent_rl.profiling import cost_summary
 
 
 def read(path):
@@ -77,7 +78,26 @@ def episode_metrics(directory):
         raise ValueError('Token accounting differs from HTTP evidence')
     if summary['infrastructure_error'] or summary['official_score'] == -1:
         raise ValueError(f'Infrastructure failure cannot be included as a completed primary run: {directory}')
-    return {**summary, 'invalid_proposed': invalid_proposed, 'invalid_reached_executor': actual_invalid,
+    phases = {}
+    if (directory / 'phase_profile.json').exists():
+        profile = read(directory / 'phase_profile.json')
+        spans = profile['spans']
+        def seconds(kind, phase=None):
+            return sum(s['end_seconds'] - s['start_seconds'] for s in spans
+                       if s['kind'] == kind and (phase is None or s['phase'] == phase))
+        agent_spans = [s for s in spans if s['kind'] == 'agent']
+        phases = {'agent_seconds': seconds('agent') if agent_spans else None,
+            'post_agent_seconds': max(0, profile['episode_seconds'] -
+                (agent_spans[-1]['end_seconds'] - profile['episode_start_seconds'])) if agent_spans else None,
+            'evaluator_seconds': seconds('evaluator'), 'tool_seconds': seconds('tool_dispatch'),
+            'agent_wait_seconds': seconds('waiting', 'agent'),
+            'evaluation_wait_seconds': seconds('waiting', 'post_agent'),
+            'evaluation_client_seconds': seconds('simulator_client', 'post_agent'),
+            'retrieval_seconds': sum(r.get('duration_seconds', 0) for r in retrieval)}
+        # Agent residual includes parsing, trace persistence and framework work, not GPU compute.
+        phases['agent_residual_seconds'] = max(0, phases['agent_seconds'] - phases['tool_seconds'] -
+            phases['agent_wait_seconds'] - sum(r['duration_seconds'] for r in calls)) if agent_spans else None
+    return {**summary, **phases, 'invalid_proposed': invalid_proposed, 'invalid_reached_executor': actual_invalid,
         'guard_blocked': blocked, 'structured_rejections': structured_rejections,
         'recovery_budget_blocked': budget_blocked,
         'verification_failures': verification_failures, 'recovered_actions': recoveries,
@@ -127,6 +147,7 @@ def report(run):
             'verification_failures', 'recovered_actions', 'recovery_budget_blocked', 'duration_seconds', 'retrieval_tokens',
             'actor_latency', 'judge_latency', 'extra_query_latency', 'tokenization_calls', 'tokenization_latency']
         summary[variant] = {'episodes': len(records), 'successes': len(success_records),
+            'cost_latency': cost_summary(records),
             'success_rate': len(success_records) / len(records), 'unfinished': sum(r['task_failure'] for r in records),
             'unique_tasks': len({i['task']['id'] for i in protocol['schedule']}),
             'by_actor_seed': {str(seed): {'episodes': sum(key(i, variant)[2] == seed for i in protocol['schedule']),

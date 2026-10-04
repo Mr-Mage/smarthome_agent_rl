@@ -152,6 +152,8 @@ class ToolGuard:
             return ['device_preconditions_uncovered']
         cid = arguments['cluster_id']
         applies = (tool == 'execute_command' and cid in rule['commands']) or (
+            tool == 'execute_command' and arguments['endpoint_id'] == 1 and
+            [cid, arguments['command_id']] in rule.get('exact_commands', [])) or (
             tool == 'write_attribute' and arguments['endpoint_id'] == 1 and
             arguments['attribute_id'] in rule['attributes'].get(cid, []))
         if applies:
@@ -190,7 +192,7 @@ class ToolGuard:
                     raise GuardError('precondition', 'Cooling - Heating must be >= 25', heating=heating, cooling=cooling)
 
 
-def public_power_rules(directory):
+def public_power_rules(directory, *, dead_front=False):
     """Extract the narrow explicit OnOff helper pattern; unknown patterns stay uncovered."""
     rules, sources = {}, {}
     for path in sorted(Path(directory).glob('*.py')):
@@ -200,6 +202,9 @@ def public_power_rules(directory):
             functions = {n.name: n for n in cls.body if isinstance(n, ast.FunctionDef)}
             check = functions.get('_check_power_dependency')
             if check is None:
+                if dead_front and wrapped_start_power_rule(cls, directory):
+                    rules[path.stem] = {'commands': [], 'attributes': {},
+                        'exact_commands': [['OperationalState', 'Start']], 'source': 'devices/' + path.name}
                 continue
             # Only the known endpoint 1 OnOff read is supported by this deterministic rule.
             reads = [n for n in ast.walk(check) if isinstance(n, ast.Call) and
@@ -230,6 +235,35 @@ def public_power_rules(directory):
                                 commands.extend(ast.literal_eval(n.comparators[0]))
             rules[path.stem] = {'commands': commands, 'attributes': attributes, 'source': 'devices/' + path.name}
     return rules, sources
+
+
+def wrapped_start_power_rule(cls, directory):
+    """Recognize only the public endpoint-1 OnOff/OperationalState Start wrapper."""
+    # Validate the meaning of dead-front from public cluster implementation as well.
+    onoff = Path(directory).parent / 'clusters/onoff.py'
+    if not onoff.exists():
+        return False
+    tree = ast.parse(onoff.read_text(encoding='utf-8'))
+    if not any(isinstance(n, ast.FunctionDef) and n.name == 'is_in_dead_front_state' and
+               any(isinstance(r, ast.Return) and r.value is not None and
+                   ast.unparse(r.value) == "not self.attributes['OnOff']" for r in n.body)
+               for n in ast.walk(tree)):
+        return False
+    expressions = {ast.unparse(n) for n in ast.walk(cls)}
+    if not {"self.endpoints[1]['OperationalState']", "self.endpoints[1]['OnOff']",
+            "self.operational_state.commands['Start'] = wrapped_start"} <= expressions:
+        return False
+    for fn in ast.walk(cls):
+        if not isinstance(fn, ast.FunctionDef) or fn.name != 'wrapped_start':
+            continue
+        for branch in fn.body:
+            if isinstance(branch, ast.If) and ast.unparse(branch.test) == 'self.onoff.is_in_dead_front_state()':
+                rejected = any(isinstance(n, ast.Return) and isinstance(n.value, ast.Call) and
+                    ast.unparse(n.value.func) == 'Result.fail' for b in branch.body for n in ast.walk(b))
+                if rejected and any(isinstance(n, ast.Call) and ast.unparse(n.func) == 'original_start'
+                                    for n in ast.walk(fn)):
+                    return True
+    return False
 
 
 def harness_schemas(base):
