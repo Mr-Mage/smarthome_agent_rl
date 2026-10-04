@@ -29,16 +29,16 @@ class GuardV3Tests(unittest.TestCase):
                     'cluster_id': 'OperationalState', 'command_id': 'Start', 'args': {}}
                 with self.assertRaises(GuardError):
                     guard.capability('execute_command', action, structure)
-                self.assertFalse(device.execute_command(1, 'OperationalState', 'Start', {}).success)
+                self.assertFalse(device.execute_command(1, 'OperationalState', 'Start').success)
                 guard.capability('execute_command', action, structure, state=False)
                 guard.capability('execute_command', {**action, 'command_id': 'Stop'}, structure)
                 unknown = copy.deepcopy(structure)
                 unknown['endpoints']['1']['clusters']['OnOff']['attributes']['OnOff']['value'] = None
                 self.assertIn('power_state_unknown', guard.capability('execute_command', action, unknown))
-                self.assertTrue(device.execute_command(1, 'OnOff', 'On', {}).success)
+                self.assertTrue(device.execute_command(1, 'OnOff', 'On').success)
                 powered = json.loads(json.dumps(device.get_structure()))
                 guard.capability('execute_command', action, powered)
-                self.assertTrue(device.execute_command(1, 'OperationalState', 'Start', {}).success)
+                self.assertTrue(device.execute_command(1, 'OperationalState', 'Start').success)
 
     def test_second_device_static_capability_is_checked_and_unique_query_budget(self):
         structure = {'endpoints': {'1': {'clusters': {'OnOff': {'commands': ['On'], 'attributes': {}}}}}}
