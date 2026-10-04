@@ -22,3 +22,18 @@ def select_guard(report, gates):
     winner = min(accepted, key=lambda v: (-report['arms'][v]['successes'],
         report['arms'][v]['all_totals']['actor_tokens'], v))
     return {'winner': winner, 'decisions': decisions, 'basis': 'all dev runs; task-clustered CIs reported separately'}
+
+
+def select_time_plan(report, gates):
+    if not report['verified'] or report['phase'] != 'dev':
+        raise ValueError('Selection requires complete verified dev evidence')
+    reference = report['reference']
+    baseline, arm = report['arms'][reference], report['arms']['TimePlan']
+    category = 'qt4-1:feasible'
+    ratio = arm['all_totals']['actor_tokens'] / baseline['all_totals']['actor_tokens']
+    checks = {'success_rate': arm['success_rate'] - baseline['success_rate'] >= gates['sr_delta_min'],
+        'temporal_success': arm['categories'][category]['successes'] > baseline['categories'][category]['successes'],
+        'actor_tokens': ratio <= gates['actor_token_ratio_max'],
+        'illegal_execution': arm['all_totals']['invalid_reached_executor'] <= baseline['all_totals']['invalid_reached_executor']}
+    return {'winner': 'TimePlan' if all(checks.values()) else reference, 'checks': checks,
+            'actor_token_ratio': ratio, 'basis': 'all dev runs; qt4-1 feasible gate; smoke diagnostic only'}

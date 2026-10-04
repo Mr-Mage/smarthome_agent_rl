@@ -14,7 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from smarthome_agent_rl.benchmark import digest
 from smarthome_agent_rl.concurrency import execution_slots, external_judge, judge_endpoint
-from smarthome_agent_rl.node_selection import select_guard
+from smarthome_agent_rl.node_selection import select_guard, select_time_plan
 from benchmark_capacity import pressure
 from run_remote_judge_capacity import queue_peaks, write
 
@@ -118,6 +118,8 @@ def main():
                 'scope': 'Four reserved H100 actors × suite elapsed; not active GPU compute or monetary cost'})
         if config['node_experiment']['node'] == 'N15':
             write(run / 'selection.json', select_guard(reports['dev'], config['node_experiment']['gates']))
+        elif config['node_experiment']['node'] == 'N16':
+            write(run / 'selection.json', select_time_plan(reports['dev'], config['node_experiment']['gates']))
         state('complete')
     except Exception as exc:
         write(run / 'failure.json', {'type': type(exc).__name__, 'message': str(exc)})

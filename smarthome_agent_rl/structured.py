@@ -67,12 +67,13 @@ def canonical_action(body):
 
 
 class StructuredProvider(LLMProvider):
-    def __init__(self, inner, audit_fn=None, *, finish_guard=True, recovery=True, guidance=True):
+    def __init__(self, inner, audit_fn=None, *, finish_guard=True, recovery=True, guidance=True, time_plan=None):
         self.inner = inner
         self.schemas = tool_schemas()
         self.audit_fn = audit_fn
         self.audit = []
         self.finish_guard, self.recovery, self.guidance = finish_guard, recovery, guidance
+        self.time_plan = time_plan
 
     def response_format(self, finish_enabled=True):
         alternatives = []
@@ -162,9 +163,17 @@ class StructuredProvider(LLMProvider):
                   "recovery_hint": recovery_hint, "extra_model_calls": 0}
         self.audit.append(record)
         schema = self.response_format(finish_enabled)
+        if self.time_plan is not None and self.time_plan.rows:
+            converted.append(ChatMessage(role='user', content=self.time_plan.prompt()))
+            schema = self.time_plan.augment_schema(schema)
         try:
             raw = self.inner.generate(converted, response_format=schema)
-            action = self.validate(json.loads(raw), finish_enabled)
+            body = json.loads(raw)
+            if self.time_plan is not None and self.time_plan.rows:
+                body = self.time_plan.consume(body)
+            action = self.validate(body, finish_enabled)
+            if self.time_plan is not None and action['action'] == 'finish':
+                self.time_plan.check('finish', json.loads(action['action_input']))
             record["normalized_action"] = action
             return json.dumps(action, ensure_ascii=False)
         except (ValueError, TypeError, KeyError) as exc:

@@ -79,6 +79,14 @@ def episode_metrics(directory):
     if summary['infrastructure_error'] or summary['official_score'] == -1:
         raise ValueError(f'Infrastructure failure cannot be included as a completed primary run: {directory}')
     phases = {}
+    time_diagnostics = {}
+    if audit_path.exists() and audit.get('time_plan') is not None:
+        ledger = audit['time_plan']
+        time_diagnostics = {'time_constraints': len(ledger['table']),
+            'time_registration_rows': len(ledger['receipts']),
+            'time_plan_blocks': sum(r.get('layer') == 'time_plan' for r in audit['proposals']),
+            'time_uncovered_step_refs': sum(r.get('time_refs', []).count('uncovered') for r in audit['proposals']),
+            'time_finish_dispositions': ledger['turns'][-1]['metadata']['dispositions'] if ledger['turns'] else []}
     if (directory / 'phase_profile.json').exists():
         profile = read(directory / 'phase_profile.json')
         spans = profile['spans']
@@ -97,7 +105,7 @@ def episode_metrics(directory):
         # Agent residual includes parsing, trace persistence and framework work, not GPU compute.
         phases['agent_residual_seconds'] = max(0, phases['agent_seconds'] - phases['tool_seconds'] -
             phases['agent_wait_seconds'] - sum(r['duration_seconds'] for r in calls)) if agent_spans else None
-    return {**summary, **phases, 'invalid_proposed': invalid_proposed, 'invalid_reached_executor': actual_invalid,
+    return {**summary, **phases, **time_diagnostics, 'invalid_proposed': invalid_proposed, 'invalid_reached_executor': actual_invalid,
         'guard_blocked': blocked, 'structured_rejections': structured_rejections,
         'recovery_budget_blocked': budget_blocked,
         'verification_failures': verification_failures, 'recovered_actions': recoveries,
@@ -148,6 +156,8 @@ def report(run):
             'actor_latency', 'judge_latency', 'extra_query_latency', 'tokenization_calls', 'tokenization_latency']
         summary[variant] = {'episodes': len(records), 'successes': len(success_records),
             'cost_latency': cost_summary(records),
+            'time_plan_diagnostics': {k: sum(r.get(k, 0) for r in records) for k in
+                ('time_constraints', 'time_registration_rows', 'time_plan_blocks', 'time_uncovered_step_refs')},
             'success_rate': len(success_records) / len(records), 'unfinished': sum(r['task_failure'] for r in records),
             'unique_tasks': len({i['task']['id'] for i in protocol['schedule']}),
             'by_actor_seed': {str(seed): {'episodes': sum(key(i, variant)[2] == seed for i in protocol['schedule']),

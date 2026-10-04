@@ -40,12 +40,14 @@ class GuardedExecutor:
         self.extra_queries, self.turn = 0, 0
         self.context_audit = []
         self.structured_audit = []
+        self.time_plan = None
 
     def save_audit(self):
         if self.audit_fn:
             self.audit_fn({'proposals': self.audit, 'actual_observations': self.observations,
                 'public_semantics_source_sha256': self.sources, 'extra_queries': self.extra_queries,
-                'context': self.context_audit, 'structured': self.structured_audit})
+                'context': self.context_audit, 'structured': self.structured_audit,
+                'time_plan': self.time_plan.snapshot() if self.time_plan is not None else None})
 
     def record_structured(self, records):
         self.structured_audit = records
@@ -77,6 +79,9 @@ class GuardedExecutor:
                           arguments.get('command_id', arguments.get('attribute_id'))], sort_keys=True)
         try:
             self.guard.schema(tool, arguments)
+            if self.time_plan is not None:
+                record['time_refs'] = copy.deepcopy(self.time_plan.metadata.get('refs', []))
+                self.time_plan.check(tool, arguments)
             if self.verify and self.failures.get(key, 0) > self.repair_limit:
                 raise GuardError('recovery', 'Two repair attempts exhausted; change plan or finish honestly')
             if self.verify and self.failures.get(key, 0):
@@ -115,6 +120,8 @@ class GuardedExecutor:
                         record['uncovered'].append('workflow_device_not_queried:' + device)
                 record['uncovered'].append('future_state_preconditions')
             response = self.call(tool, arguments)
+            if self.time_plan is not None:
+                self.time_plan.observe(tool, arguments, response)
             simulator_failed = not ok(response)
             record['reached_executor'] = True
             failed = not ok(response)
@@ -176,6 +183,10 @@ class HarnessAgent:
                                        workflow_all_devices=policy.get('workflow_all_devices', False))
         provider = StructuredProvider(llm, finish_guard=False, recovery=False, guidance=False,
                                       audit_fn=self.executor.record_structured)
+        if policy.get('time_plan'):
+            from smarthome_agent_rl.time_plan import TimePlan
+            self.executor.time_plan = TimePlan()
+            provider.time_plan = self.executor.time_plan
         provider.schemas = self.executor.guard.schemas
         if policy['context_version']:
             from smarthome_agent_rl.context import LedgerProvider, CompactLedgerProvider
@@ -184,6 +195,8 @@ class HarnessAgent:
             show_assistant_raw=True, trace_fn=trace_fn))
 
     def run(self, query, *, user_location=None, current_time=None):
+        if self.executor.time_plan is not None:
+            self.executor.time_plan.initialize(query, current_time)
         original = react_module.run_tool
         react_module.run_tool = self.executor.execute
         try:
