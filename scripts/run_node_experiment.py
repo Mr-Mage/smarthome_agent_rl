@@ -127,7 +127,7 @@ def main():
         elif config['node_experiment']['node'] == 'N16':
             write(run / 'selection.json', select_time_plan(reports['dev'], config['node_experiment']['gates']))
         state('complete')
-    except Exception as exc:
+    except BaseException as exc:
         write(run / 'failure.json', {'type': type(exc).__name__, 'message': str(exc)})
         state('failed', error=str(exc))
         raise

@@ -112,6 +112,11 @@ def main():
         for variant in item['variants']:
             job_queues[item['workflow']].put((item, variant))
     schedule_lock, halt = Lock(), Event()
+    def interrupted(signum, frame):
+        halt.set()
+        raise KeyboardInterrupt(f'Interrupted by signal {signum}')
+    signal.signal(signal.SIGINT, interrupted)
+    signal.signal(signal.SIGTERM, interrupted)
     completed = []
     def launch(name, command, cwd, environment=None):
         log = (run / f'{name}.log').open('w')
@@ -176,6 +181,8 @@ def main():
             output.with_suffix('.rollout.json').write_text(json.dumps(created, indent=2))
             deadline = time.monotonic() + 1840
             while time.monotonic() < deadline:
+                if halt.is_set():
+                    raise InterruptedError('Suite aborted; preserve incomplete episode evidence')
                 detail = api(workflow, 'GET', f'/api/rollouts/{rid}')
                 state = detail['rollout']['status']['state']
                 if state in ('succeeded', 'failed'):
@@ -327,7 +334,7 @@ def main():
             'successes': sum(row['success'] for row in results), 'results': results,
             'startup_seconds': startup_seconds, 'elapsed_seconds': time.monotonic() - suite_started,
             'execution_concurrency': len(slots)})
-    except Exception as exc:
+    except BaseException as exc:
         save('failure.json', {'type': type(exc).__name__, 'message': str(exc)})
         raise
     finally:
