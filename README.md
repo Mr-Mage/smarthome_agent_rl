@@ -14,5 +14,7 @@
 运行入口：`scripts/harness_services.py`、`scripts/run_benchmark_suite.py`、`scripts/report_benchmark.py`。
 独立复核：`python scripts/verify_benchmark.py <run-dir>`；冻结：`work/harness-mvp/final-freeze.json`。
 
-并发配置：`configs/harness-concurrent.json`，32 个独立模拟器槽、CUDA Graph 与前缀缓存、工作流优先调度。试跑 120 次用时 3 分 51 秒；完整计时首轮因上游 simulator 参数类型崩溃无效，待修复授权，见 [N8](docs/nodes/N8.md)。
-前置测量：`scripts/run_concurrency_preflight.py`；完整验收：`python scripts/run_timed_benchmark.py --config configs/harness-concurrent.json --run-dir runs/concurrency-capacity/<新目录>`。旧正式结果与失败轮全部保留。
+并发配置：`configs/harness-concurrent-fixed.json`，32 个独立模拟器槽、CUDA Graph 与前缀缓存、工作流优先调度。已修复畸形参数触发 simulator 崩溃的边界检查，完整计时复跑见 [N8](docs/nodes/N8.md)；旧正式结果与失败轮保留。
+前置测量：`scripts/run_concurrency_preflight.py`；完整验收：`python scripts/run_timed_benchmark.py --config configs/harness-concurrent-fixed.json --run-dir runs/concurrency-capacity/<新目录>`。
+
+v2 清单与门槛：`configs/benchmark-v2/`、`configs/harness-v2-protocol.json`。运行 `python scripts/run_harness_v2.py --stage modules --run-dir runs/harness-v2/<新目录>`；完成模块对比后保留模型服务，检查结果并提交节点记录，再用相同目录 `--stage finalize` 进行集成选择、冻结与新 final。各阶段共用模型，episodes 并行；seed42 为正式检验，43/44 为可靠性诊断。
