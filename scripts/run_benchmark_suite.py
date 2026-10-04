@@ -85,8 +85,13 @@ def main():
     sim = ROOT / 'deps/SimuHome'
     upstream_commit = subprocess.check_output(['git', '-C', str(sim), 'rev-parse', 'HEAD'], text=True).strip()
     upstream_dirty = subprocess.check_output(['git', '-C', str(sim), 'status', '--porcelain'], text=True).strip()
-    if upstream_commit != manifest['simuhome_commit'] or upstream_dirty:
-        raise RuntimeError('Official evaluator/simulator must remain pristine at the manifest revision')
+    expected_runtime = config.get('simulator_commit', manifest['simuhome_commit'])
+    lock = json.loads((ROOT / 'dependencies.lock.json').read_text())['SimuHome']
+    if upstream_commit != expected_runtime or upstream_commit != lock['commit'] or upstream_dirty or (
+            manifest['simuhome_commit'] not in {lock['commit'], lock.get('base_commit')}):
+        raise RuntimeError('Simulator must match the clean locked runtime and recorded benchmark source revision')
+    save('simulator_identity.json', {'runtime_commit': upstream_commit,
+        'task_source_commit': manifest['simuhome_commit'], 'dependency': lock})
     services, handles, commands = [], [], []
     key = 'smarthome-local-rollout'
     client = httpx.Client(trust_env=False, timeout=30,

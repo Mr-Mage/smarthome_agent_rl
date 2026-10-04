@@ -1,0 +1,15 @@
+--- a/src/simulator/domain/home.py
++++ b/src/simulator/domain/home.py
+@@ -1054,6 +1054,12 @@
+             return ResultBuilder.device_not_found(device_id)
+ 
+         device = self.devices_by_id[device_id][1]
++        if not isinstance(args, dict):
++            return Result.fail(
++                ErrorCode.VALIDATION_ERROR,
++                "Invalid command args",
++                "args must be an object",
++            )
+         return device.execute_command(endpoint_id, cluster_id, command_id, **args)
+ 
+     def _write_attribute(

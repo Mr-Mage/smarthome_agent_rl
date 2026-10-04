@@ -1,0 +1,103 @@
+{
+  "seed": 20261004,
+  "model_python": "/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/anaconda3/envs/qwen36-vllm/bin/python",
+  "judge_path": "/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/zhengrj/models/Qwen3.6-35B-A3B",
+  "actor_path": "../models/Qwen3.5-9B",
+  "actor_model": "smarthome-qwen35-9b",
+  "judge_model": "smarthome-qwen36-judge",
+  "judge_port": 20300,
+  "embedding_port": 20200,
+  "actor_context": 32768,
+  "judge_context": 65536,
+  "startup_timeout": 1200,
+  "workflows": [
+    {
+      "id": 0,
+      "gpus": [
+        0
+      ],
+      "actor_port": 20000,
+      "simulator_port": 20080,
+      "gateway_port": 20181
+    },
+    {
+      "id": 1,
+      "gpus": [
+        1
+      ],
+      "actor_port": 20001,
+      "simulator_port": 20081,
+      "gateway_port": 20182
+    }
+  ],
+  "judge_gpus": [
+    2,
+    3
+  ],
+  "model_seed": 42,
+  "engine_seed": 0,
+  "max_steps": 20,
+  "generation": {
+    "temperature": 0.7,
+    "top_p": 0.8,
+    "max_tokens": 2048,
+    "presence_penalty": 1.5,
+    "extra_body": {
+      "top_k": 20,
+      "min_p": 0.0,
+      "repetition_penalty": 1.0,
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    }
+  },
+  "judge_generation": {
+    "temperature": 0.0,
+    "max_tokens": 512,
+    "extra_body": {
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    }
+  },
+  "judge_seeds": [
+    42,
+    43,
+    44
+  ],
+  "variants_dev": [
+    "B0",
+    "G",
+    "GV",
+    "GC",
+    "Full"
+  ],
+  "variants_final": [
+    "B0",
+    "G",
+    "GC",
+    "Full"
+  ],
+  "recovery_per_action": 2,
+  "extra_queries_max": 40,
+  "slots_per_actor": 16,
+  "simulator_port_base": 21000,
+  "inference": {
+    "actor_max_num_seqs": 32,
+    "judge_max_num_seqs": 32,
+    "actor_enforce_eager": false,
+    "actor_prefix_caching": true,
+    "actor_gpu_memory_utilization": 0.8,
+    "actor_extra_args": [
+      "--gdn-prefill-backend",
+      "triton"
+    ],
+    "judge_extra_args": [
+      "--gdn-prefill-backend",
+      "triton"
+    ]
+  },
+  "kernel_cache_root": "work/concurrency-capacity/kernel-cache",
+  "dispatch_policy": "workflow-first",
+  "simulator_commit": "e202971348348e1bb56651245185ecb3a0e6b12d"
+}

@@ -1,9 +1,12 @@
 {
   "SimuHome": {
     "repository": "https://github.com/holi-lab/SimuHome.git",
-    "commit": "83d28837b69f0cbf1bc02ed5334cb8b561a9d54d",
+    "commit": "e202971348348e1bb56651245185ecb3a0e6b12d",
     "path": "deps/SimuHome",
-    "modified": false
+    "modified": false,
+    "base_commit": "83d28837b69f0cbf1bc02ed5334cb8b561a9d54d",
+    "patch": "patches/SimuHome/command-args.patch",
+    "note": "Authorized N8 boundary fix: reject non-object scheduled command args; official task files and evaluator unchanged."
   },
   "agent-lightning": {
     "repository": "https://github.com/microsoft/agent-lightning.git",
