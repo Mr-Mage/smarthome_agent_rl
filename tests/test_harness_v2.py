@@ -118,6 +118,17 @@ class HarnessV2Tests(unittest.TestCase):
         self.assertFalse(executor.context_audit[-1]['used'])
         self.assertEqual(inner.messages, messages)
 
+    def test_recent_auxiliary_queries_are_retained_because_raw_pairs_do_not_contain_them(self):
+        observations = [{'turn': 3, 'tool': 'get_device_structure', 'arguments': {'device_id': 'device'},
+            'extra_query': True, 'response': {'status': {'code': 200}, 'data': {'fresh': 'public'}, 'error': None}},
+            {'turn': 4, 'tool': 'get_rooms', 'arguments': {}, 'extra_query': False,
+             'response': {'status': {'code': 200}, 'data': {'rooms': ['room']}, 'error': None}}]
+        executor = SimpleNamespace(observations=observations, audit=[], structured_audit=[])
+        facts = compact_ledger(executor, recent_turns=(3, 4))['facts']
+        self.assertEqual(len(facts), 1)
+        self.assertEqual(facts[0]['tool'], 'get_device_structure')
+        self.assertEqual(facts[0]['data'], {'fresh': 'public'})
+
     def test_repeated_seeds_share_pairing_but_never_share_artifact_paths(self):
         items = seeded_schedule([{'id': 'task'}], ['G', 'GV2'], [42, 43, 44])
         paths = [episode_directory('/run', item, 'G') for item in items]

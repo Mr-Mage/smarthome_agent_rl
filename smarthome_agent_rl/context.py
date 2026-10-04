@@ -100,7 +100,7 @@ def compact_ledger(executor, recent_turns=()):
     facts = []
     for fact in ledger['facts'].values():
         source = fact['source']
-        if source['turn'] in recent_turns:
+        if source['turn'] in recent_turns and not source['extra_query']:
             continue
         catalog_stale = source['tool'] in ('get_rooms', 'get_room_devices', 'get_device_structure') and source['turn'] < catalog_turn
         facts.append({'tool': source['tool'], 'args': source['arguments'], 'turn': source['turn'],
