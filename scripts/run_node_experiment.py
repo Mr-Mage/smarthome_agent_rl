@@ -76,12 +76,16 @@ def main():
                 return name, {'error': str(exc)}
         with (run / 'metrics.jsonl').open('w') as output:
             while not stop.is_set():
-                sample = {'at': time.time(), 'stage': json.loads((run / 'state.json').read_text())['stage']}
-                gpu = subprocess.run(['nvidia-smi', '--query-gpu=index,utilization.gpu,memory.used,memory.total',
-                    '--format=csv,noheader,nounits'], capture_output=True, text=True, timeout=15)
-                sample['gpu'] = gpu.stdout.strip()
-                with ThreadPoolExecutor(max_workers=5) as pool:
-                    sample.update(pool.map(fetch, urls))
+                sample = {'at': time.time()}
+                try:
+                    sample['stage'] = json.loads((run / 'state.json').read_text())['stage']
+                    gpu = subprocess.run(['nvidia-smi', '--query-gpu=index,utilization.gpu,memory.used,memory.total',
+                        '--format=csv,noheader,nounits'], capture_output=True, text=True, timeout=15, check=True)
+                    sample['gpu'] = gpu.stdout.strip()
+                    with ThreadPoolExecutor(max_workers=5) as pool:
+                        sample.update(pool.map(fetch, urls))
+                except Exception as exc:
+                    sample['monitor_error'] = str(exc)
                 samples.append(sample)
                 output.write(json.dumps(sample) + '\n')
                 output.flush()
@@ -133,8 +137,13 @@ def main():
             supervisor.terminate()
             supervisor.wait(timeout=120)
         seconds = time.monotonic() - began
+        gpu_values = [float(line.split(',')[1]) for s in samples for line in s.get('gpu', '').splitlines()]
         write(run / 'resource-cost.json', {'total_seconds_including_cleanup': seconds,
             'allocated_actor_gpu_seconds': 4 * seconds, 'external_judge_stopped': False,
+            'monitor_errors': sum('monitor_error' in s or any(isinstance(v, dict) and 'error' in v
+                                 for v in s.values()) for s in samples),
+            'sampled_gpu_utilization_mean': sum(gpu_values) / len(gpu_values) if gpu_values else None,
+            'sampled_gpu_utilization_peak': max(gpu_values) if gpu_values else None,
             'queue_peaks': queue_peaks(samples),
             'pressure': pressure([{k: v for k, v in s.items() if isinstance(v, list)} for s in samples]),
             'scope': 'Reserved H100 GPU wall time, including startup/failures/cleanup; excludes A800 shared-service allocation'})
