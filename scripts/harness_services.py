@@ -15,6 +15,8 @@ import uuid
 import httpx
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+from smarthome_agent_rl.concurrency import execution_slots
 
 
 def save(path, value):
@@ -25,8 +27,10 @@ def save(path, value):
 
 def validate_resources(config):
     gpus = config['judge_gpus'] + [gpu for w in config['workflows'] for gpu in w['gpus']]
+    slots = execution_slots(config)
     ports = [config['judge_port'], config['embedding_port']] + [
-        w[k] for w in config['workflows'] for k in ('actor_port', 'simulator_port', 'gateway_port')]
+        w[k] for w in config['workflows'] for k in ('actor_port', 'gateway_port')]
+    ports += [w['simulator_port'] for w in slots]
     if sorted(gpus) != [0, 1, 2, 3] or len(set(ports)) != len(ports):
         raise ValueError('Expected disjoint four-GPU and port allocation')
     for port in ports:
@@ -97,24 +101,32 @@ def main():
         launch('embedding', [retrieval['python'], ROOT / 'scripts/serve_doc_embeddings.py',
             '--model', retrieval['model_path'], '--port', config['embedding_port']],
             {'CUDA_VISIBLE_DEVICES': ''}, f"http://127.0.0.1:{config['embedding_port']}/health")
+        inference = config.get('inference', {})
         deployments = [('actor' + str(w['id']), config['actor_path'], config['actor_model'],
-                        w['gpus'], w['actor_port'], config['actor_context'], 1)
+                        w['gpus'], w['actor_port'], config['actor_context'], inference.get('actor_max_num_seqs', 1))
                        for w in config['workflows']]
         deployments.append(('judge', config['judge_path'], config['judge_model'],
-                            config['judge_gpus'], config['judge_port'], config['judge_context'], 6))
+                            config['judge_gpus'], config['judge_port'], config['judge_context'], inference.get('judge_max_num_seqs', 6)))
         for name, path, model, gpus, port, context, sequences in deployments:
             environment = {'CUDA_VISIBLE_DEVICES': ','.join(map(str, gpus)),
                 'CUDA_HOME': '/usr/local/cuda-12.8', 'CUDA_PATH': '/usr/local/cuda-12.8',
                 'FLASHINFER_WORKSPACE_BASE': str(run / name / 'flashinfer'),
                 'VLLM_CACHE_ROOT': str(run / name / 'vllm'),
                 'TORCHINDUCTOR_CACHE_DIR': str(run / name / 'torchinductor'), 'MAX_JOBS': '8'}
-            launch(name, [config['model_python'], '-m', 'vllm.entrypoints.openai.api_server',
+            command = [config['model_python'], '-m', 'vllm.entrypoints.openai.api_server',
                 '--model', (ROOT / path).resolve(), '--served-model-name', model,
                 '--host', '127.0.0.1', '--port', port, '--tensor-parallel-size', len(gpus),
                 '--max-model-len', context, '--max-num-seqs', sequences,
-                '--gpu-memory-utilization', '0.72' if name == 'judge' else '0.60',
-                '--seed', config['engine_seed'], '--language-model-only', '--enforce-eager',
-                '--no-enable-log-requests'], environment, f'http://127.0.0.1:{port}/v1/models')
+                '--gpu-memory-utilization', str(inference.get('judge_gpu_memory_utilization', 0.72) if name == 'judge'
+                    else inference.get('actor_gpu_memory_utilization', 0.60)),
+                '--seed', config['engine_seed'], '--language-model-only', '--no-enable-log-requests']
+            if inference.get('judge_enforce_eager' if name == 'judge' else 'actor_enforce_eager', True):
+                command.append('--enforce-eager')
+            prefix = inference.get('judge_prefix_caching' if name == 'judge' else 'actor_prefix_caching')
+            if prefix is not None:
+                command.append('--enable-prefix-caching' if prefix else '--no-enable-prefix-caching')
+            command += list(map(str, inference.get('judge_extra_args' if name == 'judge' else 'actor_extra_args', [])))
+            launch(name, command, environment, f'http://127.0.0.1:{port}/v1/models')
         deadline = time.monotonic() + config['startup_timeout']
         with httpx.Client(trust_env=False, timeout=3) as client:
             while not stopped:

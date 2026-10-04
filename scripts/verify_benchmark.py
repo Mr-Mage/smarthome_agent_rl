@@ -3,6 +3,10 @@ import argparse
 import hashlib
 import json
 from pathlib import Path
+import sys
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from smarthome_agent_rl.concurrency import episode_directory
 
 
 def verify(run):
@@ -22,7 +26,7 @@ def verify(run):
     expected_summaries = []
     for item in protocol['schedule']:
         for variant in item['variants']:
-            expected_summaries.append(f"worker{item['workflow']}/{item['task']['id']}/{variant}/lightning/summary.json")
+            expected_summaries.append(str((episode_directory(run, item, variant) / 'summary.json').relative_to(run)).replace('\\', '/'))
     if set(expected_summaries) != {name for name in manifest if name.endswith('/summary.json')}:
         failures.append({'problem': 'missing/extra episode summary'})
     if completion['episodes'] != protocol['expected_episodes'] or not completion['complete']:

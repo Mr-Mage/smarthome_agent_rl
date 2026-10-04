@@ -61,10 +61,10 @@ def select(benchmark, *, seed=20261004, dev_count=10, final_count=16, exposed=()
             'smoke': []}
 
 
-def schedule(rows, variants):
+def schedule(rows, variants, actors=2):
     """Each task stays on one actor; adjacent tasks alternate variant order."""
-    return [{'task': row, 'workflow': i % 2,
-             'variants': list(variants if (i // 2) % 2 == 0 else reversed(variants))}
+    return [{'task': row, 'workflow': i % actors,
+             'variants': list(variants if (i // actors) % 2 == 0 else reversed(variants))}
             for i, row in enumerate(rows)]
 
 

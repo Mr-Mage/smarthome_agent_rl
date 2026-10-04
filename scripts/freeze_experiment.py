@@ -21,10 +21,11 @@ def main():
     parser.add_argument('--output', default='work/harness-mvp/final-freeze.json')
     parser.add_argument('--services', default='work/harness-mvp/services-v3')
     parser.add_argument('--inventory', default='work/harness-mvp/inventory-v2')
+    parser.add_argument('--config', default='configs/harness-mvp.json')
     args = parser.parse_args()
     if git(ROOT, 'status', '--porcelain'):
         raise RuntimeError('Commit all implementation/configuration changes before freezing')
-    config = json.loads((ROOT / 'configs/harness-mvp.json').read_text())
+    config = json.loads((ROOT / args.config).read_text())
     dev = ROOT / args.dev_run
     report = json.loads((dev / 'report.json').read_text())
     if not report['verified'] or report['phase'] != 'dev' or set(report['arms']) != set(config['variants_dev']) or any(
@@ -59,7 +60,7 @@ def main():
     inventories = {name: json.loads((ROOT / args.inventory / f'{name}-inventory.json').read_text())
                    for name in ('actor', 'judge')}
     record = {'schema': 'harness-final-freeze-v1', 'commit': git(ROOT, 'rev-parse', 'HEAD'),
-        'config_sha256': digest(ROOT / 'configs/harness-mvp.json'),
+        'config_sha256': digest(ROOT / args.config),
         'manifest_sha256': digest(ROOT / 'configs/benchmark-mvp/final.json'),
         'dev_report_sha256': digest(dev / 'report.json'), 'dev_run': args.dev_run,
         'dev_commit': protocol['commit'], 'dev_runtime_source_identity_matches': True,

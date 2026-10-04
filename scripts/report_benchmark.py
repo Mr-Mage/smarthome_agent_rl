@@ -8,6 +8,7 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from smarthome_agent_rl.benchmark import STRATA, digest
+from smarthome_agent_rl.concurrency import episode_directory
 from smarthome_agent_rl.paired_stats import mcnemar, bootstrap_ci, holm
 
 
@@ -97,7 +98,7 @@ def report(run):
     metrics = {}
     for item in protocol['schedule']:
         for variant in item['variants']:
-            directory = run / f"worker{item['workflow']}" / item['task']['id'] / variant / 'lightning'
+            directory = episode_directory(run, item, variant)
             record = episode_metrics(directory)
             if record['task_id'] != item['task']['id'] or record['variant'] != variant:
                 raise ValueError('Artifact task/variant identity mismatch')
