@@ -11,3 +11,5 @@ N13：新final1,728次核验通过，seed42 B0/G/Full=60/69/71（各192），两
 证据：`runs/harness-v2/primary-v2/`；旧开发诊断保留在`primary-v1/`；汇总与限制见`docs/实验报表.md`。
 
 N14已完成：A800常驻judge+四个单卡9B；64/128总槽各144次完整核验，吞吐35.73/29.81次/分钟，无抢占，选择64槽（每actor16）。72项测试通过；全流程16分34秒，H100已清理、judge仍在线。产物`runs/concurrency-capacity/a800-four-actors-v1/`。下一主线为dead-front依赖与工作流能力检查消融，见`docs/后续实验方案.md`。
+
+N15已完成：smoke288+dev1,440次核验；G/GD/GW/GDW成功126/124/133/124（各360），非法执行57/16/49/36。三项候选均未过冻结组合门槛，保留G；全流程35分21秒，分离Agent与评测延迟。N16时间表/注册回执检查已实现，准备按`configs/time-plan.json`对照G评测。分支`feat/guard-v3`，原始证据`runs/guard-v3/n15-v1/`。
