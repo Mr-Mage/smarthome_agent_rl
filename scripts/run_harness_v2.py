@@ -12,7 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from smarthome_agent_rl.benchmark import digest
 from smarthome_agent_rl.experiment_v2 import module_selection, integration_selection
-from scripts.harness_services import validate_resources
+from harness_services import validate_resources
 
 
 def main():
