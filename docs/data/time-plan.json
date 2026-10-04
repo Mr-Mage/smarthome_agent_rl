@@ -1,0 +1,119 @@
+{
+  "run": "runs/time-plan/n16-v5",
+  "source_commit": "c70b207",
+  "config": "configs/time-plan.json",
+  "valid_episodes": {
+    "smoke": 144,
+    "dev": 720
+  },
+  "selected_strategy": "G",
+  "selection": {
+    "winner": "G",
+    "checks": {
+      "success_rate": false,
+      "temporal_success": false,
+      "actor_tokens": false,
+      "illegal_execution": true
+    },
+    "actor_token_ratio": 1.1170872289505407,
+    "basis": "all dev runs; qt4-1 feasible gate; smoke diagnostic only"
+  },
+  "dev": {
+    "independent_tasks": 120,
+    "seeds": [
+      42,
+      43,
+      44
+    ],
+    "G": {
+      "success": 130,
+      "episodes": 360,
+      "actor_tokens": 16912596,
+      "illegal_executions": 55,
+      "qt4_1_feasible_success": 8
+    },
+    "TimePlan": {
+      "success": 117,
+      "episodes": 360,
+      "actor_tokens": 18892845,
+      "illegal_executions": 46,
+      "qt4_1_feasible_success": 0
+    },
+    "delta_sr_pp": -3.6111111111,
+    "task_clustered_ci_pp": [
+      -7.7777777778,
+      0.2777777778
+    ]
+  },
+  "mechanism_audit": {
+    "counts": {
+      "episodes": 360,
+      "recognized_phrases": 123,
+      "table_rows": 123,
+      "covered_episodes": 60,
+      "table_missing_episodes": 0,
+      "unfinished": 20,
+      "query_budget_exhausted": 0,
+      "R_triggered": 33,
+      "metadata_rejections": 31,
+      "failure_output_rejections": 8,
+      "T_checked_proposals": 412,
+      "T_triggered": 300,
+      "T_replay_disagreements": 0,
+      "uncovered_step_refs": 0,
+      "T_reason_Map each workflow step to a time constraint ID": 291,
+      "failure_step_limit": 12,
+      "T_reason_Workflow time conflicts with explicit relative-time table": 9
+    },
+    "triggered_unique_tasks": {
+      "T": 19,
+      "R": 9
+    },
+    "causal_online_ablation_performed": false,
+    "semantic_false_rejection_rate": "not established"
+  },
+  "validation_admission": {
+    "admitted": false,
+    "selected_candidate": "G",
+    "development_gate_passed": false,
+    "unused_pool_sufficient": false,
+    "available_tasks": 95,
+    "estimated_required_tasks": 663,
+    "balanced_twelve_class_max": 84,
+    "dev_primary_discordance": 0.125,
+    "dev_independent_tasks": 120,
+    "target_delta": 0.05,
+    "desired_power": 0.8,
+    "comparison_estimates": {
+      "TimePlan-G": {
+        "dev_discordance": 0.125,
+        "required_tasks": 473
+      },
+      "G-B0": {
+        "dev_discordance": 0.175,
+        "required_tasks": 663
+      }
+    },
+    "reasons": [
+      "No development enhancement passed frozen gates",
+      "Unused official pool is too small for the predeclared sample-size estimate"
+    ],
+    "decision": "Freeze selected dev strategy; no final run or extra modules when admission fails; proceed to N20 archive",
+    "limitations": "Normal approximation for planning, not an exact achieved-power calculation. Historical dev G-B0 discordance is an estimate; both comparisons use conservative Holm alpha=0.025. Shared official generator does not prove independent template families."
+  },
+  "attempts_preserved": [
+    "runs/time-plan/n16-v1",
+    "runs/time-plan/n16-v2",
+    "runs/time-plan/n16-v3",
+    "runs/time-plan/n16-v4",
+    "runs/time-plan/n16-v5"
+  ],
+  "decision": "Keep G; skip conditional N18 and new final; archive under plan stopping criteria",
+  "evidence_sha256": {
+    "runs/time-plan/n16-v5/selection.json": "ad249c987c0c77c8b9ad47bd5ad69b2a5f1d524b57970cf17474fd8a794fb1f1",
+    "runs/time-plan/n16-v5/metrics-receipt.json": "c41c29e879a1ce585f86a4e19ee1d1bf0e39bfd6cd103d98d5a1e006c4a72762",
+    "runs/time-plan/n17-v1/audit.json": "f51db1693fe102d05c3dc9eef08389f453dcb11dfe13c39f122f0de3b4f9264e",
+    "runs/holdout-inventory/n19-v1/inventory.json": "9890599e636c784ea545492e66f38a8d87f4a4710aacec95658530758d4b0677",
+    "runs/holdout-inventory/n19-v1/admission-complete.json": "016c90668c1e86cd99e4f75772213fe6f6eddeedde9ff8c2d0a02e472f202a52"
+  }
+}

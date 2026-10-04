@@ -21,9 +21,16 @@ def usage(row):
 def costs(run):
     result = {'run': str(run.relative_to(ROOT)), 'actor': {'calls': 0}, 'judge': {'calls': 0}, 'preflight_tokens': 0}
     for role, name in (('actor', 'model_calls.json'), ('judge', 'judge_calls.json')):
-        rows = [row for path in run.rglob(name) for row in json.loads(path.read_text())]
-        result[role] = {'calls': len(rows), **{key: sum(usage(row)[key] for row in rows)
-                         for key in ('input_tokens', 'output_tokens', 'total_tokens')}}
+        total = {'calls': 0, 'calls_without_usage': 0,
+                 'input_tokens': 0, 'output_tokens': 0, 'total_tokens': 0}
+        for path in run.rglob(name):
+            for row in json.loads(path.read_text()):
+                total['calls'] += 1
+                if not row.get('response', {}).get('usage'):
+                    total['calls_without_usage'] += 1
+                for key, value in usage(row).items():
+                    total[key] += value
+        result[role] = total
     preflight = run / 'metadata-preflight.json'
     if preflight.exists():
         result['preflight_tokens'] = usage(json.loads(preflight.read_text()))['total_tokens']
@@ -72,7 +79,9 @@ if __name__ == '__main__':
     cost_path = output / 'all-costs.json'
     cost_path.write_text(json.dumps({'runs': all_costs, 'raw_partial_calls_included': True,
         'allocated_actor_gpu_seconds': sum(r['resource']['allocated_actor_gpu_seconds'] for r in all_costs if r['resource']),
-        'scope': 'All declared node attempts, including partial failed trajectories, startup, probes, preflight and cleanup; no monetary conversion'}, indent=2))
+        'scope': 'Recorded costs of all declared node attempts, including partial failed trajectories, startup, probes, preflight and driver cleanup; no monetary conversion',
+        'unmeasured': ['Manual cleanup extra CPU time', 'Shared A800 resource allocation',
+                       'Tokens of calls without response usage, if any; known token sums are lower bounds in that case']}, indent=2))
     receipts.add(cost_path)
     review = output / 'review-evidence.tar.gz'
     with tarfile.open(review, 'w:gz') as archive:
