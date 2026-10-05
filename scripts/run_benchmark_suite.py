@@ -23,6 +23,7 @@ sys.path.insert(0, str(ROOT))
 from smarthome_agent_rl.benchmark import digest, schedule
 from smarthome_agent_rl.concurrency import execution_slots, dispatch_items, seeded_schedule, judge_endpoint
 from smarthome_agent_rl.variant_runtime import runtime
+from smarthome_agent_rl.model_gateways import gateway,deployments
 
 
 def main():
@@ -158,6 +159,7 @@ def main():
             'judge_endpoint': judge_endpoint(config),
             'embedding_endpoint': f"http://127.0.0.1:{config['embedding_port']}"}
         episode_config.update(runtime(config,variant,workflow))
+        workflow={**workflow,'gateway_port':gateway(config,workflow,episode_config['served_model'])}
         if args.phase == 'final':
             episode_config['protocol_frozen_commit'] = commit
         if mode == 'direct':
@@ -317,26 +319,25 @@ def main():
             pending_simulators.append((slot, simulator))
         with ThreadPoolExecutor(max_workers=len(slots)) as pool:
             list(pool.map(lambda pair: wait(f"http://127.0.0.1:{pair[0]['simulator_port']}/api/__health__", pair[1], 180), pending_simulators))
-        for workflow in config['workflows']:
-            for port in (workflow['gateway_port'],):
-                with socket.socket() as probe:
-                    probe.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-                    probe.bind(('127.0.0.1', port))
-            gateway = launch(f"gateway{workflow['id']}", [Path(sys.executable).parent / 'agl-server',
-                'host=127.0.0.1', f"port={workflow['gateway_port']}", f'key={key}',
-                f"default_proxy.model_name={config['actor_model']}",
-                f"default_proxy.val.temperature={config['generation']['temperature']}"], ROOT)
-            wait(f"http://127.0.0.1:{workflow['gateway_port']}/healthz", gateway)
-            api(workflow, 'POST', '/api/models', [{'model': config['actor_model'],
-                'endpoint': f"http://127.0.0.1:{workflow['actor_port']}/v1", 'version': 0}])
-            routes={runtime(config,v,workflow)['served_model']:runtime(config,v,workflow)['model_endpoint'] for v in variants}
-            for model, endpoint in routes.items():
-                if model!=config['actor_model']:
-                    api(workflow,'POST','/api/models',[{'model':model,'endpoint':endpoint,'version':0}])
-            launch(f"controller{workflow['id']}", [Path(sys.executable).parent / 'agl-controller',
-                'runner_type=local', f'local_runner.maximum_size={slot_count}', 'local_runner.poll_interval=1',
-                f"agl_server.url=http://127.0.0.1:{workflow['gateway_port']}", f'agl_server.key={key}'], ROOT,
-                {'PYTHONPATH': str(ROOT), 'OPENAI_API_KEY': 'local-unused'})
+        for physical in config['workflows']:
+            for deployment in deployments(config,variants,physical):
+                workflow={**physical,'gateway_port':deployment['gateway_port']}
+                model=deployment['model']
+                for port in (workflow['gateway_port'],):
+                    with socket.socket() as probe:
+                        probe.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+                        probe.bind(('127.0.0.1', port))
+                service=launch(f"gateway{workflow['id']}-{model}", [Path(sys.executable).parent / 'agl-server',
+                    'host=127.0.0.1', f"port={workflow['gateway_port']}", f'key={key}',
+                    f"default_proxy.model_name={model}",
+                    f"default_proxy.val.temperature={config['generation']['temperature']}"], ROOT)
+                wait(f"http://127.0.0.1:{workflow['gateway_port']}/healthz",service)
+                api(workflow, 'POST', '/api/models', [{'model': model,
+                    'endpoint': deployment['endpoint'], 'version': 0}])
+                launch(f"controller{workflow['id']}-{model}", [Path(sys.executable).parent / 'agl-controller',
+                    'runner_type=local', f'local_runner.maximum_size={slot_count}', 'local_runner.poll_interval=1',
+                    f"agl_server.url=http://127.0.0.1:{workflow['gateway_port']}", f'agl_server.key={key}'], ROOT,
+                    {'PYTHONPATH': str(ROOT), 'OPENAI_API_KEY': 'local-unused'})
         startup_seconds = time.monotonic() - suite_started
         with ThreadPoolExecutor(max_workers=len(slots)) as pool:
             all_results = list(pool.map(workflow_jobs, slots))

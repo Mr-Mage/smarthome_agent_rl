@@ -56,6 +56,10 @@ def execution_slots(config):
     ports = [slot['simulator_port'] for slot in slots] + [
         actor[key] for actor in actors for key in ('actor_port', 'gateway_port')]
     ports += [config['embedding_port']]
+    for model,extra in config.get('model_gateway_ports',{}).items():
+        if not isinstance(extra,list) or len(extra)!=len(actors) or any(type(p) is not int for p in extra):
+            raise ValueError('Alternate-model gateway ports must cover every actor')
+        ports += extra
     if not external_judge(config):
         ports.append(config['judge_port'])
     if len(ports) != len(set(ports)):

@@ -33,6 +33,7 @@ def validate_resources(config):
     if not external_judge(config):
         ports.append(config['judge_port'])
     ports += [w['simulator_port'] for w in slots]
+    ports += [port for extra in config.get('model_gateway_ports',{}).values() for port in extra]
     if sorted(gpus) != [0, 1, 2, 3] or len(set(ports)) != len(ports):
         raise ValueError('Expected disjoint four-GPU and port allocation')
     for port in ports:

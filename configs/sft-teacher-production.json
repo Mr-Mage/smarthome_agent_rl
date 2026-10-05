@@ -3,10 +3,10 @@
   "model_python": "/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/anaconda3/envs/qwen36-vllm/bin/python",
   "judge_path": "/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/zhengrj/models/Qwen3.6-35B-A3B",
   "actor_path": "../models/Qwen3.5-9B",
-  "actor_model": "smarthome-qwen35-9b",
+  "actor_model": "smarthome-qwen36-judge",
   "judge_model": "smarthome-qwen36-judge",
   "judge_port": 20300,
-  "embedding_port": 20200,
+  "embedding_port": 24200,
   "actor_context": 32768,
   "judge_context": 65536,
   "startup_timeout": 1200,
@@ -18,7 +18,7 @@
       ],
       "actor_port": 20000,
       "simulator_port": 20080,
-      "gateway_port": 20181
+      "gateway_port": 24181
     },
     {
       "id": 1,
@@ -27,7 +27,7 @@
       ],
       "actor_port": 20001,
       "simulator_port": 20081,
-      "gateway_port": 20182
+      "gateway_port": 24182
     },
     {
       "id": 2,
@@ -36,7 +36,7 @@
       ],
       "actor_port": 20002,
       "simulator_port": 20082,
-      "gateway_port": 20183
+      "gateway_port": 24183
     },
     {
       "id": 3,
@@ -45,7 +45,7 @@
       ],
       "actor_port": 20003,
       "simulator_port": 20083,
-      "gateway_port": 20184
+      "gateway_port": 24184
     }
   ],
   "judge_gpus": [],
@@ -81,14 +81,13 @@
     44
   ],
   "variants_dev": [
-    "G",
-    "SFT9B"
+    "Teacher"
   ],
   "variants_final": [],
   "recovery_per_action": 2,
   "extra_queries_max": 40,
-  "slots_per_actor": 16,
-  "simulator_port_base": 21000,
+  "slots_per_actor": 4,
+  "simulator_port_base": 24000,
   "inference": {
     "actor_max_num_seqs": 32,
     "judge_max_num_seqs": 32,
@@ -97,12 +96,7 @@
     "actor_gpu_memory_utilization": 0.8,
     "actor_extra_args": [
       "--gdn-prefill-backend",
-      "triton",
-      "--enable-lora",
-      "--max-lora-rank",
-      "16",
-      "--lora-modules",
-      "smarthome-qwen35-9b-sft=/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/zhengrj/agent/smarthome_agent_rl/runs/sft-pilot/n24-v1/adapter"
+      "triton"
     ],
     "judge_extra_args": [
       "--gdn-prefill-backend",
@@ -115,20 +109,11 @@
   "manifest_dir": "configs/benchmark-v2",
   "actor_seeds": [
     42,
-    43,
-    44
+    43
   ],
   "primary_actor_seed": 42,
   "variant_policies": {
-    "G": {
-      "verify": false,
-      "verification_version": 1,
-      "context_version": 0,
-      "dead_front": false,
-      "workflow_all_devices": false,
-      "time_plan": false
-    },
-    "SFT9B": {
+    "Teacher": {
       "verify": false,
       "verification_version": 1,
       "context_version": 0,
@@ -140,49 +125,18 @@
   "judge_deployment": "external",
   "judge_endpoint": "http://192.168.60.254:20300/v1",
   "node_experiment": {
-    "node": "N25",
-    "reference": "G",
-    "sft_preflight": true,
-    "stages": [
-      {
-        "phase": "dev",
-        "name": "smoke",
-        "manifest": "configs/sft-pilot/calibration.json",
-        "variants": [
-          "G",
-          "SFT9B"
-        ]
-      },
-      {
-        "phase": "dev",
-        "manifest": "configs/sft-pilot/eval.json",
-        "variants": [
-          "G",
-          "SFT9B"
-        ]
-      }
-    ],
-    "gates": {
-      "sr_delta_min": 0.0,
-      "actor_token_ratio_max": 1.1,
-      "illegal_execution_max": "control count"
-    },
-    "scope": "Frozen one-epoch LoRA evaluation; no candidate selection or tuning from eval48; all tasks historically exposed",
-    "exclusions": "None; failures retained; infrastructure invalidates entire affected stage, no selective reruns",
-    "model_identity": "Require completed n24-v1 adapter SHA256 and on-wire alias identity preflight",
-    "statistics": "seed42 paired primary; seeds43/44 repeats; task-clustered CI, development diagnosis only"
+    "node": "N23",
+    "stages": [],
+    "gates": {},
+    "local_actor_services": false,
+    "purpose": "Re-run all 120 teacher episodes after verified wrong-model gateway failure; no old partial teacher data accepted",
+    "frozen_budget": "16 isolated simulator slots on external A800; H100 GPUs released for separate training preparation",
+    "exclusions": "All ordinary failures retained; failed infrastructure stage wholly invalid; no selective retries"
   },
   "variant_runtime": {
-    "SFT9B": {
-      "model": "smarthome-qwen35-9b-sft"
+    "Teacher": {
+      "model": "smarthome-qwen36-judge",
+      "endpoint": "http://192.168.60.254:20300/v1"
     }
-  },
-  "model_gateway_ports": {
-    "smarthome-qwen35-9b-sft": [
-      20185,
-      20186,
-      20187,
-      20188
-    ]
   }
 }
