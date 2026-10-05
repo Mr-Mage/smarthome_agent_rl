@@ -3,13 +3,13 @@
 复现官方 SimuHome 单轮 ReAct benchmark，接入 Agent Lightning；harness 基线为 Qwen3.5-9B，保留冻结权重结果。
 4×H100各一个actor，每actor16个隔离模拟器槽，总并发64；Qwen3.6-35B-A3B judge常驻2×A800，CPU BGE检索。
 
-当前：N21–N25已执行。35个训练任务、361个动作标签完成单轮四卡LoRA训练及独立合并；eval48三种子配对原9B/SFT成功51/24（各144），非法执行31/125，否决本次SFT配置，继续保留原模型+G。原生thinking也未过成本门槛。结果仅为历史暴露任务上的开发诊断，剩余95个未使用任务仍封存。
+当前：N27归因及N28启动语义消融完成。G/GS成功25/84与27/84，但非法执行13→35，未过安全门槛，保留原9B+G，N29不准入。历史一次LoRA SFT成功51/144→24/144、非法31→125，已否决；原生thinking也未过成本门槛。结果仅为历史暴露任务上的开发诊断，95个未使用任务仍封存，当前不追加训练。
 N13正式seed42：B0/G/旧Full成功60/69/71（各192）；G非法执行96→16，SR差的Holm p=0.216，提升未证实。Verify v2、Context v2、N15 D/W及TimePlan均不纳入候选。旧final不再用于调参。
 
 结果：[实验报表](docs/实验报表.md)；节点：[docs/nodes](docs/nodes/)；开发约定：[AGENTS.md](AGENTS.md)。
 
 N26观测ID提示诊断完成：原9B成功26/72→26/72，tokens+3.01%；SFT成功15/72→10/72，tokens+64.03%。完整目录下错误ID样本不足，主机制证据不足，不采用提示、不扩大该消融；发现与终止覆盖仍需研究，详见[N26](docs/nodes/N26.md)。审阅包`outputs/observation-binding/n26-review-v1/`。
-N27只读复核全部31个原G seed42失败与361个训练目标：5个独立任务混淆通电与运行启动，准入N28最小公开语义提示配对；原G错误房间查询0。评测疑点保留官方失败，不改分母；无新增推理/训练，详见[N27](docs/nodes/N27.md)。
+N27只读复核全部31个原G seed42失败与361个训练目标：5个独立任务混淆通电与运行启动，原G错误房间查询0。评测疑点保留官方失败，不改分母，详见[N27](docs/nodes/N27.md)。N28该遗漏12→0，但注册重试错误增多，未进入扩大验证；192次有效运行8分51秒，两次失败启动另计，详见[N28](docs/nodes/N28.md)。审阅包`outputs/start-semantics/n28-review-v1/`。
 源码、配置、测试分别在`smarthome_agent_rl/`与`scripts/`、`configs/`、`tests/`；原始运行在忽略的`runs/`，审阅包在`outputs/`，临时文件在`work/`。
 
 服务器：`ssh h100`。沿用`../activate-agent-lightning.sh`，激活后回项目目录；模型用`qwen36-vllm`，episode/模拟器用既有venv。不改依赖或Lightning用户补丁，运行前保持部署工作树干净。
