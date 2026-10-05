@@ -107,20 +107,24 @@ def main():
         command('harness_services.py', 'probe', '--config', config_path, '--run-dir', services)
         if config['node_experiment'].get('preflight_episode'):
             command('preflight_time_plan.py', '--config', config_path, '--output', run / 'metadata-preflight.json')
+        if config['node_experiment'].get('reasoning_preflight'):
+            command('preflight_reasoning.py','--config',config_path,'--output',run/'reasoning-preflight.json')
         write(run / 'startup.json', {'seconds': time.monotonic() - began})
         thread = Thread(target=monitor, daemon=True)
         thread.start()
         reports = {}
         for stage in config['node_experiment']['stages']:
-            state(stage['phase'])
-            directory = run / stage['phase']
+            name=stage.get('name',stage['phase'])
+            state(name)
+            directory = run / name
+            seeds=['--actor-seeds',*stage['actor_seeds']] if 'actor_seeds' in stage else []
             command('run_benchmark_suite.py', '--phase', stage['phase'], '--variants', *stage['variants'],
-                '--manifest', stage['manifest'], '--config', config_path, '--run-dir', directory)
+                '--manifest', stage['manifest'], '--config', config_path, '--run-dir', directory,*seeds)
             command('report_benchmark.py', directory)
             command('verify_benchmark.py', directory)
-            reports[stage['phase']] = json.loads((directory / 'report.json').read_text())
+            reports[name] = json.loads((directory / 'report.json').read_text())
             completion = json.loads((directory / 'completion.json').read_text())
-            write(run / (stage['phase'] + '-resources.json'), {'allocated_actor_gpu_seconds': 4 * completion['elapsed_seconds'],
+            write(run / (name + '-resources.json'), {'allocated_actor_gpu_seconds': 4 * completion['elapsed_seconds'],
                 'scope': 'Four reserved H100 actors × suite elapsed; not active GPU compute or monetary cost'})
         if config['node_experiment']['node'] == 'N15':
             write(run / 'selection.json', select_guard(reports['dev'], config['node_experiment']['gates']))

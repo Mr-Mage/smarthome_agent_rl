@@ -1,10 +1,11 @@
 import copy,json,unittest
+from pathlib import Path
 from smarthome_agent_rl.sft_data import partition, action_target, tokenized_target
 from smarthome_agent_rl.variant_runtime import runtime
 
 class SftDataTests(unittest.TestCase):
     def test_split_is_task_isolated_and_balanced(self):
-        rows=json.load(open('configs/benchmark-v2/dev.json'))['tasks']
+        rows=json.loads(Path('configs/benchmark-v2/dev.json').read_text())['tasks']
         queries={r['id']:r['id']+' unique public query' for r in rows}
         result,audit=partition(rows,queries)
         self.assertEqual({k:len(v) for k,v in result.items()},{'train':60,'calibration':12,'eval':48})

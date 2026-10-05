@@ -1,0 +1,18 @@
+{
+  "source_sha256": "a016355e53893b1fea66b957f3914777075f8cbed2b0dbb4cc879e78d5e2d7d8",
+  "counts": {
+    "train": 60,
+    "calibration": 12,
+    "eval": 48
+  },
+  "numeric_normalized_cross_split_groups": 0,
+  "limitations": "Numeric query normalization is only a narrow duplicate screen; official generator template independence is not established. All 120 tasks were historically exposed; eval is training-task-isolated development diagnosis.",
+  "reserved_unused_tasks": 95,
+  "manifests_sha256": {
+    "diagnostic.json": "5ce1d87a15163d7c229f1af3cafc5209cdc2415ff767d51b0cf1b86f8fbc17a4",
+    "train.json": "136e154e7139b19fbe02110c09cdbcf25edba2b86f5745091dfedc4c4e64b896",
+    "smoke.json": "16ac9ccac2cdf2e7a8b82ba27a5621810c291d9fbca44df0bacee85c68cd7bfe",
+    "calibration.json": "4edeb95cf66f96fd7dcb34a641f87830688f78ed0279881f6401ad52f9d53a2b",
+    "eval.json": "ce9d77163ed631d671088585bce2e49db40c9f5106f53a8fee69f34263c56551"
+  }
+}
