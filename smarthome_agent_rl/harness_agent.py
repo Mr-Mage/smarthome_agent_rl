@@ -40,6 +40,7 @@ class GuardedExecutor:
         self.extra_queries, self.turn = 0, 0
         self.context_audit = []
         self.structured_audit = []
+        self.binding_audit = []
         self.time_plan = None
 
     def save_audit(self):
@@ -47,6 +48,7 @@ class GuardedExecutor:
             self.audit_fn({'proposals': self.audit, 'actual_observations': self.observations,
                 'public_semantics_source_sha256': self.sources, 'extra_queries': self.extra_queries,
                 'context': self.context_audit, 'structured': self.structured_audit,
+                'binding': self.binding_audit,
                 'time_plan': self.time_plan.snapshot() if self.time_plan is not None else None})
 
     def record_structured(self, records):
@@ -172,7 +174,7 @@ class GuardedExecutor:
 class HarnessAgent:
     def __init__(self, llm, *, variant, max_steps, trace_fn=None, audit_fn=None,
                  repair_limit=2, query_limit=40, policy=None, token_count_fn=None):
-        if variant not in ('G', 'GV', 'GC', 'Full', 'GV2', 'GC2', 'Candidate', 'GD', 'GW', 'GDW', 'TimePlan', 'GThinking', 'Teacher', 'SFT9B'):
+        if variant not in ('G', 'GV', 'GC', 'Full', 'GV2', 'GC2', 'Candidate', 'GD', 'GW', 'GDW', 'TimePlan', 'GThinking', 'Teacher', 'SFT9B', 'GB', 'SFT9B_B'):
             raise ValueError(variant)
         policy = policy or {'verify': variant in ('GV', 'Full', 'GV2'),
             'verification_version': 2 if variant == 'GV2' else 1,
@@ -188,6 +190,11 @@ class HarnessAgent:
             self.executor.time_plan = TimePlan()
             provider.time_plan = self.executor.time_plan
         provider.schemas = self.executor.guard.schemas
+        if policy.get('identifier_binding'):
+            if policy['context_version'] or policy.get('time_plan'):
+                raise ValueError('Identifier diagnosis requires complete unmodified task history')
+            from smarthome_agent_rl.binding import BindingProvider
+            provider = BindingProvider(provider, self.executor)
         if policy['context_version']:
             from smarthome_agent_rl.context import LedgerProvider, CompactLedgerProvider
             provider = CompactLedgerProvider(provider, self.executor, token_count_fn) if policy['context_version'] == 2 else LedgerProvider(provider, self.executor)
