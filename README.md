@@ -16,4 +16,4 @@ SFT流程与冻结配置见[SFT执行计划](docs/SFT执行计划.md)、[训练]
 冻结配置：[Guard v3](configs/guard-v3.json)、[TimePlan](configs/time-plan.json)。每轮四卡配对，预声明种子42/43/44；先smoke再dev，普通任务失败留在分母，基础设施故障整阶段无效。
 阶段核验：`python scripts/verify_benchmark.py <阶段目录>`；统计：`scripts/report_benchmark.py`；收据：`scripts/summarize_node_experiments.py`。
 保留证据：`runs/harness-v2/primary-v2/`、`runs/guard-v3/n15-v1/`、`runs/time-plan/`。历史结果与论文参照见实验报表；judge三票来自同一模型，不是三个独立judge。
-最新归档：`outputs/harness-post-n15/review-v2/`，28,310个有效阶段文件与109份审阅收据核验通过；失败成本有缺usage记录，详见[N20](docs/nodes/N20.md)。机器索引：[TimePlan及准入](docs/data/time-plan.json)。
+最新SFT归档：`outputs/sft-pilot/final-review-v1/`，13,845个有效阶段文件与143份本机收据核验通过，保留失败成本、数据和权重身份；[N25](docs/nodes/N25.md)记录否决结论。历史归档：`outputs/harness-post-n15/review-v2/`，28,310个有效阶段文件与109份收据核验通过；失败成本有缺usage记录，详见[N20](docs/nodes/N20.md)。机器索引：[TimePlan及准入](docs/data/time-plan.json)。
