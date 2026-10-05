@@ -1,0 +1,189 @@
+{
+  "seed": 20261005,
+  "model_python": "/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/anaconda3/envs/qwen36-vllm/bin/python",
+  "judge_path": "/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/zhengrj/models/Qwen3.6-35B-A3B",
+  "actor_path": "../models/Qwen3.5-9B",
+  "actor_model": "smarthome-qwen35-9b",
+  "judge_model": "smarthome-qwen36-judge",
+  "judge_port": 20300,
+  "embedding_port": 20200,
+  "actor_context": 32768,
+  "judge_context": 65536,
+  "startup_timeout": 1200,
+  "workflows": [
+    {
+      "id": 0,
+      "gpus": [
+        0
+      ],
+      "actor_port": 20000,
+      "simulator_port": 20080,
+      "gateway_port": 20181
+    },
+    {
+      "id": 1,
+      "gpus": [
+        1
+      ],
+      "actor_port": 20001,
+      "simulator_port": 20081,
+      "gateway_port": 20182
+    },
+    {
+      "id": 2,
+      "gpus": [
+        2
+      ],
+      "actor_port": 20002,
+      "simulator_port": 20082,
+      "gateway_port": 20183
+    },
+    {
+      "id": 3,
+      "gpus": [
+        3
+      ],
+      "actor_port": 20003,
+      "simulator_port": 20083,
+      "gateway_port": 20184
+    }
+  ],
+  "judge_gpus": [],
+  "model_seed": 42,
+  "engine_seed": 0,
+  "max_steps": 20,
+  "generation": {
+    "temperature": 0.7,
+    "top_p": 0.8,
+    "max_tokens": 2048,
+    "presence_penalty": 1.5,
+    "extra_body": {
+      "top_k": 20,
+      "min_p": 0.0,
+      "repetition_penalty": 1.0,
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    }
+  },
+  "judge_generation": {
+    "temperature": 0.0,
+    "max_tokens": 512,
+    "extra_body": {
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    }
+  },
+  "judge_seeds": [
+    42,
+    43,
+    44
+  ],
+  "variants_dev": [
+    "G",
+    "GS"
+  ],
+  "variants_final": [],
+  "recovery_per_action": 2,
+  "extra_queries_max": 40,
+  "slots_per_actor": 16,
+  "simulator_port_base": 21000,
+  "inference": {
+    "actor_max_num_seqs": 32,
+    "judge_max_num_seqs": 32,
+    "actor_enforce_eager": false,
+    "actor_prefix_caching": true,
+    "actor_gpu_memory_utilization": 0.8,
+    "actor_extra_args": [
+      "--gdn-prefill-backend",
+      "triton"
+    ],
+    "judge_extra_args": [
+      "--gdn-prefill-backend",
+      "triton"
+    ]
+  },
+  "kernel_cache_root": "work/concurrency-capacity/kernel-cache",
+  "dispatch_policy": "workflow-first",
+  "simulator_commit": "e202971348348e1bb56651245185ecb3a0e6b12d",
+  "manifest_dir": "configs/benchmark-v2",
+  "actor_seeds": [
+    42,
+    43,
+    44
+  ],
+  "primary_actor_seed": 42,
+  "variant_policies": {
+    "G": {
+      "verify": false,
+      "verification_version": 1,
+      "context_version": 0,
+      "dead_front": false,
+      "workflow_all_devices": false,
+      "time_plan": false,
+      "identifier_binding": false
+    },
+    "GS": {
+      "verify": false,
+      "verification_version": 1,
+      "context_version": 0,
+      "dead_front": false,
+      "workflow_all_devices": false,
+      "time_plan": false,
+      "identifier_binding": false,
+      "start_semantics": true
+    }
+  },
+  "judge_deployment": "external",
+  "judge_endpoint": "http://192.168.60.254:20300/v1",
+  "node_experiment": {
+    "node": "N28",
+    "reference": "G",
+    "stages": [
+      {
+        "phase": "dev",
+        "name": "smoke",
+        "manifest": "configs/sft-pilot/calibration.json",
+        "variants": [
+          "G",
+          "GS"
+        ],
+        "actor_seeds": [
+          42
+        ]
+      },
+      {
+        "phase": "dev",
+        "name": "dev",
+        "manifest": "configs/start-semantics/dev.json",
+        "variants": [
+          "G",
+          "GS"
+        ]
+      }
+    ],
+    "gates": {
+      "control_omissions_min": 5,
+      "omission_reduction_min": 0.5,
+      "sr_delta_min": 0,
+      "motivating_feasible_success_gain_min": 1,
+      "actor_token_ratio_max": 1.1,
+      "illegal_execution_max": "control count"
+    },
+    "motivating_targets": {
+      "qt4-3_feasible_seed_17": "utility_room_laundry_dryer_1",
+      "qt4-3_feasible_seed_36": "utility_room_laundry_washer_1",
+      "qt4-3_feasible_seed_80": "utility_room_laundry_washer_1",
+      "qt4-3_infeasible_seed_54": "bathroom_laundry_dryer_1",
+      "qt4-3_infeasible_seed_75": "kitchen_dishwasher_1"
+    },
+    "primary_mechanism": "Across 5 public-query motivating targets x3 seeds, count episodes with observed stopped state and accepted power/cycle configuration but no accepted OperationalState.Start/Resume for target. Workflow registration counts as a planned start, never running proof.",
+    "intervention": "Append fixed power/run command semantics only after successful observed device structure exposes same-endpoint OnOff.On and OperationalState.Start. Preserve history, schema, guards, executor and budget; no new queries, repair, state oracle, finish blocking or training.",
+    "statistics": "Paired seed42 primary; repeats43/44 descriptive with task-clustered CI. Five motivating targets selected offline before treatment; mechanistic counts are descriptive, not causal correction.",
+    "exclusions": "None; ordinary failed/unfinished episodes retained; infrastructure invalidates whole stage; no selective reruns.",
+    "stop_rule": "One frozen run. Require all mechanism, overall SR, motivating feasible success, safety and cost gates. If any fails or control mechanism count insufficient, retain G and skip N29; no prompt rewrite or extra epoch on these results.",
+    "scope": "28 exposed tasks, deliberately includes all QT4-3 and two per other class; 24 smoke +168 dev episodes. No general-population or formal holdout claim; unused95 sealed. No SFT arm.",
+    "n29": "If all gates pass, one larger G/GS paired developer validation on previously exposed official dev tasks; no access to unused95 or old formal-final tuning."
+  }
+}

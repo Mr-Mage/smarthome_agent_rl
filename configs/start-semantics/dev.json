@@ -1,0 +1,234 @@
+{
+  "schema": "official-benchmark-manifest-v1",
+  "split": "dev",
+  "sampling_seed": 20261006,
+  "simuhome_commit": "83d28837b69f0cbf1bc02ed5334cb8b561a9d54d",
+  "sft_split": "exposed-development-mechanism-enriched",
+  "tasks": [
+    {
+      "id": "qt1_feasible_seed_44",
+      "path": "qt1_feasible_seed_44.json",
+      "sha256": "762dccd46690d618eca026f709888a48369a95cff3328e1d1d176c8a7274b3ed",
+      "query_type": "qt1",
+      "case": "feasible",
+      "seed": 44
+    },
+    {
+      "id": "qt1_feasible_seed_16",
+      "path": "qt1_feasible_seed_16.json",
+      "sha256": "53345567ea220548f764657e392f267cb970a9653d726b5d8857581b3c0b9192",
+      "query_type": "qt1",
+      "case": "feasible",
+      "seed": 16
+    },
+    {
+      "id": "qt1_infeasible_seed_42",
+      "path": "qt1_infeasible_seed_42.json",
+      "sha256": "a65f20dac850fff7afc698d6a3dd7595d35742f0111fd709c9bc4781310807e6",
+      "query_type": "qt1",
+      "case": "infeasible",
+      "seed": 42
+    },
+    {
+      "id": "qt1_infeasible_seed_31",
+      "path": "qt1_infeasible_seed_31.json",
+      "sha256": "b45ee83a759f7ddd25bc17ab475ab2b89f4f01d0a8445004ac29d9c63e4fafeb",
+      "query_type": "qt1",
+      "case": "infeasible",
+      "seed": 31
+    },
+    {
+      "id": "qt2_feasible_seed_73",
+      "path": "qt2_feasible_seed_73.json",
+      "sha256": "999a491f8b1925cce90d28044e50a1506b5798054c624288da68ba2267b393c9",
+      "query_type": "qt2",
+      "case": "feasible",
+      "seed": 73
+    },
+    {
+      "id": "qt2_feasible_seed_74",
+      "path": "qt2_feasible_seed_74.json",
+      "sha256": "0d170a066add6d754b422a8fe27cde6413801a623888cb37a5dde7e41aa9909f",
+      "query_type": "qt2",
+      "case": "feasible",
+      "seed": 74
+    },
+    {
+      "id": "qt2_infeasible_seed_11",
+      "path": "qt2_infeasible_seed_11.json",
+      "sha256": "abf09c93cfe3f1575eb823b926fa932728dbc2c34b4c8323cc27ba8b34020f68",
+      "query_type": "qt2",
+      "case": "infeasible",
+      "seed": 11
+    },
+    {
+      "id": "qt2_infeasible_seed_120",
+      "path": "qt2_infeasible_seed_120.json",
+      "sha256": "4305510c60f760e33efe748fd738d92195cc7a7eeaace21d3978e5e259dee7ae",
+      "query_type": "qt2",
+      "case": "infeasible",
+      "seed": 120
+    },
+    {
+      "id": "qt3_feasible_seed_16",
+      "path": "qt3_feasible_seed_16.json",
+      "sha256": "75e8cccd3002a4726e35a7c4eb3cbabf1cea79353c4d593209f23614ed4e83fe",
+      "query_type": "qt3",
+      "case": "feasible",
+      "seed": 16
+    },
+    {
+      "id": "qt3_feasible_seed_45",
+      "path": "qt3_feasible_seed_45.json",
+      "sha256": "a35b1209dcd08e77ea36524df791cd58c020e38036f51fdc1a168bb3838a950a",
+      "query_type": "qt3",
+      "case": "feasible",
+      "seed": 45
+    },
+    {
+      "id": "qt3_infeasible_seed_15",
+      "path": "qt3_infeasible_seed_15.json",
+      "sha256": "255d2c5aa000bc2c7a1e614bdef22af0b419775cd6e30659a540b57c3c94f987",
+      "query_type": "qt3",
+      "case": "infeasible",
+      "seed": 15
+    },
+    {
+      "id": "qt3_infeasible_seed_33",
+      "path": "qt3_infeasible_seed_33.json",
+      "sha256": "e30067dda6377e206cf89ff349a6a6958597c7b17259457a88a6bdfd35f9a69f",
+      "query_type": "qt3",
+      "case": "infeasible",
+      "seed": 33
+    },
+    {
+      "id": "qt4-1_feasible_seed_14",
+      "path": "qt4-1_feasible_seed_14.json",
+      "sha256": "45e5ad962f9c1539bc19206753d42b31d3ae8eb2fc5cf330cb586639ac005f21",
+      "query_type": "qt4-1",
+      "case": "feasible",
+      "seed": 14
+    },
+    {
+      "id": "qt4-1_feasible_seed_40",
+      "path": "qt4-1_feasible_seed_40.json",
+      "sha256": "5747aaf5e08145f3242cdc103f991953fc7aa4521d59353ecfd91dd8113816a2",
+      "query_type": "qt4-1",
+      "case": "feasible",
+      "seed": 40
+    },
+    {
+      "id": "qt4-1_infeasible_seed_7",
+      "path": "qt4-1_infeasible_seed_7.json",
+      "sha256": "170090e3e5aed51e3740c3a9afeb55a389d75a39b1048d3fb2c7f5185076992e",
+      "query_type": "qt4-1",
+      "case": "infeasible",
+      "seed": 7
+    },
+    {
+      "id": "qt4-1_infeasible_seed_38",
+      "path": "qt4-1_infeasible_seed_38.json",
+      "sha256": "c758e441a5ee5405eaa422329a3c9a8a1c97192cccf309570e166b4e1fecaad5",
+      "query_type": "qt4-1",
+      "case": "infeasible",
+      "seed": 38
+    },
+    {
+      "id": "qt4-2_feasible_seed_9",
+      "path": "qt4-2_feasible_seed_9.json",
+      "sha256": "39d0640435ebd193e73e98ffc3c8beb19d33a9b0f8cb3afb74c3a10a8e91ab05",
+      "query_type": "qt4-2",
+      "case": "feasible",
+      "seed": 9
+    },
+    {
+      "id": "qt4-2_feasible_seed_54",
+      "path": "qt4-2_feasible_seed_54.json",
+      "sha256": "cc568e4556452e5e3f699f3542260be88ff2321c917ef1f56cf907d4d2cb247e",
+      "query_type": "qt4-2",
+      "case": "feasible",
+      "seed": 54
+    },
+    {
+      "id": "qt4-2_infeasible_seed_16",
+      "path": "qt4-2_infeasible_seed_16.json",
+      "sha256": "bb73e23d986ad4f8d7be6523b6bf0e5743312302fb0c71e036e961dd4545d900",
+      "query_type": "qt4-2",
+      "case": "infeasible",
+      "seed": 16
+    },
+    {
+      "id": "qt4-2_infeasible_seed_15",
+      "path": "qt4-2_infeasible_seed_15.json",
+      "sha256": "50eb7d6634cde03b34b4d45bb256b048faf37cf366067f72231bee47abda38f5",
+      "query_type": "qt4-2",
+      "case": "infeasible",
+      "seed": 15
+    },
+    {
+      "id": "qt4-3_feasible_seed_17",
+      "path": "qt4-3_feasible_seed_17.json",
+      "sha256": "59cf8617dc8e2ea50862bd6f6c0864b18bd79401c77db528828e6f320105b635",
+      "query_type": "qt4-3",
+      "case": "feasible",
+      "seed": 17
+    },
+    {
+      "id": "qt4-3_feasible_seed_36",
+      "path": "qt4-3_feasible_seed_36.json",
+      "sha256": "d7621434f6f6151d9a37ed9fcefecae377fcca7e47165c62e1211a45d12d6612",
+      "query_type": "qt4-3",
+      "case": "feasible",
+      "seed": 36
+    },
+    {
+      "id": "qt4-3_feasible_seed_79",
+      "path": "qt4-3_feasible_seed_79.json",
+      "sha256": "b971026249cde109173ac569e3e628e4b6fad6ca80f87b7c98b077f323dfb34f",
+      "query_type": "qt4-3",
+      "case": "feasible",
+      "seed": 79
+    },
+    {
+      "id": "qt4-3_feasible_seed_80",
+      "path": "qt4-3_feasible_seed_80.json",
+      "sha256": "10b6461cc64544c4918893db2593925ce1eddcc943286d05dc7df136884678bf",
+      "query_type": "qt4-3",
+      "case": "feasible",
+      "seed": 80
+    },
+    {
+      "id": "qt4-3_infeasible_seed_28",
+      "path": "qt4-3_infeasible_seed_28.json",
+      "sha256": "3d70b4387298dc66124f1de624195581a7bf9ec03b6d81f124abb3822206a32e",
+      "query_type": "qt4-3",
+      "case": "infeasible",
+      "seed": 28
+    },
+    {
+      "id": "qt4-3_infeasible_seed_54",
+      "path": "qt4-3_infeasible_seed_54.json",
+      "sha256": "c5c211999ab337b5c6d0bc4dff2e36519c486603aad1953a3b3c35cc7716ccd9",
+      "query_type": "qt4-3",
+      "case": "infeasible",
+      "seed": 54
+    },
+    {
+      "id": "qt4-3_infeasible_seed_55",
+      "path": "qt4-3_infeasible_seed_55.json",
+      "sha256": "b5d2d6fb5a92fa6f318e48214606989ef6f854f05e18359851173bdbb02b6f31",
+      "query_type": "qt4-3",
+      "case": "infeasible",
+      "seed": 55
+    },
+    {
+      "id": "qt4-3_infeasible_seed_75",
+      "path": "qt4-3_infeasible_seed_75.json",
+      "sha256": "5ba7496914246e6257a0d9bed4e8666b9300e133d135cefbdad51c230f135358",
+      "query_type": "qt4-3",
+      "case": "infeasible",
+      "seed": 75
+    }
+  ],
+  "sampling_rule": "All 8 exposed eval QT4-3 tasks; 2 per other class sampled from exposed eval48 sorted IDs with Random(20261006). No unused tasks."
+}

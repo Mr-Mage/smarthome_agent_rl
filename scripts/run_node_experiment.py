@@ -134,6 +134,8 @@ def main():
             write(run / 'selection.json', select_time_plan(reports['dev'], config['node_experiment']['gates']))
         elif config['node_experiment']['node'] == 'N25':
             write(run / 'selection.json', assess_sft(reports['dev'], config['node_experiment']['gates']))
+        elif config['node_experiment']['node'] == 'N28':
+            command('analyze_start_semantics.py', '--run', args.run_dir)
         state('complete')
     except BaseException as exc:
         write(run / 'failure.json', {'type': type(exc).__name__, 'message': str(exc)})
