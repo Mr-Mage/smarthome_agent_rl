@@ -2,7 +2,6 @@
 import argparse,json,sys
 from collections import Counter
 from pathlib import Path
-import jsonschema
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT))
 from smarthome_agent_rl.benchmark import digest
@@ -11,6 +10,7 @@ from smarthome_agent_rl.concurrency import episode_directory
 from scripts.verify_benchmark import verify
 
 def curate(stages,train_rows,root=ROOT):
+    import jsonschema
     tasks={r['id']:r for r in train_rows}
     candidates=[]; exclusions=Counter(); source_receipts={}
     validators={}

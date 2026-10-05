@@ -1,9 +1,10 @@
-import json,tempfile,unittest
+import json,tempfile,unittest,importlib.util
 from pathlib import Path
 from scripts.build_sft_dataset import curate
 from smarthome_agent_rl.benchmark import digest
 
 class CurationTests(unittest.TestCase):
+    @unittest.skipUnless(importlib.util.find_spec('jsonschema'), 'Run curation test in the isolated SFT environment')
     def test_only_successful_training_tasks_and_correct_actions_get_labels(self):
         with tempfile.TemporaryDirectory() as directory:
             root=Path(directory);stage=root/'stage';stage.mkdir()
