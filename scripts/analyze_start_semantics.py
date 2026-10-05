@@ -54,7 +54,7 @@ def main():
     root_protocol=read(run/'protocol.json')
     config=root_protocol['config']
     targets=config['node_experiment']['motivating_targets']
-    counts={v:{'omissions':0,'motivating_feasible_successes':0} for v in ('G','GS')}
+    counts={v:{'omissions':0,'observed_stopped_targets':0,'motivating_feasible_successes':0} for v in ('G','GS')}
     details=[]
     provenance={'episodes':0,'model_calls':0,'prompts_used':0,'passed':True}
     for phase in ('smoke','dev'):
@@ -95,6 +95,7 @@ def main():
                     boundary=max(i for i,m in enumerate(messages) if 'This is your actual task.' in m['content'])
                     result=missing_start(audit,messages[boundary+1:],targets[task_id])
                     counts[variant]['omissions']+=int(result['omission'])
+                    counts[variant]['observed_stopped_targets']+=int(result['observed_stopped'])
                     if '_feasible_' in task_id:
                         counts[variant]['motivating_feasible_successes']+=int(summary['success'])
                     details.append({'task_id':task_id,'variant':variant,'seed':summary['actor_seed'],
@@ -109,6 +110,7 @@ def main():
     reduction=1-counts['GS']['omissions']/n if n else None
     ratio=gs['all_totals']['actor_tokens']/g['all_totals']['actor_tokens']
     checks={'mechanism_observed':n>=gates['control_omissions_min'],
+        'public_evidence_coverage':counts['GS']['observed_stopped_targets']>=counts['G']['observed_stopped_targets'],
         'omission_reduction':reduction is not None and reduction>=gates['omission_reduction_min'],
         'success_rate':gs['success_rate']-g['success_rate']>=gates['sr_delta_min'],
         'motivating_feasible_success':counts['GS']['motivating_feasible_successes']-counts['G']['motivating_feasible_successes']>=gates['motivating_feasible_success_gain_min'],
