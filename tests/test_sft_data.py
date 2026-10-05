@@ -32,6 +32,9 @@ class SftDataTests(unittest.TestCase):
         row=tokenized_target(Tokenizer(),[{'role':'user','content':'input'}],'target',6)
         self.assertEqual(row['labels'],[-100,-100,-100,4,5,9])
         with self.assertRaises(ValueError):tokenized_target(Tokenizer(),[],'target',5)
+        class MappingTokenizer(Tokenizer):
+            def apply_chat_template(self,*a,**kw):return {'input_ids':[[1,2,3]],'attention_mask':[[1,1,1]]}
+        self.assertEqual(tokenized_target(MappingTokenizer(),[],'target',6)['input_ids'],[1,2,3,4,5,9])
 
     def test_variant_runtime_is_frozen_without_mutating_control(self):
         config={'actor_model':'base','generation':{'temperature':.7,'max_tokens':2048},

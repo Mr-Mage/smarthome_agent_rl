@@ -56,10 +56,18 @@ def action_target(call):
     return messages, content, action
 
 def tokenized_target(tokenizer, messages, target, max_length):
-    prefix = tokenizer.apply_chat_template(messages, tokenize=True, add_generation_prompt=True, enable_thinking=False)
+    prefix = tokenizer.apply_chat_template(messages, tokenize=True, add_generation_prompt=True,
+                                           enable_thinking=False, return_dict=False)
+    if isinstance(prefix,dict):
+        prefix=prefix['input_ids']
+    if prefix and isinstance(prefix[0],list):
+        if len(prefix)!=1:raise ValueError('Expected a single conversation')
+        prefix=prefix[0]
     # Structured inference also starts after an empty thinking block. Encode only the target plus EOT.
     suffix = tokenizer.encode(target, add_special_tokens=False) + [tokenizer.eos_token_id]
     ids = list(prefix)+suffix
+    if not all(type(token) is int for token in ids):
+        raise ValueError('Tokenizer returned non-integer token IDs')
     if len(ids)>max_length:
         raise ValueError('Full target exceeds length budget; no silent truncation')
     return {'input_ids':ids, 'labels':[-100]*len(prefix)+suffix, 'attention_mask':[1]*len(ids),

@@ -8,11 +8,12 @@ sys.path.insert(0,str(ROOT))
 from smarthome_agent_rl.benchmark import digest
 from smarthome_agent_rl.sft_data import action_target,text_hash,tokenized_target
 from smarthome_agent_rl.concurrency import episode_directory
-from verify_benchmark import verify
+from scripts.verify_benchmark import verify
 
 def curate(stages,train_rows,root=ROOT):
     tasks={r['id']:r for r in train_rows}
     candidates=[]; exclusions=Counter(); source_receipts={}
+    validators={}
     for name in stages:
         stage=root/name
         verified=verify(stage)
@@ -33,6 +34,7 @@ def curate(stages,train_rows,root=ROOT):
                 if len(calls)!=len(audit['structured']):
                     exclusions['ambiguous_turn_http_alignment']+=1;continue
                 proposal={row['turn']:row for row in audit['proposals']}
+                calls_sha,summary_sha=digest(episode/'model_calls.json'),digest(episode/'summary.json')
                 samples=[]; actions=[]
                 for turn,(call,structured) in enumerate(zip(calls,audit['structured']),1):
                     evidence=proposal.get(turn,{})
@@ -40,7 +42,12 @@ def curate(stages,train_rows,root=ROOT):
                         exclusions['incorrect_action_target']+=1;continue
                     try:
                         messages,target,action=action_target(call)
-                        jsonschema.validate(json.loads(target),call['request']['response_format']['json_schema']['schema'])
+                        schema=call['request']['response_format']['json_schema']['schema']
+                        schema_key=text_hash(json.dumps(schema,sort_keys=True))
+                        if schema_key not in validators:
+                            jsonschema.Draft202012Validator.check_schema(schema)
+                            validators[schema_key]=jsonschema.Draft202012Validator(schema)
+                        validators[schema_key].validate(json.loads(target))
                     except (ValueError,KeyError,jsonschema.ValidationError):
                         exclusions['invalid_or_truncated_target']+=1;continue
                     normalized=structured.get('normalized_action',{})
@@ -52,8 +59,8 @@ def curate(stages,train_rows,root=ROOT):
                         exclusions['missing_execution_receipt']+=1;continue
                     samples.append({'task_id':item['task']['id'],'category':item['task']['query_type']+':'+item['task']['case'],
                         'messages':messages,'target':target,'source':str(episode.relative_to(root)),
-                        'turn':turn,'model_calls_sha256':digest(episode/'model_calls.json'),
-                        'summary_sha256':digest(episode/'summary.json'),'supervision':'Current assistant target only; public prefix masked',
+                        'turn':turn,'model_calls_sha256':calls_sha,
+                        'summary_sha256':summary_sha,'supervision':'Current assistant target only; public prefix masked',
                         'teacher_judge_shared_model':variant=='Teacher'})
                     actions.append(action)
                 if not samples or actions[-1]['tool']!='finish':

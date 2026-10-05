@@ -1,0 +1,7 @@
+# Install only in .venv-sft with inherited agent-lightning torch/PEFT; never in Conda.
+transformers==5.18.0
+tokenizers==0.23.2
+huggingface-hub==1.33.0
+hf-xet==1.6.0
+flash-linear-attention==0.5.2
+fla-core==0.5.2
