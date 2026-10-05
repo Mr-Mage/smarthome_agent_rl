@@ -34,6 +34,10 @@ def costs(run):
     preflight = run / 'metadata-preflight.json'
     if preflight.exists():
         result['preflight_tokens'] = usage(json.loads(preflight.read_text()))['total_tokens']
+    for name in ('reasoning-preflight.json','sft-preflight.json'):
+        preflight=run/name
+        if preflight.exists():
+            result['preflight_tokens']+=sum(usage(row)['total_tokens'] for row in json.loads(preflight.read_text()).get('records',[]))
     probe = run / 'services/inference-probe.json'
     result['service_probe'] = {'actor_tokens': 0, 'judge_tokens': 0}
     if probe.exists():
