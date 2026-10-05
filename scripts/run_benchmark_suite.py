@@ -13,6 +13,7 @@ import subprocess
 import sys
 from threading import Lock, Event
 import time
+import traceback
 import uuid
 
 import httpx
@@ -253,7 +254,11 @@ def main():
                         'model_calls': {k: len(v) for k, v in calls.items()},
                         'frozen_request_pairs': len(frozen_records), 'frozen_pairs_identical': True,
                         'live_simulator_clock_unchanged': True}))
-            except Exception:
+            except Exception as exc:
+                with schedule_lock:
+                    if not (run/'first_job_failure.json').exists():
+                        save('first_job_failure.json',{'task_id':item['task']['id'],'variant':variant,
+                            'type':type(exc).__name__,'message':str(exc),'traceback':traceback.format_exc()})
                 halt.set()
                 raise
             finally:

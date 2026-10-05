@@ -19,6 +19,11 @@ def task_failure_kind(error, calls=()):
     if not error or error['type'] != 'AgentExecutionError':
         return None
     message = error['message'].lower()
+    if 'llm response content was empty' in message and calls:
+        last=calls[-1]
+        choices=last.get('response',{}).get('choices',[])
+        if last.get('status')==200 and choices and choices[0].get('finish_reason')=='length':
+            return 'actor_completion_limit'
     for term, kind in [('explicit finish', 'step_limit'), ('consecutive failures', 'output_rejections'),
                        ('polling budget', 'workflow_poll_limit')]:
         if term in message:
