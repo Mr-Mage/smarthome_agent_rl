@@ -8,15 +8,16 @@ from tests.test_binding import observation, task
 
 
 def structure(device='washer', start=True):
-    return {'device_id': device, 'commands': {'1.OnOff': ['On', 'Off'],
-        '1.OperationalState': ['Start', 'Pause'] if start else ['Pause']}}
+    return {'device_id': device, 'endpoints': {'1': {'clusters': {
+        'OnOff': {'commands': ['On', 'Off']},
+        'OperationalState': {'commands': ['Start', 'Pause'] if start else ['Pause'],
+            'attributes': {'OperationalState': {'value': 0, 'readonly': True}}}}}}}
 
 
 class StartSemanticsTests(unittest.TestCase):
     def test_metric_rejects_failed_start_and_distinguishes_registration(self):
         from scripts.analyze_start_semantics import missing_start
-        messages = observation('get_device_structure', {'device_id': 'washer'},
-            {**structure(), 'attributes': {'1.OperationalState.OperationalState': 0}})
+        messages = observation('get_device_structure', {'device_id': 'washer'}, structure())
         on = {'tool': 'execute_command', 'arguments': {'device_id': 'washer', 'cluster_id': 'OnOff',
               'command_id': 'On'}, 'reached_executor': True, 'simulator_error': False}
         failed_start = {'tool': 'execute_command', 'arguments': {'device_id': 'washer',
@@ -39,7 +40,8 @@ class StartSemanticsTests(unittest.TestCase):
         self.assertEqual([d['device_id'] for d in devices], ['washer'])
         self.assertEqual(devices[0]['endpoints'], [1])
         wrong_endpoint = structure('dryer')
-        wrong_endpoint['commands']['2.OnOff'] = wrong_endpoint['commands'].pop('1.OnOff')
+        wrong_endpoint['endpoints']['2'] = {'clusters': {
+            'OnOff': wrong_endpoint['endpoints']['1']['clusters'].pop('OnOff')}}
         messages += observation('get_device_structure', {'device_id': 'dryer'}, wrong_endpoint)
         self.assertEqual(len(observed_cycle_devices(messages)), 1)
         messages += observation('get_device_structure', {'device_id': 'washer'}, structure(start=False))

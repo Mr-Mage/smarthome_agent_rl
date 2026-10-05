@@ -36,11 +36,10 @@ def observed_cycle_devices(messages):
             elif tool == 'get_device_structure' and isinstance(data, dict) and data.get('device_id') == args.get('device_id'):
                 device = data['device_id']
                 devices.pop(device, None)
-                commands = data.get('commands') or {}
                 supported = []
-                for cluster, values in commands.items():
-                    endpoint, _, name = cluster.partition('.')
-                    if name == 'OperationalState' and 'Start' in values and 'On' in commands.get(endpoint + '.OnOff', []):
+                for endpoint, value in data.get('endpoints', {}).items():
+                    clusters = value.get('clusters', {})
+                    if str(endpoint).isdigit() and 'Start' in clusters.get('OperationalState', {}).get('commands', []) and 'On' in clusters.get('OnOff', {}).get('commands', []):
                         supported.append(int(endpoint))
                 if supported:
                     devices[device] = {'device_id': device, 'endpoints': sorted(supported),

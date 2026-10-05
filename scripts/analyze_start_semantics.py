@@ -23,7 +23,7 @@ def missing_start(audit, messages, target):
             continue
         data = response.get('data')
         if response.get('status',{}).get('code') == 200 and not response.get('error') and isinstance(data,dict) and data.get('device_id') == target:
-            stopped |= data.get('attributes',{}).get('1.OperationalState.OperationalState') == 0
+            stopped |= data.get('endpoints',{}).get('1',{}).get('clusters',{}).get('OperationalState',{}).get('attributes',{}).get('OperationalState',{}).get('value') == 0
     accepted = []
     for row in audit['proposals']:
         if row.get('blocked') or row.get('simulator_error') or not row.get('reached_executor'):
@@ -64,11 +64,13 @@ def main():
         assert report['verified'] and set(report['arms'])=={'G','GS'}
         for item in protocol['schedule']:
             first_requests={}
+            contracts={}
             for variant in ('G','GS'):
                 path=episode_directory(stage,item,variant)
                 calls=read(path/'model_calls.json')
                 audit=read(path/'harness_audit.json')
                 summary=read(path/'summary.json')
+                contracts[variant]=read(path/'contract.json')['config']
                 records=audit['start_semantics']
                 assert len(records)==(len(calls) if variant=='GS' else 0)
                 provenance['episodes']+=1
@@ -76,7 +78,7 @@ def main():
                 first_requests[variant]=calls[0]['request']
                 for i,call in enumerate(calls):
                     request=call['request']
-                    assert request['model']==config['actor_model']
+                    assert request['model']==call['response']['model']==config['actor_model']
                     wire=request['messages']
                     devices=observed_cycle_devices(wire)
                     prompt=semantics_prompt(devices) if variant=='GS' else None
@@ -102,6 +104,9 @@ def main():
                         'success':summary['success'],**result,'path':str(path.relative_to(ROOT)),
                         'audit_sha256':digest(path/'harness_audit.json'),'calls_sha256':digest(path/'model_calls.json')})
             assert first_requests['G']==first_requests['GS']
+            for key in ('model_endpoint','served_model','model_seed','generation','max_steps',
+                        'recovery_per_action','extra_queries_max','judge_endpoint'):
+                assert contracts['G'][key]==contracts['GS'][key],key
     assert len(details)==len(targets)*len(config['actor_seeds'])*2
     report=read(run/'dev/report.json')
     g,gs=report['arms']['G'],report['arms']['GS']
