@@ -17,6 +17,7 @@ def main():
     config_path=ROOT/args.config;config=json.loads(config_path.read_text())
     rank=int(os.environ.get('RANK',0));local=int(os.environ.get('LOCAL_RANK',0));world=int(os.environ.get('WORLD_SIZE',1))
     if world!=config['world_size']:raise ValueError('Frozen four-GPU DDP required')
+    if config['batch_per_gpu']!=1:raise ValueError('Target-position loss currently requires microbatch one')
     torch.cuda.set_device(local);dist.init_process_group('nccl')
     started=time.monotonic()
     random.seed(config['seed']+rank);torch.manual_seed(config['seed']+rank)
@@ -38,7 +39,8 @@ def main():
         'data_sha256':digest(data_path),'tasks':sorted({r['task_id'] for r in rows}),
         'torch':torch.__version__,'transformers':transformers.__version__,'peft':peft.__version__,
         'sampler_padding_samples':math.ceil(len(rows)/world)*world-len(rows),
-        'evaluation_used_for_checkpoint_selection':False})
+        'evaluation_used_for_checkpoint_selection':False,
+        'base_model_identity':json.loads((ROOT/'runs/sft-pilot/n21/environment/base-model-identity.json').read_text())})
     tokenizer=AutoTokenizer.from_pretrained(ROOT/config['base_model'],local_files_only=True)
     dataset=[tokenized_target(tokenizer,r['messages'],r['target'],config['max_length']) for r in rows]
     model=Qwen3_5ForConditionalGeneration.from_pretrained(ROOT/config['base_model'],local_files_only=True,
