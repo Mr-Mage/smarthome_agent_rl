@@ -1,0 +1,23 @@
+{
+  "node": "N27",
+  "mode": "offline_existing_evidence_only",
+  "primary_stage": "runs/sft-pilot/n25-v1/dev",
+  "primary_arms": ["G", "SFT9B"],
+  "supplemental_stage": "runs/observation-binding/n26-v1/dev",
+  "supplemental_arms": ["G", "GB", "SFT9B", "SFT9B_B"],
+  "primary_manual_review": "All failed G episodes at predeclared seed42; no cherry picking",
+  "automatic_review": "All declared episodes across seeds42/43/44; indicators are observations, not causal labels",
+  "manual_categories": ["discovery", "error_recovery", "goal_coverage", "temporal_planning", "wrong_action_or_state", "answer_or_judge", "unresolved"],
+  "category_rule": "Record one primary observed failure and optional secondary mechanisms; evaluator outcome alone does not establish cause. Preserve ambiguous cases as unresolved. Review original query, public trace and evaluator evidence offline; never supply evaluation goals/reasons to an actor.",
+  "data": "runs/sft-pilot/n23-v1/train.jsonl",
+  "data_audit": "Check exact provenance and training isolation; count targets after public errors, explicit discovery and finish contexts. No new samples or labels for training.",
+  "n28_admission": {
+    "minimum_independent_original_G_tasks": 5,
+    "required": "Same actionable mechanism in manually reviewed G failures; intervention must use public observations only, and materially differ from previously rejected global discovery gate, verification or ID prompting",
+    "otherwise": "Finish N27 and stop online experiments; keep original9B+G. Do not repair SFT solely to justify another training run."
+  },
+  "exclusions": "No normal failures excluded; successful episodes retained as context for automatic indicators. Any missing/changed receipt aborts analysis rather than silently skipping.",
+  "resources": "CPU only; no actor/judge inference, training or simulator reruns. GPUs remain available; A800 permanent judge untouched.",
+  "limitations": "Historically exposed development tasks; overlapping N25/N26 tasks must not be pooled as independent cases; attribution is evidence-based diagnosis, not causal treatment effect.",
+  "unused95": "No unused task contents opened"
+}
