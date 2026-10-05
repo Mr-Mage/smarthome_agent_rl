@@ -53,9 +53,18 @@ def main():
         lora_dropout=config['lora_dropout'],target_modules=targets,bias='none',task_type='CAUSAL_LM'))
     model.gradient_checkpointing_enable(gradient_checkpointing_kwargs={'use_reentrant':False})
     model.enable_input_require_grads()
+    # from_pretrained() leaves the language model in eval mode even though the
+    # PEFT wrapper is training=True. Checkpointing requires the child to train.
+    model.train()
+    language_training=model.base_model.model.model.language_model.training
+    checkpointing_active=bool(language_training and model.is_gradient_checkpointing)
+    if not checkpointing_active:raise ValueError('Language gradient checkpointing is not active')
+    if any(p.requires_grad for name,p in model.named_parameters() if 'language_model' not in name):
+        raise ValueError('Only language model LoRA parameters may train')
     trainable=sum(p.numel() for p in model.parameters() if p.requires_grad)
     if rank==0:write('model.json',{'target_modules':targets,'trainable_parameters':trainable,
-        'total_parameters':sum(p.numel() for p in model.parameters()),'vision_frozen':True})
+        'total_parameters':sum(p.numel() for p in model.parameters()),'vision_frozen':True,
+        'language_training':language_training,'gradient_checkpointing_active':checkpointing_active})
     model=DDP(model,device_ids=[local],find_unused_parameters=False)
     optimizer=torch.optim.AdamW([p for p in model.parameters() if p.requires_grad],lr=config['learning_rate'],weight_decay=config['weight_decay'])
     sampler=DistributedSampler(dataset,num_replicas=world,rank=rank,seed=config['seed'],shuffle=True)

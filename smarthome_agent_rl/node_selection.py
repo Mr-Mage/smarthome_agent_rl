@@ -37,3 +37,20 @@ def select_time_plan(report, gates):
         'illegal_execution': arm['all_totals']['invalid_reached_executor'] <= baseline['all_totals']['invalid_reached_executor']}
     return {'winner': 'TimePlan' if all(checks.values()) else reference, 'checks': checks,
             'actor_token_ratio': ratio, 'basis': 'all dev runs; qt4-1 feasible gate; smoke diagnostic only'}
+
+
+def assess_sft(report, gates):
+    """Assess the one frozen adapter; this does not select a training checkpoint."""
+    if not report['verified'] or report['phase'] != 'dev':
+        raise ValueError('Assessment requires complete verified development evidence')
+    reference = report['reference']
+    baseline, arm = report['arms'][reference], report['arms']['SFT9B']
+    if not baseline['episodes'] or baseline['episodes'] != arm['episodes']:
+        raise ValueError('Assessment requires equal paired episode coverage')
+    ratio = arm['all_totals']['actor_tokens'] / baseline['all_totals']['actor_tokens']
+    checks = {'success_rate': arm['success_rate'] - baseline['success_rate'] >= gates['sr_delta_min'],
+        'actor_tokens': ratio <= gates['actor_token_ratio_max'],
+        'illegal_execution': arm['all_totals']['invalid_reached_executor'] <= baseline['all_totals']['invalid_reached_executor']}
+    return {'winner': 'SFT9B' if all(checks.values()) else reference, 'checks': checks,
+        'actor_token_ratio': ratio, 'checkpoint_selected_from_evaluation': False,
+        'basis': 'One frozen adapter; all development runs including failures; task-clustered CIs reported separately'}

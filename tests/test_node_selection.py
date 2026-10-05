@@ -1,5 +1,5 @@
 import unittest
-from smarthome_agent_rl.node_selection import select_guard, select_time_plan
+from smarthome_agent_rl.node_selection import select_guard, select_time_plan, assess_sft
 
 
 class SelectionTests(unittest.TestCase):
@@ -31,3 +31,19 @@ class SelectionTests(unittest.TestCase):
         report['arms']['TimePlan']['categories']['qt4-1:feasible']['successes'] = 11
         report['arms']['TimePlan']['all_totals']['invalid_reached_executor'] = 5
         self.assertEqual(select_time_plan(report, gates)['winner'], 'GD')
+
+    def test_sft_shorter_output_cannot_hide_success_or_safety_regression(self):
+        def arm(successes, tokens, illegal):
+            return {'episodes':144,'success_rate':successes/144,
+                'all_totals':{'actor_tokens':tokens,'invalid_reached_executor':illegal}}
+        report={'verified':True,'phase':'dev','reference':'G',
+            'arms':{'G':arm(50,1000,4),'SFT9B':arm(49,500,0)}}
+        gates={'sr_delta_min':0,'actor_token_ratio_max':1.1}
+        self.assertEqual(assess_sft(report,gates)['winner'],'G')
+        report['arms']['SFT9B']=arm(51,1100,4)
+        self.assertEqual(assess_sft(report,gates)['winner'],'SFT9B')
+        self.assertFalse(assess_sft(report,gates)['checkpoint_selected_from_evaluation'])
+        report['arms']['SFT9B']=arm(51,500,5)
+        self.assertEqual(assess_sft(report,gates)['winner'],'G')
+        report['arms']['SFT9B']['episodes']=143
+        with self.assertRaises(ValueError):assess_sft(report,gates)

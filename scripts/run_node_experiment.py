@@ -14,7 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from smarthome_agent_rl.benchmark import digest
 from smarthome_agent_rl.concurrency import execution_slots, external_judge, judge_endpoint
-from smarthome_agent_rl.node_selection import select_guard, select_time_plan
+from smarthome_agent_rl.node_selection import select_guard, select_time_plan, assess_sft
 from benchmark_capacity import pressure
 from run_remote_judge_capacity import queue_peaks, write
 
@@ -132,6 +132,8 @@ def main():
             write(run / 'selection.json', select_guard(reports['dev'], config['node_experiment']['gates']))
         elif config['node_experiment']['node'] == 'N16':
             write(run / 'selection.json', select_time_plan(reports['dev'], config['node_experiment']['gates']))
+        elif config['node_experiment']['node'] == 'N25':
+            write(run / 'selection.json', assess_sft(reports['dev'], config['node_experiment']['gates']))
         state('complete')
     except BaseException as exc:
         write(run / 'failure.json', {'type': type(exc).__name__, 'message': str(exc)})
