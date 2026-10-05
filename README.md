@@ -7,6 +7,8 @@
 N13正式seed42：B0/G/旧Full成功60/69/71（各192）；G非法执行96→16，SR差的Holm p=0.216，提升未证实。Verify v2、Context v2、N15 D/W及TimePlan均不纳入候选。旧final不再用于调参。
 
 结果：[实验报表](docs/实验报表.md)；节点：[docs/nodes](docs/nodes/)；开发约定：[AGENTS.md](AGENTS.md)。
+
+N26观测ID提示诊断完成：原9B成功26/72→26/72，tokens+3.01%；SFT成功15/72→10/72，tokens+64.03%。完整目录下错误ID样本不足，主机制证据不足，不采用提示、不扩大该消融；发现与终止覆盖仍需研究，详见[N26](docs/nodes/N26.md)。审阅包`outputs/observation-binding/n26-review-v1/`。
 源码、配置、测试分别在`smarthome_agent_rl/`与`scripts/`、`configs/`、`tests/`；原始运行在忽略的`runs/`，审阅包在`outputs/`，临时文件在`work/`。
 
 服务器：`ssh h100`。沿用`../activate-agent-lightning.sh`，激活后回项目目录；模型用`qwen36-vllm`，episode/模拟器用既有venv。不改依赖或Lightning用户补丁，运行前保持部署工作树干净。
