@@ -19,7 +19,7 @@ class CurationTests(unittest.TestCase):
                     'response_format':{'json_schema':{'schema':{'type':'object'}}}},
                     'response':{'choices':[{'finish_reason':'stop','message':{'content':json.dumps(action)}}]}}
                     for action in actions]
-                audit={'structured':[{'normalized_action':{'action':a['call']['tool'],'action_input':json.dumps(a['call']['arguments'])}} for a in actions],
+                audit={'actual_observations':[], 'structured':[{'normalized_action':{'action':a['call']['tool'],'action_input':json.dumps(a['call']['arguments'])}} for a in actions],
                        'proposals':[{'turn':1,'blocked':True,'simulator_error':False}]}
                 for name,value in [('model_calls.json',calls),('harness_audit.json',audit),('summary.json',
                     {'success':True,'infrastructure_error':False,'task_failure':False,'actor_tokens':10})]:
@@ -32,6 +32,7 @@ class CurationTests(unittest.TestCase):
             self.assertEqual(len(selected),1)
             self.assertEqual(selected[0]['task_id'],'train')
             self.assertEqual(json.loads(selected[0]['target'])['call']['tool'],'finish')
+            self.assertNotIn('bad target',selected[0]['target'])
             self.assertEqual(audit['exclusions']['incorrect_action_target'],1)
             calls_path=stage/'worker0/train/G/lightning/model_calls.json'
             calls_path.write_text('[]')

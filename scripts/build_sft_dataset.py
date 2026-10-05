@@ -31,6 +31,9 @@ def curate(stages,train_rows,root=ROOT):
                     exclusions['unsuccessful_episode']+=1;continue
                 calls=json.loads((episode/'model_calls.json').read_text())
                 audit=json.loads((episode/'harness_audit.json').read_text())
+                mutations={'execute_command','write_attribute','schedule_workflow','cancel_workflow','add_device','remove_device','set_tick_interval'}
+                if item['task']['case']=='infeasible' and any(r['tool'] in mutations and not r['extra_query'] for r in audit['actual_observations']):
+                    exclusions['infeasible_mutation_episode']+=1;continue
                 if len(calls)!=len(audit['structured']):
                     exclusions['ambiguous_turn_http_alignment']+=1;continue
                 proposal={row['turn']:row for row in audit['proposals']}
@@ -57,11 +60,20 @@ def curate(stages,train_rows,root=ROOT):
                         raise ValueError('Action arguments audit mismatch')
                     if action['tool']!='finish' and not evidence.get('reached_executor'):
                         exclusions['missing_execution_receipt']+=1;continue
+                    brief={'get_room_devices':'Inspect devices in the requested room.',
+                        'get_device_structure':'Inspect supported device attributes and commands.',
+                        'get_environment_control_rules':'Check public rules before choosing an action.',
+                        'schedule_workflow':'Register the planned actions with the supplied schedule.',
+                        'execute_command':'Apply the command using observed device capabilities.',
+                        'write_attribute':'Update the attribute using observed device capabilities.',
+                        'finish':'Report tool observations and any unmet request.'}.get(action['tool'],'Request the next public tool observation.')
+                    target=json.dumps({'thought':brief,'call':action},ensure_ascii=False)
                     samples.append({'task_id':item['task']['id'],'category':item['task']['query_type']+':'+item['task']['case'],
                         'messages':messages,'target':target,'source':str(episode.relative_to(root)),
                         'turn':turn,'model_calls_sha256':calls_sha,
                         'summary_sha256':summary_sha,'supervision':'Current assistant target only; public prefix masked',
-                        'teacher_judge_shared_model':variant=='Teacher'})
+                        'teacher_judge_shared_model':variant=='Teacher',
+                        'target_transformation':'Brief tool-intent thought; executed tool and arguments unchanged'})
                     actions.append(action)
                 if not samples or actions[-1]['tool']!='finish':
                     exclusions['missing_valid_finish_target']+=1;continue
@@ -103,6 +115,6 @@ if __name__=='__main__':
         'target_tokens':target_tokens,'max_input_tokens':max(lengths,default=0),'total_input_tokens':sum(lengths),
         'admitted':independent>=24 and len(eligible)>=120 and any(':feasible' in c for c in counts) and any(':infeasible' in c for c in counts),
         'data_sha256':digest(path),'train_manifest_sha256':digest(ROOT/'configs/sft-pilot/train.json'),
-        'quality_limitations':'Official success plus legal executed targets is a filter, not complete semantic correctness. Teacher and judge share model; generator templates may cross splits. No private reasoning, judge text, hidden goals or eval tasks exported.'})
+        'quality_limitations':'Official success plus legal executed targets is a filter, not complete semantic correctness. Infeasible episodes with mutations conservatively excluded, including potentially valid partial fulfillment. Original verbose thoughts replaced by brief tool intent; costs can improve from shorter output independently of planning. Teacher and judge share model; generator templates may cross splits. No private reasoning, judge text, hidden goals or eval tasks exported.'})
     (out/'audit.json').write_text(json.dumps(audit,indent=2)+'\n')
     print(json.dumps({k:audit[k] for k in ('samples','independent_tasks','category_targets','admitted','total_input_tokens')}))
