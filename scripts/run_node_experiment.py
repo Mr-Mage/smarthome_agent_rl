@@ -109,6 +109,8 @@ def main():
             command('preflight_time_plan.py', '--config', config_path, '--output', run / 'metadata-preflight.json')
         if config['node_experiment'].get('reasoning_preflight'):
             command('preflight_reasoning.py','--config',config_path,'--output',run/'reasoning-preflight.json')
+        if config['node_experiment'].get('sft_preflight'):
+            command('preflight_sft.py','--config',config_path,'--output',run/'sft-preflight.json')
         write(run / 'startup.json', {'seconds': time.monotonic() - began})
         thread = Thread(target=monitor, daemon=True)
         thread.start()

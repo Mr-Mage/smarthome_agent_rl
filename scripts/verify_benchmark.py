@@ -49,6 +49,11 @@ def verify(run):
                         failures.append({'task': item['task']['id'], 'variant': variant, 'problem': 'episode endpoint isolation mismatch'})
                     if 'config' in protocol and (config['served_model']!=expected['served_model'] or config['generation']!=expected['generation']):
                         failures.append({'task':item['task']['id'],'variant':variant,'problem':'variant runtime differs from frozen protocol'})
+                    if 'config' in protocol and calls_path.exists():
+                        for call in json.loads(calls_path.read_text()):
+                            if call['request']['model']!=expected['served_model'] or (
+                                call.get('status')==200 and call['response'].get('model')!=expected['served_model']):
+                                failures.append({'task':item['task']['id'],'variant':variant,'problem':'HTTP served model identity mismatch'})
                 else:
                     failures.append({'task': item['task']['id'], 'variant': variant, 'problem': 'missing isolation contract'})
     if set(expected_summaries) != {name for name in manifest if name.endswith('/summary.json')}:
