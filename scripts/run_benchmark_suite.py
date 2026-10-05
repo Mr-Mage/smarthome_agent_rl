@@ -21,6 +21,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from smarthome_agent_rl.benchmark import digest, schedule
 from smarthome_agent_rl.concurrency import execution_slots, dispatch_items, seeded_schedule, judge_endpoint
+from smarthome_agent_rl.variant_runtime import runtime
 
 
 def main():
@@ -155,6 +156,7 @@ def main():
             'model_endpoint': f"http://127.0.0.1:{workflow['actor_port']}/v1",
             'judge_endpoint': judge_endpoint(config),
             'embedding_endpoint': f"http://127.0.0.1:{config['embedding_port']}"}
+        episode_config.update(runtime(config,variant,workflow))
         if args.phase == 'final':
             episode_config['protocol_frozen_commit'] = commit
         if mode == 'direct':
@@ -322,6 +324,10 @@ def main():
             wait(f"http://127.0.0.1:{workflow['gateway_port']}/healthz", gateway)
             api(workflow, 'POST', '/api/models', [{'model': config['actor_model'],
                 'endpoint': f"http://127.0.0.1:{workflow['actor_port']}/v1", 'version': 0}])
+            routes={runtime(config,v,workflow)['served_model']:runtime(config,v,workflow)['model_endpoint'] for v in variants}
+            for model, endpoint in routes.items():
+                if model!=config['actor_model']:
+                    api(workflow,'POST','/api/models',[{'model':model,'endpoint':endpoint,'version':0}])
             launch(f"controller{workflow['id']}", [Path(sys.executable).parent / 'agl-controller',
                 'runner_type=local', f'local_runner.maximum_size={slot_count}', 'local_runner.poll_interval=1',
                 f"agl_server.url=http://127.0.0.1:{workflow['gateway_port']}", f'agl_server.key={key}'], ROOT,

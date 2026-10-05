@@ -7,6 +7,7 @@ import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from smarthome_agent_rl.concurrency import episode_directory
+from smarthome_agent_rl.variant_runtime import runtime
 
 
 def verify(run):
@@ -42,9 +43,12 @@ def verify(run):
                     if calls_path.exists() and any(call['request'].get('seed') != config['model_seed']
                             for call in json.loads(calls_path.read_text())):
                         failures.append({'task': item['task']['id'], 'variant': variant, 'problem': 'HTTP actor seed differs from contract'})
+                    expected=runtime(protocol['config'],variant,slot) if 'config' in protocol else {'model_endpoint':f"http://127.0.0.1:{slot['actor_port']}/v1"}
                     if config['simulator_url'] != f"http://127.0.0.1:{slot['simulator_port']}/api" or (
-                        config['model_endpoint'] != f"http://127.0.0.1:{slot['actor_port']}/v1"):
+                        config['model_endpoint'] != expected['model_endpoint']):
                         failures.append({'task': item['task']['id'], 'variant': variant, 'problem': 'episode endpoint isolation mismatch'})
+                    if 'config' in protocol and (config['served_model']!=expected['served_model'] or config['generation']!=expected['generation']):
+                        failures.append({'task':item['task']['id'],'variant':variant,'problem':'variant runtime differs from frozen protocol'})
                 else:
                     failures.append({'task': item['task']['id'], 'variant': variant, 'problem': 'missing isolation contract'})
     if set(expected_summaries) != {name for name in manifest if name.endswith('/summary.json')}:
