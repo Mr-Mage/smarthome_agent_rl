@@ -19,7 +19,7 @@ class CurationTests(unittest.TestCase):
                     'response_format':{'json_schema':{'schema':{'type':'object'}}}},
                     'response':{'choices':[{'finish_reason':'stop','message':{'content':json.dumps(action)}}]}}
                     for action in actions]
-                audit={'actual_observations':[], 'structured':[{'normalized_action':{'action':a['call']['tool'],'action_input':json.dumps(a['call']['arguments'])}} for a in actions],
+                audit={'actual_observations':[{'tool':'get_room_devices','extra_query':False}], 'structured':[{'normalized_action':{'action':a['call']['tool'],'action_input':json.dumps(a['call']['arguments'])}} for a in actions],
                        'proposals':[{'turn':1,'blocked':True,'simulator_error':False}]}
                 for name,value in [('model_calls.json',calls),('harness_audit.json',audit),('summary.json',
                     {'success':True,'infrastructure_error':False,'task_failure':False,'actor_tokens':10})]:

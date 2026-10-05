@@ -31,6 +31,8 @@ def curate(stages,train_rows,root=ROOT):
                     exclusions['unsuccessful_episode']+=1;continue
                 calls=json.loads((episode/'model_calls.json').read_text())
                 audit=json.loads((episode/'harness_audit.json').read_text())
+                if not any(not r['extra_query'] for r in audit['actual_observations']):
+                    exclusions['no_agent_tool_observation']+=1;continue
                 mutations={'execute_command','write_attribute','schedule_workflow','cancel_workflow','add_device','remove_device','set_tick_interval'}
                 if item['task']['case']=='infeasible' and any(r['tool'] in mutations and not r['extra_query'] for r in audit['actual_observations']):
                     exclusions['infeasible_mutation_episode']+=1;continue
@@ -64,8 +66,8 @@ def curate(stages,train_rows,root=ROOT):
                         'get_device_structure':'Inspect supported device attributes and commands.',
                         'get_environment_control_rules':'Check public rules before choosing an action.',
                         'schedule_workflow':'Register the planned actions with the supplied schedule.',
-                        'execute_command':'Apply the command using observed device capabilities.',
-                        'write_attribute':'Update the attribute using observed device capabilities.',
+                        'execute_command':'Apply the proposed command.',
+                        'write_attribute':'Apply the proposed attribute update.',
                         'finish':'Report tool observations and any unmet request.'}.get(action['tool'],'Request the next public tool observation.')
                     target=json.dumps({'thought':brief,'call':action},ensure_ascii=False)
                     samples.append({'task_id':item['task']['id'],'category':item['task']['query_type']+':'+item['task']['case'],
