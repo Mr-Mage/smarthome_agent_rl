@@ -26,6 +26,11 @@ def main():
     args = parser.parse_args()
     config_path = ROOT / args.config
     config = json.loads(config_path.read_text())
+    gateway_binary = Path(sys.executable).parent / 'agl-server'
+    if not gateway_binary.is_file() or not os.access(gateway_binary, os.X_OK):
+        raise ValueError('Online node driver requires the existing agent-lightning environment with agl-server; source ../activate-agent-lightning.sh first')
+    if config.get('driver_python') and Path(sys.executable).resolve() != Path(config['driver_python']).resolve():
+        raise ValueError('Driver interpreter differs from frozen driver_python')
     slots = execution_slots(config)
     if len(slots) != 64 or len(config['workflows']) != 4 or not external_judge(config):
         raise ValueError('Node execution requires four actors, 64 slots and external judge')

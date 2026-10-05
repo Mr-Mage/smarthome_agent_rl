@@ -1,5 +1,6 @@
 {
   "seed": 20261005,
+  "driver_python": "/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/anaconda3/envs/agent-lightning/bin/python",
   "model_python": "/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/anaconda3/envs/qwen36-vllm/bin/python",
   "judge_path": "/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/zhengrj/models/Qwen3.6-35B-A3B",
   "actor_path": "../models/Qwen3.5-9B",
