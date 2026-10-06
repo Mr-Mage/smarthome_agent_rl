@@ -11,7 +11,8 @@ sys.path.insert(0, str(ROOT))
 from scripts.verify_frozen_baseline import verify
 
 TEST_MODULES = ('tests.test_device_contract', 'tests.test_execution_runtime',
-                'tests.test_task_runtime', 'tests.test_runtime_contract_adapter')
+                'tests.test_task_runtime', 'tests.test_runtime_contract_adapter',
+                'tests.test_scheduler_runtime')
 
 
 def main():

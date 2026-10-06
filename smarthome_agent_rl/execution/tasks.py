@@ -139,6 +139,8 @@ class TaskManager:
             task, revision = self._load(task_id, user_id, db)
             if task.version != expected_version:
                 raise RevisionConflict('Task version changed')
+            if task.status == TaskStatus.COMPLETED:
+                return task
             if task.status in TERMINAL:
                 raise ValueError('Cannot verify a terminal task')
             decisions = []
@@ -148,7 +150,11 @@ class TaskManager:
                     {key: value for key, value in condition.items() if key != 'device_id'},))
                 result = check_postconditions(function, {}, {}, public_states.get(device, {}))
                 decisions.append({'device_id': device, **result.as_dict()})
-            all_verified = bool(decisions) and all(row['status'] == VerificationStatus.VERIFIED_SUCCESS for row in decisions)
+            pending = any(job['task_id'] == task_id and job['task_version'] == task.version
+                          and job['status'] in ('REGISTERING', 'SCHEDULED', 'CLAIMED', 'UNKNOWN')
+                          for job in self.store.list('job', db=db))
+            all_verified = bool(decisions) and not pending and all(
+                row['status'] == VerificationStatus.VERIFIED_SUCCESS for row in decisions)
             task.status = TaskStatus.COMPLETED if all_verified else TaskStatus.WAITING
             task.evidence.append({'kind': 'task_postconditions', 'version': task.version, 'decisions': decisions})
             self.store.put('task', task_id, task.as_dict(), expected_revision=revision, db=db)
