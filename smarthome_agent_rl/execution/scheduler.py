@@ -190,9 +190,9 @@ class Scheduler:
         return outcomes
 
     def reconcile(self, job_id, *, now):
+        """Recover an uncertain job with retained timed evidence; never replay."""
         if type(now) not in (int, float) or not math.isfinite(now):
             raise ValueError('Reconciliation requires finite adapter time')
-        """Recover a claimed/unknown job by read-back only, never dispatch again."""
         with self.store.transaction() as db:
             job, revision = self.store.get('job', job_id, db=db)
             if job['status'] not in ('CLAIMED', 'UNKNOWN', 'REGISTERING'):
