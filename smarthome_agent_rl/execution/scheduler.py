@@ -142,6 +142,27 @@ class Scheduler:
             self.manager.verify(task.task_id, task.user_id, expected_version=task.version,
                                 public_states=self.read_task_states(task))
 
+    @staticmethod
+    def _timed_result(job, result, *, not_before=None, not_after=None):
+        if not isinstance(result, PostconditionResult):
+            raise ValueError('Scheduler callbacks must return postcondition evidence')
+        if result.status == VerificationStatus.UNVERIFIED:
+            return result
+        observed = result.observed_at
+        valid = (type(observed) in (int, float) and math.isfinite(observed)
+                 and job['target_time'] <= observed <= job['target_time'] + job['tolerance']
+                 and (not_before is None or observed >= not_before)
+                 and (not_after is None or observed <= not_after))
+        if valid:
+            return result
+        candidate = result.as_dict()
+        finite_time = type(observed) in (int, float) and math.isfinite(observed)
+        if not finite_time:
+            candidate['observed_at'] = repr(observed)
+        return PostconditionResult(VerificationStatus.UNVERIFIED,
+            ({'kind': 'unproven_timed_observation', 'candidate': candidate},),
+            'OBSERVATION_TIME_MISSING_OR_OUTSIDE_WINDOW', observed_at=observed if finite_time else None)
+
     def tick(self, now):
         if type(now) not in (int, float) or not math.isfinite(now):
             raise ValueError('Scheduler requires finite adapter time')
@@ -161,15 +182,16 @@ class Scheduler:
                     result = self.wake_agent(task, job)
                 else:
                     result = self.execute_action(task, job)
-                if not isinstance(result, PostconditionResult):
-                    raise ValueError('Scheduler callbacks must return postcondition evidence')
+                result = self._timed_result(job, result, not_before=now)
             except Exception as exc:
                 result = PostconditionResult(VerificationStatus.UNVERIFIED, reason=f'{type(exc).__name__}: {exc}')
             self._finish(job, result)
             outcomes.append({'job_id': job['job_id'], **result.as_dict()})
         return outcomes
 
-    def reconcile(self, job_id):
+    def reconcile(self, job_id, *, now):
+        if type(now) not in (int, float) or not math.isfinite(now):
+            raise ValueError('Reconciliation requires finite adapter time')
         """Recover a claimed/unknown job by read-back only, never dispatch again."""
         with self.store.transaction() as db:
             job, revision = self.store.get('job', job_id, db=db)
@@ -182,7 +204,9 @@ class Scheduler:
                 raise RevisionConflict('Native registration is uncertain; inspect registration before due verification')
             job['status'] = 'UNKNOWN'
             self.store.put('job', job_id, job, expected_revision=revision, db=db)
-        result = self.verify_job(job)
+        # A fresh late snapshot cannot prove an earlier timed goal. A retained
+        # adapter observation inside the original window can; never replay.
+        result = self._timed_result(job, self.verify_job(job), not_after=now)
         self._finish(job, result)
         return result
 

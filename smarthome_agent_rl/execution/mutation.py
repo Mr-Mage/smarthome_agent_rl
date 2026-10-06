@@ -42,6 +42,9 @@ class PostconditionResult:
     status: VerificationStatus
     evidence: tuple[dict[str, Any], ...] = ()
     reason: str | None = None
+    # Adapter/simulator observation time, never wall time substituted by the
+    # scheduler. Ordinary untimed mutations may leave this unset.
+    observed_at: float | None = None
 
     def as_dict(self):
         return asdict(self)

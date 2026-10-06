@@ -10,9 +10,10 @@ from smarthome_agent_rl.execution.tasks import TaskManager
 from smarthome_agent_rl.execution.trace import ToolTrace
 
 
-def verified():
+def verified(observed_at=10):
     return PostconditionResult(VerificationStatus.VERIFIED_SUCCESS,
-                               ({'path': 'power', 'observed': False, 'expected': False, 'matched': True},))
+                               ({'path': 'power', 'observed': False, 'expected': False, 'matched': True},),
+                               observed_at=observed_at)
 
 
 class SchedulerRuntimeTests(unittest.TestCase):
@@ -34,12 +35,12 @@ class SchedulerRuntimeTests(unittest.TestCase):
         self.wakes = []
         def execute(task, job):
             self.executions.append(job['job_id'])
-            return verified()
+            return verified(job['target_time'])
         def wake(task, job):
             self.wakes.append((task.goal, task.version))
-            return verified()
+            return verified(job['target_time'])
         self.scheduler = Scheduler(self.manager, self.trace, execute_action=execute,
-                                   verify_job=lambda job: verified(), wake_agent=wake,
+                                   verify_job=lambda job: verified(job['target_time']), wake_agent=wake,
                                    read_task_states=lambda task: {'tv': {'power': False}})
 
     def schedule(self, **args):
@@ -91,7 +92,7 @@ class SchedulerRuntimeTests(unittest.TestCase):
         self.scheduler.tick(10)
         self.assertEqual(self.store.get('job', job['job_id'])[0]['status'], 'UNKNOWN')
         self.scheduler.tick(11)
-        self.scheduler.reconcile(job['job_id'])
+        self.scheduler.reconcile(job['job_id'], now=11)
         self.assertEqual(self.executions, [job['job_id']])
         self.assertEqual(self.store.get('job', job['job_id'])[0]['status'], 'DONE')
 
@@ -110,6 +111,36 @@ class SchedulerRuntimeTests(unittest.TestCase):
         self.assertEqual(result[0]['status'], VerificationStatus.UNVERIFIED)
         self.assertIn('WINDOW_MISSED', result[0]['reason'])
         self.assertEqual(self.store.get('job', job['job_id'])[0]['status'], 'UNKNOWN')
+
+    def test_late_current_state_cannot_prove_original_timed_goal(self):
+        job = self.schedule()
+        self.scheduler.tick(11)
+        self.scheduler.verify_job = lambda job: verified(11)
+        result = self.scheduler.reconcile(job['job_id'], now=11)
+        self.assertEqual(result.status, VerificationStatus.UNVERIFIED)
+        self.assertEqual(self.store.get('job', job['job_id'])[0]['status'], 'UNKNOWN')
+        self.assertNotEqual(self.manager.get(self.task.task_id, 'u1').status, 'COMPLETED')
+        self.assertEqual(self.executions, [])
+
+    def test_timed_callbacks_require_timestamp_and_reject_stale_snapshot(self):
+        for observation in (None, 9, 11, float('nan'), True):
+            with self.subTest(observation=observation):
+                job = self.schedule(native_call={'tool': 'native_schedule', 'args': {'at': 10}})
+                self.scheduler.verify_job = lambda job: verified(observation)
+                self.scheduler.tick(10)
+                self.assertEqual(self.store.get('job', job['job_id'])[0]['status'], 'UNKNOWN')
+
+    def test_retained_in_window_observation_reconciles_but_future_one_does_not(self):
+        job = self.schedule(tolerance=2)
+        self.scheduler.execute_action = lambda *args: verified(None)
+        self.scheduler.tick(10)
+        self.scheduler.verify_job = lambda job: verified(12)
+        self.assertEqual(self.scheduler.reconcile(job['job_id'], now=11).status,
+                         VerificationStatus.UNVERIFIED)
+        self.scheduler.verify_job = lambda job: verified(10)
+        self.assertEqual(self.scheduler.reconcile(job['job_id'], now=20).status,
+                         VerificationStatus.VERIFIED_SUCCESS)
+        self.assertEqual(self.manager.get(self.task.task_id, 'u1').status, 'COMPLETED')
 
     def test_cancellation_acknowledgement_alone_does_not_confirm_cancelled(self):
         job = self.schedule(native_call={'tool': 'native_schedule', 'args': {'at': 10}})
