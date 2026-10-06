@@ -50,8 +50,8 @@ class RuntimeStore:
         if expected_revision is None:
             db.execute('INSERT INTO records VALUES (?, ?, 1, ?)', (kind, id, payload))
             return 1
-        if kind == 'trace':
-            raise ValueError('Invocation evidence is append-only')
+        if kind in ('trace','conflict'):
+            raise ValueError('Invocation and conflict evidence are append-only')
         cursor = db.execute('UPDATE records SET revision=revision+1,data=? WHERE kind=? AND id=? AND revision=?',
                             (payload, kind, id, expected_revision))
         if cursor.rowcount != 1:

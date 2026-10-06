@@ -13,6 +13,7 @@ from .store import RevisionConflict
 from .tasks import TaskManager, TaskStatus, TERMINAL
 from .trace import ToolTrace
 from .workflow import Workflow, WorkflowStatus
+from .conflicts import resource_claims as normalize_claims
 
 
 class Scheduler:
@@ -23,7 +24,7 @@ class Scheduler:
         self.read_task_states = read_task_states
 
     def schedule(self, task_id, user_id, *, expected_version, target_time, payload=None,
-                 native_call=None, wake_agent=False, tolerance=0):
+                 native_call=None, wake_agent=False, tolerance=0, resource_claims=()):
         if any(type(t) not in (int, float) or not math.isfinite(t) for t in (target_time, tolerance)) or tolerance < 0:
             raise ValueError('Schedule times must be finite; tolerance nonnegative')
         if native_call and wake_agent:
@@ -41,14 +42,28 @@ class Scheduler:
             task, revision = self.manager._load(task_id, user_id, db)
             if task.version != expected_version or task.status in TERMINAL:
                 raise RevisionConflict('Task changed before scheduling')
+            # Intents are supplied by the planner. Do not infer tomorrow's
+            # command targets from today's state or from the whole task goal.
+            job['resource_claims'] = normalize_claims(resource_claims,
+                namespace=task.constraints.get('resource_namespace','home'),
+                target_time=target_time,tolerance=tolerance)
+            conflicts, uncovered = self.manager._plan_conflicts(job,db)
+            job['conflict_ids'] = [row['conflict_id'] for row in conflicts]
+            job['conflict_uncovered'] = uncovered
             workflow.transition(WorkflowStatus.SCHEDULED, {'target_time': target_time, 'mode': mode})
             if native_call:
                 # Native registration starts outside the transaction; durable
                 # REGISTERING state retains the ambiguity if the process dies.
                 workflow.status = WorkflowStatus.CREATED
+            if conflicts or uncovered:
+                workflow.evidence.append({'kind':'resource_conflict_detection',
+                    'conflict_ids':job['conflict_ids'],'uncovered':uncovered,'policy':'report only'})
             self.store.put('workflow', workflow.workflow_id, workflow.as_dict(), db=db)
             self.store.put('job', job_id, job, db=db)
             task.related_workflows.append(workflow.workflow_id)
+            if conflicts or uncovered:
+                task.evidence.append({'kind':'resource_conflict_detection','job_id':job_id,
+                                      'conflict_ids':job['conflict_ids'],'uncovered':uncovered})
             task.status = TaskStatus.WAITING
             self.store.put('task', task_id, task.as_dict(), expected_revision=revision, db=db)
         if native_call:

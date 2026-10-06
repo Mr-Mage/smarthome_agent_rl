@@ -8,6 +8,7 @@ from uuid import uuid4
 from ..device_contract import FunctionContract
 from .mutation import check_postconditions, VerificationStatus
 from .store import RevisionConflict, RuntimeStore
+from .conflicts import detect_conflicts
 
 
 class TaskStatus(str, Enum):
@@ -77,6 +78,27 @@ class TaskManager:
     def active(self, user_id):
         return [TaskSession(**row) for row in self.store.list('task')
                 if row['user_id'] == user_id and row['status'] not in TERMINAL]
+
+    def detect_conflicts(self, task_id, user_id):
+        """Owned task view; disclose resource evidence, never other users' goals."""
+        with self.store.transaction() as db:
+            self._load(task_id,user_id,db)
+            conflicts, uncovered = detect_conflicts(self.store.list('job',db=db))
+            relevant = lambda row: any(side['task_id'] == task_id for side in row['sides'])
+            return {'conflicts':[row for row in conflicts if relevant(row)],
+                    'uncovered':[row for row in uncovered if relevant(row)],
+                    'policy':'report only; no cancellation, priority assignment or automatic arbitration'}
+
+    def _plan_conflicts(self, candidate, db):
+        conflicts, uncovered = detect_conflicts([*self.store.list('job',db=db),candidate])
+        relevant = lambda row: any(side['job_id'] == candidate['job_id'] for side in row['sides'])
+        selected = [row for row in conflicts if relevant(row)]
+        for row in selected:
+            try:
+                self.store.get('conflict',row['conflict_id'],db=db)
+            except KeyError:
+                self.store.put('conflict',row['conflict_id'],row,db=db)
+        return selected, [row for row in uncovered if relevant(row)]
 
     def _invalidate_plans(self, task, db):
         # A native schedule survives this process. It must be explicitly
