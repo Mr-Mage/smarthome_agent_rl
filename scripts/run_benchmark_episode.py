@@ -19,7 +19,7 @@ sys.path.insert(0, str(ROOT / 'deps/SimuHome'))
 from src.agents.providers import OpenAIChatProvider
 from src.agents.tools import ToolConfig, set_tool_config
 from src.pipelines.episode_evaluation import runner
-from smarthome_agent_rl.generation import install_generation_options
+from smarthome_agent_rl.generation import install_generation_options, record_generation_errors
 from smarthome_agent_rl.retrieval import load_retrieval
 from smarthome_agent_rl.benchmark import task_failure_kind
 from smarthome_agent_rl.profiling import PhaseProfile, TimedTime
@@ -51,6 +51,11 @@ def main(mode):
         raise ValueError('Frozen official case identity mismatch')
     calls, judges, events, starts = [], [], [], {}
     calls_lock = Lock()
+    provider_errors = []
+    def record_provider_error(row):
+        with calls_lock:
+            provider_errors.append(row)
+            save('provider_errors.json', provider_errors)
     def hook(label, collection):
         def capture(response):
             response.read()
@@ -65,6 +70,7 @@ def main(mode):
         p = OpenAIChatProvider(model=model, api_base=url, api_key=api_key,
             seed=seed, temperature=generation['temperature'], timeout=300)
         install_generation_options(p, {'generation': generation})
+        record_generation_errors(p, label, record_provider_error)
         p._client._client.event_hooks['request'].append(lambda request: starts.update({id(request): time.monotonic()}))
         p._client._client.event_hooks['response'].append(hook(label, collection))
         return p

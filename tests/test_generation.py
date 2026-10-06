@@ -2,7 +2,7 @@ import json
 from types import SimpleNamespace
 import unittest
 
-from smarthome_agent_rl.generation import generation_options, install_generation_options
+from smarthome_agent_rl.generation import generation_options, install_generation_options, record_generation_errors
 
 
 OPTIONS = {"temperature": 0.7, "top_p": 0.8, "max_tokens": 2048,
@@ -11,6 +11,27 @@ OPTIONS = {"temperature": 0.7, "top_p": 0.8, "max_tokens": 2048,
 
 
 class GenerationTests(unittest.TestCase):
+    def test_error_observer_preserves_request_exception_and_next_attempt(self):
+        error = RuntimeError('temporary transport failure')
+        calls, errors = [], []
+        def create(**kwargs):
+            calls.append(kwargs)
+            if len(calls) == 1:
+                raise error
+            return 'result'
+        provider = SimpleNamespace(_client=SimpleNamespace(chat=SimpleNamespace(
+            completions=SimpleNamespace(create=create))))
+        record_generation_errors(provider, 'judge-42', errors.append)
+        with self.assertRaises(RuntimeError) as caught:
+            provider._client.chat.completions.create(model='judge', seed=42)
+        self.assertIs(caught.exception, error)
+        self.assertEqual(len(calls), 1)
+        self.assertEqual(errors[0]['provider'], 'judge-42')
+        self.assertEqual(errors[0]['type'], 'RuntimeError')
+        self.assertEqual(provider._client.chat.completions.create(model='judge', seed=42), 'result')
+        self.assertEqual(calls, [{'model': 'judge', 'seed': 42}] * 2)
+        self.assertEqual(len(errors), 1)
+
     def test_legacy_default(self):
         self.assertEqual(generation_options({}), {"temperature": 0.0})
 

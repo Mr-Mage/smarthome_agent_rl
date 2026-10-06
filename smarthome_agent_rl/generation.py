@@ -1,5 +1,6 @@
 """Project generation settings; leave the external ReAct loop/provider retries intact."""
 import copy
+import time
 
 
 def generation_options(config):
@@ -55,3 +56,19 @@ def install_generation_options(provider, config):
 
     provider._client.chat.completions.create = configured_create
     return options
+
+
+def record_generation_errors(provider, label, record):
+    """Observe failed SDK invocations; retry policy and exceptions stay upstream."""
+    original = provider._client.chat.completions.create
+
+    def observed_create(**kwargs):
+        started = time.monotonic()
+        try:
+            return original(**kwargs)
+        except Exception as exc:
+            record({'provider': label, 'type': type(exc).__name__, 'message': str(exc),
+                    'duration_seconds': time.monotonic() - started})
+            raise
+
+    provider._client.chat.completions.create = observed_create
