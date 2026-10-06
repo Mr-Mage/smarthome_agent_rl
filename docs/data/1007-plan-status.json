@@ -3,6 +3,100 @@
   "scope": "Latest user confirmation: official single-turn harness diagnostics/ablations only; no SFT/RL, new benchmark or multi-session experiments.",
   "default": "Qwen3.5-9B + G; permanent baseline tag baseline/1007-9b-g",
   "nodes": {
+    "N72": {
+      "status": "failed_not_admitted",
+      "implementation_commit": "697313f",
+      "source_commit": "d080cda",
+      "auditor_commit": "794cd77",
+      "config": "configs/public-action-semantic-diagnosis.json",
+      "evidence": "runs/action-semantic-diagnosis/n72-v1/",
+      "source_episodes": 36,
+      "proposals": 38,
+      "requests": 152,
+      "zero_mutation_episodes": 14,
+      "excluded_proposals": 165,
+      "engineering_passed": false,
+      "native_integration_admitted": false,
+      "arms": {
+        "9b_legacy": {
+          "records": 38,
+          "valid": 28,
+          "verdicts": {
+            "ALLOW": 24,
+            "DENY": 3,
+            "UNCERTAIN": 1
+          },
+          "tokens": 64322,
+          "http_errors": 0,
+          "missing_usage": 0,
+          "parse_errors": 10,
+          "median_request_seconds": 4.4894014799792785
+        },
+        "9b_public": {
+          "records": 38,
+          "valid": 38,
+          "verdicts": {
+            "ALLOW": 32,
+            "DENY": 6
+          },
+          "tokens": 87300,
+          "http_errors": 0,
+          "missing_usage": 0,
+          "parse_errors": 0,
+          "median_request_seconds": 4.471970106533263
+        },
+        "35b_legacy": {
+          "records": 38,
+          "valid": 28,
+          "verdicts": {
+            "DENY": 1,
+            "ALLOW": 20,
+            "UNCERTAIN": 7
+          },
+          "tokens": 65634,
+          "http_errors": 0,
+          "missing_usage": 0,
+          "parse_errors": 10,
+          "median_request_seconds": 27.14820987751591
+        },
+        "35b_public": {
+          "records": 38,
+          "valid": 34,
+          "verdicts": {
+            "DENY": 4,
+            "ALLOW": 22,
+            "UNCERTAIN": 8
+          },
+          "tokens": 95611,
+          "http_errors": 0,
+          "missing_usage": 0,
+          "parse_errors": 4,
+          "median_request_seconds": 28.335421020456124
+        }
+      },
+      "developer_counts": {
+        "CONSISTENT_CONTROL": 3,
+        "CERTAIN_CONFLICT": 6,
+        "UNCERTAIN": 29
+      },
+      "developer_conflict_denials": {
+        "9b_legacy": 0,
+        "9b_public": 0,
+        "35b_legacy": 0,
+        "35b_public": 1
+      },
+      "acceptance": "167 original artifacts,36 retained source episodes,38 pre-action cutoffs,152 HTTP requests and6 receipts verified locally;full339,338 passed,one skip",
+      "cost": {
+        "model_requests": 152,
+        "model_tokens": 312867,
+        "probe_requests": 5,
+        "probe_tokens": 106,
+        "wall_seconds": 430.75,
+        "reserved_h100_gpu_seconds": 1722.98
+      },
+      "archive_sha256": "9343f60bc846c05ae73bec913838557ae27c3ce38b98fe1d25cf800c9b2a80af",
+      "scope": "Developer readings not independent ground truth;no semantic calibration,native SR,training,default change or frozen rerun"
+    },
     "N71": {
       "status": "public_preaction_context_engineering_verified",
       "source_commit": "a55b8a0",
@@ -437,5 +531,6 @@
     "native_user_goal_conditions": "unimplemented;N67/N70 parsers failed admission;N66/N69 Task remain WAITING,action intentions do not prove user goals",
     "common_simuhome_adapter": "N61 unified entry and public actor boundary verified; native protocols and scores retained"
   },
-  "benefit_acceptance": "not satisfied; no stable benefit on two public benchmarks. N66 CI crosses zero;N67/N70 semantic admission failed;N69 SR flips all without candidate context and tiny stratified interval degenerates. G retained"
+  "benefit_acceptance": "not satisfied; no stable benefit on two public benchmarks. N66 CI crosses zero;N67/N70 semantic admission failed;N69 SR flips all without candidate context and tiny stratified interval degenerates. N72 semantic review not admitted. G retained",
+  "next": "Independent engineering node: retain observed reference-device receipts and expose public workflow step-time facts;preserve failed N72,no automatic blocking or rerun"
 }
