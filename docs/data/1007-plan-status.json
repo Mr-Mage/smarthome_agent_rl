@@ -221,6 +221,26 @@
       "evidence": "runs/homebench/n59-n54-cost-v2/report.json",
       "scope": "completed public snapshot cost only; not production SLO"
     },
+    "N63": {
+      "status": "official_single_turn_engineering_gate_failed_not_adopted",
+      "source_commit": "f4813dd",
+      "auditor_commit": "a99df46",
+      "evidence": "runs/native-task-supervision/n63-v1/evidence-receipt.json",
+      "successes_per_12": {"G": 6, "GTM": 6},
+      "paired": {"wins": 1, "losses": 1},
+      "stop_reasons": ["null-data native400 receipt interrupted registration", "one raw tool call omitted from legacy audit"],
+      "runtime": {"public_tasks_waiting": 12, "jobs": 5, "verified_jobs": 0, "supervisor_queries": 45},
+      "scope": "24 exposed single-turn episodes; no new SR benefit,expansion or rerun",
+      "archive_sha256": "dfa0efb46979371be1b9190c0b9a8ab1b6079a229fe21ce53941c0df813b9a26"
+    },
+    "N64": {
+      "status": "error_receipt_and_noop_cost_engineering_fixed",
+      "source_commit": "bcc269f",
+      "acceptance": "41 server checks passed; full286 one skip; null-data receipt linkage and bounded no-op writes",
+      "evidence": "runs/task-runtime/n64-server-v1/report.json",
+      "scope": "engineering only; no N63 rerun or observed SR/speed benefit",
+      "archive_sha256": "7750631f9bc7e415fa10a8490f0af9d2646911ebc55fb0187b7902bb1d8a2eb5"
+    },
     "N62": {
       "status": "native_task_scheduler_engineering_integrated",
       "source_commit": "9ce0ac7",
@@ -269,9 +289,9 @@
   "remaining_engineering": {
     "persistent_trigger": "not implemented",
     "task_conflict": "implemented; reports only, no arbitration or benchmark integration",
-    "scheduler_official_runner": "N62 opt-in GTM attaches to ReAct and native time advancement; actual official acceptance pending",
+    "scheduler_official_runner": "N63 official24 episodes executed; engineering gate failed and no SR gain; N64 fixes verified in tests only,G retained",
     "timed_observation": "N62 public clock bounds native verification; late state remains UNKNOWN; no automatic time advancement",
     "common_simuhome_adapter": "N61 unified entry and public actor boundary verified; native protocols and scores retained"
   },
-  "benefit_acceptance": "not satisfied; runtime unit/integration tests do not establish stable benefit on two public benchmarks"
+  "benefit_acceptance": "not satisfied; no stable benefit on two public benchmarks. N63 stopped; N64 engineering fixes do not replace frozen official acceptance"
 }
