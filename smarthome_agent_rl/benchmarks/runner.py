@@ -37,16 +37,22 @@ def select_tasks(adapter, selection):
     return result
 
 
-def messages_for(adapter, task_id, arm):
+def messages_for(adapter, task_id, arm, transport='native'):
     messages = adapter.public_input(task_id)
     if arm == 'B0':
-        return messages
-    if arm != 'B1':
+        pass
+    elif arm != 'B1':
         raise ValueError('B2 must reuse B1 raw output')
-    _, _, spec = adapter.contract(task_id)
-    # These are capabilities only, never target labels or task-category hints.
-    context = '\n<public_device_contract>\n'+json.dumps(spec, ensure_ascii=False, separators=(',', ':'))+'\n</public_device_contract>\n'
-    return [{'role': m['role'], 'content': m['content']+context} for m in messages]
+    else:
+        _, _, spec = adapter.contract(task_id)
+        # These are capabilities only, never target labels or task-category hints.
+        context = '\n<public_device_contract>\n'+json.dumps(spec, ensure_ascii=False, separators=(',', ':'))+'\n</public_device_contract>\n'
+        messages = [{'role': m['role'], 'content': m['content']+context} for m in messages]
+    if transport == 'append_empty_user':
+        messages = messages+[{'role': 'user', 'content': ''}]
+    elif transport != 'native':
+        raise ValueError('Unknown chat template compatibility policy')
+    return messages
 
 
 def completion(endpoint, body, timeout):
@@ -142,9 +148,10 @@ def run(adapter, config, output, selection, request_fn=completion):
               'config_sha256': digest(config), 'task_ids_sha256': digest(ids)}
     save(output/'freeze.json', freeze)
     records = []
+    last_checkpoint = start
     def episode(task_id, arm, actor, submitted):
         queued = time.monotonic()
-        messages = messages_for(adapter, task_id, arm)
+        messages = messages_for(adapter, task_id, arm, config.get('chat_transport', 'native'))
         generation = config['generation']
         body = {'model': config['model'], 'messages': messages, 'seed': config['model_seed'],
                 **{k: v for k, v in generation.items() if k != 'extra_body'}, **generation.get('extra_body', {})}
@@ -188,7 +195,12 @@ def run(adapter, config, output, selection, request_fn=completion):
                     log.write(json.dumps(row, ensure_ascii=False)+'\n')
                 log.flush()
                 records.extend(batch)
-                save(output/'report.json', summarize(records, len(ids), time.monotonic()-start))
+                # A full benchmark has tens of thousands of rows. Re-aggregating
+                # after every completion would introduce quadratic CPU work.
+                now = time.monotonic()
+                if len(records) == len(batch) or now-last_checkpoint >= config.get('checkpoint_seconds', 10):
+                    save(output/'report.json', summarize(records, len(ids), now-start))
+                    last_checkpoint = now
     finally:
         for pool in pools:
             pool.shutdown(wait=True)

@@ -7,7 +7,7 @@ import threading
 import time
 import unittest
 
-from smarthome_agent_rl.benchmarks.runner import run, select_tasks
+from smarthome_agent_rl.benchmarks.runner import run, select_tasks, messages_for
 from scripts.verify_public_benchmark import verify
 from tests import test_homebench_adapter as fixtures
 
@@ -99,6 +99,12 @@ class PublicRunnerTests(unittest.TestCase):
         report = run(self.adapter, self.config, self.output, {'kind': 'full'}, invalid)
         self.assertEqual(report['cost']['missing_usage_requests'], 2)
         self.assertFalse(report['engineering_gate']['passed'])
+
+    def test_qwen_compatibility_keeps_author_system_content(self):
+        messages = messages_for(self.adapter, 'case1', 'B0', 'append_empty_user')
+        self.assertEqual(messages[0], self.adapter.public_input('case1')[0])
+        self.assertEqual(messages[1], {'role': 'user', 'content': ''})
+        self.assertEqual(len(messages), 2)
 
     def test_evidence_verifier_rejects_answer_injected_request(self):
         run(self.adapter, self.config, self.output, {'kind': 'full'}, self.request)

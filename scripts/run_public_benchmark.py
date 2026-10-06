@@ -16,7 +16,7 @@ from urllib.parse import urlparse
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from smarthome_agent_rl.benchmarks.homebench import HomeBenchAdapter
-from smarthome_agent_rl.benchmarks.runner import digest, run, save
+from smarthome_agent_rl.benchmarks.runner import completion, digest, run, save, valid_usage
 
 
 @contextmanager
@@ -106,6 +106,24 @@ def actors(config, directory):
                 raise TimeoutError('Actor startup exceeded frozen budget')
             time.sleep(1)
         lifecycle['ready_seconds'] = time.monotonic()-start
+        probes = []
+        for actor in config['actors']:
+            messages = [{'role': 'system', 'content': 'Reply OK.'}]
+            if config.get('chat_transport') == 'append_empty_user':
+                messages.append({'role': 'user', 'content': ''})
+            generation = config['generation']
+            body = {'model': config['model'], 'messages': messages, 'seed': config['model_seed'],
+                    **{k: v for k, v in generation.items() if k != 'extra_body'},
+                    **generation.get('extra_body', {}), 'max_tokens': 8}
+            call = completion(actor['endpoint'], body, config['request_timeout'])
+            probes.append(call)
+            save(directory/'probe-receipts.json', probes)
+            lifecycle['probes'] = {'requests': len(probes),
+                'failed': sum(p['error'] is not None for p in probes),
+                'tokens': sum(p['usage']['total_tokens'] for p in probes if valid_usage(p['usage'])),
+                'missing_usage': sum(not valid_usage(p['usage']) for p in probes)}
+            if call['error'] or not valid_usage(call['usage']):
+                raise RuntimeError('Actor chat/usage probe failed before benchmark requests; retain receipt')
         save(directory/'lifecycle.json', lifecycle)
         yield
     except BaseException as exc:

@@ -36,7 +36,7 @@ def verify(directory, source, lock=None):
         call = json.loads(receipt.read_text(encoding='utf-8'))
         references.add(receipt.resolve())
         parent = 'B1' if arm == 'B2' else arm
-        messages = messages_for(adapter, task_id, parent)
+        messages = messages_for(adapter, task_id, parent, config.get('chat_transport', 'native'))
         generation = config['generation']
         body = {'model': config['model'], 'messages': messages, 'seed': config['model_seed'],
                 **{k: v for k, v in generation.items() if k != 'extra_body'}, **generation.get('extra_body', {})}
