@@ -242,13 +242,23 @@
       "archive_sha256": "e731d0903c90bb2d3c060d65be27ea4e186548648e5fa6344d789a7d0b94714f"
     },
     "N66": {
-      "status": "running_results_provisional",
+      "status": "official_engineering_accepted_benefit_not_established",
       "source_commit": "203985f",
       "evidence": "runs/native-event-supervision/n66-v1/",
       "config": "configs/native-event-supervision.json",
       "tasks": 120,
       "actor_seeds": [42, 43, 44],
       "episodes": 720,
+      "successes": {"G": 123, "GTME": 126},
+      "verified_native_jobs": 64,
+      "native_jobs": 191,
+      "task_clustered_delta_ci95": [-0.02777777777777778, 0.047222222222222214],
+      "cost": {"actor_requests": 5066, "actor_tokens": 31937717, "judge_requests": 1242, "judge_tokens": 2552115, "probe_requests": 10, "probe_tokens": 324, "wall_seconds": 822.2625447410392, "reserved_h100_gpu_seconds": 3289.0501789641567},
+      "acceptance": "8639 artifacts and360 initial paired requests verified;191 native jobs,64 verified; zero infrastructure/accounting errors",
+      "archive_sha256": "2c3ad8591483a01cfa4f5fbb98992331c5cb6267985ba40707a0e877a1b1f74e",
+      "public_case_diagnosis_sha256": "cb9df07a2334c4d5e65727c5394c97cb7e971f7c1b54cc39a00005566e8001fa",
+      "public_case_archive_sha256": "a587c2a84294de2eda24373ed528ee1d960c350e8160ed7bfece03f1fd3acc83",
+      "discordance_without_supervisor_reads": "34/43 repeated pairs; not direct causal evidence of supervision gain",
       "scope": "G vs independent GTME; previously exposed official dev120,no holdout or automatic adoption"
     },
     "N64": {
@@ -307,9 +317,10 @@
   "remaining_engineering": {
     "persistent_trigger": "not implemented",
     "task_conflict": "implemented; reports only, no arbitration or benchmark integration",
-    "scheduler_official_runner": "N63 failed; N64 error fixes,N65 independent public-event path verified in tests; N66 official dev120 repeated comparison running; G retained",
-    "timed_observation": "N62 public clock bounds native verification; late state remains UNKNOWN; no automatic time advancement",
+    "scheduler_official_runner": "N63 remains failed; independent GTME accepted in N66 official720 episodes,64 jobs verified; no stable SR benefit,G retained",
+    "timed_observation": "N66 public response events and final readback clock receipts exercised; late state remains UNKNOWN,no replay or automatic time advancement",
+    "native_user_goal_conditions": "unimplemented; action intentions do not validate the public user goal,all360 runtime Task remain WAITING",
     "common_simuhome_adapter": "N61 unified entry and public actor boundary verified; native protocols and scores retained"
   },
-  "benefit_acceptance": "not satisfied; no stable benefit on two public benchmarks. N63 remains failed; N65 engineering tests do not prove online benefit"
+  "benefit_acceptance": "not satisfied; no stable benefit on two public benchmarks. N66 engineering accepted,SR +0.83pp with task-clustered CI crossing zero and increased queries/tokens; G retained"
 }
