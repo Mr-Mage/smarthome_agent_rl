@@ -23,6 +23,7 @@ from smarthome_agent_rl.generation import install_generation_options, record_gen
 from smarthome_agent_rl.retrieval import load_retrieval
 from smarthome_agent_rl.benchmark import task_failure_kind
 from smarthome_agent_rl.profiling import PhaseProfile, TimedTime
+from smarthome_agent_rl.benchmarks.simuhome import SimuHomeAdapter
 
 
 def main(mode):
@@ -46,9 +47,8 @@ def main(mode):
             response = client.post(os.environ['AGL_EVENT_URL'], headers={'Authorization': f'Bearer {key}'},
                                    json={'event_type': kind, 'data': data})
             response.raise_for_status()
-    path = ROOT / 'deps/SimuHome/data/benchmark' / task['path']
-    if path.name != task['path'] or hashlib.sha256(path.read_bytes()).hexdigest() != task['sha256']:
-        raise ValueError('Frozen official case identity mismatch')
+    benchmark = SimuHomeAdapter(ROOT / 'deps/SimuHome/data/benchmark', {'tasks': [task]})
+    path = benchmark.task_path(task['id'])
     calls, judges, events, starts = [], [], [], {}
     calls_lock = Lock()
     provider_errors = []
@@ -121,7 +121,7 @@ def main(mode):
                 repair_limit=config['recovery_per_action'], query_limit=config['extra_queries_max'],
                 policy=config.get('variant_policies', {}).get(variant), token_count_fn=count_tokens)
         import src.agents.strategies.react_agent as react_module
-        return profile.agent(agent, react_module)
+        return benchmark.bind_agent(task['id'], profile.agent(agent, react_module))
     runner._build_agent = build
     import src.agents.strategies.react_agent as react_module
     evaluation_module = importlib.import_module(runner._EVALUATOR_REGISTRY[(task['query_type'], task['case'])])
@@ -146,6 +146,7 @@ def main(mode):
     try:
         result = runner.run_single_config(cfg_path=str(path), base_url=config['simulator_url'], timeout=30,
             max_steps=config['max_steps'], agent_strategy='react', main_llm=actor, judge_llms=panel)
+        benchmark.score(task['id'], result)  # Validate native episode identity; never replace its evaluator.
         save('official_result.json', result)
     except Exception as exc:
         error = {'type': type(exc).__name__, 'message': str(exc)}

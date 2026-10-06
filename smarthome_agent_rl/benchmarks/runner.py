@@ -11,6 +11,7 @@ import urllib.request
 from .homebench import aggregate
 from .instructions import serialize_instructions
 from .wire import compile_wire
+from .actors import ChatActor
 
 
 def digest(value):
@@ -175,9 +176,9 @@ def run(adapter, config, output, selection, request_fn=completion):
         location = 'after' if config.get('schema') == 'homebench-ablation-v1' and 'contract_location' not in config else 'before'
         messages = messages_for(adapter, task_id, arm, config.get('chat_transport', 'native'), location)
         generation = config['generation']
-        body = {'model': config['model'], 'messages': messages, 'seed': config['model_seed'],
+        options = {'model': config['model'], 'seed': config['model_seed'],
                 **{k: v for k, v in generation.items() if k != 'extra_body'}, **generation.get('extra_body', {})}
-        call = request_fn(actor['endpoint'], body, config['request_timeout'])
+        call = ChatActor(request_fn, actor['endpoint'], options, config['request_timeout']).invoke(messages)
         # Request evidence is saved before any evaluator accesses the answer.
         receipt = output/'requests'/f'{digest(task_id)}-{arm}.json'
         receipt.parent.mkdir(exist_ok=True)
