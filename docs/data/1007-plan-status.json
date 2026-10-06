@@ -173,6 +173,12 @@
       "evidence": "runs/task-runtime/n58-server-v1/",
       "acceptance": "90 server tests passed; full257 one skip; no online Task SR claim",
       "archive_sha256": "6f9396e14a954a68c2828d646f0d8c0bf083f5d718b59ac64eed8b11df50cbea"
+    },
+    "N59": {
+      "status": "read_only_cost_attribution_complete",
+      "source_commit": "3d39707",
+      "evidence": "runs/homebench/n59-n54-cost-v2/report.json",
+      "scope": "completed public snapshot cost only; not production SLO"
     }
   },
   "benchmark_status": {
