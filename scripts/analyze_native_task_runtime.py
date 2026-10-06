@@ -35,7 +35,7 @@ def audit_episode(directory):
     elif native is not None and native['evaluation_result']['score'] != summary['official_score']:
         problems.append('Runtime replaced the native official score')
     # JSON export must agree with durable database, not merely an in-memory sidecar.
-    db = sqlite3.connect(directory / 'task-runtime.sqlite3')
+    db = sqlite3.connect((directory / 'task-runtime.sqlite3').resolve().as_uri() + '?mode=ro', uri=True)
     try:
         for kind, exported in [('task', tasks), ('job', jobs), ('workflow', workflows), ('trace', data['trace'])]:
             stored = [json.loads(row[0]) for row in db.execute('SELECT data FROM records WHERE kind=? ORDER BY id', (kind,))]
@@ -56,7 +56,10 @@ def audit_episode(directory):
     registration_ids = []
     for job in jobs:
         wf = wf_by_id[job['workflow_id']]
-        registration = next(e for e in wf['evidence'] if e.get('kind') == 'registration')
+        registration = next((e for e in wf['evidence'] if e.get('kind') == 'registration'), None)
+        if registration is None:
+            problems.append('Native registration intent has no completed receipt linkage')
+            continue
         invocation = trace[registration['invocation_id']]
         registration_ids.append(invocation['invocation_id'])
         if invocation['tool'] != 'schedule_workflow' or invocation['workflow_id'] != wf['workflow_id'] or \
@@ -106,7 +109,8 @@ def analyze(run, stage='calibration'):
         'public_tasks': len(rows) == gates['public_tasks'], 'evidence_consistent': not problems,
         'native_jobs_exercised': jobs >= gates['minimum_native_jobs'],
         'native_time_callback_exercised': callbacks >= gates['minimum_native_time_callbacks']}
-    result = {'source_commit': protocol['commit'], 'checks': checks, 'engineering_accepted': all(checks.values()),
+    result = {'source_commit': protocol['commit'], 'auditor_sha256': hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+        'checks': checks, 'engineering_accepted': all(checks.values()),
         'problems': problems, 'episodes': rows, 'native_jobs': jobs, 'native_clock_callbacks': callbacks,
         'supervisor_queries': sum(r['supervisor_queries'] for r in rows),
         'official_successes': {a: r['successes'] for a, r in report['arms'].items()},

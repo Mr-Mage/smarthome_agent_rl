@@ -52,6 +52,13 @@ class NativeRuntimeAuditTests(unittest.TestCase):
                                     'task_failure': True, 'task_failure_kind': 'max_steps'})
         self.assertEqual(audit_episode(self.directory)['problems'], [])
 
+    def test_incomplete_registration_is_reported_as_failure_without_dropping_episode(self):
+        self.runtime['workflows'][0]['evidence'] = [
+            e for e in self.runtime['workflows'][0]['evidence'] if e.get('kind') != 'registration']
+        self.write('task_runtime.json', self.runtime)
+        problems = audit_episode(self.directory)['problems']
+        self.assertTrue(any('completed receipt linkage' in p for p in problems))
+
 
 if __name__ == '__main__':
     unittest.main()
