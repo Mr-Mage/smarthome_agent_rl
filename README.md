@@ -2,7 +2,9 @@
 
 基于官方 SimuHome 单轮 ReAct benchmark 与 Agent Lightning 的可审计智能家居 Agent harness。项目实现工具契约校验、动作生命周期记录、四卡隔离调度与配对评测，保留完整失败及成本证据。
 
-**当前默认：Qwen3.5-9B + Guard（G）。已完成至 N37，包括官方600任务全量验收。** 项目概览、设计取舍与案例见[项目总结书](docs/项目总结书.md)。
+**当前默认：Qwen3.5-9B + Guard（G）。官方600任务全量结果已完成；新执行 runtime 尚无在线收益结论。** 项目概览、设计取舍与案例见[项目总结书](docs/项目总结书.md)。
+
+N41–N45已实现基线冻结、Tool Trace/Mutation/Workflow分层、SQLite任务与调度器，服务器29项专项检查通过。N46正在把公开状态验证接入单轮ReAct，默认关闭；持久模块尚未接入官方评测。本轮只继续harness诊断与消融，不追加训练、多轮或新benchmark。
 
 ## 结果与边界
 

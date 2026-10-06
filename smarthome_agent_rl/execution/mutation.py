@@ -88,8 +88,9 @@ class MutationResult:
 
 
 class MutationExecutor:
-    def __init__(self, trace: ToolTrace):
+    def __init__(self, trace: ToolTrace, *, readback=None):
         self.trace = trace
+        self.readback = readback or trace.call
 
     def execute(self, tool, arguments, *, contract: DeviceContract, state,
                 function_name=None, contract_args=None, task_id=None, workflow_id=None, parent_step=None):
@@ -116,12 +117,27 @@ class MutationExecutor:
         if not query or not function.postconditions:
             return MutationResult(VerificationStatus.UNVERIFIED, mutation.invocation_id,
                                   guard=guard.response(), verification={'reason': 'VERIFICATION_UNCOVERED'})
-        readback = self.trace.call(query['tool'], query.get('args', {}), **linkage)
+        readback = self.readback(query['tool'], query.get('args', {}), **linkage)
+        if readback is None:
+            return MutationResult(VerificationStatus.UNVERIFIED, mutation.invocation_id,
+                                  guard=guard.response(), verification={'reason': 'READBACK_BUDGET_EXHAUSTED'})
         response = readback.response
-        if readback.error or not isinstance(response, dict) or response.get('status', {}).get('code') != 200:
+        if readback.error or not isinstance(response, dict) or response.get('status', {}).get('code') != 200 or not isinstance(response.get('data'), dict):
             return MutationResult(VerificationStatus.UNVERIFIED, mutation.invocation_id, readback.invocation_id,
                                   guard.response(), {'reason': 'READBACK_UNAVAILABLE'})
         after = response.get('data', {})
+        expected_device = query.get('args', {}).get('device_id')
+        if expected_device is not None and after.get('device_id') != expected_device:
+            return MutationResult(VerificationStatus.UNVERIFIED, mutation.invocation_id, readback.invocation_id,
+                                  guard.response(), {'reason': 'READBACK_IDENTITY_MISMATCH'})
+        # A live transition is neither a completed action nor a failed one. Do
+        # not advance simulator time or replay the command to force a decision.
+        for path in query.get('pending_paths', []):
+            found, remaining = _get_path(after, path)
+            if found and type(remaining) in (int, float) and remaining > 0:
+                return MutationResult(VerificationStatus.UNVERIFIED, mutation.invocation_id, readback.invocation_id,
+                                      guard.response(), {'reason': 'PUBLIC_TRANSITION_PENDING',
+                                                         'path': path, 'remaining': remaining})
         verification = check_postconditions(function, action, state, after)
         return MutationResult(verification.status, mutation.invocation_id, readback.invocation_id,
                               guard.response(), verification.as_dict())

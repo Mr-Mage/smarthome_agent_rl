@@ -36,15 +36,18 @@ class ArgumentContract:
     minimum: float | None = None
     maximum: float | None = None
     enum: tuple[Any, ...] = ()
+    nullable: bool = False
 
     @classmethod
     def from_dict(cls, name: str, spec: Mapping[str, Any]) -> 'ArgumentContract':
         return cls(name=name, type=spec.get('type', 'any'),
                    required=spec.get('required', True), minimum=spec.get('min', spec.get('minimum')),
                    maximum=spec.get('max', spec.get('maximum')),
-                   enum=tuple(spec.get('enum', spec.get('values', ()))))
+                   enum=tuple(spec.get('enum', spec.get('values', ()))), nullable=bool(spec.get('nullable', False)))
 
     def validate(self, value: Any) -> tuple[str, dict[str, Any]] | None:
+        if value is None and self.nullable:
+            return None
         if not _type_ok(value, self.type):
             return 'ARGUMENT_TYPE', {'argument': self.name, 'expected': self.type, 'actual_type': type(value).__name__}
         if self.enum and value not in self.enum:

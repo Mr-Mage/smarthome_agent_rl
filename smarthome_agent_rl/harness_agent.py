@@ -260,7 +260,25 @@ class HarnessAgent:
         policy = policy or {'verify': variant in ('GV', 'Full', 'GV2'),
             'verification_version': 2 if variant == 'GV2' else 1,
             'context_version': 2 if variant == 'GC2' else 1 if variant in ('GC', 'Full') else 0}
-        self.executor = GuardedExecutor(verify=policy['verify'], verification_version=policy['verification_version'], audit_fn=audit_fn,
+        if policy.get('execution_runtime'):
+            incompatible = ('verify', 'context_version', 'time_plan', 'identifier_binding',
+                            'start_semantics', 'recovery', 'task_spec', 'evidence_context',
+                            'semantic_verifier', 'reflection_verifier', 'contract_registry',
+                            'dead_front', 'workflow_all_devices')
+            if variant in ('B0', 'GR', 'GTS', 'GEC') or any(policy.get(key) for key in incompatible):
+                raise ValueError('Execution runtime comparison must isolate the tool execution boundary')
+            from smarthome_agent_rl.execution.harness import RuntimeExecutor
+            from smarthome_agent_rl.execution.simuhome_contract import SimuHomeContractAdapter
+            contracts, sources = command_contracts(ROOT / 'deps/SimuHome/src/simulator/domain/clusters')
+            power_rules, device_sources = public_power_rules(ROOT / 'deps/SimuHome/src/simulator/domain/devices')
+            sources.update(device_sources)
+            for filename in ('configs/device-contract-rules.json', 'deps/SimuHome/src/simulator/api/schemas.py'):
+                sources[filename] = hashlib.sha256((ROOT / filename).read_bytes()).hexdigest()
+            self.executor = RuntimeExecutor(guard=ToolGuard(harness_schemas(tool_schemas()), contracts, power_rules),
+                adapter=SimuHomeContractAdapter(contracts, power_rules), dispatch=run_tool,
+                invocation_factory=ToolInvocation, sources=sources, query_limit=query_limit, audit_fn=audit_fn)
+        else:
+            self.executor = GuardedExecutor(verify=policy['verify'], verification_version=policy['verification_version'], audit_fn=audit_fn,
                                        repair_limit=repair_limit, query_limit=query_limit,
                                        dead_front=policy.get('dead_front', False),
                                        workflow_all_devices=policy.get('workflow_all_devices', False),

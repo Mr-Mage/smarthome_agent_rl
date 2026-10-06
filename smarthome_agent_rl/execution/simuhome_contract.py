@@ -41,6 +41,7 @@ class SimuHomeContractAdapter:
             else:
                 for arg, row in signature['properties'].items():
                     function['args'][arg] = {'type': row.get('type') or 'any',
+                                             'nullable': bool(row.get('nullable', False)),
                                              'required': arg in signature.get('required', [])}
             rule = self.rules.get('commands', {}).get(f'{cid}.{command}', {})
             for arg, constraints in rule.get('args', {}).items():
@@ -53,6 +54,8 @@ class SimuHomeContractAdapter:
             for row in rule.get('postconditions', []):
                 # Optional alternatives produce an expectation only when supplied.
                 if row.get('when_arg') and arguments.get('args', {}).get(row['when_arg']) is None:
+                    continue
+                if row.get('unless_arg') and arguments.get('args', {}).get(row['unless_arg']) is not None:
                     continue
                 function['postconditions'].append({'path': attribute_path(row['attribute']), 'value': row['value']})
             dependent = public_rule and (cid in public_rule.get('commands', []) or
@@ -82,6 +85,8 @@ class SimuHomeContractAdapter:
             elif dependent:
                 function['assertions'].append({'path': 'endpoints.1.clusters.OnOff.attributes.OnOff.value', 'value': True})
         function['verification'] = {'tool': 'get_device_structure', 'args': {'device_id': arguments['device_id']}}
+        function['verification']['pending_paths'] = [attribute_path(attribute) for attribute in
+            self.rules.get('pending_attributes', {}).get(cid, []) if attribute in attrs]
         spec['functions'][name] = function
         args = arguments.get('args', {}) if tool == 'execute_command' else {'value': arguments.get('value')}
         return DeviceContract.from_dict(str(structure.get('device_type', 'unknown')), spec), name, args

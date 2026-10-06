@@ -11,7 +11,7 @@ class RuntimeContractAdapterTests(unittest.TestCase):
         self.adapter = SimuHomeContractAdapter({('LevelControl', 'MoveToLevel'): {
             'properties': {'Level': {'type': None}}, 'required': ['Level']}},
             {'new-lamp': {'commands': [], 'attributes': {}}})
-        self.state = {'device_type': 'new-lamp', 'endpoints': {'1': {'clusters': {
+        self.state = {'device_id': 'lamp2', 'device_type': 'new-lamp', 'endpoints': {'1': {'clusters': {
             'LevelControl': {'commands': ['MoveToLevel'], 'attributes': {'CurrentLevel': {'value': 20}}}}}}}
         self.args = {'device_id': 'lamp2', 'endpoint_id': 1, 'cluster_id': 'LevelControl',
                      'command_id': 'MoveToLevel', 'args': {'Level': 40}}

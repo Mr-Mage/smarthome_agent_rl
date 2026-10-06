@@ -18,7 +18,7 @@
       },
       "postconditions": [
         {"attribute": "TemperatureSetpoint", "value": "$args.target_temperature", "when_arg": "target_temperature"},
-        {"attribute": "SelectedTemperatureLevel", "value": "$args.target_temperature_level", "when_arg": "target_temperature_level"}
+        {"attribute": "SelectedTemperatureLevel", "value": "$args.target_temperature_level", "when_arg": "target_temperature_level", "unless_arg": "target_temperature"}
       ]
     }
   },
@@ -26,6 +26,7 @@
     "Thermostat.OccupiedHeatingSetpoint": {"type": "integer", "min": 700, "max": 3200, "paired_attribute": "OccupiedCoolingSetpoint", "relation": "cooling_minus_heating", "min_gap": 25},
     "Thermostat.OccupiedCoolingSetpoint": {"type": "integer", "min": 700, "max": 3200, "paired_attribute": "OccupiedHeatingSetpoint", "relation": "cooling_minus_heating", "min_gap": 25}
   },
-  "coverage": "Known source-verified rules only. Unknown command signatures, preconditions, enum coercions and delayed effects remain explicit uncovered. No hidden evaluator fields.",
+  "pending_attributes": {"LevelControl": ["RemainingTime"]},
+  "coverage": "Partial source-verified constraints and postconditions. Power extraction is not complete precondition coverage. Unknown command rules, enum coercions and delayed effects stay uncovered; no hidden evaluator fields.",
   "sources": ["src/simulator/domain/clusters/level_control.py", "src/simulator/domain/clusters/temperature_control.py", "src/simulator/domain/clusters/thermostat.py"]
 }

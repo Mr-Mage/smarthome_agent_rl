@@ -21,6 +21,13 @@
 | N39 Semantic Verification | 离线完成 | public-only四维决策、置信度门控、Self-Reflection解析器；不生成新benchmark、不做在线对照 |
 | N40 Process Reward / RL接口 | 接口完成 | RL-A/B/C、冻结verifier reward、交替调度；按本轮范围不启动训练；[N40](docs/nodes/N40.md) |
 
-N35/N36均完成；N37全量验收、N38-N40改进接口已完成。按本轮范围不开展在线语义对照、小模型训练或RL训练，不把接口测试包装为效果收益。普通失败及全部成本保留；条件节点未准入按原停止规则结束。生产化研究方向不计为已实现能力。
+| N41 基线冻结 | 完成 | 永久 tag `baseline/1007-9b-g`、八份源码 SHA 核验；[N41](docs/nodes/N41.md) |
+| N42 执行分层 | 工程完成 | Tool Trace / Mutation / Workflow 分开；[N42](docs/nodes/N42.md) |
+| N43 Task 持久化 | 工程完成 | SQLite、版本修订、所有权和整个目标验证；[N43](docs/nodes/N43.md) |
+| N44 声明式模拟器契约 | 工程完成 | 公开参数/范围/部分前置条件与读回规则；[N44](docs/nodes/N44.md) |
+| N45 Scheduler | 工程完成 | 原生监督/定时动作/wake-up、原子认领与未知结果处理；[N45](docs/nodes/N45.md) |
+| N46 真实执行链接入 | 进行中 | 可选单轮 RuntimeExecutor；本机36通过、8项真实模拟器检查待服务器验收；默认G保留 |
+
+N37全量验收已完成。N41–N45为工程验证，服务器累计29专项测试通过、全量196项195通过/1跳过；暂无新benchmark效果。N46接入真实单轮执行链后再冻结配对消融。按最新确认不追加训练、不生成新benchmark、不展开多轮或新的压力任务；持久模块保留工程证据。普通失败及全部成本保留，接口测试不作效果收益。
 
 冻结协议保留在[后续实验方案](docs/后续实验方案.md)、[后续开发计划](docs/后续开发计划.md)、[SFT执行计划](docs/SFT执行计划.md)及各配置中；其“待执行”描述是历史冻结文本，当前状态以本表、节点记录和[实验报表](docs/实验报表.md)为准。
