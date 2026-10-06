@@ -24,4 +24,8 @@ class ReActActor:
     def invoke(self, public_input):
         if not isinstance(public_input, dict) or set(public_input) != {'query', 'user_location', 'current_time'}:
             raise ValueError('ReAct actor requires only the official public episode context')
-        return self.agent.run(**copy.deepcopy(public_input))
+        context = copy.deepcopy(public_input)
+        # Upstream ReAct calls its first argument user_query; HarnessAgent uses query.
+        # Preserve their shared positional protocol rather than assuming a parameter name.
+        return self.agent.run(context['query'], user_location=context['user_location'],
+                              current_time=context['current_time'])

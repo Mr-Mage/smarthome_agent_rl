@@ -28,7 +28,10 @@ class SimuHomeBenchmarkTests(unittest.TestCase):
     def test_native_agent_boundary_excludes_goal_world_and_category(self):
         public = self.adapter.public_input('case')
         calls = []
-        agent = SimpleNamespace(run=lambda **kwargs: calls.append(kwargs) or 'native-artifact', extra='native')
+        def native_run(user_query, /, *, user_location=None, current_time=None):
+            calls.append({'query': user_query, 'user_location': user_location, 'current_time': current_time})
+            return 'native-artifact'
+        agent = SimpleNamespace(run=native_run, extra='native')
         bound = self.adapter.bind_agent('case', agent)
         self.assertEqual(bound.run(**public), 'native-artifact')
         self.assertEqual(bound.extra, 'native')
