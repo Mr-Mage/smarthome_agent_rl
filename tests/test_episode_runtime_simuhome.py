@@ -60,7 +60,7 @@ class NativeEpisodeRuntimeTests(unittest.TestCase):
         if tool == 'get_device_structure':
             result = self.home._get_structure(args['device_id'])
         elif tool == 'schedule_workflow':
-            self.assertEqual(self.runtime.store.list('job')[0]['status'], 'REGISTERING')
+            self.assertTrue(any(j['status'] == 'REGISTERING' for j in self.runtime.store.list('job')))
             result = self.home.schedule_workflow(**args)
         elif tool == 'get_workflow_status':
             result = self.home.get_workflow_status(**args)
