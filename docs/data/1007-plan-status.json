@@ -233,6 +233,17 @@
       "scope": "24 exposed single-turn episodes; no new SR benefit,expansion or rerun",
       "archive_sha256": "dfa0efb46979371be1b9190c0b9a8ab1b6079a229fe21ce53941c0df813b9a26"
     },
+    "N67": {
+      "status": "running_public_goal_diagnosis",
+      "source_commit": "3e019a4",
+      "config": "configs/public-goal-diagnosis.json",
+      "evidence": "runs/public-goal-diagnosis/n67-v1/",
+      "tasks": 120,
+      "actor_seeds": [42, 43, 44],
+      "records": 360,
+      "acceptance_before_inference": "14 server checks; full303,302 passed,one environment skip",
+      "scope": "Separate public goal proposals and graph diagnosis only; no ReAct changes,Task completion,training or new benchmark"
+    },
     "N65": {
       "status": "public_event_supervision_engineering_verified",
       "source_commit": "57ca642",
