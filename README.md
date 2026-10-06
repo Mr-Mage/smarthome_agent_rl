@@ -6,7 +6,7 @@
 当前：N27归因及N28启动语义消融完成。G/GS成功25/84与27/84，但非法执行13→35，未过安全门槛，保留原9B+G，N29不准入。历史一次LoRA SFT成功51/144→24/144、非法31→125，已否决；原生thinking也未过成本门槛。结果仅为历史暴露任务上的开发诊断，95个未使用任务仍封存，当前不追加训练。
 N13正式seed42：B0/G/旧Full成功60/69/71（各192）；G非法执行96→16，SR差的Holm p=0.216，提升未证实。Verify v2、Context v2、N15 D/W及TimePlan均不纳入候选。旧final不再用于调参。
 
-结果：[实验报表](docs/实验报表.md)；节点：[docs/nodes](docs/nodes/)；开发约定：[AGENTS.md](AGENTS.md)。
+架构：[项目架构](docs/项目架构.md)（模块设计、实现边界与后续工程验收）；结果：[实验报表](docs/实验报表.md)；节点：[docs/nodes](docs/nodes/)；开发约定：[AGENTS.md](AGENTS.md)。
 
 N26观测ID提示诊断完成：原9B成功26/72→26/72，tokens+3.01%；SFT成功15/72→10/72，tokens+64.03%。完整目录下错误ID样本不足，主机制证据不足，不采用提示、不扩大该消融；发现与终止覆盖仍需研究，详见[N26](docs/nodes/N26.md)。审阅包`outputs/observation-binding/n26-review-v1/`。
 N27只读复核全部31个原G seed42失败与361个训练目标：5个独立任务混淆通电与运行启动，原G错误房间查询0。评测疑点保留官方失败，不改分母，详见[N27](docs/nodes/N27.md)。N28该遗漏12→0，但注册重试错误增多，未进入扩大验证；192次有效运行8分51秒，两次失败启动另计，详见[N28](docs/nodes/N28.md)。审阅包`outputs/start-semantics/n28-review-v1/`。
