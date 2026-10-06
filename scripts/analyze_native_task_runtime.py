@@ -1,4 +1,4 @@
-"""Audit frozen G/GTM official single-turn lifecycle, reads and native scoring."""
+"""Audit frozen native runtime lifecycle, public receipts and official scoring."""
 import argparse
 from collections import Counter
 import hashlib
@@ -73,6 +73,20 @@ def audit_episode(directory):
             observed = result['observed_at']
             if type(observed) not in (int, float) or not job['target_time'] <= observed <= job['target_time'] + job['tolerance']:
                 problems.append('Timed outcome lacks an in-window public observation')
+            clocks = [e for e in result['evidence'] if e.get('kind') == 'public_observation_clock']
+            if clocks:
+                row = trace.get(clocks[-1].get('invocation_id'))
+                try:
+                    valid_clock = row is not None and row['tool'] == 'get_current_time' and not row['error'] and \
+                        row['response']['status']['code'] == 200 and \
+                        virtual_seconds(row['response']['data']['now']) == observed and \
+                        clocks[-1].get('observed_at') == observed
+                except (KeyError, TypeError, ValueError):
+                    valid_clock = False
+                if not valid_clock:
+                    problems.append('Timed outcome clock does not match its public receipt')
+            elif contract['config'].get('variant_policies', {}).get('GTME', {}).get('task_runtime_clock') == 'public_events':
+                problems.append('Event runtime timed outcome lacks clock receipt provenance')
         if job['status'] == 'DONE' and (job['payload']['uncovered'] or not job['payload']['conditions']):
             problems.append('Uncovered action intention incorrectly verified')
     if len(registration_ids) != len(set(registration_ids)):
@@ -84,8 +98,9 @@ def audit_episode(directory):
     return {'task_id': summary['task_id'], 'problems': problems, 'jobs': len(jobs),
         'job_statuses': dict(Counter(j['status'] for j in jobs)),
         'supervisor_queries': data['supervisor_queries'], 'trace_calls': len(trace),
-        'native_clock_callbacks': sum(e['kind'] == 'public_clock_supervision' and
-            e.get('phase') == 'native_virtual_time_advanced' for e in data['events'])}
+        'native_clock_callbacks': data.get('event_supervision', {}).get('native_clock_callbacks',
+            sum(e['kind'] == 'public_clock_supervision' and
+                e.get('phase') == 'native_virtual_time_advanced' for e in data['events']))}
 
 
 def analyze(run, stage='calibration'):
@@ -96,22 +111,30 @@ def analyze(run, stage='calibration'):
     report = read(directory / 'report.json')
     config = protocol['config']
     gates = config['node_experiment']['gates']
-    if protocol['variants'] != ['G', 'GTM'] or protocol['expected_episodes'] != gates['complete_episodes']:
+    candidate = config['node_experiment'].get('candidate', 'GTM')
+    if protocol['variants'] != ['G', candidate] or protocol['expected_episodes'] != gates['complete_episodes']:
         raise ValueError('Native task-runtime experiment differs from frozen protocol')
     policies = config['variant_policies']
-    if {k: v for k, v in policies['GTM'].items() if k not in ('task_runtime', 'task_runtime_tolerance')} != policies['G']:
+    if {k: v for k, v in policies[candidate].items()
+            if k not in ('task_runtime', 'task_runtime_tolerance', 'task_runtime_clock')} != policies['G']:
         raise ValueError('Native task-runtime must isolate unchanged G')
-    rows = [audit_episode(episode_directory(directory, item, 'GTM')) for item in protocol['schedule']]
+    rows = [audit_episode(episode_directory(directory, item, candidate)) for item in protocol['schedule']]
     problems = [p for row in rows for p in row['problems']]
     jobs = sum(r['jobs'] for r in rows)
     callbacks = sum(r['native_clock_callbacks'] for r in rows)
     checks = {'complete_episodes': verification['expected_episodes'] == gates['complete_episodes'],
-        'public_tasks': len(rows) == gates['public_tasks'], 'evidence_consistent': not problems,
+        'public_tasks': len({r['task_id'] for r in rows}) == gates['public_tasks'], 'evidence_consistent': not problems,
         'native_jobs_exercised': jobs >= gates['minimum_native_jobs'],
         'native_time_callback_exercised': callbacks >= gates['minimum_native_time_callbacks']}
+    verified_jobs = sum(r['job_statuses'].get('DONE', 0) for r in rows)
+    if 'minimum_verified_native_jobs' in gates:
+        checks['native_state_verification_exercised'] = verified_jobs >= gates['minimum_verified_native_jobs']
+    if 'candidate_executions' in gates:
+        checks['candidate_executions'] = len(rows) == gates['candidate_executions']
     result = {'source_commit': protocol['commit'], 'auditor_sha256': hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
         'checks': checks, 'engineering_accepted': all(checks.values()),
-        'problems': problems, 'episodes': rows, 'native_jobs': jobs, 'native_clock_callbacks': callbacks,
+        'problems': problems, 'episodes': rows, 'native_jobs': jobs, 'verified_native_jobs': verified_jobs,
+        'native_clock_callbacks': callbacks,
         'supervisor_queries': sum(r['supervisor_queries'] for r in rows),
         'official_successes': {a: r['successes'] for a, r in report['arms'].items()},
         'paired': report['paired'], 'default': 'G',

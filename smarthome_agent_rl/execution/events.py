@@ -37,7 +37,7 @@ class EventEpisodeRuntime(EpisodeRuntime):
         field = 'now' if row['tool'] == 'get_current_time' else 'current_time' if row['tool'] == 'get_home_state' else None
         if field:
             self.observe_clock(response['data'].get(field), source={
-                'kind': 'actor_public_tool', 'invocation_id': row['invocation_id'], 'field': field})
+                'kind': 'public_tool', 'invocation_id': row['invocation_id'], 'field': field})
 
     def observe_clock(self, current_time, *, source):
         try:

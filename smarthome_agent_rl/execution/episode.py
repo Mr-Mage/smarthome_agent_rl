@@ -209,6 +209,9 @@ class EpisodeRuntime:
                     return PostconditionResult(VerificationStatus.UNVERIFIED, tuple(evidence),
                                                'PUBLIC_TRANSITION_PENDING')
         observed = self._clock()
+        if observed is not None:
+            evidence.append({'kind': 'public_observation_clock',
+                'invocation_id': self.trace.invocations[-1].invocation_id, 'observed_at': observed})
         results = []
         for condition in payload['conditions']:
             device = condition['device_id']

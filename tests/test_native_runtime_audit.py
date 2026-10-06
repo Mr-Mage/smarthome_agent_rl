@@ -1,8 +1,9 @@
 import copy
 import json
 import unittest
+from unittest.mock import patch
 
-from scripts.analyze_native_task_runtime import audit_episode
+from scripts.analyze_native_task_runtime import analyze, audit_episode
 from tests import test_episode_runtime as fixtures
 
 
@@ -58,6 +59,57 @@ class NativeRuntimeAuditTests(unittest.TestCase):
         self.write('task_runtime.json', self.runtime)
         problems = audit_episode(self.directory)['problems']
         self.assertTrue(any('completed receipt linkage' in p for p in problems))
+
+    def test_event_completion_requires_untampered_public_clock_receipt(self):
+        self.write('contract.json', {'public_context': {'query': self.fixture.runtime.task.goal},
+            'config': {'extra_queries_max': 40, 'variant_policies': {
+                'GTME': {'task_runtime_clock': 'public_events'}}}})
+        self.assertEqual(audit_episode(self.directory)['problems'], [])
+        job = self.runtime['jobs'][0]
+        evidence = job['evidence'][-1]['evidence']
+        clock = next(e for e in evidence if e.get('kind') == 'public_observation_clock')
+        clock['invocation_id'] = 'missing-public-receipt'
+        self.write('task_runtime.json', self.runtime)
+        self.assertTrue(any('clock does not match' in p for p in audit_episode(self.directory)['problems']))
+        evidence.remove(clock)
+        self.write('task_runtime.json', self.runtime)
+        self.assertTrue(any('lacks clock receipt' in p for p in audit_episode(self.directory)['problems']))
+
+
+class NativeRuntimeStageAuditTests(unittest.TestCase):
+    def test_repeated_seeds_count_unique_tasks_and_require_actual_verification(self):
+        # Six candidate runs are only two public tasks, not six independent tasks.
+        import tempfile
+        from pathlib import Path
+        with tempfile.TemporaryDirectory() as temp:
+            run = Path(temp)
+            stage = run / 'dev'
+            stage.mkdir()
+            config = {'variant_policies': {'G': {'verify': False}, 'GTME': {
+                'verify': False, 'task_runtime': True, 'task_runtime_clock': 'public_events'}},
+                'node_experiment': {'candidate': 'GTME', 'gates': {'complete_episodes': 12,
+                    'public_tasks': 2, 'candidate_executions': 6, 'minimum_native_jobs': 1,
+                    'minimum_native_time_callbacks': 1, 'minimum_verified_native_jobs': 1}}}
+            for name, data in {'protocol.json': {'config': config, 'commit': 'frozen',
+                    'variants': ['G', 'GTME'], 'expected_episodes': 12, 'schedule': [{}] * 6},
+                    'report.json': {'arms': {'G': {'successes': 0}, 'GTME': {'successes': 0}}, 'paired': []},
+                    'artifact_manifest.json': {}}.items():
+                (stage / name).write_text(json.dumps(data), encoding='utf-8')
+            rows = [{'task_id': f'public-{i % 2}', 'problems': [], 'jobs': 1,
+                'job_statuses': {'UNKNOWN': 1}, 'native_clock_callbacks': 1, 'supervisor_queries': 2}
+                for i in range(6)]
+            with patch('scripts.analyze_native_task_runtime.verify', return_value={'expected_episodes': 12}), \
+                    patch('scripts.analyze_native_task_runtime.episode_directory', return_value=stage), \
+                    patch('scripts.analyze_native_task_runtime.audit_episode', side_effect=rows):
+                result = analyze(run, 'dev')
+            self.assertTrue(result['checks']['public_tasks'])
+            self.assertTrue(result['checks']['candidate_executions'])
+            self.assertFalse(result['engineering_accepted'])
+            rows[0]['job_statuses'] = {'DONE': 1}
+            with patch('scripts.analyze_native_task_runtime.verify', return_value={'expected_episodes': 12}), \
+                    patch('scripts.analyze_native_task_runtime.episode_directory', return_value=stage), \
+                    patch('scripts.analyze_native_task_runtime.audit_episode', side_effect=rows):
+                self.assertTrue(analyze(run, 'dev')['engineering_accepted'])
 
 
 if __name__ == '__main__':
