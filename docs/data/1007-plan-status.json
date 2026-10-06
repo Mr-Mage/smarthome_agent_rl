@@ -234,7 +234,7 @@
       "archive_sha256": "dfa0efb46979371be1b9190c0b9a8ab1b6079a229fe21ce53941c0df813b9a26"
     },
     "N67": {
-      "status": "running_public_goal_diagnosis",
+      "status": "failed_not_admitted",
       "source_commit": "3e019a4",
       "config": "configs/public-goal-diagnosis.json",
       "evidence": "runs/public-goal-diagnosis/n67-v1/",
@@ -242,6 +242,13 @@
       "actor_seeds": [42, 43, 44],
       "records": 360,
       "acceptance_before_inference": "14 server checks; full303,302 passed,one environment skip",
+      "valid_proposals": 207,
+      "review_all_yes": 84,
+      "manual": {"passed": 6, "failed": 30},
+      "acceptance": "16 specialized checks; full305,304 passed,one skip;374 original artifacts and360 HTTP records verified; semantic gates failed",
+      "ready_for_native_integration": false,
+      "cost": {"extractor_requests": 360, "extractor_tokens": 186987, "reviewer_requests": 207, "reviewer_tokens": 166698, "probe_requests": 4, "probe_tokens": 88, "wall_seconds": 188.80, "reserved_h100_gpu_seconds": 755.16},
+      "archive_sha256": "97457dcaeb92ca0d6b5b1db17598ba5aadce65cb9fc663f5950c784fac9fba99",
       "scope": "Separate public goal proposals and graph diagnosis only; no ReAct changes,Task completion,training or new benchmark"
     },
     "N65": {
