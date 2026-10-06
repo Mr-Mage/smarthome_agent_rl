@@ -69,9 +69,12 @@ class Scheduler:
         if native_call:
             receipt = self.trace.call(native_call['tool'], native_call['args'], task_id=task_id,
                                       workflow_id=workflow.workflow_id, parent_step=job_id)
-            response = receipt.response or {}
-            registered = not receipt.error and response.get('status', {}).get('code') == 200
-            external_id = response.get('data', {}).get('workflow_id')
+            response = receipt.response if isinstance(receipt.response, dict) else {}
+            status, data = response.get('status'), response.get('data')
+            registered = not receipt.error and isinstance(status, dict) and status.get('code') == 200
+            external_id = data.get('workflow_id') if isinstance(data, dict) else None
+            if not isinstance(external_id, str) or not external_id:
+                external_id = None
             with self.store.transaction() as db:
                 wf, revision = self.store.get('workflow', workflow.workflow_id, db=db)
                 job, jr = self.store.get('job', job_id, db=db)

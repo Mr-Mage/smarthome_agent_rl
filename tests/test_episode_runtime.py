@@ -127,6 +127,20 @@ class EpisodeRuntimeTests(unittest.TestCase):
         self.assertEqual(sum(tool == 'schedule_workflow' for tool, _ in self.calls), 1)
         self.assertTrue(self.runtime.store.list('job')[0]['registration_uncertain'])
 
+    def test_null_data_native_rejection_is_preserved_and_durable(self):
+        original = self.runtime.raw_dispatch
+        rejection = {'status': {'code': 400}, 'data': None, 'error': {'type': 'HTTP_ERROR'}}
+        def rejected(tool, arguments):
+            if tool == 'schedule_workflow':
+                return copy.deepcopy(rejection)
+            return original(tool, arguments)
+        self.runtime.raw_dispatch = rejected
+        self.assertEqual(self.register(), rejection)
+        self.assertEqual(self.runtime.store.list('job')[0]['status'], 'SCHEDULED')
+        self.assertEqual(self.runtime.store.list('workflow')[0]['evidence'][-1]['kind'], 'registration')
+        self.assertEqual(self.complete()[0]['status'], 'UNVERIFIED')
+        self.assertEqual(len(self.actual), len(self.runtime.trace.invocations))
+
     def test_wrong_device_id_cannot_verify_intention(self):
         self.register()
         self.bad_identity = True

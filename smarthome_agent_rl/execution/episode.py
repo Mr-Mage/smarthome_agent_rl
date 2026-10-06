@@ -162,8 +162,9 @@ class EpisodeRuntime:
     def _observe_cancellation(self, arguments, row):
         response = row.response
         external = arguments.get('workflow_id')
-        if not ok(response) or response.get('data', {}).get('workflow_id') != external or \
-                response['data'].get('status') != 'cancelled':
+        data = response.get('data') if isinstance(response, dict) else None
+        if not ok(response) or not isinstance(data, dict) or data.get('workflow_id') != external or \
+                data.get('status') != 'cancelled':
             return
         with self.store.transaction() as db:
             for job in self.store.list('job', db=db):
@@ -182,9 +183,10 @@ class EpisodeRuntime:
         if not external:
             return PostconditionResult(VerificationStatus.UNVERIFIED, reason='NATIVE_REGISTRATION_UNCERTAIN')
         receipt = self._read('get_workflow_status', {'workflow_id': external})
-        if receipt is None or receipt.response.get('data', {}).get('workflow_id') != external:
+        data = receipt.response.get('data') if receipt else None
+        if not isinstance(data, dict) or data.get('workflow_id') != external:
             return PostconditionResult(VerificationStatus.UNVERIFIED, reason='NATIVE_STATUS_UNAVAILABLE_OR_IDENTITY_MISMATCH')
-        state = receipt.response['data'].get('status')
+        state = data.get('status')
         evidence = [{'kind': 'public_native_status', 'invocation_id': receipt.invocation_id, 'status': state}]
         if state != 'completed':
             return PostconditionResult(VerificationStatus.UNVERIFIED, tuple(evidence), 'NATIVE_NOT_COMPLETED')

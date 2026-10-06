@@ -55,6 +55,18 @@ class SchedulerRuntimeTests(unittest.TestCase):
         self.assertEqual(self.executions, [])
         self.assertEqual(self.manager.get(self.task.task_id, 'u1').status, 'COMPLETED')
 
+    def test_native_rejection_with_null_data_finishes_receipt_linkage_without_replay(self):
+        self.trace.dispatch = lambda *args: {'status': {'code': 400}, 'data': None,
+                                            'error': {'type': 'HTTP_ERROR'}}
+        job = self.schedule(native_call={'tool': 'native_schedule', 'args': {'at': 10}})
+        self.assertEqual(job['status'], 'SCHEDULED')
+        self.assertTrue(job['registration_uncertain'])
+        wf = self.store.get('workflow', job['workflow_id'])[0]
+        self.assertIsNone(wf['device_workflow_id'])
+        self.assertFalse(wf['evidence'][-1]['acknowledged'])
+        self.assertEqual(wf['evidence'][-1]['invocation_id'], self.trace.invocations[0].invocation_id)
+        self.assertEqual(len(self.trace.invocations), 1)
+
     def test_two_workers_claim_a_harness_job_only_once(self):
         self.schedule()
         with ThreadPoolExecutor(2) as pool:
