@@ -1,0 +1,162 @@
+{
+  "seed": 20261005,
+  "driver_python": "/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/anaconda3/envs/agent-lightning/bin/python",
+  "model_python": "/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/anaconda3/envs/qwen36-vllm/bin/python",
+  "judge_path": "/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/zhengrj/models/Qwen3.6-35B-A3B",
+  "actor_path": "../models/Qwen3.5-9B",
+  "actor_model": "smarthome-qwen35-9b",
+  "judge_model": "smarthome-qwen36-judge",
+  "judge_port": 20300,
+  "embedding_port": 20200,
+  "actor_context": 32768,
+  "judge_context": 65536,
+  "startup_timeout": 1200,
+  "workflows": [
+    {
+      "id": 0,
+      "gpus": [
+        0
+      ],
+      "actor_port": 20000,
+      "simulator_port": 20080,
+      "gateway_port": 20181
+    },
+    {
+      "id": 1,
+      "gpus": [
+        1
+      ],
+      "actor_port": 20001,
+      "simulator_port": 20081,
+      "gateway_port": 20182
+    },
+    {
+      "id": 2,
+      "gpus": [
+        2
+      ],
+      "actor_port": 20002,
+      "simulator_port": 20082,
+      "gateway_port": 20183
+    },
+    {
+      "id": 3,
+      "gpus": [
+        3
+      ],
+      "actor_port": 20003,
+      "simulator_port": 20083,
+      "gateway_port": 20184
+    }
+  ],
+  "judge_gpus": [],
+  "model_seed": 42,
+  "engine_seed": 0,
+  "max_steps": 20,
+  "generation": {
+    "temperature": 0.7,
+    "top_p": 0.8,
+    "max_tokens": 2048,
+    "presence_penalty": 1.5,
+    "extra_body": {
+      "top_k": 20,
+      "min_p": 0.0,
+      "repetition_penalty": 1.0,
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    }
+  },
+  "judge_generation": {
+    "temperature": 0.0,
+    "max_tokens": 512,
+    "extra_body": {
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    }
+  },
+  "judge_seeds": [
+    42,
+    43,
+    44
+  ],
+  "variants_dev": [
+    "B0",
+    "G"
+  ],
+  "variants_final": [],
+  "recovery_per_action": 2,
+  "extra_queries_max": 40,
+  "slots_per_actor": 16,
+  "simulator_port_base": 21000,
+  "inference": {
+    "actor_max_num_seqs": 32,
+    "judge_max_num_seqs": 32,
+    "actor_enforce_eager": false,
+    "actor_prefix_caching": true,
+    "actor_gpu_memory_utilization": 0.8,
+    "actor_extra_args": [
+      "--gdn-prefill-backend",
+      "triton"
+    ],
+    "judge_extra_args": [
+      "--gdn-prefill-backend",
+      "triton"
+    ]
+  },
+  "kernel_cache_root": "work/concurrency-capacity/kernel-cache",
+  "dispatch_policy": "workflow-first",
+  "simulator_commit": "e202971348348e1bb56651245185ecb3a0e6b12d",
+  "manifest_dir": "configs/benchmark-v2",
+  "actor_seeds": [
+    42
+  ],
+  "primary_actor_seed": 42,
+  "variant_policies": {
+    "G": {
+      "verify": false,
+      "verification_version": 1,
+      "context_version": 0,
+      "dead_front": false,
+      "workflow_all_devices": false,
+      "time_plan": false,
+      "identifier_binding": false,
+      "start_semantics": false,
+      "recovery": false,
+      "task_spec": false,
+      "evidence_context": false
+    }
+  },
+  "judge_deployment": "external",
+  "judge_endpoint": "http://192.168.60.254:20300/v1",
+  "node_experiment": {
+    "node": "N36",
+    "reference": "B0",
+    "stages": [
+      {
+        "phase": "dev",
+        "name": "smoke",
+        "manifest": "configs/sft-pilot/calibration.json",
+        "variants": [
+          "B0",
+          "G"
+        ],
+        "actor_seeds": [
+          42
+        ]
+      }
+    ],
+    "gates": {
+      "complete_episodes": 24,
+      "infrastructure_errors": 0,
+      "artifact_verified": true,
+      "model_and_pairing_identity_verified": true
+    },
+    "intervention": "Final current-code chain acceptance of unchanged B0/G; no candidate selection",
+    "statistics": "Already exposed calibration12 only, no new formal SR inference",
+    "exclusions": "None for ordinary task failures; infrastructure invalidates whole stage and retains all cost",
+    "stop_rule": "One frozen acceptance; no prompt, task or parameter changes after results",
+    "scope": "No training, unused95 reads, simulator/evaluator changes or judge restart"
+  }
+}
