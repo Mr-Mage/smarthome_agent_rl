@@ -255,7 +255,7 @@ class GuardedExecutor:
 class HarnessAgent:
     def __init__(self, llm, *, variant, max_steps, trace_fn=None, audit_fn=None,
                  repair_limit=2, query_limit=40, policy=None, token_count_fn=None):
-        if variant not in ('B0', 'B1', 'B2', 'G', 'GV', 'GC', 'Full', 'GV2', 'GC2', 'Candidate', 'GD', 'GW', 'GDW', 'TimePlan', 'GThinking', 'Teacher', 'SFT9B', 'GB', 'SFT9B_B', 'GS', 'GR', 'GTS', 'GEC'):
+        if variant not in ('B0', 'B1', 'B2', 'G', 'GV', 'GC', 'Full', 'GV2', 'GC2', 'Candidate', 'GD', 'GW', 'GDW', 'TimePlan', 'GThinking', 'Teacher', 'SFT9B', 'GB', 'SFT9B_B', 'GS', 'GR', 'GTS', 'GEC', 'RC', 'RCV'):
             raise ValueError(variant)
         policy = policy or {'verify': variant in ('GV', 'Full', 'GV2'),
             'verification_version': 2 if variant == 'GV2' else 1,
@@ -276,7 +276,8 @@ class HarnessAgent:
                 sources[filename] = hashlib.sha256((ROOT / filename).read_bytes()).hexdigest()
             self.executor = RuntimeExecutor(guard=ToolGuard(harness_schemas(tool_schemas()), contracts, power_rules),
                 adapter=SimuHomeContractAdapter(contracts, power_rules), dispatch=run_tool,
-                invocation_factory=ToolInvocation, sources=sources, query_limit=query_limit, audit_fn=audit_fn)
+                invocation_factory=ToolInvocation, sources=sources, query_limit=query_limit, audit_fn=audit_fn,
+                verify_mutations=policy.get('runtime_verify', True))
         else:
             self.executor = GuardedExecutor(verify=policy['verify'], verification_version=policy['verification_version'], audit_fn=audit_fn,
                                        repair_limit=repair_limit, query_limit=query_limit,

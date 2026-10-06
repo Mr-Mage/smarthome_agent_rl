@@ -93,7 +93,8 @@ class MutationExecutor:
         self.readback = readback or trace.call
 
     def execute(self, tool, arguments, *, contract: DeviceContract, state,
-                function_name=None, contract_args=None, task_id=None, workflow_id=None, parent_step=None):
+                function_name=None, contract_args=None, task_id=None, workflow_id=None, parent_step=None,
+                verify=True):
         name = function_name or arguments.get('function') or arguments.get('command_id') or arguments.get('attribute_id')
         action = {**copy.deepcopy(arguments), 'function': name,
                   'args': copy.deepcopy(contract_args if contract_args is not None else arguments.get('args', {}))}
@@ -114,6 +115,9 @@ class MutationExecutor:
             raise ValueError('Invalid verification query')
         linkage = {'task_id': task_id, 'workflow_id': workflow_id, 'parent_step': parent_step}
         mutation = self.trace.call(tool, arguments, **linkage)
+        if not verify:
+            return MutationResult(VerificationStatus.UNVERIFIED, mutation.invocation_id,
+                                  guard=guard.response(), verification={'reason': 'VERIFICATION_DISABLED'})
         if not query or not function.postconditions:
             return MutationResult(VerificationStatus.UNVERIFIED, mutation.invocation_id,
                                   guard=guard.response(), verification={'reason': 'VERIFICATION_UNCOVERED'})

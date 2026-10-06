@@ -18,10 +18,11 @@ def ok(response):
 
 class RuntimeExecutor:
     def __init__(self, *, guard, adapter, dispatch, invocation_factory, sources=None,
-                 query_limit=40, audit_fn=None):
+                 query_limit=40, audit_fn=None, verify_mutations=True):
         self.guard, self.adapter = guard, adapter
         self.invocation_factory = invocation_factory
         self.sources, self.query_limit, self.audit_fn = sources or {}, query_limit, audit_fn
+        self.verify_mutations = verify_mutations
         self.trace = ToolTrace(dispatch, sink=self._observe)
         self.mutations = MutationExecutor(self.trace, readback=self._readback)
         self.audit, self.actual, self.observations = [], [], []
@@ -60,6 +61,7 @@ class RuntimeExecutor:
             self.audit_fn({'proposals': self.audit, 'actual_observations': self.observations,
                 'public_semantics_source_sha256': self.sources, 'extra_queries': self.extra_queries,
                 'structured': self.structured_audit, 'tool_trace': [r.as_dict() for r in self.trace.invocations],
+                'runtime_verify': self.verify_mutations,
                 'execution_runtime': 'public-mutation-v1', 'action_lifecycle': {},
                 'context': [], 'binding': [], 'start_semantics': [],
                 'recovery_policy': None, 'task_spec': None, 'time_plan': None})
@@ -84,7 +86,7 @@ class RuntimeExecutor:
                     raise GuardError('capability', 'Public device identity differs', reason_code='PREQUERY_IDENTITY_MISMATCH')
                 contract, name, args = self.adapter.build(tool, arguments, state)
                 result = self.mutations.execute(tool, arguments, contract=contract, state=state,
-                    function_name=name, contract_args=args, parent_step=str(self.turn))
+                    function_name=name, contract_args=args, parent_step=str(self.turn), verify=self.verify_mutations)
                 record['contract'] = result.guard
                 record['uncovered'] = result.guard.get('uncovered', [])
                 record['mutation'] = result.as_dict()
@@ -139,16 +141,20 @@ class RuntimeExecutor:
 
     def _check_workflow(self, arguments, record):
         structures = {}
+        queried = False
         for step in arguments['steps']:
             device = step['args']['device_id']
-            if device not in structures:
+            if not queried:
+                queried = True
                 row = self._readback('get_device_structure', {'device_id': device})
-                if row is None or row.error or not ok(row.response):
-                    raise GuardError('capability', 'Workflow capability unavailable')
-                structures[device] = row.response['data']
-                if structures[device].get('device_id') != device:
-                    raise GuardError('capability', 'Workflow device identity differs')
+                if row is not None and not row.error and ok(row.response):
+                    structures[device] = row.response['data']
+                    if structures[device].get('device_id') != device:
+                        raise GuardError('capability', 'Workflow device identity differs')
             # Validate static API capability only. Current state must not be
             # substituted for the state at scheduled execution time.
-            record['uncovered'].extend(self.guard.capability(step['tool'], step['args'], structures[device], state=False))
+            if device in structures:
+                record['uncovered'].extend(self.guard.capability(step['tool'], step['args'], structures[device], state=False))
+            else:
+                record['uncovered'].append('workflow_device_not_queried:' + device)
         record['uncovered'].append('future_state_preconditions')

@@ -1,0 +1,237 @@
+{
+  "seed": 20261005,
+  "driver_python": "/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/anaconda3/envs/agent-lightning/bin/python",
+  "model_python": "/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/anaconda3/envs/qwen36-vllm/bin/python",
+  "judge_path": "/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/zhengrj/models/Qwen3.6-35B-A3B",
+  "actor_path": "../models/Qwen3.5-9B",
+  "actor_model": "smarthome-qwen35-9b",
+  "judge_model": "smarthome-qwen36-judge",
+  "judge_port": 20300,
+  "embedding_port": 20200,
+  "actor_context": 32768,
+  "judge_context": 65536,
+  "startup_timeout": 1200,
+  "workflows": [
+    {
+      "id": 0,
+      "gpus": [
+        0
+      ],
+      "actor_port": 20000,
+      "simulator_port": 20080,
+      "gateway_port": 20181
+    },
+    {
+      "id": 1,
+      "gpus": [
+        1
+      ],
+      "actor_port": 20001,
+      "simulator_port": 20081,
+      "gateway_port": 20182
+    },
+    {
+      "id": 2,
+      "gpus": [
+        2
+      ],
+      "actor_port": 20002,
+      "simulator_port": 20082,
+      "gateway_port": 20183
+    },
+    {
+      "id": 3,
+      "gpus": [
+        3
+      ],
+      "actor_port": 20003,
+      "simulator_port": 20083,
+      "gateway_port": 20184
+    }
+  ],
+  "judge_gpus": [],
+  "model_seed": 42,
+  "engine_seed": 0,
+  "max_steps": 20,
+  "generation": {
+    "temperature": 0.7,
+    "top_p": 0.8,
+    "max_tokens": 2048,
+    "presence_penalty": 1.5,
+    "extra_body": {
+      "top_k": 20,
+      "min_p": 0.0,
+      "repetition_penalty": 1.0,
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    }
+  },
+  "judge_generation": {
+    "temperature": 0.0,
+    "max_tokens": 512,
+    "extra_body": {
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    }
+  },
+  "judge_seeds": [
+    42,
+    43,
+    44
+  ],
+  "variants_dev": [
+    "G",
+    "RC",
+    "RCV",
+    "B0"
+  ],
+  "variants_final": [],
+  "recovery_per_action": 2,
+  "extra_queries_max": 40,
+  "slots_per_actor": 16,
+  "simulator_port_base": 21000,
+  "inference": {
+    "actor_max_num_seqs": 32,
+    "judge_max_num_seqs": 32,
+    "actor_enforce_eager": false,
+    "actor_prefix_caching": true,
+    "actor_gpu_memory_utilization": 0.8,
+    "actor_extra_args": [
+      "--gdn-prefill-backend",
+      "triton"
+    ],
+    "judge_extra_args": [
+      "--gdn-prefill-backend",
+      "triton"
+    ]
+  },
+  "kernel_cache_root": "work/concurrency-capacity/kernel-cache",
+  "dispatch_policy": "workflow-first",
+  "simulator_commit": "e202971348348e1bb56651245185ecb3a0e6b12d",
+  "manifest_dir": "configs/benchmark-v2",
+  "actor_seeds": [
+    42,
+    43,
+    44
+  ],
+  "primary_actor_seed": 42,
+  "variant_policies": {
+    "G": {
+      "verify": false,
+      "verification_version": 1,
+      "context_version": 0,
+      "dead_front": false,
+      "workflow_all_devices": false,
+      "time_plan": false,
+      "identifier_binding": false,
+      "start_semantics": false,
+      "recovery": false,
+      "task_spec": false,
+      "evidence_context": false
+    },
+    "RC": {
+      "verify": false,
+      "verification_version": 1,
+      "context_version": 0,
+      "dead_front": false,
+      "workflow_all_devices": false,
+      "time_plan": false,
+      "identifier_binding": false,
+      "start_semantics": false,
+      "recovery": false,
+      "task_spec": false,
+      "evidence_context": false,
+      "execution_runtime": true,
+      "runtime_verify": false
+    },
+    "RCV": {
+      "verify": false,
+      "verification_version": 1,
+      "context_version": 0,
+      "dead_front": false,
+      "workflow_all_devices": false,
+      "time_plan": false,
+      "identifier_binding": false,
+      "start_semantics": false,
+      "recovery": false,
+      "task_spec": false,
+      "evidence_context": false,
+      "execution_runtime": true,
+      "runtime_verify": true
+    }
+  },
+  "judge_deployment": "external",
+  "judge_endpoint": "http://192.168.60.254:20300/v1",
+  "node_experiment": {
+    "node": "N47",
+    "reference": "G",
+    "stages": [
+      {
+        "phase": "dev",
+        "name": "smoke",
+        "manifest": "configs/sft-pilot/calibration.json",
+        "variants": [
+          "G",
+          "RC",
+          "RCV",
+          "B0"
+        ],
+        "actor_seeds": [
+          42
+        ]
+      },
+      {
+        "phase": "dev",
+        "name": "dev",
+        "manifest": "configs/observation-binding/dev.json",
+        "variants": [
+          "G",
+          "RC",
+          "RCV",
+          "B0"
+        ]
+      }
+    ],
+    "gates": {
+      "smoke": {
+        "executed_mutations_min": 1,
+        "uncovered_episode_ratio_max": 0.25
+      },
+      "sr_delta_min": 0,
+      "illegal_execution_max": "G count",
+      "actor_token_ratio_max": 1.1
+    },
+    "intervention": "G frozen legacy Guard; RC changes only tool boundary to declarative contracts (unknown public precondition blocks) and immutable trace; RCV adds public read-back verification to RC. B0 unchanged upstream anchor. No semantic verifier, reflection, prompt rewrite, automatic retries, scheduling changes or training.",
+    "primary_metrics": [
+      "official Task SR",
+      "illegal executions",
+      "actor tokens all episodes"
+    ],
+    "diagnostics": [
+      "contract rejection reasons and uncovered episodes",
+      "UNVERIFIED / actually dispatched mutations in RC/RCV (not measured for G/B0)",
+      "verification success/failure/pending",
+      "query budget failures",
+      "all tool/query/actor/judge calls and latency",
+      "RCV-RC paired seed42"
+    ],
+    "statistics": "Seed42 paired primary within tasks, seeds43/44 descriptive and task-cluster CI. Four arms keep task actor affinity. Main G comparisons retain Holm correction; RCV-RC is predeclared mechanism comparison, not independent holdout.",
+    "exclusions": "None; failed and unfinished tasks retained. Infrastructure invalidates whole stage, no selective reruns. No silent filtering of unknown-contract device types.",
+    "stop_rule": "One frozen smoke and, only if coverage gate passes, one full 24-task paired diagnostic with three seeds. If uncovered-precondition episodes exceed 25% in RCV smoke, or no mutation dispatch/audit missing, stop before dev and retain G. Do not rewrite contracts or thresholds using this run. Default G retained after pilot even if gates pass; larger validation would need new frozen protocol.",
+    "scope": "48 calibration episodes plus 288 development episodes if gate passes, all previously exposed official single-turn tasks. Unused95 sealed; no new benchmark, SFT/RL or multi-session tasks.",
+    "budget": {
+      "actor_gpus": 4,
+      "slots": 64,
+      "max_steps": 20,
+      "auxiliary_queries_per_episode": 40,
+      "actor_seeds": [
+        42,
+        43,
+        44
+      ],
+      "judge": "permanent external A800 Qwen3.6-35B-A3B"
+    }
+  }
+}

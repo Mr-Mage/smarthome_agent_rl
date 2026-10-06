@@ -94,6 +94,14 @@ class RuntimeHarnessTests(unittest.TestCase):
         self.assertFalse(result['harness_verification']['future_success_verified'])
         self.assertEqual([t for t, _ in self.calls], ['get_device_structure', 'schedule_workflow'])
 
+    def test_contract_only_arm_does_not_read_back_or_claim_success(self):
+        executor = self.executor()
+        executor.verify_mutations = False
+        result = executor.execute('execute_command', self.action)
+        self.assertEqual(result['harness_verification']['reason'], 'VERIFICATION_DISABLED')
+        self.assertIsNone(result['harness_verification']['verified'])
+        self.assertEqual([t for t, _ in self.calls], ['get_device_structure', 'execute_command'])
+
 
 if __name__ == '__main__':
     unittest.main()

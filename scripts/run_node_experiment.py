@@ -133,6 +133,12 @@ def main():
             completion = json.loads((directory / 'completion.json').read_text())
             write(run / (name + '-resources.json'), {'allocated_actor_gpu_seconds': 4 * completion['elapsed_seconds'],
                 'scope': 'Four reserved H100 actors × suite elapsed; not active GPU compute or monetary cost'})
+            if config['node_experiment']['node'] == 'N47':
+                command('analyze_runtime_ablation.py', '--run', args.run_dir, '--stage', name)
+                gate = json.loads((run / (name + '-runtime-gate.json')).read_text())
+                if name == 'smoke' and not gate['can_continue']:
+                    state('stopped_by_gate', gate=gate, reference_retained='G')
+                    return
         if config['node_experiment']['node'] == 'N15':
             write(run / 'selection.json', select_guard(reports['dev'], config['node_experiment']['gates']))
         elif config['node_experiment']['node'] == 'N16':
