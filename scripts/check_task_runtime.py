@@ -14,7 +14,8 @@ TEST_MODULES = ('tests.test_device_contract', 'tests.test_execution_runtime',
                 'tests.test_task_runtime', 'tests.test_runtime_contract_adapter',
                 'tests.test_scheduler_runtime', 'tests.test_runtime_harness', 'tests.test_runtime_simuhome',
                 'tests.test_task_conflicts', 'tests.test_homebench_adapter', 'tests.test_public_benchmark_runner',
-                'tests.test_instruction_serialization', 'tests.test_homebench_dialect')
+                'tests.test_instruction_serialization', 'tests.test_homebench_dialect',
+                'tests.test_seed_replication_budget')
 
 
 def main():

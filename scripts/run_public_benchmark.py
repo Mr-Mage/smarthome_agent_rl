@@ -29,12 +29,14 @@ def actors(config, directory):
     lifecycle = {'started_unix': time.time(), 'error': None, 'ready_seconds': None}
     save(directory/'config.json', config)
     try:
-        if sorted(a['gpu'] for a in config['actors']) != [0, 1, 2, 3]:
-            raise ValueError('Expected four independent GPU actors')
+        assigned = [a['gpu'] for a in config['actors']]
+        if not assigned or len(set(assigned)) != len(assigned) or any(g not in (0, 1, 2, 3) for g in assigned):
+            raise ValueError('Actors require a disjoint, explicit H100 subset')
         allocation = subprocess.check_output(['nvidia-smi', '--query-gpu=index,memory.used',
                                                '--format=csv,noheader,nounits'], text=True)
         lifecycle['initial_gpu_memory'] = allocation
-        if any(int(line.split(',')[1]) > 256 for line in allocation.strip().splitlines()):
+        if any(int(line.split(',')[1]) > 256 for line in allocation.strip().splitlines()
+               if int(line.split(',')[0]) in assigned):
             raise RuntimeError('GPUs occupied; preserve other processes')
         for actor in config['actors']:
             parsed = urlparse(actor['endpoint'])
@@ -78,7 +80,8 @@ def actors(config, directory):
                         result = subprocess.run(['nvidia-smi',
                             '--query-gpu=index,utilization.gpu,memory.used,memory.total',
                             '--format=csv,noheader,nounits'], capture_output=True, text=True, timeout=10, check=True)
-                        sample['gpus'] = result.stdout.strip().splitlines()
+                        sample['gpus'] = [line for line in result.stdout.strip().splitlines()
+                                          if int(line.split(',')[0]) in assigned]
                     except Exception as exc:
                         sample['error'] = str(exc)
                     log.write(json.dumps(sample)+'\n')
