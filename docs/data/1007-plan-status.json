@@ -3,6 +3,18 @@
   "scope": "Latest user confirmation: official single-turn harness diagnostics/ablations only; no SFT/RL, new benchmark or multi-session experiments.",
   "default": "Qwen3.5-9B + G; permanent baseline tag baseline/1007-9b-g",
   "nodes": {
+    "N71": {
+      "status": "public_preaction_context_engineering_verified",
+      "source_commit": "a55b8a0",
+      "config": "configs/public-semantic-context.json",
+      "evidence": "runs/task-runtime/n71-server-v1/",
+      "acceptance": "20 specialized server checks;full331,330 passed,one skip;native ReAct two calls and pre-dispatch context verified locally",
+      "model_requests": 0,
+      "tokens": 0,
+      "reserved_gpu_seconds": 0,
+      "archive_sha256": "5e7632571b72e26711be3a5ad1d821d626ab682fe3e1c7c54b533b88491bafd8",
+      "scope": "Optional semantic_context_version1;no added queries,automatic deny or default adoption;not calibrated verifier or Task completion"
+    },
     "N70": {
       "status": "failed_not_admitted",
       "implementation_commit": "a234bc3",
@@ -422,8 +434,8 @@
     "task_conflict": "N68 native conflict engineering verified;N69 official72 episodes verified34 claims and19 HTTP contexts,but no real conflict and no attributed SR benefit;report only,no arbitration",
     "scheduler_official_runner": "N63 remains failed; independent GTME accepted in N66 official720 episodes,64 jobs verified; no stable SR benefit,G retained",
     "timed_observation": "N66 public response events and final readback clock receipts exercised; late state remains UNKNOWN,no replay or automatic time advancement",
-    "native_user_goal_conditions": "unimplemented;N67 parser failed admission;N66/N69 Task remain WAITING,action intentions do not prove user goals",
+    "native_user_goal_conditions": "unimplemented;N67/N70 parsers failed admission;N66/N69 Task remain WAITING,action intentions do not prove user goals",
     "common_simuhome_adapter": "N61 unified entry and public actor boundary verified; native protocols and scores retained"
   },
-  "benefit_acceptance": "not satisfied; no stable benefit on two public benchmarks. N66 CI crosses zero;N67 semantic admission failed;N69 SR flips all without candidate context and tiny stratified interval degenerates. G retained"
+  "benefit_acceptance": "not satisfied; no stable benefit on two public benchmarks. N66 CI crosses zero;N67/N70 semantic admission failed;N69 SR flips all without candidate context and tiny stratified interval degenerates. G retained"
 }
