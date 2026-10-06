@@ -153,14 +153,26 @@
       "evidence": "runs/homebench/n56-seed{43,44}-calibration-v1/"
     },
     "N57": {
-      "status": "wire_calibration_running",
+      "status": "wire_calibrations_passed_full_running",
       "source_commit": "08963a1",
       "seeds": [
         43,
         44
       ],
       "config": "configs/homebench-wire-seed{42,43,44}.json",
-      "acceptance": "87 server tests passed; full254 one skip; no online conclusion yet"
+      "acceptance": "87 server tests passed; full254 one skip; no online conclusion yet",
+      "gate_uncovered_per_94": {
+        "seed43": 12,
+        "seed44": 22
+      },
+      "failed_starts": "full-v1 port preflight TIME_WAIT; retained before any actor load"
+    },
+    "N58": {
+      "status": "timed_observation_engineering_verified",
+      "source_commit": "eae2237",
+      "evidence": "runs/task-runtime/n58-server-v1/",
+      "acceptance": "90 server tests passed; full257 one skip; no online Task SR claim",
+      "archive_sha256": "6f9396e14a954a68c2828d646f0d8c0bf083f5d718b59ac64eed8b11df50cbea"
     }
   },
   "benchmark_status": {
@@ -171,7 +183,8 @@
   "remaining_engineering": {
     "persistent_trigger": "not implemented",
     "task_conflict": "implemented; reports only, no arbitration or benchmark integration",
-    "scheduler_official_runner": "not integrated"
+    "scheduler_official_runner": "not integrated",
+    "timed_observation": "N58 requires trusted adapter observation time; official runner integration pending"
   },
   "benefit_acceptance": "not satisfied; runtime unit/integration tests do not establish stable benefit on two public benchmarks"
 }
