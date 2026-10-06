@@ -1,0 +1,13 @@
+{
+  "schema": "homebench-dialect-diagnostic-v1",
+  "scope": "additional read-only diagnostic on exposed raw model outputs, not independent online acceptance",
+  "source_commit": "6d650caa19ba061e8790fc0f78f506169d029e4e",
+  "input_arms": ["F"],
+  "baseline": "FG with unchanged Python literal Guard",
+  "additional": "F plus public string enum symbol binding then the same Guard",
+  "binding_rule": "Only a bare AST Name matching a declared public enum for a string argument becomes that string value. No arbitrary name, numeric conversion, method renaming, quote rewriting or label-derived rule.",
+  "exclude_rule": "none; keep failed requests and every regression",
+  "metrics": ["native_exact_match", "native_micro_f1", "paired_wins_losses", "public_bindings", "rejections"],
+  "actor_calls": 0,
+  "judge_calls": 0
+}

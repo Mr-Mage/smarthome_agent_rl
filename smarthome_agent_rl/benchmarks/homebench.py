@@ -126,7 +126,7 @@ class HomeBenchAdapter:
         self._contracts[hid]=result
         return result
 
-    def guard(self,task_id,prediction):
+    def guard(self,task_id,prediction,*,symbolic_enums=False):
         contract,shapes,_=self.contract(task_id)
         bodies=re.findall(r'\{(.*?)\}',prediction,re.S)
         expression='['+','.join(bodies)+']'
@@ -137,6 +137,7 @@ class HomeBenchAdapter:
         if not bodies:
             return {'prediction':prediction,'rejections':[],'uncovered':['INSTRUCTION_FORMAT_UNCOVERED']}
         results,rejections=[],[]
+        bindings=[]
         for index,node in enumerate(nodes):
             segment=ast.get_source_segment(expression,node)
             reason=None
@@ -151,11 +152,19 @@ class HomeBenchAdapter:
                 try:
                     if len(node.args)>len(keys):
                         raise ValueError('Too many positional arguments')
-                    values={key:ast.literal_eval(value) for key,value in zip(keys,node.args)}
+                    def decode(key,value):
+                        declaration=contract.functions[name].arguments.get(key)
+                        if (symbolic_enums and isinstance(value,ast.Name) and declaration is not None
+                                and declaration.type=='string' and value.id in declaration.enum):
+                            bindings.append({'index':index,'argument':key,'token':value.id,
+                                             'value':value.id,'public_enum':list(declaration.enum)})
+                            return value.id
+                        return ast.literal_eval(value)
+                    values={key:decode(key,value) for key,value in zip(keys,node.args)}
                     for kw in node.keywords:
                         if kw.arg is None or kw.arg in values:
                             raise ValueError('Duplicate/expanded keyword argument')
-                        values[kw.arg]=ast.literal_eval(kw.value)
+                        values[kw.arg]=decode(kw.arg,kw.value)
                     for key,value in list(values.items()):
                         if (name,key) in shapes:
                             if not isinstance(value,tuple) or len(value)!=shapes[(name,key)] or any(type(v) is not int for v in value):
@@ -171,7 +180,10 @@ class HomeBenchAdapter:
                 results.append('error_input')
             else:
                 results.append(segment)
-        return {'prediction':'{'+','.join(results)+'}','rejections':rejections,'uncovered':[]}
+        result={'prediction':'{'+','.join(results)+'}','rejections':rejections,'uncovered':[]}
+        if symbolic_enums:
+            result['symbolic_bindings']=bindings
+        return result
 
     def score(self,task_id,prediction):
         return native_counts(prediction,self._cases[task_id]['output'])
