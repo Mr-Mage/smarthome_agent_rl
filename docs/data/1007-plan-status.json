@@ -114,17 +114,25 @@
       "evidence": "runs/homebench/n53-calibration-v1/evidence-receipt.json"
     },
     "N54": {
-      "status": "full_public_snapshot_running",
+      "status": "full_public_snapshot_verified",
       "tasks": 17366,
       "source_commit": "9098ec7",
       "config": "configs/homebench-format-ablation.json",
-      "evidence": "runs/homebench/n54-full-v1/report.json",
-      "scope": "includes94 exposed calibration tasks; not independent holdout"
+      "evidence": "runs/homebench/n54-full-v1/evidence-receipt.json",
+      "scope": "includes94 exposed calibration tasks; not independent holdout",
+      "exact_matches": {
+        "B0": 4748,
+        "B1": 4418,
+        "B2": 5196,
+        "F": 8656,
+        "FG": 9538
+      },
+      "archive_sha256": "9b6b36fbd71fb7ebe2e884fbcdddbfaad4c733a9b458343c25c1a286c41b887c"
     }
   },
   "benchmark_status": {
     "SimuHome": "existing official single-turn benchmark; reused exposed development tasks",
-    "HomeBench": "N53 independent serialization engineering gate passed; N54 full17366 snapshot running; no completed full result yet",
+    "HomeBench": "N54 full17366 snapshot verified; representation/Guard gains; multi-seed stability not accepted",
     "SAGE": "read-only source audit only; no new environment or evaluation this round"
   },
   "remaining_engineering": {
