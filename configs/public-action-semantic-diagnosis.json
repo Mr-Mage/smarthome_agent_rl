@@ -64,7 +64,7 @@
   "proposals": 38,
   "review_slots": 16,
   "valid_ratio_min": 0.95,
-  "inputs_sha256": "PREFLIGHT_REQUIRED",
+  "inputs_sha256": "a322aa6d86c637a08fdb494b6f4b6b06abc0af725b5905d09ab2327ddaed5b4d",
   "intervention": "2x2 paired9B/35B x legacy/public preaction context; unchanged short review prompt and schema in all arms",
   "selection": "Every Guard-admitted real mutation attempt from retained G calibration12x3seeds; include failed tool outcomes; no score-based selection or fabricated actions",
   "metrics": [
