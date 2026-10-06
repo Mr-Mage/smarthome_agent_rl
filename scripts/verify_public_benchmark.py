@@ -10,6 +10,7 @@ sys.path.insert(0, str(ROOT))
 from smarthome_agent_rl.benchmarks.homebench import HomeBenchAdapter
 from smarthome_agent_rl.benchmarks.runner import digest, messages_for, select_tasks, summarize
 from smarthome_agent_rl.benchmarks.instructions import serialize_instructions
+from smarthome_agent_rl.benchmarks.wire import compile_wire
 
 
 def verify(directory, source, lock=None):
@@ -49,13 +50,16 @@ def verify(directory, source, lock=None):
             raise AssertionError('Cost/failure evidence differs')
         if arm not in ('B0', 'B1'):
             prediction = call['text']
-            if arm in ('F', 'FG'):
+            if arm in ('F', 'FG', 'W', 'WG'):
                 formatted = serialize_instructions(prediction)
+                if arm in ('W', 'WG'):
+                    _, shapes, spec = adapter.contract(task_id)
+                    formatted = compile_wire(prediction, spec['functions'], shapes)
                 if row['format'] != formatted:
                     raise AssertionError('Format replay differs')
                 prediction = formatted['prediction']
-            guarded = adapter.guard(task_id, prediction) if arm != 'F' else {'prediction': prediction}
-            if row['prediction'] != guarded['prediction'] or (arm != 'F' and row['guard'] != guarded):
+            guarded = adapter.guard(task_id, prediction) if arm not in ('F', 'W') else {'prediction': prediction}
+            if row['prediction'] != guarded['prediction'] or (arm not in ('F', 'W') and row['guard'] != guarded):
                 raise AssertionError('Guard replay differs')
             if row['request_receipt'] != index[(task_id, 'B1')]['request_receipt']:
                 raise AssertionError('B2 did not share B1 request')

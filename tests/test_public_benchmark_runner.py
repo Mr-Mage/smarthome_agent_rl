@@ -121,6 +121,20 @@ class PublicRunnerTests(unittest.TestCase):
         self.assertEqual(report['engineering_gate']['arm'], 'FG')
         self.assertTrue(verify(self.output, self.root, {'files': self.files, 'commit': 'fixture'})['verified'])
 
+    def test_wire_arm_compiles_mapping_and_keeps_legacy_formatter_failure(self):
+        self.config.update(extra_arms=['F','FG','W','WG'],engineering_gate_arm='WG')
+        def mapping(*args):
+            value=self.request(*args)
+            value['text']='{"garage.light.turn_on":null}'
+            return value
+        report=run(self.adapter,self.config,self.output,{'kind':'full'},mapping)
+        self.assertEqual(report['cost']['actual_actor_requests'],2)
+        self.assertEqual(report['arms']['F']['format_uncovered_episodes'],1)
+        self.assertEqual(report['arms']['W']['format_uncovered_episodes'],0)
+        self.assertEqual(report['arms']['WG']['exact_match'],1)
+        self.assertTrue(report['engineering_gate']['passed'])
+        self.assertTrue(verify(self.output,self.root,{'files':self.files,'commit':'fixture'})['verified'])
+
     def test_evidence_verifier_rejects_answer_injected_request(self):
         run(self.adapter, self.config, self.output, {'kind': 'full'}, self.request)
         lock = {'files': self.files, 'commit': 'fixture'}

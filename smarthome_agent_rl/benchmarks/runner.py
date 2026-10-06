@@ -10,6 +10,7 @@ import urllib.request
 
 from .homebench import aggregate
 from .instructions import serialize_instructions
+from .wire import compile_wire
 
 
 def digest(value):
@@ -119,7 +120,7 @@ def summarize(records, total_tasks, seconds, arm_names=('B0', 'B1', 'B2')):
     complete_usage = [r['usage'] for r in actual if valid_usage(r['usage'])]
     changes = {}
     indexed = {(r['task_id'], r['arm']): r for r in records}
-    for left, right in [('B0', 'B1'), ('B1', 'B2'), ('B1', 'F'), ('F', 'FG')]:
+    for left, right in [('B0', 'B1'), ('B1', 'B2'), ('B1', 'F'), ('F', 'FG'), ('F', 'W'), ('W', 'WG')]:
         if left not in arm_names or right not in arm_names:
             continue
         pairs = [(indexed[(t, left)], indexed[(t, right)]) for t, a in indexed
@@ -152,7 +153,7 @@ def run(adapter, config, output, selection, request_fn=completion):
     start = time.monotonic()
     ids = select_tasks(adapter, selection)
     extra_arms = config.get('extra_arms', [])
-    if len(set(extra_arms)) != len(extra_arms) or any(a not in ('F', 'FG') for a in extra_arms):
+    if len(set(extra_arms)) != len(extra_arms) or any(a not in ('F', 'FG', 'W', 'WG') for a in extra_arms):
         raise ValueError('Unknown/duplicate additional arm')
     arm_names = ('B0', 'B1', 'B2')+tuple(extra_arms)
     if config.get('engineering_gate_arm', 'B2') not in arm_names:
@@ -204,13 +205,17 @@ def run(adapter, config, output, selection, request_fn=completion):
                 format_started = time.monotonic()
                 formatted = serialize_instructions(call['text'])
                 for arm_name in extra_arms:
-                    result = {'prediction': formatted['prediction'], 'rejections': [], 'uncovered': []}
-                    if arm_name == 'FG':
-                        result = adapter.guard(task_id, formatted['prediction'])
-                    extra = {**row, 'arm': arm_name, 'prediction': result['prediction'], 'format': formatted,
+                    format_result = formatted
+                    if arm_name in ('W', 'WG'):
+                        _, shapes, spec = adapter.contract(task_id)
+                        format_result = compile_wire(call['text'], spec['functions'], shapes)
+                    result = {'prediction': format_result['prediction'], 'rejections': [], 'uncovered': []}
+                    if arm_name in ('FG', 'WG'):
+                        result = adapter.guard(task_id, format_result['prediction'])
+                    extra = {**row, 'arm': arm_name, 'prediction': result['prediction'], 'format': format_result,
                              'format_seconds': time.monotonic()-format_started, 'shared_request': 'B1',
                              'score': adapter.score(task_id, result['prediction'])}
-                    if arm_name == 'FG':
+                    if arm_name in ('FG', 'WG'):
                         extra['guard'] = result
                     if call['error']:
                         extra['score']['exact_match'] = False
