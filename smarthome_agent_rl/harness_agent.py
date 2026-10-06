@@ -221,7 +221,7 @@ class GuardedExecutor:
 class HarnessAgent:
     def __init__(self, llm, *, variant, max_steps, trace_fn=None, audit_fn=None,
                  repair_limit=2, query_limit=40, policy=None, token_count_fn=None):
-        if variant not in ('G', 'GV', 'GC', 'Full', 'GV2', 'GC2', 'Candidate', 'GD', 'GW', 'GDW', 'TimePlan', 'GThinking', 'Teacher', 'SFT9B', 'GB', 'SFT9B_B', 'GS', 'GR', 'GTS'):
+        if variant not in ('G', 'GV', 'GC', 'Full', 'GV2', 'GC2', 'Candidate', 'GD', 'GW', 'GDW', 'TimePlan', 'GThinking', 'Teacher', 'SFT9B', 'GB', 'SFT9B_B', 'GS', 'GR', 'GTS', 'GEC'):
             raise ValueError(variant)
         policy = policy or {'verify': variant in ('GV', 'Full', 'GV2'),
             'verification_version': 2 if variant == 'GV2' else 1,
@@ -232,6 +232,13 @@ class HarnessAgent:
                                        workflow_all_devices=policy.get('workflow_all_devices', False),
                                        recovery=policy.get('recovery', variant == 'GR'),
                                        recovery_total_limit=policy.get('recovery_total_limit', 6))
+        if policy.get('evidence_context', variant == 'GEC'):
+            if any(policy.get(key) for key in ('verify', 'context_version', 'time_plan',
+                    'identifier_binding', 'start_semantics', 'recovery', 'task_spec',
+                    'dead_front', 'workflow_all_devices')):
+                raise ValueError('Evidence context must isolate prompt representation from other interventions')
+            from smarthome_agent_rl.evidence_context import EvidenceContextProvider
+            llm = EvidenceContextProvider(llm, self.executor, token_count_fn)
         provider = StructuredProvider(llm, finish_guard=False, recovery=False, guidance=False,
                                       audit_fn=self.executor.record_structured)
         if policy.get('time_plan'):
