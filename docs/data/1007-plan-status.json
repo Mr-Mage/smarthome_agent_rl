@@ -221,6 +221,14 @@
       "evidence": "runs/homebench/n59-n54-cost-v2/report.json",
       "scope": "completed public snapshot cost only; not production SLO"
     },
+    "N62": {
+      "status": "native_task_scheduler_engineering_integrated",
+      "source_commit": "9ce0ac7",
+      "acceptance": "34 native/runtime checks passed; full279 one skip; original ReAct/Home virtual time and durable jobs exercised",
+      "evidence": "runs/task-runtime/n62-server-v1/report.json",
+      "scope": "optional GTM on unchanged G; no official benefit claim; user goal conditions uncovered,Task WAITING",
+      "archive_sha256": "8506559f0eb85941405e15361b0eb7965c19a099805034dbebdfd9286682ae2f"
+    },
     "N61": {
       "status": "common_native_adapter_acceptance_verified",
       "source_commit": "6c9c413",
@@ -261,8 +269,8 @@
   "remaining_engineering": {
     "persistent_trigger": "not implemented",
     "task_conflict": "implemented; reports only, no arbitration or benchmark integration",
-    "scheduler_official_runner": "not integrated",
-    "timed_observation": "N58 requires trusted adapter observation time; official runner integration pending",
+    "scheduler_official_runner": "N62 opt-in GTM attaches to ReAct and native time advancement; actual official acceptance pending",
+    "timed_observation": "N62 public clock bounds native verification; late state remains UNKNOWN; no automatic time advancement",
     "common_simuhome_adapter": "N61 unified entry and public actor boundary verified; native protocols and scores retained"
   },
   "benefit_acceptance": "not satisfied; runtime unit/integration tests do not establish stable benefit on two public benchmarks"
