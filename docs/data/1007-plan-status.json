@@ -137,6 +137,30 @@
       "exact_matches": 9584,
       "evidence": "runs/homebench/n55-dialect-full-v1/report.json",
       "default_changed": false
+    },
+    "N56": {
+      "status": "replication_calibration_failed_full_not_admitted",
+      "source_commit": "3a48e51",
+      "seeds": [
+        43,
+        44
+      ],
+      "uncovered": [
+        44,
+        36
+      ],
+      "tasks_per_seed": 94,
+      "evidence": "runs/homebench/n56-seed{43,44}-calibration-v1/"
+    },
+    "N57": {
+      "status": "wire_calibration_running",
+      "source_commit": "08963a1",
+      "seeds": [
+        43,
+        44
+      ],
+      "config": "configs/homebench-wire-seed{42,43,44}.json",
+      "acceptance": "87 server tests passed; full254 one skip; no online conclusion yet"
     }
   },
   "benchmark_status": {
