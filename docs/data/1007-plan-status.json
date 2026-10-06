@@ -242,7 +242,9 @@
       "archive_sha256": "e731d0903c90bb2d3c060d65be27ea4e186548648e5fa6344d789a7d0b94714f"
     },
     "N66": {
-      "status": "protocol_frozen_not_started",
+      "status": "running_results_provisional",
+      "source_commit": "203985f",
+      "evidence": "runs/native-event-supervision/n66-v1/",
       "config": "configs/native-event-supervision.json",
       "tasks": 120,
       "actor_seeds": [42, 43, 44],
@@ -305,7 +307,7 @@
   "remaining_engineering": {
     "persistent_trigger": "not implemented",
     "task_conflict": "implemented; reports only, no arbitration or benchmark integration",
-    "scheduler_official_runner": "N63 failed; N64 error fixes,N65 independent public-event path verified in tests; N66 official dev120 repeated comparison frozen,not started; G retained",
+    "scheduler_official_runner": "N63 failed; N64 error fixes,N65 independent public-event path verified in tests; N66 official dev120 repeated comparison running; G retained",
     "timed_observation": "N62 public clock bounds native verification; late state remains UNKNOWN; no automatic time advancement",
     "common_simuhome_adapter": "N61 unified entry and public actor boundary verified; native protocols and scores retained"
   },
