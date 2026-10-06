@@ -3,6 +3,16 @@
   "scope": "Latest user confirmation: official single-turn harness diagnostics/ablations only; no SFT/RL, new benchmark or multi-session experiments.",
   "default": "Qwen3.5-9B + G; permanent baseline tag baseline/1007-9b-g",
   "nodes": {
+    "N68": {
+      "status": "native_resource_context_engineering_verified",
+      "source_commit": "8c20fd5",
+      "fixture_fix_commit": "6caf7a3",
+      "acceptance": "28 server checks;full313,312 passed,one skip;real native ReAct received two contexts,2 opposing workflows and1 persistent conflict",
+      "evidence": "runs/task-runtime/n68-server-v2/",
+      "failed_attempts": "n68-server-v1 fixture failure;cross-filesystem collector rename failure;zero inference",
+      "archive_sha256": "e2bb017ae1234d092e667f96e2844cae5790e2b8e77540cca3b34d774fb0715e",
+      "scope": "opt-in GTMEC public fixed action targets and report-only bounded context;no native SR or user-goal proof"
+    },
     "N41": {
       "status": "baseline_frozen",
       "commit": "43ccba1"
@@ -334,7 +344,7 @@
   },
   "remaining_engineering": {
     "persistent_trigger": "not implemented",
-    "task_conflict": "implemented; reports only, no arbitration or benchmark integration",
+    "task_conflict": "N68 opt-in GTMEC native claims and bounded Agent disclosure engineering verified;reports only,no arbitration or official SR evidence yet",
     "scheduler_official_runner": "N63 remains failed; independent GTME accepted in N66 official720 episodes,64 jobs verified; no stable SR benefit,G retained",
     "timed_observation": "N66 public response events and final readback clock receipts exercised; late state remains UNKNOWN,no replay or automatic time advancement",
     "native_user_goal_conditions": "unimplemented; action intentions do not validate the public user goal,all360 runtime Task remain WAITING",
