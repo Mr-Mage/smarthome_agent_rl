@@ -1,0 +1,13 @@
+{
+  "node": "N32",
+  "mode": "offline_policy_audit",
+  "source_run": "runs/start-semantics/n28-v3",
+  "expected_episodes": 192,
+  "repair_limit": 2,
+  "total_failure_limit": 6,
+  "reference": "G",
+  "historical_negative_probe": "GS",
+  "exclusions": [],
+  "online_admission": "requires_a_reviewed_trigger_in_G_and_a_separate_frozen_paired_protocol",
+  "scope": "Identical full parameters and unchanged relevant public evidence; no automatic transport retry or mutation reconciliation. Historical decisions do not predict replanning, SR or tokens."
+}

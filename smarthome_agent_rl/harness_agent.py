@@ -15,6 +15,7 @@ from smarthome_agent_rl.guard import ToolGuard, GuardError, command_contracts, p
 from smarthome_agent_rl.structured import StructuredProvider, tool_schemas
 from smarthome_agent_rl.verification import expected_effect, expected_effect_v2, verify_effect, verify_effect_v2
 from smarthome_agent_rl.action_state import ActionLedger
+from smarthome_agent_rl.recovery import RecoveryPolicy, public_context
 
 ROOT = Path(__file__).resolve().parents[1]
 MUTATIONS = {'execute_command', 'write_attribute', 'schedule_workflow', 'cancel_workflow',
@@ -27,7 +28,8 @@ def ok(response):
 
 class GuardedExecutor:
     def __init__(self, *, verify=False, verification_version=1, repair_limit=2, query_limit=40,
-                 dead_front=False, workflow_all_devices=False, audit_fn=None, dispatch=run_tool):
+                 dead_front=False, workflow_all_devices=False, audit_fn=None, dispatch=run_tool,
+                 recovery=False, recovery_total_limit=6):
         contracts, sources = command_contracts(ROOT / 'deps/SimuHome/src/simulator/domain/clusters')
         power_rules, device_sources = public_power_rules(ROOT / 'deps/SimuHome/src/simulator/domain/devices', dead_front=dead_front)
         sources.update(device_sources)
@@ -40,6 +42,7 @@ class GuardedExecutor:
         self.audit, self.actual, self.failures, self.observations = [], [], {}, []
         self.actions = ActionLedger()
         self.active_action_id = None
+        self.recovery = RecoveryPolicy(repair_limit, recovery_total_limit) if recovery else None
         self.extra_queries, self.turn = 0, 0
         self.context_audit = []
         self.structured_audit = []
@@ -55,6 +58,7 @@ class GuardedExecutor:
                 'binding': self.binding_audit,
                 'start_semantics': self.start_semantics_audit,
                 'action_lifecycle': self.actions.snapshot(),
+                'recovery_policy': self.recovery.snapshot() if self.recovery else None,
                 'time_plan': self.time_plan.snapshot() if self.time_plan is not None else None})
 
     def record_structured(self, records):
@@ -140,7 +144,13 @@ class GuardedExecutor:
                     else:
                         record['uncovered'].append('workflow_device_not_queried:' + device)
                 record['uncovered'].append('future_state_preconditions')
+            recovery_context = None
+            if self.recovery is not None:
+                recovery_context = public_context(tool, arguments, self.observations)
+                self.recovery.check(tool, arguments, recovery_context)
             response = self.call(tool, arguments, action_id=action_id)
+            if self.recovery is not None:
+                self.recovery.observe(tool, arguments, response, recovery_context, action_id)
             if self.time_plan is not None:
                 self.time_plan.observe(tool, arguments, response)
             simulator_failed = not ok(response)
@@ -187,6 +197,9 @@ class GuardedExecutor:
             return record['response']
         except Exception as exc:
             self.actions.interrupted(action_id, exc)
+            if self.recovery is not None and self.actions.records[action_id].state == 'unknown':
+                self.recovery.observe(tool, arguments, None,
+                    public_context(tool, arguments, self.observations), action_id)
             raise
         finally:
             record['extra_queries'] = self.extra_queries - record['extra_queries_before']
@@ -198,7 +211,7 @@ class GuardedExecutor:
 class HarnessAgent:
     def __init__(self, llm, *, variant, max_steps, trace_fn=None, audit_fn=None,
                  repair_limit=2, query_limit=40, policy=None, token_count_fn=None):
-        if variant not in ('G', 'GV', 'GC', 'Full', 'GV2', 'GC2', 'Candidate', 'GD', 'GW', 'GDW', 'TimePlan', 'GThinking', 'Teacher', 'SFT9B', 'GB', 'SFT9B_B', 'GS'):
+        if variant not in ('G', 'GV', 'GC', 'Full', 'GV2', 'GC2', 'Candidate', 'GD', 'GW', 'GDW', 'TimePlan', 'GThinking', 'Teacher', 'SFT9B', 'GB', 'SFT9B_B', 'GS', 'GR'):
             raise ValueError(variant)
         policy = policy or {'verify': variant in ('GV', 'Full', 'GV2'),
             'verification_version': 2 if variant == 'GV2' else 1,
@@ -206,7 +219,9 @@ class HarnessAgent:
         self.executor = GuardedExecutor(verify=policy['verify'], verification_version=policy['verification_version'], audit_fn=audit_fn,
                                        repair_limit=repair_limit, query_limit=query_limit,
                                        dead_front=policy.get('dead_front', False),
-                                       workflow_all_devices=policy.get('workflow_all_devices', False))
+                                       workflow_all_devices=policy.get('workflow_all_devices', False),
+                                       recovery=policy.get('recovery', variant == 'GR'),
+                                       recovery_total_limit=policy.get('recovery_total_limit', 6))
         provider = StructuredProvider(llm, finish_guard=False, recovery=False, guidance=False,
                                       audit_fn=self.executor.record_structured)
         if policy.get('time_plan'):

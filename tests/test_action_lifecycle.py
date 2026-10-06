@@ -70,6 +70,32 @@ class ActionLifecycleTests(unittest.TestCase):
             executor.execute('execute_command', self.action)
         self.assertEqual([r.state for r in executor.actions.records.values()], ['aborted', 'unknown'])
 
+    def test_opt_in_repair_limit_operates_without_verify_and_g_is_unchanged(self):
+        for recovery, expected_calls in ((False, 5), (True, 3)):
+            calls = []
+            def dispatch(tool, args):
+                calls.append(tool)
+                return {'status': {'code': 400}, 'error': {'type': 'INVALID_STATE'}, 'data': {}}
+            executor = GuardedExecutor(verify=False, recovery=recovery, dispatch=dispatch)
+            for _ in range(5):
+                response = executor.execute('get_rooms', {})
+            self.assertEqual(len(calls), expected_calls)
+            if recovery:
+                self.assertEqual(response['error']['layer'], 'recovery_budget')
+                self.assertEqual(executor.actions.records['a000005'].state, 'rejected')
+
+    def test_unknown_mutation_timeout_prevents_replay_without_swallowing_exception(self):
+        calls = []
+        def dispatch(*args):
+            calls.append(args)
+            raise TimeoutError('lost mutation receipt')
+        executor = GuardedExecutor(recovery=True, query_limit=0, dispatch=dispatch)
+        with self.assertRaises(TimeoutError):
+            executor.execute('execute_command', self.action)
+        response = executor.execute('execute_command', self.action)
+        self.assertEqual(len(calls), 1)
+        self.assertEqual(response['error']['layer'], 'recovery_unknown')
+
 
 if __name__ == '__main__':
     unittest.main()
