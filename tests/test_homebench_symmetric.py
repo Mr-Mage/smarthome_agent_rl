@@ -26,6 +26,8 @@ class SymmetricTests(unittest.TestCase):
         result = compare(Adapter(), rows)
         self.assertEqual(result['arms']['B0_WG']['exact_match'], 0)
         self.assertEqual(result['contract_paired_changes']['WG']['wins'], 1)
+        rows[0]['error'], rows[1]['error'] = None, 'transport failure'
+        self.assertEqual(compare(Adapter(), rows)['contract_paired_changes']['WG']['losses'], 1)
 
     def test_incomplete_and_duplicate_pairs_fail_closed(self):
         row = {'task_id': 'x', 'arm': 'B0', 'prediction': ''}

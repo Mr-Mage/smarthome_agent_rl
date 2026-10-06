@@ -54,7 +54,7 @@ def compare(adapter, rows):
             if before[1] == after[1]:
                 continue
             direction = 'win' if after[1] else 'loss'
-            change[direction + 's'] += 1
+            change['wins' if direction == 'win' else 'losses'] += 1
             if len(change[direction + '_cases']) < 3:
                 change[direction + '_cases'].append({'task_id': task_id,
                     'B0_prediction': before[0], 'B1_prediction': after[0]})
