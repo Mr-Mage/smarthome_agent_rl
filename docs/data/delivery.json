@@ -1,0 +1,226 @@
+{
+  "plan_status": "complete",
+  "default_model": "Qwen3.5-9B",
+  "default_variant": "G",
+  "implementation_commit": "883516896669ff67b22a24d8a331cca6b65c317e",
+  "acceptance_commit": "5f407b69f5838f39bca5fd6a81c0c8fe6203e759",
+  "scope": "Official single-turn harness reproduction/diagnosis/ablation; unused95 sealed; no additional training",
+  "behavioral_decisions": {
+    "Guard": "adopted",
+    "action_lifecycle": "adopted",
+    "GR": "optional_not_online_admitted",
+    "GTS": "not_admitted",
+    "GEC": "not_admitted",
+    "Verify_Context_TimePlan": "not_admitted",
+    "historical_LoRA": "rejected_no_further_training"
+  },
+  "production_capabilities": "Durable recovery, idempotent transactions, multi-user authorization and SLO not accepted in this project",
+  "official_reference": {
+    "node": "N13",
+    "source": "docs/data/harness-v2.json",
+    "source_sha256": "e9bc4a6a677d447d8a906f8eaf7c2f284c4452350aae9f1b894ab75ebee45f21",
+    "primary_seed": 42,
+    "independent_tasks": 192,
+    "B0_successes": 60,
+    "G_successes": 69,
+    "B0_illegal": 96,
+    "G_illegal": 16,
+    "delta_sr_pp": 4.6875,
+    "holm_p": 0.216,
+    "conclusion": "Execution errors reduced; overall SR significant improvement unproven"
+  },
+  "offline_acceptance": {
+    "source": "runs/delivery/n35-check-v1/report.json",
+    "source_sha256": "8309777211bc023941037dc0e7979039f14d562b654f54dff618dbe42bbea1ba",
+    "tests": {
+      "release_config": true,
+      "actors": 4,
+      "slots": 64,
+      "exposed_calibration_tasks": 12,
+      "local_links_checked": 51,
+      "mode": "full",
+      "tests": 150,
+      "skipped": 1,
+      "passed": true
+    },
+    "reviewed_episodes": 96,
+    "actions": 705,
+    "upstream": {
+      "SimuHome": {
+        "commit": "e202971348348e1bb56651245185ecb3a0e6b12d",
+        "status": "",
+        "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "agent-lightning": {
+        "commit": "d381995396274039f2bb1cbe5ff42ac8067f4e47",
+        "status": "M agentlightning/config/server.yaml\n M agentlightning/controller/local_reconciler.py\n M agentlightning/server/app.py\n M examples/gsm8k/run_local.sh\n M examples/gsm8k/train_gsm8k_agent.py\n?? tests/server/test_http_limits.py",
+        "diff_sha256": "8316ae6a93981900b1fbccd08629b97a2ab6eb6e220fac2d17ba2ae98df66c20"
+      }
+    },
+    "wall_seconds": 6.844499426020775
+  },
+  "chain_acceptance": {
+    "source": "runs/delivery/n36-v1/smoke/report.json",
+    "source_sha256": "3168b2c2fba350bf6ee5ab646e09adc015d026d86ca21099e9b5e928e3afda62",
+    "episodes": 24,
+    "arms": {
+      "B0": {
+        "episodes": 12,
+        "successes": 3,
+        "success_rate": 0.25,
+        "unfinished": 0,
+        "actor_tokens": 467363,
+        "judge_tokens": 35868,
+        "invalid_reached_executor": 3,
+        "agent_seconds": {
+          "observed": 12,
+          "total": 164.18175743805477,
+          "p50": 15.679041161492933,
+          "p95": 21.851887637138134
+        }
+      },
+      "G": {
+        "episodes": 12,
+        "successes": 5,
+        "success_rate": 0.4166666666666667,
+        "unfinished": 1,
+        "actor_tokens": 638745,
+        "judge_tokens": 53583,
+        "invalid_reached_executor": 5,
+        "agent_seconds": {
+          "observed": 12,
+          "total": 255.0118572959327,
+          "p50": 20.613110603997484,
+          "p95": 44.19811507390112
+        }
+      }
+    },
+    "verified_stage_files": 453,
+    "metrics_scope": "Exposed calibration12 only; no new formal improvement claim",
+    "cost": {
+      "verified_stage_files": 453,
+      "review_files": 53,
+      "actor_tokens_with_probes": 1106192,
+      "judge_tokens_with_probes": 89691,
+      "actor_calls_without_usage": 0,
+      "judge_calls_without_usage": 0,
+      "resource": {
+        "total_seconds_including_cleanup": 400.5340316090151,
+        "allocated_actor_gpu_seconds": 1602.1361264360603,
+        "external_judge_stopped": false,
+        "monitor_errors": 0,
+        "sampled_gpu_utilization_mean": 13.902173913043478,
+        "sampled_gpu_utilization_peak": 100.0,
+        "queue_peaks": {
+          "actor_running": 15.0,
+          "actor_waiting": 0.0,
+          "judge_running": 0.0,
+          "judge_waiting": 0.0
+        },
+        "pressure": {
+          "peak_kv_cache_fraction": 0.023429179978700754,
+          "preemptions": 0.0
+        },
+        "scope": "Reserved H100 GPU wall time, including startup/failures/cleanup; excludes A800 shared-service allocation"
+      },
+      "scope_resource_audit": {
+        "verified": true,
+        "episodes": 24,
+        "actor_calls": 177,
+        "judge_calls": 39,
+        "model_parameters_and_pairing_verified": true,
+        "upstream_and_user_patch_unchanged": true,
+        "h100_released": true,
+        "actor_ports_closed": true,
+        "judge_healthy": true,
+        "judge_modified": false,
+        "gpu_memory_used": "0, 0\n1, 0\n2, 0\n3, 0\n",
+        "audit_wall_seconds": 0.7792834839783609,
+        "unused95_read": false,
+        "training_started": false
+      },
+      "archive_sha256": "55a8a8f7a95f541851180995fa973a5c2f1e8397c471bd58663e9f34414f2540"
+    },
+    "config": "configs/harness-release.json",
+    "config_sha256": "0ba4429475bfdf8c294f2b98796ebdcfb1706492f29b96622158879ca60599e3"
+  },
+  "resources": {
+    "actor_gpus": 4,
+    "total_slots": 64,
+    "judge_deployment": "external",
+    "judge_model": "smarthome-qwen36-judge",
+    "h100_released": true,
+    "judge_healthy_unchanged": true
+  },
+  "historical_cases": {
+    "qt3_feasible_seed_45-seed44": "outputs/delivery/n36-review-v1/extracted/runs/delivery/n35-check-v1/cases/qt3_feasible_seed_45-seed44/review.md",
+    "qt4-3_feasible_seed_36-seed42": "outputs/delivery/n36-review-v1/extracted/runs/delivery/n35-check-v1/cases/qt4-3_feasible_seed_36-seed42/review.md",
+    "qt4-3_feasible_seed_80-seed42": "outputs/delivery/n36-review-v1/extracted/runs/delivery/n35-check-v1/cases/qt4-3_feasible_seed_80-seed42/review.md"
+  },
+  "current_G_reviews": {
+    "qt1_feasible_seed_10": "outputs/delivery/n36-review-v1/extracted/runs/delivery/n36-v1/reviews/qt1_feasible_seed_10/review.md",
+    "qt1_infeasible_seed_24": "outputs/delivery/n36-review-v1/extracted/runs/delivery/n36-v1/reviews/qt1_infeasible_seed_24/review.md",
+    "qt2_feasible_seed_78": "outputs/delivery/n36-review-v1/extracted/runs/delivery/n36-v1/reviews/qt2_feasible_seed_78/review.md",
+    "qt2_infeasible_seed_15": "outputs/delivery/n36-review-v1/extracted/runs/delivery/n36-v1/reviews/qt2_infeasible_seed_15/review.md",
+    "qt3_feasible_seed_15": "outputs/delivery/n36-review-v1/extracted/runs/delivery/n36-v1/reviews/qt3_feasible_seed_15/review.md",
+    "qt3_infeasible_seed_40": "outputs/delivery/n36-review-v1/extracted/runs/delivery/n36-v1/reviews/qt3_infeasible_seed_40/review.md",
+    "qt4-1_feasible_seed_26": "outputs/delivery/n36-review-v1/extracted/runs/delivery/n36-v1/reviews/qt4-1_feasible_seed_26/review.md",
+    "qt4-1_infeasible_seed_27": "outputs/delivery/n36-review-v1/extracted/runs/delivery/n36-v1/reviews/qt4-1_infeasible_seed_27/review.md",
+    "qt4-2_feasible_seed_31": "outputs/delivery/n36-review-v1/extracted/runs/delivery/n36-v1/reviews/qt4-2_feasible_seed_31/review.md",
+    "qt4-2_infeasible_seed_46": "outputs/delivery/n36-review-v1/extracted/runs/delivery/n36-v1/reviews/qt4-2_infeasible_seed_46/review.md",
+    "qt4-3_feasible_seed_21": "outputs/delivery/n36-review-v1/extracted/runs/delivery/n36-v1/reviews/qt4-3_feasible_seed_21/review.md",
+    "qt4-3_infeasible_seed_36": "outputs/delivery/n36-review-v1/extracted/runs/delivery/n36-v1/reviews/qt4-3_infeasible_seed_36/review.md"
+  },
+  "archives": [
+    {
+      "node": "N31",
+      "review_files": 389,
+      "archive_sha256": "b3a70dbc19dca881a355250be25c0ae506f488d618882b9f6709b18be502f40f",
+      "archive": "outputs/action-lifecycle/n31-review-v1/review-evidence.tar.gz",
+      "verified": true
+    },
+    {
+      "node": "N32",
+      "review_files": 199,
+      "archive_sha256": "461519f742f55218c52d71954b6c2a861c27563227f1c71df9632b9e5e20b576",
+      "archive": "outputs/recovery-policy/n32-review-v1/review-evidence.tar.gz",
+      "verified": true
+    },
+    {
+      "node": "N33",
+      "review_files": 202,
+      "archive_sha256": "c578ba1ce6ab627b825c0300ad3787b1f1dc8a5197584e63bba26892c1615f5d",
+      "archive": "outputs/task-spec/n33-review-v1/review-evidence.tar.gz",
+      "verified": true
+    },
+    {
+      "node": "N34",
+      "review_files": 7,
+      "archive_sha256": "e5f23cfe77226c37bf6cf6b767dbdfb86656050724bd96d3d43ac0cdb265bc68",
+      "archive": "outputs/evidence-context/n34-review-v1/evidence.tar.gz",
+      "verified": true
+    },
+    {
+      "node": "N34-source",
+      "review_files": 384,
+      "archive_sha256": "9c4af4555b8f6cc69c873cbf0fb81a3795754068c23a6cee907127b70c52c519",
+      "archive": "outputs/evidence-context/n34-review-v1/source-evidence.tar.gz",
+      "verified": true
+    },
+    {
+      "node": "N35",
+      "review_files": 9,
+      "archive_sha256": "505f2834420dacfcb58bc640c7f0968122a96281b6ea7ecac685c9aeab6f6481",
+      "archive": "outputs/delivery/n35-review-v1/review-evidence.tar.gz",
+      "verified": true
+    },
+    {
+      "node": "N36",
+      "review_files": 53,
+      "archive_sha256": "55a8a8f7a95f541851180995fa973a5c2f1e8397c471bd58663e9f34414f2540",
+      "archive": "outputs/delivery/n36-review-v1/review-evidence.tar.gz",
+      "verified": true
+    }
+  ],
+  "artifacts_note": "Artifact paths are local/remote ignored outputs/runs, not shipped in Git. Raw episodes remain on H100. Receipt checks overlap and must not be counted as independent tasks or added costs."
+}

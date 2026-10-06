@@ -6,7 +6,7 @@
 
 N13正式seed42、192任务：B0/G成功60/69（31.25%/35.94%），非法执行96→16（减少83.33%）；SR差+4.69pp，95% CI[-1.04,+10.94]pp，Holm p=0.216，未证明显著提升。论文采用600任务及不同模型/judge，不能直接横向宣称超越论文。
 
-N31动作生命周期已接入G。N32恢复预算、N33目标关联、N34证据上下文为可选实现，未替换G；Context/Verify、TimePlan及一次历史LoRA SFT也未准入。当前不追加训练；95个未使用任务封存。N35工程审阅、N36最终链路验收状态见[计划](PLAN.md)。
+N31动作生命周期已接入G。N32恢复预算、N33目标关联、N34证据上下文为可选实现，未替换G；Context/Verify、TimePlan及一次历史LoRA SFT也未准入。N35/N36交付验收完成，当前计划收尾；不追加训练，95个未使用任务封存。状态见[计划](PLAN.md)，机器索引见[delivery.json](docs/data/delivery.json)。
 
 可展示：强类型调用、公开契约、状态与回执边界、错误归类、四卡隔离、配对实验及失败成本。持久恢复、事务/幂等、多用户权限和生产SLO未验收。
 
@@ -28,7 +28,7 @@ python scripts/check_project.py
 python scripts/review_episode.py <episode>/G/lightning --manifest <冻结SHA索引> --output outputs/delivery/case
 ```
 
-轨迹审阅输出`review.json`和`review.md`：动作状态、完整参数、尝试、父提案、观测引用和原官方结果。未给冻结索引时仅计算自身SHA，不能证明来源真实；动作`completed`或工作流`registered`均不等于用户目标成功。实际案例与验收证据见[N36](docs/nodes/N36.md)。
+轨迹审阅输出`review.json`和`review.md`：动作状态、完整参数、尝试、父提案、观测引用和原官方结果。未给冻结索引时仅计算自身SHA，不能证明来源真实；动作`completed`或工作流`registered`均不等于用户目标成功。已核对96条轨迹/705个动作，全量150测试149通过/1环境跳过；三个历史案例与十二份当前G审阅见`outputs/delivery/n36-review-v1/extracted/runs/delivery/`及[N36](docs/nodes/N36.md)。CI配置已加入仓库，GitHub端执行状态未核验。
 
 服务器全量检查沿用现有venv：
 
