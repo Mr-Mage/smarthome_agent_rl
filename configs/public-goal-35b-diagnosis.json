@@ -95,6 +95,6 @@
   "chat_transport": "append_empty_user",
   "actor_deployment": "external",
   "reference_run": "runs/public-goal-diagnosis/n67-v1",
-  "reference_artifact_sha256": "61637c69f918a4faef6db57026c14ca7b424ce023c4392ddf8c24d229b6c8394f",
+  "reference_artifact_sha256": "61637c69f918a4faef6db57026c14ca7b424ce023c4392df8c24d229b6c8394f",
   "intervention": "Change only the extractor from9B to35B-A3B;reuse immutable N67 9B reference,no rerun. Same public inputs,prompts,schemas,generation,gates and manual36 cases. Borrow permanent A800 service with16 slots;no H100 allocation. Same extractor/reviewer model,so model agreement is biased and manual review mandatory."
 }
