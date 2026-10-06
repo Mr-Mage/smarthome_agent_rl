@@ -3,6 +3,20 @@
   "scope": "Latest user confirmation: official single-turn harness diagnostics/ablations only; no SFT/RL, new benchmark or multi-session experiments.",
   "default": "Qwen3.5-9B + G; permanent baseline tag baseline/1007-9b-g",
   "nodes": {
+    "N70": {
+      "status": "running_model_only_public_goal_diagnosis",
+      "implementation_commit": "a234bc3",
+      "config": "configs/public-goal-35b-diagnosis.json",
+      "evidence": "runs/public-goal-diagnosis/n70-v1/",
+      "reference": "immutable N67 9B360 outputs,no rerun",
+      "candidate": "Qwen3.6-35B-A3B standalone goal extractor",
+      "tasks": 120,
+      "actor_seeds": [42,43,44],
+      "records": 360,
+      "resources": "permanent A800 endpoint16 slots;zero H100 reservation;extractor/reviewer share model,bias retained",
+      "acceptance_before_inference": "11 specialized server checks;full319,318 passed,one skip;retained N67 re-evaluation unchanged",
+      "scope": "Model-only diagnosis with unchanged source,prompt,schemas,generation,gates and manual36 cases;no native execution,training or new benchmark"
+    },
     "N69": {
       "status": "native_engineering_accepted_benefit_not_established",
       "implementation_commit": "fb6f140",
