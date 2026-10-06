@@ -233,8 +233,12 @@ class EpisodeRuntime:
         finally:
             self._supervising = False
 
-    def finish(self):
-        self.supervise(phase='agent_return')
+    def finish(self, *, supervise=True):
+        if self.task is None:
+            self.flush()
+            return
+        if supervise:
+            self.supervise(phase='agent_return')
         task = self.manager.get(self.task.task_id, self.task.user_id)
         if task.status in (TaskStatus.ACTIVE, TaskStatus.EXECUTING, TaskStatus.VERIFYING):
             self.manager.transition(task.task_id, task.user_id, TaskStatus.WAITING,

@@ -21,7 +21,8 @@ def read(path):
 def audit_episode(directory):
     data = read(directory / 'task_runtime.json')
     contract = read(directory / 'contract.json')
-    native = read(directory / 'official_result.json')
+    native_path = directory / 'official_result.json'
+    native = read(native_path) if native_path.exists() else None
     audit = read(directory / 'harness_audit.json')
     summary = read(directory / 'summary.json')
     problems = []
@@ -29,7 +30,9 @@ def audit_episode(directory):
     if len(tasks) != 1 or tasks[0]['goal'] != contract['public_context']['query'] or \
             tasks[0]['expected_postconditions'] != [] or tasks[0]['status'] != 'WAITING':
         problems.append('Public task boundary or conservative completion violated')
-    if native['evaluation_result']['score'] != summary['official_score']:
+    if native is None and not summary.get('task_failure'):
+        problems.append('Native result missing without retained ordinary task failure')
+    elif native is not None and native['evaluation_result']['score'] != summary['official_score']:
         problems.append('Runtime replaced the native official score')
     # JSON export must agree with durable database, not merely an in-memory sidecar.
     db = sqlite3.connect(directory / 'task-runtime.sqlite3')

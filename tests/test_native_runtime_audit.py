@@ -46,6 +46,12 @@ class NativeRuntimeAuditTests(unittest.TestCase):
         self.assertTrue(any('Durable task' in p for p in problems))
         self.assertTrue(any('supervisor cost' in p for p in problems))
 
+    def test_unfinished_model_task_is_retained_without_inventing_native_score(self):
+        (self.directory / 'official_result.json').unlink()
+        self.write('summary.json', {'task_id': 'public-test', 'official_score': None,
+                                    'task_failure': True, 'task_failure_kind': 'max_steps'})
+        self.assertEqual(audit_episode(self.directory)['problems'], [])
+
 
 if __name__ == '__main__':
     unittest.main()

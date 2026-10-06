@@ -190,7 +190,7 @@ def main(mode):
         for name, method in client_methods:
             setattr(runner.SmartHomeClient, name, method)
         if attached_runtime is not None:
-            attached_runtime.flush()
+            attached_runtime.finish(supervise=False)
         failure_kind = task_failure_kind(error, calls)
         task_failure = failure_kind is not None
         score = result['evaluation_result']['score'] if result else None
