@@ -1,0 +1,10 @@
+{
+  "schema": "semantic-verifier-v1",
+  "dimensions": ["correct_target", "goal_consistent", "trajectory_consistent", "safe_to_execute"],
+  "labels": ["YES", "NO", "UNCERTAIN"],
+  "high_confidence_threshold": 0.85,
+  "runtime_policy": "deterministic_reject_first; semantic_deny_only_when_high_confidence; uncertain_escalates_to_reflection",
+  "hidden_information": "evaluator goals, judge output and official score are forbidden",
+  "taxonomy": ["wrong_target", "goal_conflict", "trajectory_conflict", "uncertain"],
+  "stop_criteria": {"false_reject_max": 0.05, "task_sr_delta_min": 0.0, "cost_vs_self_reflection": "must_improve"}
+}

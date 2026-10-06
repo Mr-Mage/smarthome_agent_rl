@@ -37,6 +37,25 @@ class SemanticVerifierTests(unittest.TestCase):
         self.assertTrue(called)
         self.assertIn(result.verdict, {'ALLOW', 'UNCERTAIN'})
 
+    def test_confidence_gate_does_not_block_low_confidence_deny(self):
+        base = RuleSemanticVerifier()
+        result = ConfidenceGate(base, high=.95).verify(self.context(
+            'turn on the bedroom device',
+            {'device_id': 'bedroom_ac', 'command_id': 'Off', 'args': {}}))
+        self.assertEqual(result.verdict, 'UNCERTAIN')
+
+    def test_feedback_contains_dimension_specific_repair(self):
+        result = RuleSemanticVerifier().verify(self.context(
+            'turn on the bedroom device',
+            {'device_id': 'living_ac', 'command_id': 'On', 'args': {}}))
+        value = feedback(result)
+        self.assertEqual(value['failed_dimension'], 'correct_target')
+        self.assertIn('requested room', value['repair_hint']['repair'])
+
+    def test_context_rejects_hidden_evaluator_fields(self):
+        with self.assertRaises(ValueError):
+            VerificationContext('turn on bedroom', {'devices': {}, 'judge_output': 'YES'}, {})
+
 
 if __name__ == '__main__':
     unittest.main()

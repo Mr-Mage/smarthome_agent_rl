@@ -41,6 +41,17 @@ class DeviceContractTests(unittest.TestCase):
         self.assertEqual(contract.device_type, 'novel-lamp')
         self.assertTrue(contract.validate({'function': 'On', 'args': {}}, {}).accepted)
 
+    def test_assertions_are_lazy_and_type_mismatches_are_uncovered(self):
+        contract = ContractRegistry.from_dict({'x': {'capabilities': ['power'], 'functions': {
+            'On': {'capability': 'power', 'assertions': [
+                {'path': 'power', 'op': 'eq', 'value': True}]}}}})
+        self.assertTrue(contract.validate({'function': 'On', 'args': {}}, {'device_type': 'x', 'power': True}).accepted)
+        contract = ContractRegistry.from_dict({'x': {'capabilities': ['power'], 'functions': {
+            'On': {'capability': 'power', 'assertions': [
+                {'path': 'power', 'op': 'ge', 'value': 'on'}]}}}})
+        result = contract.validate({'function': 'On', 'args': {}}, {'device_type': 'x', 'power': True})
+        self.assertEqual(result.uncovered[0]['reason'], 'incomparable public state types')
+
 
 if __name__ == '__main__':
     unittest.main()

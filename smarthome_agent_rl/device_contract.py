@@ -68,12 +68,24 @@ class Assertion:
         found, actual = _get_path(state, self.path)
         if not found:
             return 'UNCOVERED_ASSERTION', {'path': self.path, 'reason': 'public state field missing'}
-        checks = {'eq': actual == self.value, 'ne': actual != self.value,
-                  'in': actual in self.value, 'not_in': actual not in self.value,
-                  'ge': actual >= self.value, 'le': actual <= self.value}
-        if self.op not in checks:
+        if self.op == 'eq':
+            passed = actual == self.value
+        elif self.op == 'ne':
+            passed = actual != self.value
+        elif self.op in ('in', 'not_in'):
+            if not isinstance(self.value, (list, tuple, set, frozenset)):
+                return 'UNCOVERED_ASSERTION', {'path': self.path, 'reason': 'in/not_in requires a collection'}
+            passed = actual in self.value
+            if self.op == 'not_in':
+                passed = not passed
+        elif self.op in ('ge', 'le'):
+            try:
+                passed = actual >= self.value if self.op == 'ge' else actual <= self.value
+            except TypeError:
+                return 'UNCOVERED_ASSERTION', {'path': self.path, 'reason': 'incomparable public state types'}
+        else:
             return 'UNCOVERED_ASSERTION', {'path': self.path, 'reason': f'unsupported operator {self.op}'}
-        if not checks[self.op]:
+        if not passed:
             return 'PRECONDITION_FAILED', {'path': self.path, 'expected': {self.op: self.value}, 'actual': actual}
         return None
 

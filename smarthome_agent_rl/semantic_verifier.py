@@ -3,11 +3,31 @@
 The verifier sees public task text, public state and the proposed action.  It
 never receives the evaluator's hidden target or judge output.
 """
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass, asdict, replace
 import re
 from typing import Any, Callable, Mapping, Sequence
 
 LABELS = ('YES', 'NO', 'UNCERTAIN')
+HIDDEN_KEYS = frozenset({'evaluator', 'evaluator_goal', 'judge', 'judge_output',
+                         'official_score', 'evaluation_result', 'ground_truth', 'hidden_goal'})
+
+
+def _find_hidden(value: Any, path='') -> str | None:
+    if isinstance(value, Mapping):
+        for key, child in value.items():
+            key_name = str(key).casefold()
+            child_path = f'{path}.{key}' if path else str(key)
+            if key_name in HIDDEN_KEYS:
+                return child_path
+            found = _find_hidden(child, child_path)
+            if found:
+                return found
+    elif isinstance(value, (list, tuple)):
+        for index, child in enumerate(value):
+            found = _find_hidden(child, f'{path}[{index}]')
+            if found:
+                return found
+    return None
 
 
 @dataclass(frozen=True)
@@ -52,6 +72,15 @@ class VerificationContext:
     proposed_action: Mapping[str, Any]
     recent_actions: Sequence[Mapping[str, Any]] = ()
     contract: Mapping[str, Any] | None = None
+
+    def __post_init__(self):
+        for name, value in (('environment_state', self.environment_state),
+                            ('proposed_action', self.proposed_action),
+                            ('recent_actions', self.recent_actions),
+                            ('contract', self.contract)):
+            hidden = _find_hidden(value)
+            if hidden:
+                raise ValueError(f'Hidden evaluator information is forbidden: {name}.{hidden}')
 
 
 def _decision(label, probability, **evidence):
@@ -98,21 +127,64 @@ class RuleSemanticVerifier:
 
 class ConfidenceGate:
     def __init__(self, verifier, *, high=0.85, escalation: Callable | None = None):
+        if not 0 < high <= 1:
+            raise ValueError('high confidence threshold must be in (0, 1]')
         self.verifier, self.high, self.escalation = verifier, high, escalation
+
+    def _high_confidence(self, result: VerificationResult, label: str) -> bool:
+        decisions = (result.correct_target, result.goal_consistent,
+                     result.trajectory_consistent, result.safe_to_execute)
+        return all(decision.label != label or decision.probability >= self.high
+                   for decision in decisions) and any(decision.label == label for decision in decisions)
+
+    def _gate(self, result: VerificationResult) -> VerificationResult:
+        # A deny is enforceable only when every negative decision is confident;
+        # an allow requires all four dimensions to be confident YES. Anything
+        # else is escalated or observed as UNCERTAIN by the caller.
+        if result.verdict == 'DENY' and self._high_confidence(result, 'NO'):
+            return result
+        if result.verdict == 'ALLOW' and all(decision.label == 'YES' and
+                                             decision.probability >= self.high for decision in
+                                             (result.correct_target, result.goal_consistent,
+                                              result.trajectory_consistent, result.safe_to_execute)):
+            return result
+        def uncertain(decision):
+            if decision.label == 'NO' and decision.probability < self.high:
+                return Decision('UNCERTAIN', decision.probability,
+                                {**decision.evidence, 'confidence_gate': self.high})
+            if decision.label == 'YES' and decision.probability < self.high:
+                return Decision('UNCERTAIN', decision.probability,
+                                {**decision.evidence, 'confidence_gate': self.high})
+            return decision
+        return VerificationResult(*(uncertain(decision) for decision in (
+            result.correct_target, result.goal_consistent, result.trajectory_consistent,
+            result.safe_to_execute)), result.reason_code or 'SEMANTIC_UNCERTAIN')
 
     def verify(self, context: VerificationContext) -> VerificationResult:
         result = self.verifier.verify(context)
-        if result.verdict == 'UNCERTAIN' and self.escalation:
-            escalated = self.escalation(context, result)
+        gated = self._gate(result)
+        if gated.verdict == 'UNCERTAIN' and self.escalation:
+            escalated = self.escalation(context, gated)
             if escalated is not None:
                 return escalated
-        return result
+        return gated
 
 
 def feedback(result: VerificationResult) -> dict[str, Any]:
     if result.verdict == 'ALLOW':
         return {'status': 'allowed', 'verifier': result.as_dict()}
+    reason = result.reason_code or 'SEMANTIC_UNCERTAIN'
+    failed = next((name for name in ('correct_target', 'goal_consistent',
+                                     'trajectory_consistent', 'safe_to_execute')
+                   if getattr(result, name).label == 'NO'), None)
+    repair = {
+        'correct_target': 'Re-select a device from the requested room.',
+        'goal_consistent': 'Replan an action that matches the user goal.',
+        'trajectory_consistent': 'Remove the repeated or conflicting action.',
+        'safe_to_execute': 'Escalate for an independent safety check.',
+    }.get(failed, 'Replan using public state and contract evidence.')
     return {'status': 'rejected' if result.verdict == 'DENY' else 'uncertain',
-            'layer': 'semantic', 'reason_code': result.reason_code or 'SEMANTIC_UNCERTAIN',
-            'evidence': result.as_dict(), 'repair_hint': {
-                'action': 'replan', 'ask_for_public_state': result.verdict == 'UNCERTAIN'}}
+            'layer': 'semantic', 'reason_code': reason,
+            'failed_dimension': failed, 'evidence': result.as_dict(), 'repair_hint': {
+                'action': 'replan', 'repair': repair,
+                'ask_for_public_state': result.verdict == 'UNCERTAIN'}}
