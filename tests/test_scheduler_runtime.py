@@ -166,6 +166,16 @@ class SchedulerRuntimeTests(unittest.TestCase):
         self.assertEqual(task.status, 'FAILED')
         self.assertEqual(task.evidence[-1]['failed_job_ids'], [job['job_id']])
 
+    def test_captured_live_observation_uses_clock_after_read_and_still_rejects_future_evidence(self):
+        job = self.schedule(tolerance=2)
+        self.scheduler.execute_action = lambda *args: verified(None)
+        self.scheduler.tick(10)
+        self.assertEqual(self.scheduler.reconcile_observation(job['job_id'], verified(11), now=10).status,
+                         VerificationStatus.UNVERIFIED)
+        self.assertEqual(self.scheduler.reconcile_observation(job['job_id'], verified(11), now=11).status,
+                         VerificationStatus.VERIFIED_SUCCESS)
+        self.assertEqual(self.store.get('job', job['job_id'])[0]['status'], 'DONE')
+
     def test_cancellation_acknowledgement_alone_does_not_confirm_cancelled(self):
         job = self.schedule(native_call={'tool': 'native_schedule', 'args': {'at': 10}})
         self.trace.dispatch = lambda *args: {'status': {'code': 200}, 'data': {}}

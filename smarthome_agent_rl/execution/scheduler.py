@@ -213,6 +213,26 @@ class Scheduler:
         self._finish(job, result)
         return result
 
+    def reconcile_observation(self, job_id, result, *, now):
+        """Consume an already captured adapter observation; never dispatch again.
+
+        Live read-backs may finish after the clock supplied before a query. The
+        adapter supplies its trusted clock after collecting the evidence here.
+        This does not relax the original deadline or admit future observations.
+        """
+        if type(now) not in (int, float) or not math.isfinite(now):
+            raise ValueError('Reconciliation requires finite adapter time')
+        with self.store.transaction() as db:
+            job, _ = self.store.get('job', job_id, db=db)
+            if job['status'] != 'UNKNOWN':
+                raise RevisionConflict('Only an uncertain completed attempt accepts retained evidence')
+            task, _ = self.manager._load(job['task_id'], job['user_id'], db)
+            if task.version != job['task_version'] or task.status in TERMINAL:
+                raise RevisionConflict('Cannot reconcile an obsolete or terminal task')
+        result = self._timed_result(job, result, not_after=now)
+        self._finish(job, result)
+        return result
+
     def cancel_workflow(self, workflow_id, user_id, *, cancel_native=None):
         with self.store.transaction() as db:
             wf, _ = self.store.get('workflow', workflow_id, db=db)

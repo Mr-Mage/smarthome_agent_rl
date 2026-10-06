@@ -110,6 +110,26 @@ class NativeEpisodeRuntimeTests(unittest.TestCase):
         self.assertEqual(self.home.workflows_by_id, {})
         self.assertFalse(any(t == 'schedule_workflow' for t, _ in self.calls))
 
+    def test_event_supervision_uses_real_public_fast_forward_response_and_reconciles_native_start(self):
+        from smarthome_agent_rl.execution.events import EventEpisodeRuntime
+        self.agent.executor.dispatch = self.runtime.raw_dispatch
+        self.runtime = self.agent.task_runtime = EventEpisodeRuntime(self.agent.executor,
+            self.runtime.adapter, self.path.with_name('event.sqlite3'))
+        self.run_agent()
+        self.assertFalse(any(t == 'get_current_time' for t, _ in self.calls))
+        self.assertTrue(self.home._fast_forward_to(10).success)
+        response = {'status': {'code': 200}, 'data': self.home._get_home_state().data}
+        result = self.runtime.observe_native_response(response)
+        self.assertEqual(result[0]['status'], 'UNVERIFIED')
+        self.assertTrue(self.home._fast_forward_to(11).success)
+        response = {'status': {'code': 200}, 'data': self.home._get_home_state().data}
+        result = self.runtime.observe_native_response(response)
+        self.assertEqual(result[0]['status'], 'VERIFIED_SUCCESS')
+        self.assertEqual(self.runtime.store.list('job')[0]['status'], 'DONE')
+        self.assertEqual(sum(t == 'schedule_workflow' for t, _ in self.calls), 1)
+        self.runtime.finish()
+        self.assertEqual(self.runtime.store.list('task')[0]['status'], 'WAITING')
+
 
 if __name__ == '__main__':
     unittest.main()

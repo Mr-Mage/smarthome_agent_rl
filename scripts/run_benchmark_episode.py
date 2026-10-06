@@ -123,11 +123,11 @@ def main(mode):
                 repair_limit=config['recovery_per_action'], query_limit=config['extra_queries_max'],
                 policy=config.get('variant_policies', {}).get(variant), token_count_fn=count_tokens)
         if config.get('variant_policies', {}).get(variant, {}).get('task_runtime'):
-            if variant != 'GTM' or type(agent.executor).__name__ != 'GuardedExecutor':
-                raise ValueError('Native task-runtime ablation must use an isolated GTM legacy Guard arm')
+            if variant not in ('GTM', 'GTME') or type(agent.executor).__name__ != 'GuardedExecutor':
+                raise ValueError('Native task-runtime ablation must use an isolated legacy Guard arm')
             policies = config['variant_policies']
             base_policy = {k: v for k, v in policies[variant].items()
-                           if k not in ('task_runtime', 'task_runtime_tolerance')}
+                           if k not in ('task_runtime', 'task_runtime_tolerance', 'task_runtime_clock')}
             if base_policy != policies.get('G'):
                 raise ValueError('GTM must preserve the frozen G policy and isolate runtime attachment')
             from smarthome_agent_rl.execution.episode import EpisodeRuntime
@@ -135,7 +135,15 @@ def main(mode):
             from smarthome_agent_rl.guard import command_contracts, public_power_rules
             signatures, _ = command_contracts(ROOT / 'deps/SimuHome/src/simulator/domain/clusters')
             power, _ = public_power_rules(ROOT / 'deps/SimuHome/src/simulator/domain/devices')
-            attached_runtime = agent.task_runtime = EpisodeRuntime(agent.executor,
+            clock_policy = policies[variant].get('task_runtime_clock', 'poll')
+            if clock_policy == 'public_events' and variant == 'GTME':
+                from smarthome_agent_rl.execution.events import EventEpisodeRuntime
+                runtime_class = EventEpisodeRuntime
+            elif clock_policy == 'poll' and variant == 'GTM':
+                runtime_class = EpisodeRuntime
+            else:
+                raise ValueError('Runtime variant/clock policy differs from frozen arm identity')
+            attached_runtime = agent.task_runtime = runtime_class(agent.executor,
                 SimuHomeContractAdapter(signatures, power), output / 'task-runtime.sqlite3',
                 tolerance=config['variant_policies'][variant]['task_runtime_tolerance'], save=save)
             attached_runtime.supervise = profile.wrap(attached_runtime.supervise, 'runtime_supervision')
@@ -163,7 +171,10 @@ def main(mode):
         # Never pass evaluator deadlines, labels or result payloads to the
         # runtime. Read the current public clock through its budgeted tools.
         if attached_runtime is not None:
-            attached_runtime.supervise(phase='native_virtual_time_advanced')
+            if hasattr(attached_runtime, 'observe_native_response'):
+                attached_runtime.observe_native_response(response)
+            else:
+                attached_runtime.supervise(phase='native_virtual_time_advanced')
         return response
     runner.SmartHomeClient.fast_forward_to = observed_fast_forward
     save('contract.json', {'config': config, 'task_identity': task, 'mode': mode,
