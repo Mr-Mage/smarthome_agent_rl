@@ -19,7 +19,7 @@ sys.path.insert(0, str(ROOT / 'deps/SimuHome'))
 from src.agents.providers import OpenAIChatProvider
 from src.agents.tools import ToolConfig, set_tool_config
 from src.pipelines.episode_evaluation import runner
-from smarthome_agent_rl.generation import install_generation_options, record_generation_errors
+from smarthome_agent_rl.generation import install_generation_options, record_generation_errors, use_direct_service_transport, audit_response_payload
 from smarthome_agent_rl.retrieval import load_retrieval
 from smarthome_agent_rl.benchmark import task_failure_kind
 from smarthome_agent_rl.profiling import PhaseProfile, TimedTime
@@ -60,7 +60,7 @@ def main(mode):
         def capture(response):
             response.read()
             record = {'provider': label, 'request': json.loads(response.request.content),
-                'response': response.json(), 'status': response.status_code,
+                'response': audit_response_payload(response), 'status': response.status_code,
                 'duration_seconds': time.monotonic() - starts.pop(id(response.request), time.monotonic())}
             with calls_lock:
                 collection.append(record)
@@ -69,6 +69,7 @@ def main(mode):
     def provider(model, url, seed, generation, collection, label, api_key='local-unused'):
         p = OpenAIChatProvider(model=model, api_base=url, api_key=api_key,
             seed=seed, temperature=generation['temperature'], timeout=300)
+        use_direct_service_transport(p)
         install_generation_options(p, {'generation': generation})
         record_generation_errors(p, label, record_provider_error)
         p._client._client.event_hooks['request'].append(lambda request: starts.update({id(request): time.monotonic()}))

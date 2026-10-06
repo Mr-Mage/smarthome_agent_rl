@@ -2,7 +2,7 @@ import json
 from types import SimpleNamespace
 import unittest
 
-from smarthome_agent_rl.generation import generation_options, install_generation_options, record_generation_errors
+from smarthome_agent_rl.generation import generation_options, install_generation_options, record_generation_errors, use_direct_service_transport, audit_response_payload
 
 
 OPTIONS = {"temperature": 0.7, "top_p": 0.8, "max_tokens": 2048,
@@ -11,6 +11,80 @@ OPTIONS = {"temperature": 0.7, "top_p": 0.8, "max_tokens": 2048,
 
 
 class GenerationTests(unittest.TestCase):
+    def test_non_json_http_error_keeps_status_and_does_not_trigger_transport_retry(self):
+        import httpx
+        from openai import OpenAI
+        from src.agents.providers import OpenAIChatProvider
+        from src.agents.providers.base import NonRetryableLLMError
+        from src.agents.types import ChatMessage
+        requests, responses = [], []
+        def handle(request):
+            requests.append(request)
+            return httpx.Response(403, text='Proxy denied this request')
+        def capture(response):
+            response.read()
+            responses.append({'status': response.status_code, 'payload': audit_response_payload(response)})
+        p = OpenAIChatProvider(model='judge', api_key='dummy', api_base='http://local.test/v1')
+        p._client.close()
+        p._client = OpenAI(api_key='dummy', base_url='http://local.test/v1',
+            http_client=httpx.Client(transport=httpx.MockTransport(handle),
+                event_hooks={'response': [capture]}))
+        try:
+            with self.assertRaises(NonRetryableLLMError) as caught:
+                p.generate([ChatMessage('user', 'task')])
+            self.assertIn('HTTP 403', str(caught.exception))
+            self.assertEqual(len(requests), 1)
+            self.assertEqual(responses[0]['status'], 403)
+            self.assertEqual(responses[0]['payload']['body_excerpt'], 'Proxy denied this request')
+        finally:
+            p._client.close()
+
+    def test_direct_service_survives_inherited_invalid_proxy(self):
+        from http.server import BaseHTTPRequestHandler, HTTPServer
+        from threading import Thread
+        from unittest.mock import patch
+        from src.agents.providers import OpenAIChatProvider
+        from src.agents.types import ChatMessage
+        requests = []
+        class Handler(BaseHTTPRequestHandler):
+            def do_POST(self):
+                requests.append(json.loads(self.rfile.read(int(self.headers['Content-Length']))))
+                body = json.dumps({'id': 'test', 'object': 'chat.completion', 'created': 0,
+                    'model': 'judge', 'choices': [{'index': 0, 'finish_reason': 'stop',
+                    'message': {'role': 'assistant', 'content': 'A'}}]}).encode()
+                self.send_response(200)
+                self.send_header('Content-Type', 'application/json')
+                self.send_header('Content-Length', str(len(body)))
+                self.end_headers()
+                self.wfile.write(body)
+            def log_message(self, *args):
+                pass
+        server = HTTPServer(('127.0.0.1', 0), Handler)
+        thread = Thread(target=server.serve_forever, daemon=True)
+        thread.start()
+        try:
+            with patch.dict('os.environ', {'HTTP_PROXY': 'http://127.0.0.1:1',
+                'http_proxy': 'http://127.0.0.1:1', 'ALL_PROXY': 'http://127.0.0.1:1',
+                'NO_PROXY': '', 'no_proxy': ''}):
+                p = OpenAIChatProvider(model='judge', api_key='dummy',
+                    api_base=f'http://127.0.0.1:{server.server_port}/v1', timeout=5, max_retries=0)
+                original = p._client
+                retries, timeout = original.max_retries, original.timeout
+                try:
+                    use_direct_service_transport(p)
+                    self.assertTrue(original.is_closed())
+                    self.assertEqual(p._client.max_retries, retries)
+                    self.assertEqual(p._client.timeout, timeout)
+                    self.assertEqual(p.generate([ChatMessage('user', 'task')]), 'A')
+                    self.assertEqual(len(requests), 1)
+                    self.assertEqual(requests[0]['model'], 'judge')
+                finally:
+                    p._client.close()
+        finally:
+            server.shutdown()
+            server.server_close()
+            thread.join(timeout=5)
+
     def test_error_observer_preserves_request_exception_and_next_attempt(self):
         error = RuntimeError('temporary transport failure')
         calls, errors = [], []

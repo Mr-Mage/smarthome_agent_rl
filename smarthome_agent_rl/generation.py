@@ -72,3 +72,24 @@ def record_generation_errors(provider, label, record):
             raise
 
     provider._client.chat.completions.create = observed_create
+
+
+def use_direct_service_transport(provider):
+    """Explicit actor/judge endpoints use the same direct route as service probes."""
+    import httpx
+    original = provider._client
+    provider._client = original.with_options(
+        http_client=httpx.Client(trust_env=False, timeout=original.timeout))
+    original.close()
+
+
+def audit_response_payload(response):
+    """Keep non-JSON HTTP errors without turning audit parsing into transport failure."""
+    try:
+        value = response.json()
+    except ValueError:
+        value = None
+    if isinstance(value, dict):
+        return value
+    return {'unparsed_response': True, 'content_type': response.headers.get('content-type'),
+            'body_excerpt': response.text[:4096]}
