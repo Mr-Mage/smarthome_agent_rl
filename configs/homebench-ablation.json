@@ -91,5 +91,7 @@
   ],
   "kernel_cache_root": "/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/zhengrj/agent/smarthome_agent_rl/work/concurrency-capacity/kernel-cache",
   "chat_transport": "append_empty_user",
-  "checkpoint_seconds": 10
+  "checkpoint_seconds": 10,
+  "contract_location": "before official task instruction boundary, allowing public context prefix reuse",
+  "dispatch_policy": "home_hash_contiguous; paired arms on same actor"
 }

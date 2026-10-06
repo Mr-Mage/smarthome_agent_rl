@@ -47,7 +47,14 @@ def messages_for(adapter, task_id, arm, transport='native'):
         _, _, spec = adapter.contract(task_id)
         # These are capabilities only, never target labels or task-category hints.
         context = '\n<public_device_contract>\n'+json.dumps(spec, ensure_ascii=False, separators=(',', ':'))+'\n</public_device_contract>\n'
-        messages = [{'role': m['role'], 'content': m['content']+context} for m in messages]
+        marker = '-------------------------------\nHere are the user instructions you need to reply to.\n'
+        enriched = []
+        for message in messages:
+            prefix, separator, suffix = message['content'].partition(marker)
+            if not separator:
+                raise ValueError('Pinned HomeBench task boundary missing')
+            enriched.append({'role': message['role'], 'content': prefix+context+separator+suffix})
+        messages = enriched
     if transport == 'append_empty_user':
         messages = messages+[{'role': 'user', 'content': ''}]
     elif transport != 'native':
@@ -184,7 +191,9 @@ def run(adapter, config, output, selection, request_fn=completion):
     pools = [ThreadPoolExecutor(max_workers=config['slots_per_actor']) for _ in actors]
     try:
         futures = []
-        for task_id in ids:
+        # Keep each home's public context contiguous in the actor queue. This
+        # changes neither the frozen selection nor either arm's input.
+        for task_id in sorted(ids, key=lambda t: (digest(adapter.home_id(t)), digest(t))):
             actor_index = int(digest(adapter.home_id(task_id)), 16) % len(actors)
             for arm in ('B0', 'B1'):
                 futures.append(pools[actor_index].submit(episode, task_id, arm, actors[actor_index], time.monotonic()))
