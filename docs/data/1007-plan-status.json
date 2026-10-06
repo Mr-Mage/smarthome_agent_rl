@@ -1,0 +1,76 @@
+{
+  "plan": "docs/1007_plan.md",
+  "scope": "Latest user confirmation: official single-turn harness diagnostics/ablations only; no SFT/RL, new benchmark or multi-session experiments.",
+  "default": "Qwen3.5-9B + G; permanent baseline tag baseline/1007-9b-g",
+  "nodes": {
+    "N41": {
+      "status": "baseline_frozen",
+      "commit": "43ccba1"
+    },
+    "N42": {
+      "status": "execution_layers_implemented",
+      "commit": "8fcd521"
+    },
+    "N43": {
+      "status": "task_persistence_engineering_only",
+      "commit": "ae656c2"
+    },
+    "N44": {
+      "status": "partial_public_contract_implemented",
+      "commit": "670e118"
+    },
+    "N45": {
+      "status": "durable_scheduler_engineering_only",
+      "commit": "93693b9"
+    },
+    "N46": {
+      "status": "single_turn_react_boundary_integrated",
+      "commit": "199e0d8",
+      "acceptance": "44 server tests passed; full 211 tests, 1 environment skip"
+    },
+    "N47": {
+      "status": "calibration_complete_dev_not_admitted",
+      "source_commit": "10d4f3977f46358381939a30a1a503f7af8242c6",
+      "config": "configs/runtime-ablation.json",
+      "evidence": "runs/runtime-ablation/n47-v3/evidence-receipt.json",
+      "failed_starts": [
+        "runs/runtime-ablation/n47-v1",
+        "runs/runtime-ablation/n47-v2"
+      ],
+      "acceptance": "47 server runtime tests passed; 48 calibration episodes verified; 730 stage files; 29 local receipts checked; 12 initial paired inputs equal",
+      "successes_per_12": {
+        "G": 5,
+        "RC": 5,
+        "RCV": 5,
+        "B0": 6
+      },
+      "stop_reasons": [
+        "uncovered precondition episodes 4/12 > 25%",
+        "RCV ordinary mutations dispatched 0 < 1"
+      ],
+      "default_decision": "retain G; do not rewrite frozen rules or rerun on pilot outcomes",
+      "cost": {
+        "actor_tokens": 2154645,
+        "judge_tokens": 189126,
+        "actor_requests": 363,
+        "judge_requests": 96,
+        "missing_usage": 0,
+        "allocated_actor_gpu_seconds": 2631.6456528198905,
+        "seconds_including_cleanup": 657.9114132049726
+      },
+      "archive": "work/1007/n47-evidence.tar.gz",
+      "archive_sha256": "f1b1adfc5632306d8fe8381ad8643dfc289fbbc16aef96638edf2bbc57816491"
+    }
+  },
+  "benchmark_status": {
+    "SimuHome": "existing official single-turn benchmark; reused exposed development tasks",
+    "HomeBench": "read-only source audit only; no evaluation added this round",
+    "SAGE": "read-only source audit only; no new environment or evaluation this round"
+  },
+  "remaining_engineering": {
+    "persistent_trigger": "not implemented",
+    "task_conflict": "not implemented",
+    "scheduler_official_runner": "not integrated"
+  },
+  "benefit_acceptance": "not satisfied; runtime unit/integration tests do not establish stable benefit on two public benchmarks"
+}
