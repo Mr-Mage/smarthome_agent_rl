@@ -8,6 +8,7 @@ import sys
 import time
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
 
 
 def command(benchmark, config_path, output, *, source=None, stage='calibration', calibration=None,
@@ -45,15 +46,43 @@ def main():
     parser.add_argument('--prepare-only', action='store_true', help='Freeze dispatch without starting services')
     args = parser.parse_args()
     config = args.config.resolve()
-    argv = command(args.benchmark, config, args.output.resolve(), source=args.source, stage=args.stage,
-                   calibration=args.calibration, launch_actors=args.launch_actors)
-    dispatch_dir = args.output.parent / (args.output.name + '-dispatch')
-    dispatch_dir.mkdir(parents=True, exist_ok=False)
+    source = args.source.resolve() if args.source else None
+    argv = command(args.benchmark, config, args.output.resolve(), source=source, stage=args.stage,
+                   calibration=args.calibration.resolve() if args.calibration else None,
+                   launch_actors=args.launch_actors)
+    cfg = json.loads(config.read_text(encoding='utf-8'))
+    if args.benchmark == 'HomeBench':
+        from smarthome_agent_rl.benchmarks.homebench import HomeBenchAdapter
+        lock = json.loads((ROOT / 'configs/public-benchmarks.json').read_text())['HomeBench']
+        if cfg['source_commit'] != lock['commit']:
+            raise ValueError('Pinned benchmark/config commit differs')
+        HomeBenchAdapter(source, lock)  # Source validation before creating dispatch evidence.
+        source_identity = lock
+    else:
+        from smarthome_agent_rl.benchmarks.simuhome import SimuHomeAdapter
+        source_identity = []
+        for stage in cfg['node_experiment']['stages']:
+            path = ROOT / stage['manifest']
+            manifest = json.loads(path.read_text())
+            adapter = SimuHomeAdapter(ROOT / 'deps/SimuHome/data/benchmark', manifest)
+            for task_id in adapter.task_ids():
+                adapter.public_input(task_id)
+            source_identity.append({'manifest': stage['manifest'], 'sha256': hashlib.sha256(path.read_bytes()).hexdigest(),
+                                    'tasks': len(adapter.task_ids())})
     receipt = {'benchmark': args.benchmark, 'argv': argv,
-               'git_commit': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
+               'git_commit': subprocess.check_output(['git', '-c', f'safe.directory={ROOT.as_posix()}',
+                                                      'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
                'config_sha256': hashlib.sha256(config.read_bytes()).hexdigest(),
+               'source_identity': source_identity,
                'prepare_only': args.prepare_only, 'status': 'prepared',
                'scope': 'native protocols, evaluators and resource budgets retained; no aggregate cross-benchmark SR'}
+    dirty = subprocess.check_output(['git', '-c', f'safe.directory={ROOT.as_posix()}',
+                                    'status', '--porcelain'], cwd=ROOT, text=True).strip()
+    receipt['git_worktree_dirty'] = bool(dirty)
+    if dirty and not args.prepare_only:
+        raise ValueError('Commit frozen execution source before starting a benchmark')
+    dispatch_dir = args.output.parent / (args.output.name + '-dispatch')
+    dispatch_dir.mkdir(parents=True, exist_ok=False)
     path = dispatch_dir / 'entrypoint.json'
     path.write_text(json.dumps(receipt, indent=2) + '\n')
     if args.prepare_only:
