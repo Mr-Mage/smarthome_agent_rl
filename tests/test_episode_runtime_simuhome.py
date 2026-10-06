@@ -130,6 +130,39 @@ class NativeEpisodeRuntimeTests(unittest.TestCase):
         self.runtime.finish()
         self.assertEqual(self.runtime.store.list('task')[0]['status'], 'WAITING')
 
+    def test_resource_context_reaches_real_react_and_native_conflicts_without_automatic_cancellation(self):
+        from smarthome_agent_rl.execution.resource_context import ResourceEpisodeRuntime
+        from smarthome_agent_rl.harness_agent import HarnessAgent
+        captured = []
+        off = copy.deepcopy(self.arguments)
+        off['steps'][0]['args']['command_id'] = 'Off'
+        self.outputs.insert(2, {'thought': 'Conflicting second intention.',
+            'call': {'tool': 'schedule_workflow', 'arguments': off}})
+        def generate(messages, response_format=None):
+            captured.append(copy.deepcopy(messages))
+            result = json.dumps(self.outputs[self.index])
+            self.index += 1
+            return result
+        policy = {'verify': False, 'verification_version': 1, 'context_version': 0,
+                  'task_runtime': True, 'task_runtime_clock': 'public_events', 'task_runtime_context': True}
+        self.agent = HarnessAgent(SimpleNamespace(generate=generate), variant='GTMEC', max_steps=5, policy=policy)
+        self.agent.executor.dispatch = self.dispatch
+        self.runtime = self.agent.task_runtime = ResourceEpisodeRuntime(self.agent.executor,
+            self.runtime.adapter, self.path.with_name('resource.sqlite3'))
+        result = self.run_agent()
+        self.assertEqual(result.final_answer, 'Scheduled.')
+        self.assertFalse(any('PUBLIC NATIVE JOB / RESOURCE CONTEXT' in m.content for m in captured[0]))
+        contexts = [json.loads(m.content.split('\n', 1)[1]) for turn in captured
+                    for m in turn if m.content.startswith('PUBLIC NATIVE JOB / RESOURCE CONTEXT')]
+        self.assertEqual([c['jobs_total'] for c in contexts], [1, 2])
+        self.assertEqual(contexts[-1]['conflicts_total'], 1)
+        self.assertEqual(len(self.home.workflows_by_id), 2)
+        self.assertEqual(sum(t == 'schedule_workflow' for t, _ in self.calls), 2)
+        self.assertFalse(any(t in ('cancel_workflow', 'get_current_time') for t, _ in self.calls))
+        self.assertEqual(self.runtime.store.list('task')[0]['status'], 'WAITING')
+        # Summary is freshly copied, never added permanently to native history.
+        self.assertEqual(len([e for e in self.runtime.events if e['kind'] == 'runtime_context_exposed']), 2)
+
 
 if __name__ == '__main__':
     unittest.main()

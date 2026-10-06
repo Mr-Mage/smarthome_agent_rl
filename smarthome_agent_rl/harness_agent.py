@@ -255,7 +255,7 @@ class GuardedExecutor:
 class HarnessAgent:
     def __init__(self, llm, *, variant, max_steps, trace_fn=None, audit_fn=None,
                  repair_limit=2, query_limit=40, policy=None, token_count_fn=None):
-        if variant not in ('B0', 'B1', 'B2', 'G', 'GV', 'GC', 'Full', 'GV2', 'GC2', 'Candidate', 'GD', 'GW', 'GDW', 'TimePlan', 'GThinking', 'Teacher', 'SFT9B', 'GB', 'SFT9B_B', 'GS', 'GR', 'GTS', 'GEC', 'RC', 'RCV', 'GTM', 'GTME'):
+        if variant not in ('B0', 'B1', 'B2', 'G', 'GV', 'GC', 'Full', 'GV2', 'GC2', 'Candidate', 'GD', 'GW', 'GDW', 'TimePlan', 'GThinking', 'Teacher', 'SFT9B', 'GB', 'SFT9B_B', 'GS', 'GR', 'GTS', 'GEC', 'RC', 'RCV', 'GTM', 'GTME', 'GTMEC'):
             raise ValueError(variant)
         policy = policy or {'verify': variant in ('GV', 'Full', 'GV2'),
             'verification_version': 2 if variant == 'GV2' else 1,
@@ -323,6 +323,11 @@ class HarnessAgent:
         if policy['context_version']:
             from smarthome_agent_rl.context import LedgerProvider, CompactLedgerProvider
             provider = CompactLedgerProvider(provider, self.executor, token_count_fn) if policy['context_version'] == 2 else LedgerProvider(provider, self.executor)
+        if policy.get('task_runtime_context'):
+            if variant != 'GTMEC' or not policy.get('task_runtime') or policy.get('task_runtime_clock') != 'public_events':
+                raise ValueError('Resource context requires the dedicated public-event runtime arm')
+            from smarthome_agent_rl.execution.resource_context import RuntimeContextProvider
+            provider = RuntimeContextProvider(provider, lambda: getattr(self, 'task_runtime', None))
         self.agent = ReActAgent(provider, config=ReActConfig(max_steps=max_steps,
             show_assistant_raw=True, trace_fn=trace_fn))
 

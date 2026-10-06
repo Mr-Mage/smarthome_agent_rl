@@ -123,11 +123,11 @@ def main(mode):
                 repair_limit=config['recovery_per_action'], query_limit=config['extra_queries_max'],
                 policy=config.get('variant_policies', {}).get(variant), token_count_fn=count_tokens)
         if config.get('variant_policies', {}).get(variant, {}).get('task_runtime'):
-            if variant not in ('GTM', 'GTME') or type(agent.executor).__name__ != 'GuardedExecutor':
+            if variant not in ('GTM', 'GTME', 'GTMEC') or type(agent.executor).__name__ != 'GuardedExecutor':
                 raise ValueError('Native task-runtime ablation must use an isolated legacy Guard arm')
             policies = config['variant_policies']
             base_policy = {k: v for k, v in policies[variant].items()
-                           if k not in ('task_runtime', 'task_runtime_tolerance', 'task_runtime_clock')}
+                           if k not in ('task_runtime', 'task_runtime_tolerance', 'task_runtime_clock', 'task_runtime_context')}
             if base_policy != policies.get('G'):
                 raise ValueError('GTM must preserve the frozen G policy and isolate runtime attachment')
             from smarthome_agent_rl.execution.episode import EpisodeRuntime
@@ -136,7 +136,10 @@ def main(mode):
             signatures, _ = command_contracts(ROOT / 'deps/SimuHome/src/simulator/domain/clusters')
             power, _ = public_power_rules(ROOT / 'deps/SimuHome/src/simulator/domain/devices')
             clock_policy = policies[variant].get('task_runtime_clock', 'poll')
-            if clock_policy == 'public_events' and variant == 'GTME':
+            if clock_policy == 'public_events' and variant == 'GTMEC' and policies[variant].get('task_runtime_context'):
+                from smarthome_agent_rl.execution.resource_context import ResourceEpisodeRuntime
+                runtime_class = ResourceEpisodeRuntime
+            elif clock_policy == 'public_events' and variant == 'GTME':
                 from smarthome_agent_rl.execution.events import EventEpisodeRuntime
                 runtime_class = EventEpisodeRuntime
             elif clock_policy == 'poll' and variant == 'GTM':

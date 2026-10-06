@@ -149,7 +149,8 @@ class EpisodeRuntime:
                 payload = self._intent(arguments['steps'])
                 job = self.scheduler.schedule(self.task.task_id, self.task.user_id,
                     expected_version=self.task.version, target_time=target, tolerance=self.tolerance,
-                    payload=payload, native_call={'tool': tool, 'args': arguments})
+                    payload=payload, native_call={'tool': tool, 'args': arguments},
+                    resource_claims=self._resource_claims(payload))
                 wf = self.store.get('workflow', job['workflow_id'])[0]
                 row = next(r for r in self.trace.invocations
                            if r.invocation_id == wf['evidence'][-1]['invocation_id'])
@@ -161,6 +162,10 @@ class EpisodeRuntime:
         if self._dispatch_exception is not None:
             raise self._dispatch_exception
         return copy.deepcopy(row.response)
+
+    def _resource_claims(self, payload):
+        # Frozen GTM/GTME retain empty claims. New policies opt in explicitly.
+        return ()
 
     def _observe_cancellation(self, arguments, row):
         response = row.response
