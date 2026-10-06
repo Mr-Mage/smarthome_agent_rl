@@ -1,0 +1,18 @@
+{
+  "node": "N71",
+  "scope": "Engineering public pre-action context only; no inference, new benchmark, training or goal IR integration",
+  "default": "Qwen3.5-9B+G unchanged; semantic_context_version defaults to0",
+  "intervention": "Opt-in version1 forwards existing public receipts to a verifier; no added tools or automatic retry",
+  "limits": {"devices": 8, "recent_actions": 8, "environment_json_characters": 24000},
+  "acceptance": [
+    "Original native ReAct receives only query,user_location,current_time",
+    "Verifier receives only receipts completed before proposed mutation dispatch",
+    "Workflow context covers observed devices and explicitly marks missing devices",
+    "Device and catalog facts have observation ordinal,turn and response SHA",
+    "Initial time is not claimed as current; state freshness and future state remain unknown",
+    "Hidden evaluator fields rejected recursively; oversized rows dropped whole with exact counts",
+    "Version0 unchanged; version1 report-only DENY does not cancel,repair or alter tool budget",
+    "Existing server environment full checks pass; native engineering case and local archive verified"
+  ],
+  "stop_rule": "Engineering failure stops any online semantic ablation; do not infer user Task completion or verifier calibration from tests"
+}

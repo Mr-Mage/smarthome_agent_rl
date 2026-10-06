@@ -1,5 +1,6 @@
 """Project variants around the upstream ReAct loop, with process-local tool injection."""
 import copy
+from dataclasses import asdict
 import json
 import hashlib
 from pathlib import Path
@@ -33,7 +34,9 @@ class GuardedExecutor:
                  dead_front=False, workflow_all_devices=False, audit_fn=None, dispatch=run_tool,
                  recovery=False, recovery_total_limit=6, semantic_verifier=None,
                  reflection_verifier=None, semantic_blocking=False, contract_registry=None,
-                 contract_blocking=False):
+                 contract_blocking=False, semantic_context_version=0):
+        if type(semantic_context_version) is not int or semantic_context_version not in (0, 1):
+            raise ValueError('Unsupported semantic context version')
         contracts, sources = command_contracts(ROOT / 'deps/SimuHome/src/simulator/domain/clusters')
         power_rules, device_sources = public_power_rules(ROOT / 'deps/SimuHome/src/simulator/domain/devices', dead_front=dead_front)
         sources.update(device_sources)
@@ -57,6 +60,7 @@ class GuardedExecutor:
         self.semantic_verifier = semantic_verifier
         self.reflection_verifier = reflection_verifier
         self.semantic_blocking = semantic_blocking
+        self.semantic_context_version = semantic_context_version
         self.contract_registry = contract_registry
         self.contract_blocking = contract_blocking
 
@@ -176,11 +180,22 @@ class GuardedExecutor:
                 record['uncovered'].append('future_state_preconditions')
             verifier = self.reflection_verifier or self.semantic_verifier
             if verifier is not None and tool in MUTATIONS:
-                semantic_context = VerificationContext(
-                    user_goal=getattr(self, 'user_goal', ''), environment_state=before,
-                    proposed_action={'tool': tool, **copy.deepcopy(arguments)},
-                    recent_actions=[{'tool': row.tool, **copy.deepcopy(row.params)} for row in self.actual[-8:]],
-                    contract=record.get('contract'))
+                if self.semantic_context_version == 1:
+                    from smarthome_agent_rl.semantic_context import build_context
+                    semantic_context = build_context(getattr(self, 'user_goal', ''),
+                        {'tool': tool, **copy.deepcopy(arguments)}, self.observations,
+                        user_location=getattr(self, 'user_location', None),
+                        initial_time=getattr(self, 'initial_public_time', None), contract=record.get('contract'))
+                    record['semantic_context'] = asdict(semantic_context)
+                    record['semantic_context_sha256'] = hashlib.sha256(json.dumps(
+                        record['semantic_context'], sort_keys=True, ensure_ascii=False,
+                        separators=(',', ':')).encode('utf-8')).hexdigest()
+                else:
+                    semantic_context = VerificationContext(
+                        user_goal=getattr(self, 'user_goal', ''), environment_state=before,
+                        proposed_action={'tool': tool, **copy.deepcopy(arguments)},
+                        recent_actions=[{'tool': row.tool, **copy.deepcopy(row.params)} for row in self.actual[-8:]],
+                        contract=record.get('contract'))
                 semantic_result = verifier.verify(semantic_context)
                 record['semantic_verification'] = semantic_result.as_dict()
                 if self.semantic_blocking and semantic_result.verdict == 'DENY':
@@ -263,7 +278,7 @@ class HarnessAgent:
         if policy.get('execution_runtime'):
             incompatible = ('verify', 'context_version', 'time_plan', 'identifier_binding',
                             'start_semantics', 'recovery', 'task_spec', 'evidence_context',
-                            'semantic_verifier', 'reflection_verifier', 'contract_registry',
+                            'semantic_verifier', 'reflection_verifier', 'semantic_context_version', 'contract_registry',
                             'dead_front', 'workflow_all_devices')
             if variant in ('B0', 'GR', 'GTS', 'GEC') or any(policy.get(key) for key in incompatible):
                 raise ValueError('Execution runtime comparison must isolate the tool execution boundary')
@@ -287,6 +302,7 @@ class HarnessAgent:
                                        recovery_total_limit=policy.get('recovery_total_limit', 6),
                                        semantic_verifier=policy.get('semantic_verifier'),
                                        reflection_verifier=policy.get('reflection_verifier'),
+                                       semantic_context_version=policy.get('semantic_context_version', 0),
                                        semantic_blocking=policy.get('semantic_blocking', False),
                                        contract_registry=policy.get('contract_registry'),
                                        contract_blocking=policy.get('contract_blocking', False))
@@ -333,6 +349,8 @@ class HarnessAgent:
 
     def run(self, query, *, user_location=None, current_time=None):
         self.executor.user_goal = query
+        self.executor.user_location = copy.deepcopy(user_location)
+        self.executor.initial_public_time = copy.deepcopy(current_time)
         runtime = getattr(self, 'task_runtime', None)
         if runtime is not None:
             runtime.start(query, user_location=user_location, current_time=current_time)
