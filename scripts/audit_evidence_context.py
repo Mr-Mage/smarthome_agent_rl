@@ -141,8 +141,10 @@ def analyze(output, model):
         episodes.append(totals)
     gates = config['offline_gates']
     dev = stages['dev']
+    reference_count = sum(s['references'] for s in stages.values())
     checks = {'lossless_roundtrip': all(s['roundtrips'] == s['requests'] for s in stages.values()),
-        'public_source_match': all(s['source_matches'] == s['references'] for s in stages.values()),
+        'public_source_match': (all(s['source_matches'] == s['references'] for s in stages.values())
+                                if reference_count else None),
         'protected_messages': all(s['protected_messages'] == s['protected_unchanged'] for s in stages.values()),
         'exact_deployed_tokenizer': not mismatch,
         'input_token_savings': dev['selected_tokens'] / dev['raw_tokens'] <= gates['dev_input_token_ratio_max']}
@@ -157,7 +159,8 @@ def analyze(output, model):
             'tokenizer_load_seconds': load_seconds, 'tokenizer_calls': token_calls,
             'tokenizer_seconds': token_time, 'actor_inference_calls': 0, 'judge_inference_calls': 0,
             'reserved_h100_gpu_seconds': 0, 'a800_resource_cost': 'not attributable; resident judge untouched'},
-        'limits': 'Lossless restore proves evidence availability, not model understanding or task success. '
+        'limits': 'A null public-source check means no reference was exercised. '
+                  'Lossless restore proves evidence availability, not model understanding or task success. '
                   'Fixed historical G prompts do not predict candidate trajectories or full episode savings.'}
     write(output / 'report.json', report)
     print(json.dumps({k: report[k] for k in ('checks','online_eligible','stages','cost')}))

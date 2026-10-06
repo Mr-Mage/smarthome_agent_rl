@@ -108,6 +108,7 @@ class EvidenceContextTests(unittest.TestCase):
             self.skipTest('Existing SimuHome environment required')
         from types import SimpleNamespace
         from smarthome_agent_rl.evidence_context import EvidenceContextProvider
+        from smarthome_agent_rl.harness_agent import HarnessAgent
         class Inner:
             def generate(self, messages, response_format=None):
                 self.messages, self.schema = messages, response_format
@@ -116,6 +117,15 @@ class EvidenceContextTests(unittest.TestCase):
         messages = [ChatMessage(**m) for m in raw]
         executor = SimpleNamespace(observations=observed, context_audit=[], save_audit=lambda: None)
         inner = Inner()
+        for variant in ('GTS', 'GR'):
+            with self.assertRaises(ValueError):
+                HarnessAgent(inner, variant=variant, max_steps=20,
+                    policy={'verify':False, 'verification_version':1, 'context_version':0,
+                            'evidence_context':True}, token_count_fn=lambda rows:100)
+        with self.assertRaises(ValueError):
+            HarnessAgent(inner, variant='GEC', max_steps=20)
+        baseline = HarnessAgent(inner, variant='G', max_steps=20)
+        self.assertIs(baseline.agent.llm.inner, inner)
         schema = {'json_schema': {'name': 'original-schema'}}
         provider = EvidenceContextProvider(inner, executor, lambda rows: 100)
         self.assertEqual(provider.generate(messages, schema), 'unchanged reply')

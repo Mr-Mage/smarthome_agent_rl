@@ -233,7 +233,7 @@ class HarnessAgent:
                                        recovery=policy.get('recovery', variant == 'GR'),
                                        recovery_total_limit=policy.get('recovery_total_limit', 6))
         if policy.get('evidence_context', variant == 'GEC'):
-            if any(policy.get(key) for key in ('verify', 'context_version', 'time_plan',
+            if variant in ('GTS', 'GR') or any(policy.get(key) for key in ('verify', 'context_version', 'time_plan',
                     'identifier_binding', 'start_semantics', 'recovery', 'task_spec',
                     'dead_front', 'workflow_all_devices')):
                 raise ValueError('Evidence context must isolate prompt representation from other interventions')
