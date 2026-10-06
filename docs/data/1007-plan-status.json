@@ -153,19 +153,60 @@
       "evidence": "runs/homebench/n56-seed{43,44}-calibration-v1/"
     },
     "N57": {
-      "status": "wire_calibrations_passed_full_running",
+      "status": "three_seed_full_public_snapshots_verified",
       "source_commit": "08963a1",
       "seeds": [
+        42,
         43,
         44
       ],
       "config": "configs/homebench-wire-seed{42,43,44}.json",
-      "acceptance": "87 server tests passed; full254 one skip; no online conclusion yet",
+      "acceptance": "364686 scored records,104196 requests,52098 paired inputs verified; descriptive exposed snapshot only",
       "gate_uncovered_per_94": {
+        "seed42": 16,
         "seed43": 12,
         "seed44": 22
       },
-      "failed_starts": "full-v1 port preflight TIME_WAIT; retained before any actor load"
+      "failed_starts": "full-v1 port preflight TIME_WAIT; retained before any actor load",
+      "source_commits": {
+        "seed42": "fc48ca8",
+        "seed43": "5cae99e",
+        "seed44": "5cae99e"
+      },
+      "full_exact_matches": {
+        "seed42": {
+          "B0": 4763,
+          "FG": 9531,
+          "WG": 9539
+        },
+        "seed43": {
+          "B0": 4765,
+          "FG": 8673,
+          "WG": 9691
+        },
+        "seed44": {
+          "B0": 4698,
+          "FG": 9507,
+          "WG": 9544
+        }
+      },
+      "cost": {
+        "actor_requests_including_calibration": 104760,
+        "logical_tokens": 517182069,
+        "probes": 16,
+        "probe_tokens": 352,
+        "reserved_h100_gpu_seconds": 5352.19799334195,
+        "failed_start_seconds": 0.5057875040222383
+      },
+      "evidence": [
+        "runs/homebench/n57-seed42-full-v1/evidence-receipt.json",
+        "runs/homebench/n57-seed43-full-v2/evidence-receipt.json",
+        "runs/homebench/n57-seed44-full-v2/evidence-receipt.json"
+      ],
+      "archives": {
+        "work/1007/n57-seeds43-44-evidence.tar.gz": "574d6db30a15d9f5ebc89c16dd10c64e4d9c10469c436456573f0ac35e2380a7",
+        "work/1007/n57-seed42-evidence.tar.gz": "5eca86befabc54db08069d709c0ed2e2ef7f41062c676e7576ab84d3c9fed464"
+      }
     },
     "N58": {
       "status": "timed_observation_engineering_verified",
@@ -186,19 +227,34 @@
       "evidence": "runs/homebench/n60-n54-symmetric-v1/report.json",
       "contract_WG_wins": 287,
       "contract_WG_losses": 819,
-      "scope": "read-only exposed N54 outputs; contract gain not supported"
+      "scope": "read-only exposed N54 outputs; contract gain not supported",
+      "replications": {
+        "seed42": {
+          "wins": 279,
+          "losses": 820
+        },
+        "seed43": {
+          "wins": 391,
+          "losses": 802
+        },
+        "seed44": {
+          "wins": 286,
+          "losses": 834
+        }
+      }
     }
   },
   "benchmark_status": {
     "SimuHome": "existing official single-turn benchmark; reused exposed development tasks",
-    "HomeBench": "N54 full17366 snapshot verified; representation/Guard gains; multi-seed stability not accepted",
+    "HomeBench": "N57 full17366 x seeds42/43/44 verified; representation benefits descriptive; symmetric contract comparison negative",
     "SAGE": "read-only source audit only; no new environment or evaluation this round"
   },
   "remaining_engineering": {
     "persistent_trigger": "not implemented",
     "task_conflict": "implemented; reports only, no arbitration or benchmark integration",
     "scheduler_official_runner": "not integrated",
-    "timed_observation": "N58 requires trusted adapter observation time; official runner integration pending"
+    "timed_observation": "N58 requires trusted adapter observation time; official runner integration pending",
+    "common_simuhome_adapter": "not integrated; existing official driver remains separate from HomeBench"
   },
   "benefit_acceptance": "not satisfied; runtime unit/integration tests do not establish stable benefit on two public benchmarks"
 }
