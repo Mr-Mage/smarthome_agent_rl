@@ -60,16 +60,27 @@
       },
       "archive": "work/1007/n47-evidence.tar.gz",
       "archive_sha256": "f1b1adfc5632306d8fe8381ad8643dfc289fbbc16aef96638edf2bbc57816491"
+    },
+    "N48": {
+      "status": "source_coverage_audit_complete",
+      "commit": "9045613",
+      "evidence": "runs/task-runtime/n48-source-audit-v2/report.json"
+    },
+    "N49": {
+      "status": "task_conflict_engineering_only",
+      "commit": "dcb7326",
+      "acceptance": "57 server tests passed; full224, one environment skip",
+      "evidence": "runs/task-runtime/n49-server-v1/"
     }
   },
   "benchmark_status": {
     "SimuHome": "existing official single-turn benchmark; reused exposed development tasks",
-    "HomeBench": "read-only source audit only; no evaluation added this round",
+    "HomeBench": "pinned source adapter in development; no online evaluation yet",
     "SAGE": "read-only source audit only; no new environment or evaluation this round"
   },
   "remaining_engineering": {
     "persistent_trigger": "not implemented",
-    "task_conflict": "not implemented",
+    "task_conflict": "implemented; reports only, no arbitration or benchmark integration",
     "scheduler_official_runner": "not integrated"
   },
   "benefit_acceptance": "not satisfied; runtime unit/integration tests do not establish stable benefit on two public benchmarks"
