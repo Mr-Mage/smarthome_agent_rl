@@ -179,6 +179,14 @@
       "source_commit": "3d39707",
       "evidence": "runs/homebench/n59-n54-cost-v2/report.json",
       "scope": "completed public snapshot cost only; not production SLO"
+    },
+    "N60": {
+      "status": "additional_symmetric_attribution_complete",
+      "source_commit": "fc48ca8",
+      "evidence": "runs/homebench/n60-n54-symmetric-v1/report.json",
+      "contract_WG_wins": 287,
+      "contract_WG_losses": 819,
+      "scope": "read-only exposed N54 outputs; contract gain not supported"
     }
   },
   "benchmark_status": {
