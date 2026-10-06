@@ -118,6 +118,19 @@ class EpisodeRuntimeTests(unittest.TestCase):
         self.assertEqual(len(self.calls), before)
         self.assertEqual(self.runtime.store.list('job')[0]['status'], 'SCHEDULED')
 
+    def test_many_native_callbacks_after_budget_exhaustion_do_not_rewrite_evidence(self):
+        self.register()
+        self.executor.query_limit = self.executor.extra_queries
+        before, calls = len(self.receipts), len(self.calls)
+        for _ in range(100):
+            self.runtime.supervise(phase='native_virtual_time_advanced')
+        self.assertEqual(len(self.receipts), before + 1)
+        self.assertEqual(len(self.calls), calls)
+        self.assertEqual(self.runtime.skipped_supervisions, 100)
+        self.runtime.flush()
+        self.assertEqual(self.receipts[-1][1]['skipped_supervisions_query_budget'], 100)
+        self.assertEqual(self.runtime.store.list('job')[0]['status'], 'SCHEDULED')
+
     def test_registration_timeout_retains_original_exception_and_never_replays(self):
         self.timeout = True
         with self.assertRaises(TimeoutError):

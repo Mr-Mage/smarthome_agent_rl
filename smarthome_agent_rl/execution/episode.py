@@ -36,6 +36,8 @@ class EpisodeRuntime:
         self._dispatch_exception = None
         self._supervising = False
         self.supervisor_queries = 0
+        self.skipped_supervisions = 0
+        self._budget_exhausted_reported = False
         executor.dispatch = self.dispatch
 
     @staticmethod
@@ -78,6 +80,7 @@ class EpisodeRuntime:
                 'workflows': self.store.list('workflow'), 'jobs': self.store.list('job'),
                 'events': self.events, 'trace': self.store.list('trace'),
                 'supervisor_queries': self.supervisor_queries,
+                'skipped_supervisions_query_budget': self.skipped_supervisions,
                 'scope': 'public single-turn native delegation; action verification is not official task scoring'})
 
     def _read(self, tool, arguments):
@@ -224,6 +227,15 @@ class EpisodeRuntime:
             return []
         pending = any(j['status'] == 'SCHEDULED' for j in self.store.list('job'))
         if not pending:
+            return []
+        if self.executor.extra_queries >= self.executor.query_limit:
+            # Native evaluators may advance time thousands of times. No budget
+            # means no new observation: count these callbacks without rewriting
+            # the entire trace/database snapshot on every no-op.
+            self.skipped_supervisions += 1
+            if not self._budget_exhausted_reported:
+                self._budget_exhausted_reported = True
+                self._event('supervisor_budget_exhausted', phase=phase)
             return []
         self._supervising = True
         try:
