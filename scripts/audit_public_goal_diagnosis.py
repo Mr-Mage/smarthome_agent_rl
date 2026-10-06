@@ -79,7 +79,7 @@ def audit(run):
             expected_paths.add(path.resolve())
             record = read(path)
             records.append(record)
-            problems.extend(audit_record(config, item, record, seed=seed, actor=config['actors'][index % 4]))
+            problems.extend(audit_record(config, item, record, seed=seed, actor=config['actors'][index % len(config['actors'])]))
     if expected_paths != {p.resolve() for p in (run / 'records').rglob('evidence.json')}:
         problems.append('Record coverage differs from frozen task/seed schedule')
     calculated = evaluate(config, records)

@@ -4,6 +4,7 @@ No simulator invocation, benchmark generation, training records or native scores
 are involved. All responses and errors are retained; there are no retries.
 """
 import argparse
+from contextlib import contextmanager
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import hashlib
 import json
@@ -54,7 +55,44 @@ def sources(config):
         identity[key] = item['task']
     if identity != {r['id']: r for r in expected} or len(inputs) != config['gates']['public_tasks']:
         raise ValueError('Exposed task scope differs from frozen manifest')
-    return [{'task': task, 'public': inputs[task['id']]} for task in expected]
+    result = [{'task': task, 'public': inputs[task['id']]} for task in expected]
+    if config.get('reference_run'):
+        reference = ROOT / config['reference_run']
+        if sha(reference / 'artifact_manifest.json') != config['reference_artifact_sha256']:
+            raise ValueError('Retained reference evidence identity differs')
+        original = read(reference / 'protocol.json')
+        if original['inputs'] != result or original['extraction_schema'] != extraction_schema() or \
+                original['review_schema'] != review_schema() or any(
+                    original['config'][key] != config[key] for key in
+                    ('generation', 'review_generation', 'review_seed', 'actor_seeds', 'gates', 'manual_review')):
+            raise ValueError('Model-only diagnosis must retain public inputs,schemas,generation and gates')
+    return result
+
+
+@contextmanager
+def external_actor(config, services):
+    """Borrow the permanent service; never restart or reserve H100s for it."""
+    services.mkdir(parents=True, exist_ok=False)
+    started = time.monotonic()
+    lifecycle = {'managed': False, 'reserved_h100_gpu_seconds': 0,
+        'shared_a800_allocation': 'Unallocated permanent service; request costs recorded by role',
+        'external_service_stopped': False}
+    try:
+        body = {'model': config['model'], 'seed': 42, 'temperature': 0.0, 'max_tokens': 32,
+            'messages': [{'role': 'user', 'content': 'Reply OK.'}],
+            'chat_template_kwargs': {'enable_thinking': False}}
+        call = completion(config['actors'][0]['endpoint'], body, config['request_timeout'])
+        save(services / 'probe-receipts.json', [call])
+        lifecycle['probes'] = {'requests': 1, 'failed': int(call['error'] is not None),
+            'tokens': call['usage']['total_tokens'] if valid_usage(call['usage']) else 0,
+            'missing_usage': int(not valid_usage(call['usage']))}
+        if call['error'] is not None or not valid_usage(call['usage']) or call['response']['model'] != config['model']:
+            raise ValueError('Permanent extractor model/usage probe failed')
+        lifecycle['ready_seconds'] = time.monotonic() - started
+        yield
+    finally:
+        lifecycle['seconds_including_cleanup'] = time.monotonic() - started
+        save(services / 'lifecycle.json', lifecycle)
 
 
 def request(config, messages, schema, *, seed, review=False):
@@ -83,9 +121,11 @@ def evaluate(config, records):
         'structural_validity': all(r['valid_proposals'] / max(1, r['records']) >= gates['valid_proposal_ratio_min'] for r in by_seed.values()),
         'model_review_fidelity': all(r['review_all_yes'] / max(1, r['records']) >= gates['review_all_yes_ratio_min'] for r in by_seed.values()),
         'manual_semantics': False}
-    costs = {role: {'requests': len([c for c in calls if c['body']['model'] == model]),
-        'tokens': sum(c['usage']['total_tokens'] for c in calls if c['body']['model'] == model and valid_usage(c['usage']))}
-        for role, model in (('extractor', config['model']), ('reviewer', config['review_model']))}
+    # Roles remain distinct even when a shared model performs both calls.
+    role_calls = {role: [r['calls'][index] for r in records if len(r['calls']) > index]
+                  for role, index in (('extractor', 0), ('reviewer', 1))}
+    costs = {role: {'requests': len(rows), 'tokens': sum(c['usage']['total_tokens'] for c in rows if valid_usage(c['usage']))}
+             for role, rows in role_calls.items()}
     return {'checks': checks, 'by_seed': by_seed, 'cost': costs, 'http_errors': http_errors,
         'missing_usage': missing, 'ready_for_native_integration': False,
         'time_graph_rows': sum(len(r['proposal']['time_graph']) for r in records if structured(r)),
@@ -101,7 +141,11 @@ def main():
     parser.add_argument('--output', type=Path, required=True)
     args = parser.parse_args()
     config = read(args.config)
-    if len(config['actors']) != 4 or config['slots_per_actor'] != 16:
+    external = config.get('actor_deployment') == 'external'
+    if external and (config['node'] != 'N70' or len(config['actors']) != 1 or config['slots_per_actor'] != 16 or
+            config['actors'][0]['endpoint'] != config['review_endpoint'] or config['model'] != config['review_model']):
+        raise ValueError('N70 external diagnosis requires the frozen shared A800 endpoint/model and16 slots')
+    if not external and (len(config['actors']) != 4 or config['slots_per_actor'] != 16):
         raise ValueError('Use four isolated actors and 64 total slots')
     if subprocess.check_output(['git', 'status', '--porcelain'], cwd=ROOT, text=True).strip():
         raise ValueError('Commit the frozen source/config before diagnosis')
@@ -155,11 +199,12 @@ def main():
 
     try:
         state('loading_actors')
-        with actors(config, services):
+        with (external_actor(config, services) if external else actors(config, services)):
             state('public_goal_diagnosis')
             pools = [ThreadPoolExecutor(max_workers=config['slots_per_actor']) for _ in config['actors']]
             try:
-                futures = [pools[index % 4].submit(worker, item, seed, config['actors'][index % 4])
+                count = len(config['actors'])
+                futures = [pools[index % count].submit(worker, item, seed, config['actors'][index % count])
                     for seed in config['actor_seeds'] for index, item in enumerate(inputs)]
                 for future in as_completed(futures):
                     records.append(future.result())
