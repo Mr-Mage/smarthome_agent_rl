@@ -4,6 +4,7 @@ The contract layer deliberately knows only capabilities, functions, arguments an
 public state assertions.  It does not contain device-type-specific branches.
 """
 from dataclasses import dataclass, field
+import math
 from typing import Any, Mapping
 
 
@@ -18,6 +19,7 @@ def _get_path(value: Any, path: str) -> tuple[bool, Any]:
 
 
 def _type_ok(value: Any, expected: str) -> bool:
+    expected = {'float': 'number', 'int': 'integer', 'bool': 'boolean'}.get(expected, expected)
     return {
         'any': True, 'null': value is None, 'string': isinstance(value, str),
         'integer': type(value) is int, 'number': type(value) in (int, float),
@@ -47,6 +49,10 @@ class ArgumentContract:
             return 'ARGUMENT_TYPE', {'argument': self.name, 'expected': self.type, 'actual_type': type(value).__name__}
         if self.enum and value not in self.enum:
             return 'ARGUMENT_ENUM', {'argument': self.name, 'allowed': list(self.enum), 'actual': value}
+        if type(value) in (int, float) and not math.isfinite(value):
+            return 'ARGUMENT_RANGE', {'argument': self.name, 'reason': 'nonfinite number'}
+        if (self.minimum is not None or self.maximum is not None) and type(value) not in (int, float):
+            return 'ARGUMENT_TYPE', {'argument': self.name, 'expected': 'finite number'}
         if self.minimum is not None and value < self.minimum:
             return 'ARGUMENT_RANGE', {'argument': self.name, 'minimum': self.minimum, 'actual': value}
         if self.maximum is not None and value > self.maximum:
@@ -96,12 +102,17 @@ class FunctionContract:
     capability: str
     arguments: dict[str, ArgumentContract] = field(default_factory=dict)
     assertions: tuple[Assertion, ...] = ()
+    postconditions: tuple[dict[str, Any], ...] = ()
+    verification: dict[str, Any] = field(default_factory=dict)
+    readonly: bool = False
 
     @classmethod
     def from_dict(cls, name: str, spec: Mapping[str, Any]) -> 'FunctionContract':
         args = {key: ArgumentContract.from_dict(key, value) for key, value in spec.get('args', {}).items()}
-        assertions = tuple(Assertion.from_dict(row) for row in spec.get('assertions', ()))
-        return cls(name=name, capability=spec.get('capability', name), arguments=args, assertions=assertions)
+        assertions = tuple(Assertion.from_dict(row) for row in spec.get('assertions', spec.get('preconditions', ())))
+        return cls(name=name, capability=spec.get('capability', name), arguments=args, assertions=assertions,
+                   postconditions=tuple(spec.get('postconditions', ())),
+                   verification=dict(spec.get('verification', {})), readonly=spec.get('readonly', False))
 
 
 @dataclass(frozen=True)
@@ -122,10 +133,14 @@ class DeviceContract:
             return ContractResult.reject('UNSUPPORTED_FUNCTION', {'function': function_name,
                 'available': sorted(self.functions)}, repair_hint={'select_function': sorted(self.functions)})
         function = self.functions[function_name]
+        if function.readonly and action.get('mutation', True):
+            return ContractResult.reject('READONLY_FUNCTION', {'function': function_name})
         if function.capability not in self.capabilities:
             return ContractResult.reject('UNSUPPORTED_CAPABILITY', {'capability': function.capability,
                 'available': sorted(self.capabilities)})
         arguments = action.get('args', action.get('arguments', {})) or {}
+        if not isinstance(arguments, Mapping):
+            return ContractResult.reject('ARGUMENT_SCHEMA', {'reason': 'arguments must be an object'})
         missing = [name for name, spec in function.arguments.items() if spec.required and name not in arguments]
         extra = sorted(set(arguments) - set(function.arguments))
         if missing or extra:
