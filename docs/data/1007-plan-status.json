@@ -4,18 +4,57 @@
   "default": "Qwen3.5-9B + G; permanent baseline tag baseline/1007-9b-g",
   "nodes": {
     "N70": {
-      "status": "running_model_only_public_goal_diagnosis",
+      "status": "failed_not_admitted",
       "implementation_commit": "a234bc3",
       "config": "configs/public-goal-35b-diagnosis.json",
       "evidence": "runs/public-goal-diagnosis/n70-v1/",
       "reference": "immutable N67 9B360 outputs,no rerun",
       "candidate": "Qwen3.6-35B-A3B standalone goal extractor",
       "tasks": 120,
-      "actor_seeds": [42,43,44],
+      "actor_seeds": [
+        42,
+        43,
+        44
+      ],
       "records": 360,
       "resources": "permanent A800 endpoint16 slots;zero H100 reservation;extractor/reviewer share model,bias retained",
       "acceptance_before_inference": "11 specialized server checks;full319,318 passed,one skip;retained N67 re-evaluation unchanged",
-      "scope": "Model-only diagnosis with unchanged source,prompt,schemas,generation,gates and manual36 cases;no native execution,training or new benchmark"
+      "scope": "Model-only diagnosis with unchanged source,prompt,schemas,generation,gates and manual36 cases;no native execution,training or new benchmark",
+      "source_commit": "6970e0d",
+      "valid_proposals": 317,
+      "review_all_yes": 119,
+      "manual": {
+        "assessor": "Codex developer,not independent human ground truth",
+        "passed": 11,
+        "failed": 25
+      },
+      "ready_for_native_integration": false,
+      "by_seed": {
+        "42": {
+          "valid": 107,
+          "all_yes": 42
+        },
+        "43": {
+          "valid": 100,
+          "all_yes": 36
+        },
+        "44": {
+          "valid": 110,
+          "all_yes": 41
+        }
+      },
+      "acceptance": "366 original artifacts,360 HTTP records and6 outer receipts verified locally;semantic gates failed",
+      "cost": {
+        "extractor_requests": 360,
+        "extractor_tokens": 188223,
+        "reviewer_requests": 317,
+        "reviewer_tokens": 250557,
+        "probe_requests": 1,
+        "probe_tokens": 18,
+        "wall_seconds": 636.66,
+        "reserved_h100_gpu_seconds": 0
+      },
+      "archive_sha256": "bcf575d4e4c91041712c1afc9d7451ec951d114b59614ae4d201cf0db53069da"
     },
     "N69": {
       "status": "native_engineering_accepted_benefit_not_established",
