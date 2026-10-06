@@ -221,6 +221,15 @@
       "evidence": "runs/homebench/n59-n54-cost-v2/report.json",
       "scope": "completed public snapshot cost only; not production SLO"
     },
+    "N61": {
+      "status": "common_native_adapter_acceptance_verified",
+      "source_commit": "6c9c413",
+      "evidence": "runs/adapter-integration/n61-v2/evidence-receipt.json",
+      "acceptance": "24 exposed official episodes; native score and 493 stage files verified; server267 checks,one skip",
+      "failed_run": "runs/adapter-integration/n61-v1",
+      "scope": "engineering acceptance only; B0 4/12,G 5/12; no new benefit claim",
+      "archive_sha256": "94f0ae6ee46115787bf914081d09d26d69213a419659c173b16af512580e8f72"
+    },
     "N60": {
       "status": "additional_symmetric_attribution_complete",
       "source_commit": "fc48ca8",
@@ -254,7 +263,7 @@
     "task_conflict": "implemented; reports only, no arbitration or benchmark integration",
     "scheduler_official_runner": "not integrated",
     "timed_observation": "N58 requires trusted adapter observation time; official runner integration pending",
-    "common_simuhome_adapter": "not integrated; existing official driver remains separate from HomeBench"
+    "common_simuhome_adapter": "N61 unified entry and public actor boundary verified; native protocols and scores retained"
   },
   "benefit_acceptance": "not satisfied; runtime unit/integration tests do not establish stable benefit on two public benchmarks"
 }
