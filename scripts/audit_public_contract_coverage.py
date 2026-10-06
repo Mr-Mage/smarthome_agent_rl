@@ -31,6 +31,14 @@ def declared_commands(init, methods):
     # Literal dictionaries of bound methods also cover e.g. all_commands,
     # later filtered into self.commands by a feature-dependent comprehension.
     for node in ast.walk(init):
+        if isinstance(node, ast.Assign) and isinstance(node.value, ast.Attribute):
+            if isinstance(node.value.value, ast.Name) and node.value.value.id == 'self' and node.value.attr in methods:
+                for target in node.targets:
+                    if (isinstance(target, ast.Subscript) and isinstance(target.value, ast.Attribute)
+                            and isinstance(target.value.value, ast.Name) and target.value.value.id == 'self'
+                            and target.value.attr == 'commands' and isinstance(target.slice, ast.Constant)
+                            and isinstance(target.slice.value, str)):
+                        result.add(target.slice.value)
         if not isinstance(node, ast.Dict):
             continue
         for key, value in zip(node.keys, node.values):
