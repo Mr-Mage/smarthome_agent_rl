@@ -90,6 +90,11 @@
       "stop_reason": "guard format uncovered75/94 > frozen25%",
       "evidence": "runs/homebench/n51-calibration-v3/evidence-receipt.json",
       "archive_sha256": "a500c3346291e7d2c7edb8634d351fe9e7fd13c3de7219ac59c28a5000271bbb"
+    },
+    "N52": {
+      "status": "read_only_format_diagnosis_complete",
+      "evidence": "runs/homebench/n52-format-analysis-v2/report.json",
+      "next": "independent F / F+frozen Guard ablation; N51 remains not admitted"
     }
   },
   "benchmark_status": {
