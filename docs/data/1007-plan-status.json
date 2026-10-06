@@ -95,11 +95,36 @@
       "status": "read_only_format_diagnosis_complete",
       "evidence": "runs/homebench/n52-format-analysis-v2/report.json",
       "next": "independent F / F+frozen Guard ablation; N51 remains not admitted"
+    },
+    "N53": {
+      "status": "independent_format_calibration_passed",
+      "source_commit": "9098ec7",
+      "exact_matches": {
+        "B0": 2,
+        "B1": 2,
+        "B2": 4,
+        "F": 20,
+        "FG": 22
+      },
+      "gate_uncovered": "18/94",
+      "guard_change_on_F": {
+        "wins": 8,
+        "losses": 6
+      },
+      "evidence": "runs/homebench/n53-calibration-v1/evidence-receipt.json"
+    },
+    "N54": {
+      "status": "full_public_snapshot_running",
+      "tasks": 17366,
+      "source_commit": "9098ec7",
+      "config": "configs/homebench-format-ablation.json",
+      "evidence": "runs/homebench/n54-full-v1/report.json",
+      "scope": "includes94 exposed calibration tasks; not independent holdout"
     }
   },
   "benchmark_status": {
     "SimuHome": "existing official single-turn benchmark; reused exposed development tasks",
-    "HomeBench": "94 public calibration tasks completed; format coverage gate failed; no full result; disclosed source/chat compatibility adaptations",
+    "HomeBench": "N53 independent serialization engineering gate passed; N54 full17366 snapshot running; no completed full result yet",
     "SAGE": "read-only source audit only; no new environment or evaluation this round"
   },
   "remaining_engineering": {
