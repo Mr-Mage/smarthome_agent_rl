@@ -131,6 +131,30 @@ class RealSimuHomeRuntimeTests(unittest.TestCase):
             HarnessAgent(SimpleNamespace(), variant='Candidate', max_steps=20,
                 policy={'verify': True, 'verification_version': 1, 'context_version': 0, 'execution_runtime': True})
 
+    def test_actual_react_and_episode_profiler_keep_all_public_tool_evidence(self):
+        from smarthome_agent_rl.harness_agent import HarnessAgent
+        from smarthome_agent_rl.profiling import PhaseProfile
+        import src.agents.strategies.react_agent as react
+        outputs = iter([
+            {'thought': 'Read lamp capabilities.', 'call': {'tool': 'get_device_structure', 'arguments': {'device_id': 'lamp'}}},
+            {'thought': 'Set the requested level.', 'call': {'tool': 'execute_command', 'arguments': self.action()}},
+            {'thought': 'The public read-back matches.', 'call': {'tool': 'finish', 'arguments': {'answer': 'Level 100 verified.'}}}])
+        llm = SimpleNamespace(generate=lambda messages, response_format=None: json.dumps(next(outputs)))
+        audits = []
+        agent = HarnessAgent(llm, variant='RCV', max_steps=4, audit_fn=audits.append,
+            policy={'verify': False, 'verification_version': 1, 'context_version': 0,
+                    'execution_runtime': True, 'runtime_verify': True})
+        agent.executor.dispatch = self.dispatch
+        original = react.run_tool
+        profile = PhaseProfile(lambda *args: None)
+        profile.agent(agent, react)
+        result = agent.run('Set lamp brightness to 100.', current_time='2030-01-01 12:00:00')
+        self.assertEqual(result.final_answer, 'Level 100 verified.')
+        self.assertEqual(len(result.tool_calls), 4)
+        self.assertEqual(sum(row['kind'] == 'tool_dispatch' for row in profile.spans), 4)
+        self.assertEqual(audits[-1]['proposals'][-1]['verification']['status'], 'VERIFIED_SUCCESS')
+        self.assertIs(react.run_tool, original)
+
 
 if __name__ == '__main__':
     unittest.main()

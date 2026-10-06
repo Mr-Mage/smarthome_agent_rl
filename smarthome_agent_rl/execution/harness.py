@@ -30,6 +30,16 @@ class RuntimeExecutor:
         self.extra_queries, self.turn, self._extra = 0, 0, False
         self.task_spec = self.time_plan = None
 
+    @property
+    def dispatch(self):
+        # Existing PhaseProfile wraps this boundary; tracing must use the same
+        # wrapped dispatcher so auxiliary read-backs appear in latency costs.
+        return self.trace.dispatch
+
+    @dispatch.setter
+    def dispatch(self, value):
+        self.trace.dispatch = value
+
     def _observe(self, row):
         response = row['response']
         if row['error'] and response is None:

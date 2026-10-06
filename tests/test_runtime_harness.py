@@ -102,6 +102,19 @@ class RuntimeHarnessTests(unittest.TestCase):
         self.assertIsNone(result['harness_verification']['verified'])
         self.assertEqual([t for t, _ in self.calls], ['get_device_structure', 'execute_command'])
 
+    def test_existing_episode_profiler_measures_and_restores_runtime_dispatch(self):
+        from smarthome_agent_rl.profiling import PhaseProfile
+        executor = self.executor()
+        original = executor.dispatch
+        agent = SimpleNamespace(executor=executor, run=lambda: executor.execute('execute_command', self.action))
+        react = SimpleNamespace(run_tool=lambda *args: None)
+        profile = PhaseProfile(lambda *args: None)
+        profile.agent(agent, react)
+        result = agent.run()
+        self.assertEqual(result['harness_verification']['status'], 'VERIFIED_SUCCESS')
+        self.assertEqual(sum(row['kind'] == 'tool_dispatch' for row in profile.spans), 3)
+        self.assertEqual(executor.dispatch, original)
+
 
 if __name__ == '__main__':
     unittest.main()

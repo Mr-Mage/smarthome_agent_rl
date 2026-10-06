@@ -107,7 +107,7 @@
       "triton"
     ]
   },
-  "kernel_cache_root": "work/concurrency-capacity/kernel-cache",
+  "kernel_cache_root": "/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/zhengrj/agent/smarthome_agent_rl/work/concurrency-capacity/kernel-cache",
   "dispatch_policy": "workflow-first",
   "simulator_commit": "e202971348348e1bb56651245185ecb3a0e6b12d",
   "manifest_dir": "configs/benchmark-v2",
