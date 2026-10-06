@@ -233,6 +233,22 @@
       "scope": "24 exposed single-turn episodes; no new SR benefit,expansion or rerun",
       "archive_sha256": "dfa0efb46979371be1b9190c0b9a8ab1b6079a229fe21ce53941c0df813b9a26"
     },
+    "N65": {
+      "status": "public_event_supervision_engineering_verified",
+      "source_commit": "57ca642",
+      "acceptance": "42 specialized server checks; full296,295 passed,one environment skip",
+      "evidence": "runs/task-runtime/n65-server-v2/report.json",
+      "scope": "optional GTME; public-clock receipt provenance; no online benefit or N63 rerun,Task WAITING",
+      "archive_sha256": "e731d0903c90bb2d3c060d65be27ea4e186548648e5fa6344d789a7d0b94714f"
+    },
+    "N66": {
+      "status": "protocol_frozen_not_started",
+      "config": "configs/native-event-supervision.json",
+      "tasks": 120,
+      "actor_seeds": [42, 43, 44],
+      "episodes": 720,
+      "scope": "G vs independent GTME; previously exposed official dev120,no holdout or automatic adoption"
+    },
     "N64": {
       "status": "error_receipt_and_noop_cost_engineering_fixed",
       "source_commit": "bcc269f",
@@ -289,9 +305,9 @@
   "remaining_engineering": {
     "persistent_trigger": "not implemented",
     "task_conflict": "implemented; reports only, no arbitration or benchmark integration",
-    "scheduler_official_runner": "N63 official24 episodes executed; engineering gate failed and no SR gain; N64 fixes verified in tests only,G retained",
+    "scheduler_official_runner": "N63 failed; N64 error fixes,N65 independent public-event path verified in tests; N66 official dev120 repeated comparison frozen,not started; G retained",
     "timed_observation": "N62 public clock bounds native verification; late state remains UNKNOWN; no automatic time advancement",
     "common_simuhome_adapter": "N61 unified entry and public actor boundary verified; native protocols and scores retained"
   },
-  "benefit_acceptance": "not satisfied; no stable benefit on two public benchmarks. N63 stopped; N64 engineering fixes do not replace frozen official acceptance"
+  "benefit_acceptance": "not satisfied; no stable benefit on two public benchmarks. N63 remains failed; N65 engineering tests do not prove online benefit"
 }
