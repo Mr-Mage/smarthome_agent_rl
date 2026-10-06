@@ -34,9 +34,14 @@ class GuardedExecutor:
                  dead_front=False, workflow_all_devices=False, audit_fn=None, dispatch=run_tool,
                  recovery=False, recovery_total_limit=6, semantic_verifier=None,
                  reflection_verifier=None, semantic_blocking=False, contract_registry=None,
-                 contract_blocking=False, semantic_context_version=0):
-        if type(semantic_context_version) is not int or semantic_context_version not in (0, 1):
+                 contract_blocking=False, semantic_context_version=0,
+                 semantic_context_references=False, semantic_context_workflow=False):
+        if type(semantic_context_version) is not int or semantic_context_version not in (0, 1, 2):
             raise ValueError('Unsupported semantic context version')
+        if type(semantic_context_references) is not bool or type(semantic_context_workflow) is not bool:
+            raise ValueError('Semantic context interventions must be explicit booleans')
+        if (semantic_context_version == 2) != (semantic_context_references or semantic_context_workflow):
+            raise ValueError('Version2 requires explicit reference/workflow interventions; legacy versions forbid them')
         contracts, sources = command_contracts(ROOT / 'deps/SimuHome/src/simulator/domain/clusters')
         power_rules, device_sources = public_power_rules(ROOT / 'deps/SimuHome/src/simulator/domain/devices', dead_front=dead_front)
         sources.update(device_sources)
@@ -61,6 +66,11 @@ class GuardedExecutor:
         self.reflection_verifier = reflection_verifier
         self.semantic_blocking = semantic_blocking
         self.semantic_context_version = semantic_context_version
+        self.semantic_context_references = semantic_context_references
+        self.semantic_workflow_rules = None
+        if semantic_context_workflow:
+            from smarthome_agent_rl.workflow_semantics import load_workflow_semantics
+            self.semantic_workflow_rules = load_workflow_semantics()
         self.contract_registry = contract_registry
         self.contract_blocking = contract_blocking
 
@@ -180,12 +190,19 @@ class GuardedExecutor:
                 record['uncovered'].append('future_state_preconditions')
             verifier = self.reflection_verifier or self.semantic_verifier
             if verifier is not None and tool in MUTATIONS:
-                if self.semantic_context_version == 1:
-                    from smarthome_agent_rl.semantic_context import build_context
+                if self.semantic_context_version in (1, 2):
+                    if self.semantic_context_version == 2:
+                        from smarthome_agent_rl.semantic_context_enriched import build_enriched_context
+                        build_context = build_enriched_context
+                        options = {'references': self.semantic_context_references,
+                                   'workflow_rules': self.semantic_workflow_rules}
+                    else:
+                        from smarthome_agent_rl.semantic_context import build_context
+                        options = {}
                     semantic_context = build_context(getattr(self, 'user_goal', ''),
                         {'tool': tool, **copy.deepcopy(arguments)}, self.observations,
                         user_location=getattr(self, 'user_location', None),
-                        initial_time=getattr(self, 'initial_public_time', None), contract=record.get('contract'))
+                        initial_time=getattr(self, 'initial_public_time', None), contract=record.get('contract'), **options)
                     record['semantic_context'] = asdict(semantic_context)
                     record['semantic_context_sha256'] = hashlib.sha256(json.dumps(
                         record['semantic_context'], sort_keys=True, ensure_ascii=False,
@@ -278,7 +295,8 @@ class HarnessAgent:
         if policy.get('execution_runtime'):
             incompatible = ('verify', 'context_version', 'time_plan', 'identifier_binding',
                             'start_semantics', 'recovery', 'task_spec', 'evidence_context',
-                            'semantic_verifier', 'reflection_verifier', 'semantic_context_version', 'contract_registry',
+                            'semantic_verifier', 'reflection_verifier', 'semantic_context_version',
+                            'semantic_context_references', 'semantic_context_workflow', 'contract_registry',
                             'dead_front', 'workflow_all_devices')
             if variant in ('B0', 'GR', 'GTS', 'GEC') or any(policy.get(key) for key in incompatible):
                 raise ValueError('Execution runtime comparison must isolate the tool execution boundary')
@@ -303,6 +321,8 @@ class HarnessAgent:
                                        semantic_verifier=policy.get('semantic_verifier'),
                                        reflection_verifier=policy.get('reflection_verifier'),
                                        semantic_context_version=policy.get('semantic_context_version', 0),
+                                       semantic_context_references=policy.get('semantic_context_references', False),
+                                       semantic_context_workflow=policy.get('semantic_context_workflow', False),
                                        semantic_blocking=policy.get('semantic_blocking', False),
                                        contract_registry=policy.get('contract_registry'),
                                        contract_blocking=policy.get('contract_blocking', False))

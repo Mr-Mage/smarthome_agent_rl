@@ -1,0 +1,22 @@
+{
+  "node": "N73",
+  "schema": "public-workflow-semantics-source-v1",
+  "source_sha256": {
+    "src/simulator/domain/home.py": "bd33ea3a6a51f7d216faadcee3ce16bf81214adee4f34e0fcc9638e83f62ccdb",
+    "src/simulator/api/schemas.py": "6e253fedacfded93b1665723fae00af8995898a0cb8f93e4d913616ab73c6f89"
+  },
+  "facts": {
+    "step_fields": [
+      "tool",
+      "args"
+    ],
+    "one_absolute_workflow_start_time": true,
+    "per_step_wait_supported": false,
+    "successful_steps": "Home executes the next step recursively without advancing virtual time between steps.",
+    "failed_step": "Failure halts the remaining workflow steps.",
+    "device_effects": "A command acknowledgement does not imply its physical effect has completed; no implicit effect wait is inserted.",
+    "dispatch_time": "Registration maps start_time to a due tick; actual dispatch may be late or fail.",
+    "phase_gaps": "Separate requested times need separate scheduling; consecutive steps do not encode minute-scale phase gaps."
+  },
+  "scope": "Public API/source facts, not a user-goal contract or automatic action policy."
+}
