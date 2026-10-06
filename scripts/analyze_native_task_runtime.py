@@ -53,7 +53,7 @@ def audit_episode(directory):
     registration_ids = []
     for job in jobs:
         wf = wf_by_id[job['workflow_id']]
-        registration = next(e for e in wf['evidence'] if e['kind'] == 'registration')
+        registration = next(e for e in wf['evidence'] if e.get('kind') == 'registration')
         invocation = trace[registration['invocation_id']]
         registration_ids.append(invocation['invocation_id'])
         if invocation['tool'] != 'schedule_workflow' or invocation['workflow_id'] != wf['workflow_id'] or \

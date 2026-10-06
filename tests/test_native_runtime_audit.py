@@ -3,12 +3,12 @@ import json
 import unittest
 
 from scripts.analyze_native_task_runtime import audit_episode
-from tests.test_episode_runtime import EpisodeRuntimeTests
+from tests import test_episode_runtime as fixtures
 
 
 class NativeRuntimeAuditTests(unittest.TestCase):
     def setUp(self):
-        self.fixture = EpisodeRuntimeTests('test_single_registration_durable_before_dispatch_and_receipt_preserved')
+        self.fixture = fixtures.EpisodeRuntimeTests('test_single_registration_durable_before_dispatch_and_receipt_preserved')
         self.fixture.setUp()
         self.addCleanup(self.fixture.doCleanups)
         f = self.fixture
