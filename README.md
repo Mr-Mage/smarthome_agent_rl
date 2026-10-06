@@ -68,6 +68,7 @@ PYTHONPATH=.:deps/SimuHome PYTHONNOUSERSITE=1 .venv-baseline/bin/python scripts/
 ```bash
 cd /HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/zhengrj/agent/smarthome_agent_rl
 source ../activate-agent-lightning.sh
+cd /HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/zhengrj/agent/smarthome_agent_rl
 python scripts/run_node_experiment.py --config configs/harness-release.json --run-dir runs/delivery/<新目录>
 python scripts/verify_benchmark.py runs/delivery/<新目录>/smoke
 ```
