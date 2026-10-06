@@ -1,0 +1,195 @@
+{
+  "seed": 20261005,
+  "driver_python": "/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/anaconda3/envs/agent-lightning/bin/python",
+  "model_python": "/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/anaconda3/envs/qwen36-vllm/bin/python",
+  "judge_path": "/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/zhengrj/models/Qwen3.6-35B-A3B",
+  "actor_path": "../models/Qwen3.5-9B",
+  "actor_model": "smarthome-qwen35-9b",
+  "judge_model": "smarthome-qwen36-judge",
+  "judge_port": 20300,
+  "embedding_port": 20200,
+  "actor_context": 32768,
+  "judge_context": 65536,
+  "startup_timeout": 1200,
+  "workflows": [
+    {
+      "id": 0,
+      "gpus": [
+        0
+      ],
+      "actor_port": 20000,
+      "simulator_port": 20080,
+      "gateway_port": 20181
+    },
+    {
+      "id": 1,
+      "gpus": [
+        1
+      ],
+      "actor_port": 20001,
+      "simulator_port": 20081,
+      "gateway_port": 20182
+    },
+    {
+      "id": 2,
+      "gpus": [
+        2
+      ],
+      "actor_port": 20002,
+      "simulator_port": 20082,
+      "gateway_port": 20183
+    },
+    {
+      "id": 3,
+      "gpus": [
+        3
+      ],
+      "actor_port": 20003,
+      "simulator_port": 20083,
+      "gateway_port": 20184
+    }
+  ],
+  "judge_gpus": [],
+  "model_seed": 42,
+  "engine_seed": 0,
+  "max_steps": 20,
+  "generation": {
+    "temperature": 0.7,
+    "top_p": 0.8,
+    "max_tokens": 2048,
+    "presence_penalty": 1.5,
+    "extra_body": {
+      "top_k": 20,
+      "min_p": 0.0,
+      "repetition_penalty": 1.0,
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    }
+  },
+  "judge_generation": {
+    "temperature": 0.0,
+    "max_tokens": 512,
+    "extra_body": {
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    }
+  },
+  "judge_seeds": [
+    42,
+    43,
+    44
+  ],
+  "variants_dev": [
+    "G",
+    "GTS"
+  ],
+  "variants_final": [],
+  "recovery_per_action": 2,
+  "extra_queries_max": 40,
+  "slots_per_actor": 16,
+  "simulator_port_base": 21000,
+  "inference": {
+    "actor_max_num_seqs": 32,
+    "judge_max_num_seqs": 32,
+    "actor_enforce_eager": false,
+    "actor_prefix_caching": true,
+    "actor_gpu_memory_utilization": 0.8,
+    "actor_extra_args": [
+      "--gdn-prefill-backend",
+      "triton"
+    ],
+    "judge_extra_args": [
+      "--gdn-prefill-backend",
+      "triton"
+    ]
+  },
+  "kernel_cache_root": "work/concurrency-capacity/kernel-cache",
+  "dispatch_policy": "workflow-first",
+  "simulator_commit": "e202971348348e1bb56651245185ecb3a0e6b12d",
+  "manifest_dir": "configs/benchmark-v2",
+  "actor_seeds": [
+    42,
+    43,
+    44
+  ],
+  "primary_actor_seed": 42,
+  "variant_policies": {
+    "G": {
+      "verify": false,
+      "verification_version": 1,
+      "context_version": 0,
+      "dead_front": false,
+      "workflow_all_devices": false,
+      "time_plan": false,
+      "identifier_binding": false
+    },
+    "GTS": {
+      "verify": false,
+      "verification_version": 1,
+      "context_version": 0,
+      "dead_front": false,
+      "workflow_all_devices": false,
+      "time_plan": false,
+      "identifier_binding": false,
+      "task_spec": true
+    }
+  },
+  "judge_deployment": "external",
+  "judge_endpoint": "http://192.168.60.254:20300/v1",
+  "node_experiment": {
+    "node": "N33",
+    "reference": "G",
+    "stages": [
+      {
+        "phase": "dev",
+        "name": "smoke",
+        "manifest": "configs/sft-pilot/calibration.json",
+        "variants": [
+          "G",
+          "GTS"
+        ],
+        "actor_seeds": [
+          42
+        ]
+      },
+      {
+        "phase": "dev",
+        "name": "dev",
+        "manifest": "configs/start-semantics/dev.json",
+        "variants": [
+          "G",
+          "GTS"
+        ]
+      }
+    ],
+    "gates": {
+      "sr_delta_min": 0,
+      "illegal_execution_max": "control count",
+      "actor_token_ratio_max": 1.1,
+      "extracted_episode_ratio_min": 0.95,
+      "associated_mutation_ratio_min": 0.9,
+      "manual_semantics_review": "all declared motivating cases x3 seeds must pass frozen criteria"
+    },
+    "intervention": "First valid actor output extracts frozen TaskSpec; every output carries goal_refs and public-observation device bindings. One model request per turn; no goal satisfaction checker, automatic execution, finish gate, recovery or extra queries.",
+    "statistics": "Paired seed42 primary; seeds43/44 descriptive, task-clustered CI. 28 exposed developer tasks; no holdout claim.",
+    "exclusions": "None; ordinary failures stay in denominator; infrastructure invalidates whole stage, retain cost and rerun full stage in new directory.",
+    "stop_rule": "One frozen run. Keep G unless all behavioral/cost/provenance gates pass. Invalid/missing extraction counts against coverage; no prompt rewrite based on results.",
+    "manual_review": {
+      "task_ids": [
+        "qt4-3_feasible_seed_80",
+        "qt4-3_feasible_seed_36",
+        "qt3_feasible_seed_45"
+      ],
+      "criteria": [
+        "source quotes refer to requested goals, not explanatory background",
+        "mode and start represented distinctly; event condition not added as new user goal",
+        "event/time text retained literally; no invented timestamp",
+        "public ID presence is provenance, not proof of correct semantic association",
+        "action/workflow receipts never certify overall goal satisfaction"
+      ]
+    },
+    "scope": "24 smoke +168 developer episodes on already exposed tasks. No SFT/RL or unused95 task reads."
+  }
+}

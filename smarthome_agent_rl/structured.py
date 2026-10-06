@@ -67,13 +67,15 @@ def canonical_action(body):
 
 
 class StructuredProvider(LLMProvider):
-    def __init__(self, inner, audit_fn=None, *, finish_guard=True, recovery=True, guidance=True, time_plan=None):
+    def __init__(self, inner, audit_fn=None, *, finish_guard=True, recovery=True, guidance=True, time_plan=None,
+                 task_spec=None):
         self.inner = inner
         self.schemas = tool_schemas()
         self.audit_fn = audit_fn
         self.audit = []
         self.finish_guard, self.recovery, self.guidance = finish_guard, recovery, guidance
         self.time_plan = time_plan
+        self.task_spec = task_spec
 
     def response_format(self, finish_enabled=True):
         alternatives = []
@@ -169,18 +171,29 @@ class StructuredProvider(LLMProvider):
         if self.time_plan is not None and self.time_plan.rows:
             converted.append(ChatMessage(role='user', content=self.time_plan.prompt()))
             schema = self.time_plan.augment_schema(schema)
+        if self.task_spec is not None:
+            converted.append(ChatMessage(role='user', content=self.task_spec.prompt()))
+            schema = self.task_spec.augment_schema(schema)
         try:
             raw = self.inner.generate(converted, response_format=schema)
             body = json.loads(raw)
             if self.time_plan is not None and self.time_plan.rows:
                 body = self.time_plan.consume(body)
+            draft = None
+            if self.task_spec is not None:
+                body, draft = self.task_spec.prepare(body)
             action = self.validate(body, finish_enabled)
             if self.time_plan is not None and action['action'] == 'finish':
                 self.time_plan.check('finish', json.loads(action['action_input']))
+            if draft is not None:
+                self.task_spec.commit(draft, action, record['turn'])
+                record['goal_refs'] = list(draft['goal_refs'])
             record["normalized_action"] = action
             return json.dumps(action, ensure_ascii=False)
         except (ValueError, TypeError, KeyError) as exc:
             record["validation_error"] = str(exc)
+            if self.task_spec is not None:
+                self.task_spec.errors.append(str(exc))
             # Upstream parser supplies an observation; no action is silently repaired/executed.
             return "{}"
         finally:

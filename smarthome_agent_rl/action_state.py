@@ -53,7 +53,8 @@ class ActionRecord:
     request_sha256: str
     observation_version: int
     parent_action_id: str | None = None
-    goal_id: str | None = None  # No goal parser exists yet; do not invent associations.
+    goal_id: str | None = None
+    goal_ids: list = field(default_factory=list)
     extra_query: bool = False
     state: str = 'proposed'
     workflow_id: str | None = None

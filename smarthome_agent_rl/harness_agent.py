@@ -49,6 +49,7 @@ class GuardedExecutor:
         self.binding_audit = []
         self.start_semantics_audit = []
         self.time_plan = None
+        self.task_spec = None
 
     def save_audit(self):
         if self.audit_fn:
@@ -59,6 +60,7 @@ class GuardedExecutor:
                 'start_semantics': self.start_semantics_audit,
                 'action_lifecycle': self.actions.snapshot(),
                 'recovery_policy': self.recovery.snapshot() if self.recovery else None,
+                'task_spec': self.task_spec.snapshot() if self.task_spec else None,
                 'time_plan': self.time_plan.snapshot() if self.time_plan is not None else None})
 
     def record_structured(self, records):
@@ -73,6 +75,10 @@ class GuardedExecutor:
         action_id = action_id or self.actions.propose(tool, arguments, turn=self.turn,
             observation_version=len(self.observations), extra_query=extra,
             parent_action_id=self.active_action_id)
+        if extra and self.active_action_id:
+            parent = self.actions.records[self.active_action_id]
+            self.actions.records[action_id].goal_ids = list(parent.goal_ids)
+            self.actions.records[action_id].goal_id = parent.goal_id
         started = time.monotonic()
         self.actions.dispatched(action_id)
         try:
@@ -95,6 +101,10 @@ class GuardedExecutor:
         action_id = self.actions.propose(tool, arguments, turn=self.turn,
                                          observation_version=len(self.observations))
         self.active_action_id = action_id
+        if self.task_spec is not None and self.structured_audit:
+            refs = self.structured_audit[-1].get('goal_refs', [])
+            self.actions.records[action_id].goal_ids = list(refs)
+            self.actions.records[action_id].goal_id = refs[0] if len(refs) == 1 else None
         record = {'turn': self.turn, 'tool': tool, 'arguments': copy.deepcopy(arguments),
             'action_id': action_id,
             'blocked': False, 'uncovered': [], 'extra_queries_before': self.extra_queries,
@@ -211,7 +221,7 @@ class GuardedExecutor:
 class HarnessAgent:
     def __init__(self, llm, *, variant, max_steps, trace_fn=None, audit_fn=None,
                  repair_limit=2, query_limit=40, policy=None, token_count_fn=None):
-        if variant not in ('G', 'GV', 'GC', 'Full', 'GV2', 'GC2', 'Candidate', 'GD', 'GW', 'GDW', 'TimePlan', 'GThinking', 'Teacher', 'SFT9B', 'GB', 'SFT9B_B', 'GS', 'GR'):
+        if variant not in ('G', 'GV', 'GC', 'Full', 'GV2', 'GC2', 'Candidate', 'GD', 'GW', 'GDW', 'TimePlan', 'GThinking', 'Teacher', 'SFT9B', 'GB', 'SFT9B_B', 'GS', 'GR', 'GTS'):
             raise ValueError(variant)
         policy = policy or {'verify': variant in ('GV', 'Full', 'GV2'),
             'verification_version': 2 if variant == 'GV2' else 1,
@@ -229,6 +239,12 @@ class HarnessAgent:
             self.executor.time_plan = TimePlan()
             provider.time_plan = self.executor.time_plan
         provider.schemas = self.executor.guard.schemas
+        if policy.get('task_spec', variant == 'GTS'):
+            if any(policy.get(key) for key in ('verify', 'context_version', 'time_plan', 'identifier_binding', 'start_semantics', 'recovery')):
+                raise ValueError('TaskSpec experiment must isolate goal metadata from other interventions')
+            from smarthome_agent_rl.task_spec import TaskSpec
+            self.executor.task_spec = TaskSpec(self.executor)
+            provider.task_spec = self.executor.task_spec
         if policy.get('start_semantics'):
             if policy['context_version'] or policy.get('time_plan') or policy.get('identifier_binding'):
                 raise ValueError('Start semantics diagnosis requires complete unmodified task history')
@@ -246,6 +262,8 @@ class HarnessAgent:
             show_assistant_raw=True, trace_fn=trace_fn))
 
     def run(self, query, *, user_location=None, current_time=None):
+        if self.executor.task_spec is not None:
+            self.executor.task_spec.initialize(query)
         if self.executor.time_plan is not None:
             self.executor.time_plan.initialize(query, current_time)
         original = react_module.run_tool
