@@ -8,5 +8,5 @@
 - 实验前冻结任务、参数、指标和排除规则；主实验与额外实验分开，保留失败及全部成本。
 - 源码、配置、测试、文档分目录；运行产物放 `runs/`，临时文件放 `work/`，均不入 Git。节点结束整理归档，不删除唯一证据。
 - 遵守既有 Conda/venv 环境约束；不擅自改依赖环境、SimuHome 或 Lightning 上游及用户补丁。
-- 当前只做官方单轮benchmark的harness复现、诊断与消融；不开展SFT/RL、语音、多轮或生成新benchmark。历史训练证据保留，不追加训练；用户授权的N37完整600任务验收已完成（包括此前封存95任务），这95任务已使用。全量结果不包装为独立留出收益，不据此继续调参。
+- 当前主线仍是官方单轮benchmark harness；本轮按用户确认只实施`docs/1006_plan.md`的Hybrid Runtime Verification与消融接口。保留Agentic RL/process-reward接口但不启动SFT/RL，不生成新benchmark；语音、多轮仍不在范围内。全量结果不包装为独立留出收益。
 - 训练使用独立项目环境，不修改现有Conda/venv；先冻结数据、参数、预算与停止规则，再生产和训练，保留教师失败与同模型judge偏差。

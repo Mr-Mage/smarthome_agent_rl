@@ -54,6 +54,7 @@ N31动作生命周期已接入G。N32恢复预算、N33目标关联、N34证据�
 - [项目架构](docs/项目架构.md)：意图、记忆、上下文、状态、恢复及实现边界。
 - [实验报表](docs/实验报表.md)：论文参照、9B基线、正式结果和全部节点负结果。
 - [节点记录](docs/nodes/)：[N31](docs/nodes/N31.md)、[N32](docs/nodes/N32.md)、[N33](docs/nodes/N33.md)、[N34](docs/nodes/N34.md)、[N35](docs/nodes/N35.md)、[N36](docs/nodes/N36.md)。
+- [1006改进计划状态](docs/data/1006-plan-status.json)：N38 Contract、N39 Semantic Verification/Self-Reflection、N40 Process Reward 接口；本轮只做 Harness 与消融，保留 RL 接口但不训练、不生成新 benchmark。
 - [依赖身份](dependencies.lock.json)、[开发约定](AGENTS.md)：沿用环境和用户补丁。
 
 源码在`smarthome_agent_rl/`，运行脚本在`scripts/`，配置在`configs/`，测试在`tests/`。原始运行放`runs/`，审阅包放`outputs/`，临时工具放`work/`，均不入Git；不删除唯一证据。克隆仓库不包含这些运行产物，已有证据包位置由[交付索引](docs/data/delivery.json)记录。

@@ -1,0 +1,20 @@
+{
+  "plan": "docs/1006_plan.md",
+  "status": "Harness and offline ablation interfaces implemented; online model comparison, new benchmark and SFT/RL are out of current scope",
+  "nodes": {
+    "P0": {"node": "N38", "status": "implemented_offline", "contract_blocking_default": false},
+    "P1": {"node": "N39", "status": "implemented_offline_rules_and_diagnostic_generator", "new_benchmark": "not_generated"},
+    "P2": {"node": "N39", "status": "implemented_parser_confidence_gate_and_interface", "online_comparison": "out_of_scope"},
+    "P3": {"node": "N40", "status": "process_reward_interface", "training": "out_of_scope"},
+    "P4": {"node": "N40", "status": "frozen_rl_config_only", "training": "out_of_scope"},
+    "P5": {"status": "not_started"}
+  },
+  "gates": {
+    "semantic_verifier_false_reject": 0.05,
+    "task_sr_delta_min": 0.0,
+    "small_verifier_cost": "must beat self reflection",
+    "rl_fallback": "sparse task reward if process reward has no task SR gain"
+  },
+  "hidden_information_policy": "evaluator goals, judge output and official score are forbidden from verifier inputs",
+  "scope_decision": "2026-10-06 user confirmed harness and ablation only; preserve RL interfaces without training"
+}
