@@ -77,11 +77,24 @@
       "source_commit": "969dbdf",
       "acceptance": "17366 tasks,100 homes; author prompt/metric parity; server66 tests; full233,one skip",
       "evidence": "runs/task-runtime/n50-server-source-v1/"
+    },
+    "N51": {
+      "status": "calibration_complete_full_not_admitted",
+      "source_commit": "6559b3d",
+      "tasks": 94,
+      "exact_matches": {
+        "B0": 2,
+        "B1": 2,
+        "B2": 4
+      },
+      "stop_reason": "guard format uncovered75/94 > frozen25%",
+      "evidence": "runs/homebench/n51-calibration-v3/evidence-receipt.json",
+      "archive_sha256": "a500c3346291e7d2c7edb8634d351fe9e7fd13c3de7219ac59c28a5000271bbb"
     }
   },
   "benchmark_status": {
     "SimuHome": "existing official single-turn benchmark; reused exposed development tasks",
-    "HomeBench": "public assets adapter verified; online B0/B1/B2 pending; disclosed author CLI source adaptation",
+    "HomeBench": "94 public calibration tasks completed; format coverage gate failed; no full result; disclosed source/chat compatibility adaptations",
     "SAGE": "read-only source audit only; no new environment or evaluation this round"
   },
   "remaining_engineering": {

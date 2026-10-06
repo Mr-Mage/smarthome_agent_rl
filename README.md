@@ -103,4 +103,19 @@ python scripts/verify_full_benchmark.py --run runs/full-benchmark/<新目录>
 
 已有N37结果及原始证据保留，无需为查看报告重跑。[全量配置](configs/harness-full-benchmark.json)保持B0/G、seed42及所有失败，不追加调参。
 
+## HomeBench公开单轮对照
+
+[公开资源适配](docs/nodes/N50.md)固定17,366任务/100家庭及上游SHA。公开字段、zero-shot提示内容与Counter指标保持一致；Qwen3.5模板要求user消息，因此各臂统一追加空user消息。这是指令生成EM/F1，无设备执行或judge。B0适配后原提示、B1加公开契约、B2复用B1输出加Guard，成本按实际请求计一次。
+
+在当前隔离工作区、既有venv运行（四张H100需空闲）：
+
+```bash
+bench_source=work/public-benchmarks/homebench/6d650caa19ba061e8790fc0f78f506169d029e4e
+.venv-baseline/bin/python scripts/fetch_public_benchmark.py --benchmark HomeBench --output "$bench_source" --proxy http://127.0.0.1:7897
+.venv-baseline/bin/python scripts/run_public_benchmark.py --source "$bench_source" --output runs/homebench/calibration --launch-actors
+.venv-baseline/bin/python scripts/verify_public_benchmark.py --source "$bench_source" --run-dir runs/homebench/calibration
+```
+
+校准接入门槛通过后，同配置增加`--stage full --calibration runs/homebench/calibration`并使用新输出目录。冻结配置见[homebench-ablation.json](configs/homebench-ablation.json)；原始预测、失败、usage、GPU采样和共享请求均保留，当前实验状态见[实验报表](docs/实验报表.md)。
+
 旧实验方案、SFT数据/权重和失败证据均保留；历史入口见[后续开发计划](docs/后续开发计划.md)、[SFT执行计划](docs/SFT执行计划.md)。正式结论以[N13](docs/nodes/N13.md)与实验报表为准。
