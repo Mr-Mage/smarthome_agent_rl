@@ -43,6 +43,9 @@ def actors(config, directory):
             if parsed.hostname != '127.0.0.1' or parsed.port is None:
                 raise ValueError('Owned actors must listen on explicit local ports')
             with socket.socket() as probe:
+                # Match the service's reuse policy: a released listener may
+                # leave TIME_WAIT sockets after calibration, not a live owner.
+                probe.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
                 probe.bind((parsed.hostname, parsed.port))
         # Existing identity checker; hash once, not once per GPU.
         from scripts.harness_services import inventory
