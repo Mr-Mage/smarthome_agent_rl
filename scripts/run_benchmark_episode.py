@@ -89,6 +89,7 @@ def main(mode):
     set_tool_config(ToolConfig(base_url=config['simulator_url'], timeout=30,
         db=load_retrieval(retrieval, output / 'retrieval_calls.json')))
     variant = config['variant']
+    attached_runtime = None
     def trace(kind, payload):
         event = {'event': kind, 'payload': payload, 'at_seconds': time.monotonic() - profile.origin}
         events.append(event)
@@ -111,6 +112,7 @@ def main(mode):
         save('tokenization_calls.json', tokenization_calls)
         return response.json()['count']
     def build(llm, *, max_steps, strategy):
+        nonlocal attached_runtime
         if variant == 'B0':
             agent = original(llm, max_steps=max_steps, strategy=strategy)
             agent.config.trace_fn = trace
@@ -120,6 +122,23 @@ def main(mode):
                 audit_fn=lambda data: save('harness_audit.json', data),
                 repair_limit=config['recovery_per_action'], query_limit=config['extra_queries_max'],
                 policy=config.get('variant_policies', {}).get(variant), token_count_fn=count_tokens)
+        if config.get('variant_policies', {}).get(variant, {}).get('task_runtime'):
+            if variant != 'GTM' or type(agent.executor).__name__ != 'GuardedExecutor':
+                raise ValueError('Native task-runtime ablation must use an isolated GTM legacy Guard arm')
+            policies = config['variant_policies']
+            base_policy = {k: v for k, v in policies[variant].items()
+                           if k not in ('task_runtime', 'task_runtime_tolerance')}
+            if base_policy != policies.get('G'):
+                raise ValueError('GTM must preserve the frozen G policy and isolate runtime attachment')
+            from smarthome_agent_rl.execution.episode import EpisodeRuntime
+            from smarthome_agent_rl.execution.simuhome_contract import SimuHomeContractAdapter
+            from smarthome_agent_rl.guard import command_contracts, public_power_rules
+            signatures, _ = command_contracts(ROOT / 'deps/SimuHome/src/simulator/domain/clusters')
+            power, _ = public_power_rules(ROOT / 'deps/SimuHome/src/simulator/domain/devices')
+            attached_runtime = agent.task_runtime = EpisodeRuntime(agent.executor,
+                SimuHomeContractAdapter(signatures, power), output / 'task-runtime.sqlite3',
+                tolerance=config['variant_policies'][variant]['task_runtime_tolerance'], save=save)
+            attached_runtime.supervise = profile.wrap(attached_runtime.supervise, 'runtime_supervision')
         import src.agents.strategies.react_agent as react_module
         return benchmark.bind_agent(task['id'], profile.agent(agent, react_module))
     runner._build_agent = build
@@ -138,14 +157,26 @@ def main(mode):
             method = getattr(runner.SmartHomeClient, name)
             client_methods.append((name, method))
             setattr(runner.SmartHomeClient, name, profile.wrap(method, 'simulator_client', name))
+    original_fast_forward = runner.SmartHomeClient.fast_forward_to
+    def observed_fast_forward(*args, **kwargs):
+        response = original_fast_forward(*args, **kwargs)
+        # Never pass evaluator deadlines, labels or result payloads to the
+        # runtime. Read the current public clock through its budgeted tools.
+        if attached_runtime is not None:
+            attached_runtime.supervise(phase='native_virtual_time_advanced')
+        return response
+    runner.SmartHomeClient.fast_forward_to = observed_fast_forward
     save('contract.json', {'config': config, 'task_identity': task, 'mode': mode,
         'evaluator': 'original run_single_config', 'upstream_source_modified': False,
-        'agent_inputs': ['query', 'user_location', 'current_time'], 'training': False})
+        'agent_inputs': ['query', 'user_location', 'current_time'],
+        'public_context': benchmark.public_input(task['id']), 'training': False})
     error, result = None, None
     started = time.monotonic()
     try:
         result = runner.run_single_config(cfg_path=str(path), base_url=config['simulator_url'], timeout=30,
             max_steps=config['max_steps'], agent_strategy='react', main_llm=actor, judge_llms=panel)
+        if attached_runtime is not None:
+            attached_runtime.finish()
         benchmark.score(task['id'], result)  # Validate native episode identity; never replace its evaluator.
         save('official_result.json', result)
     except Exception as exc:
@@ -158,6 +189,8 @@ def main(mode):
             module.time = original_time
         for name, method in client_methods:
             setattr(runner.SmartHomeClient, name, method)
+        if attached_runtime is not None:
+            attached_runtime.flush()
         failure_kind = task_failure_kind(error, calls)
         task_failure = failure_kind is not None
         score = result['evaluation_result']['score'] if result else None

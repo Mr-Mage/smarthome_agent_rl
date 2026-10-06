@@ -255,7 +255,7 @@ class GuardedExecutor:
 class HarnessAgent:
     def __init__(self, llm, *, variant, max_steps, trace_fn=None, audit_fn=None,
                  repair_limit=2, query_limit=40, policy=None, token_count_fn=None):
-        if variant not in ('B0', 'B1', 'B2', 'G', 'GV', 'GC', 'Full', 'GV2', 'GC2', 'Candidate', 'GD', 'GW', 'GDW', 'TimePlan', 'GThinking', 'Teacher', 'SFT9B', 'GB', 'SFT9B_B', 'GS', 'GR', 'GTS', 'GEC', 'RC', 'RCV'):
+        if variant not in ('B0', 'B1', 'B2', 'G', 'GV', 'GC', 'Full', 'GV2', 'GC2', 'Candidate', 'GD', 'GW', 'GDW', 'TimePlan', 'GThinking', 'Teacher', 'SFT9B', 'GB', 'SFT9B_B', 'GS', 'GR', 'GTS', 'GEC', 'RC', 'RCV', 'GTM'):
             raise ValueError(variant)
         policy = policy or {'verify': variant in ('GV', 'Full', 'GV2'),
             'verification_version': 2 if variant == 'GV2' else 1,
@@ -328,14 +328,23 @@ class HarnessAgent:
 
     def run(self, query, *, user_location=None, current_time=None):
         self.executor.user_goal = query
+        runtime = getattr(self, 'task_runtime', None)
+        if runtime is not None:
+            runtime.start(query, user_location=user_location, current_time=current_time)
         if self.executor.task_spec is not None:
             self.executor.task_spec.initialize(query)
         if self.executor.time_plan is not None:
             self.executor.time_plan.initialize(query, current_time)
         original = react_module.run_tool
-        react_module.run_tool = self.executor.execute
+        def execute_with_supervision(tool, arguments):
+            response = self.executor.execute(tool, arguments)
+            runtime.supervise(phase='agent_tool_return')
+            return response
+        react_module.run_tool = execute_with_supervision if runtime is not None else self.executor.execute
         try:
             result = self.agent.run(query, user_location=user_location, current_time=current_time)
+            if runtime is not None:
+                runtime.finish()
             # Evaluators see real calls, including extra public queries; blocked proposals aren't calls.
             result.tool_calls = list(self.executor.actual)
             return result
