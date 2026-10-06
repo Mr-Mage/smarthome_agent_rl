@@ -3,6 +3,19 @@
   "scope": "Latest user confirmation: official single-turn harness diagnostics/ablations only; no SFT/RL, new benchmark or multi-session experiments.",
   "default": "Qwen3.5-9B + G; permanent baseline tag baseline/1007-9b-g",
   "nodes": {
+    "N69": {
+      "status": "running_native_resource_context_diagnosis",
+      "implementation_commit": "fb6f140",
+      "config": "configs/native-resource-context.json",
+      "evidence": "runs/native-resource-context/n69-v1/",
+      "tasks": 12,
+      "actor_seeds": [42, 43, 44],
+      "episodes": 72,
+      "reference": "GTME",
+      "candidate": "GTMEC",
+      "acceptance_before_inference": "22 specialized server checks;full317,316 passed,one environment skip",
+      "scope": "Frozen exposed official single-turn calibration;no automatic expansion,default adoption,training or new benchmark"
+    },
     "N68": {
       "status": "native_resource_context_engineering_verified",
       "source_commit": "8c20fd5",
