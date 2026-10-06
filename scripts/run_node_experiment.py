@@ -160,6 +160,8 @@ def main():
             command('analyze_task_spec.py', '--run', args.run_dir)
         elif config['node_experiment']['node'] == 'N36':
             command('verify_delivery.py', '--run', args.run_dir)
+        elif config['node_experiment']['node'] == 'N63':
+            command('analyze_native_task_runtime.py', '--run', args.run_dir)
         state('complete')
     except BaseException as exc:
         write(run / 'failure.json', {'type': type(exc).__name__, 'message': str(exc)})
