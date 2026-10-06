@@ -1,0 +1,433 @@
+{
+  "node": "N37",
+  "status": "complete",
+  "acceptance": {
+    "node": "N37",
+    "verified": true,
+    "commit": "d875f5511307f50e8417e6386e65278e5373a0ef",
+    "episodes": 1200,
+    "tasks": 600,
+    "categories": 12,
+    "manifest_sha256": "a6ebc678c76717a3d5fd743179a8b1be33f0c51c27a065c54279c9c23f1c986e",
+    "stage_files": 12391,
+    "requests": {
+      "actor": 8402,
+      "judge": 2022
+    },
+    "model_parameters_pairing_and_task_hashes_verified": true,
+    "candidate_selection": false,
+    "default_variant": "G",
+    "formerly_sealed_tasks": 95,
+    "scope": "Full official snapshot, including exposed tasks; not 600 independent holdout tasks. N13 formal result remains separate."
+  },
+  "scope": "Full current official 600 snapshot; exposed and formerly sealed95 included by explicit authorization; not independent holdout generalization.",
+  "report_source": "runs/full-benchmark/n37-v1/full600/report.json",
+  "report_sha256": "0cae74274528218231ca8605f96dce12fb161d592f5f134c239b0e766d3a294b",
+  "arms": {
+    "B0": {
+      "episodes": 600,
+      "successes": 197,
+      "success_rate": 0.3283333333333333,
+      "unfinished": 5,
+      "categories": {
+        "qt1:feasible": {
+          "episodes": 50,
+          "successes": 32
+        },
+        "qt1:infeasible": {
+          "episodes": 50,
+          "successes": 36
+        },
+        "qt2:feasible": {
+          "episodes": 50,
+          "successes": 16
+        },
+        "qt2:infeasible": {
+          "episodes": 50,
+          "successes": 11
+        },
+        "qt3:feasible": {
+          "episodes": 50,
+          "successes": 34
+        },
+        "qt3:infeasible": {
+          "episodes": 50,
+          "successes": 30
+        },
+        "qt4-1:feasible": {
+          "episodes": 50,
+          "successes": 8
+        },
+        "qt4-1:infeasible": {
+          "episodes": 50,
+          "successes": 11
+        },
+        "qt4-2:feasible": {
+          "episodes": 50,
+          "successes": 12
+        },
+        "qt4-2:infeasible": {
+          "episodes": 50,
+          "successes": 0
+        },
+        "qt4-3:feasible": {
+          "episodes": 50,
+          "successes": 5
+        },
+        "qt4-3:infeasible": {
+          "episodes": 50,
+          "successes": 2
+        }
+      },
+      "all_totals": {
+        "actor_tokens": 26081530,
+        "judge_tokens": 2155395,
+        "actor_model_calls": 4152,
+        "judge_model_calls": 1017,
+        "invalid_proposed": 388,
+        "invalid_reached_executor": 325,
+        "structured_rejections": 63,
+        "executed_tool_calls": 3494,
+        "guard_blocked": 0,
+        "extra_queries": 0,
+        "verification_failures": 0,
+        "recovered_actions": 0,
+        "recovery_budget_blocked": 0,
+        "duration_seconds": 25549.28438214725,
+        "retrieval_tokens": 1423,
+        "actor_latency": 12604.525278447429,
+        "judge_latency": 913.3032277948805,
+        "extra_query_latency": 0,
+        "tokenization_calls": 0,
+        "tokenization_latency": 0
+      },
+      "cost_latency": {
+        "actor_tokens_per_success": 132393.5532994924,
+        "judge_tokens_per_success": 10941.091370558375,
+        "failed_actor_tokens": 19917952,
+        "duration_seconds": {
+          "observed": 600,
+          "total": 25549.28438214725,
+          "p50": 21.23387316602748,
+          "p95": 167.69232484460505
+        },
+        "agent_seconds": {
+          "observed": 600,
+          "total": 12961.651445246418,
+          "p50": 16.00374480598839,
+          "p95": 60.02359485216723
+        },
+        "post_agent_seconds": {
+          "observed": 600,
+          "total": 12543.471877856995,
+          "p50": 1.2771472524909768,
+          "p95": 127.67630419057954
+        },
+        "evaluator_seconds": {
+          "observed": 600,
+          "total": 12205.050301280571,
+          "p50": 0.6861106970172841,
+          "p95": 127.14286289010765
+        },
+        "tool_seconds": {
+          "observed": 600,
+          "total": 199.2959633762366,
+          "p50": 0.3052876699657645,
+          "p95": 0.7163627527770583
+        },
+        "agent_wait_seconds": {
+          "observed": 600,
+          "total": 0,
+          "p50": 0.0,
+          "p95": 0.0
+        },
+        "evaluation_wait_seconds": {
+          "observed": 600,
+          "total": 297.83259587257635,
+          "p50": 0.5000903790351003,
+          "p95": 0.5001165192195913
+        },
+        "retrieval_seconds": {
+          "observed": 600,
+          "total": 4.786305096175056,
+          "p50": 0.0,
+          "p95": 0.06114946905872778
+        },
+        "actor_latency": {
+          "observed": 600,
+          "total": 12604.525278447429,
+          "p50": 15.372918080131058,
+          "p95": 58.66045586588724
+        },
+        "judge_latency": {
+          "observed": 600,
+          "total": 913.3032277948805,
+          "p50": 0.9236280430632178,
+          "p95": 6.934270228585211
+        },
+        "evaluation_client_seconds": {
+          "observed": 600,
+          "total": 11898.928730132815,
+          "p50": 0.09000556851970032,
+          "p95": 127.03090900919909
+        },
+        "agent_residual_seconds": {
+          "observed": 600,
+          "total": 157.83020342275267,
+          "p50": 0.22674608894158155,
+          "p95": 0.6238223906053463
+        }
+      }
+    },
+    "G": {
+      "episodes": 600,
+      "successes": 231,
+      "success_rate": 0.385,
+      "unfinished": 8,
+      "categories": {
+        "qt1:feasible": {
+          "episodes": 50,
+          "successes": 33
+        },
+        "qt1:infeasible": {
+          "episodes": 50,
+          "successes": 36
+        },
+        "qt2:feasible": {
+          "episodes": 50,
+          "successes": 18
+        },
+        "qt2:infeasible": {
+          "episodes": 50,
+          "successes": 11
+        },
+        "qt3:feasible": {
+          "episodes": 50,
+          "successes": 41
+        },
+        "qt3:infeasible": {
+          "episodes": 50,
+          "successes": 31
+        },
+        "qt4-1:feasible": {
+          "episodes": 50,
+          "successes": 17
+        },
+        "qt4-1:infeasible": {
+          "episodes": 50,
+          "successes": 12
+        },
+        "qt4-2:feasible": {
+          "episodes": 50,
+          "successes": 25
+        },
+        "qt4-2:infeasible": {
+          "episodes": 50,
+          "successes": 0
+        },
+        "qt4-3:feasible": {
+          "episodes": 50,
+          "successes": 6
+        },
+        "qt4-3:infeasible": {
+          "episodes": 50,
+          "successes": 1
+        }
+      },
+      "all_totals": {
+        "actor_tokens": 27512346,
+        "judge_tokens": 2165664,
+        "actor_model_calls": 4250,
+        "judge_model_calls": 1005,
+        "invalid_proposed": 406,
+        "invalid_reached_executor": 70,
+        "structured_rejections": 51,
+        "executed_tool_calls": 3322,
+        "guard_blocked": 285,
+        "extra_queries": 903,
+        "verification_failures": 0,
+        "recovered_actions": 219,
+        "recovery_budget_blocked": 0,
+        "duration_seconds": 24599.48310530465,
+        "retrieval_tokens": 1390,
+        "actor_latency": 13663.647948766418,
+        "judge_latency": 886.730997698789,
+        "extra_query_latency": 52.77643218415324,
+        "tokenization_calls": 0,
+        "tokenization_latency": 0
+      },
+      "cost_latency": {
+        "actor_tokens_per_success": 119101.06493506493,
+        "judge_tokens_per_success": 9375.16883116883,
+        "failed_actor_tokens": 19325241,
+        "duration_seconds": {
+          "observed": 600,
+          "total": 24599.48310530465,
+          "p50": 21.99838469349197,
+          "p95": 137.7007234170829
+        },
+        "agent_seconds": {
+          "observed": 600,
+          "total": 14142.329440786969,
+          "p50": 17.51375934848329,
+          "p95": 63.01772682849257
+        },
+        "post_agent_seconds": {
+          "observed": 600,
+          "total": 10301.43670606555,
+          "p50": 1.252642225008458,
+          "p95": 92.58096501429962
+        },
+        "evaluator_seconds": {
+          "observed": 600,
+          "total": 9965.914213586424,
+          "p50": 0.6747981755179353,
+          "p95": 92.00289186114085
+        },
+        "tool_seconds": {
+          "observed": 600,
+          "total": 275.95938525820384,
+          "p50": 0.4104817840270698,
+          "p95": 1.140540148509899
+        },
+        "agent_wait_seconds": {
+          "observed": 600,
+          "total": 0,
+          "p50": 0.0,
+          "p95": 0.0
+        },
+        "evaluation_wait_seconds": {
+          "observed": 600,
+          "total": 296.4417290883139,
+          "p50": 0.5000904789776541,
+          "p95": 0.5001153890538262
+        },
+        "retrieval_seconds": {
+          "observed": 600,
+          "total": 4.509055784670636,
+          "p50": 0.0,
+          "p95": 0.04881888036907184
+        },
+        "actor_latency": {
+          "observed": 600,
+          "total": 13663.647948766418,
+          "p50": 16.61053251105477,
+          "p95": 60.94716707243932
+        },
+        "judge_latency": {
+          "observed": 600,
+          "total": 886.730997698789,
+          "p50": 0.926793374994304,
+          "p95": 5.65898454719281
+        },
+        "evaluation_client_seconds": {
+          "observed": 600,
+          "total": 9668.579747234064,
+          "p50": 0.08898727150517516,
+          "p95": 91.99703400300922
+        },
+        "agent_residual_seconds": {
+          "observed": 600,
+          "total": 202.7221067623468,
+          "p50": 0.2877525814983528,
+          "p95": 0.8156581642455415
+        }
+      }
+    }
+  },
+  "paired": {
+    "G": {
+      "wins": 77,
+      "losses": 43,
+      "p_exact": 0.002446856762814159,
+      "success_delta": 0.056666666666666664,
+      "success_delta_ci95": [
+        0.021666666666666667,
+        0.09
+      ],
+      "actor_token_delta": 2384.693333333333,
+      "p_holm": 0.002446856762814159
+    }
+  },
+  "cost_with_probes": {
+    "actor_tokens": 53593960,
+    "judge_tokens": 4321299,
+    "actor_calls_without_usage": 0,
+    "judge_calls_without_usage": 0
+  },
+  "resource": {
+    "total_seconds_including_cleanup": 1320.2282086100313,
+    "allocated_actor_gpu_seconds": 5280.912834440125,
+    "external_judge_stopped": false,
+    "monitor_errors": 0,
+    "sampled_gpu_utilization_mean": 69.8545918367347,
+    "sampled_gpu_utilization_peak": 100.0,
+    "queue_peaks": {
+      "actor_running": 60.0,
+      "actor_waiting": 1.0,
+      "judge_running": 11.0,
+      "judge_waiting": 14.0
+    },
+    "pressure": {
+      "peak_kv_cache_fraction": 0.0876819311324104,
+      "preemptions": 0.0
+    },
+    "scope": "Reserved H100 GPU wall time, including startup/failures/cleanup; excludes A800 shared-service allocation"
+  },
+  "post_run_audit": {
+    "verified": true,
+    "upstream_and_user_patch_unchanged": true,
+    "h100_released": true,
+    "actor_and_simulator_ports_closed": true,
+    "judge_healthy": true,
+    "judge_modified": false,
+    "gpu_memory_used": "0, 0\n1, 0\n2, 0\n3, 0\n",
+    "post_run_audit_wall_seconds": 30.430748196027707,
+    "previously_unused95_included_by_user_authorization": true,
+    "training_started": false,
+    "prelaunch_failure": "work/full-benchmark/prelaunch-failure.log; before driver, zero inference; activation/transport CPU not fully measured"
+  },
+  "archive": {
+    "path": "outputs/full-benchmark/n37-review-v1",
+    "sha256": "8c7820ba6e3f4db530af62bec7a8295d371550082faf37d0710d85fd3049aa4a",
+    "receipt_files": 32,
+    "local_sha_verified": true
+  },
+  "cases": {
+    "both_success": {
+      "task_id": "qt1_feasible_seed_1",
+      "outcomes": {
+        "B0": true,
+        "G": true
+      },
+      "path": "runs/full-benchmark/n37-v1/reviews/both_success"
+    },
+    "both_fail": {
+      "task_id": "qt1_feasible_seed_11",
+      "outcomes": {
+        "B0": false,
+        "G": false
+      },
+      "path": "runs/full-benchmark/n37-v1/reviews/both_fail"
+    },
+    "G_win": {
+      "task_id": "qt1_feasible_seed_15",
+      "outcomes": {
+        "B0": false,
+        "G": true
+      },
+      "path": "runs/full-benchmark/n37-v1/reviews/G_win"
+    },
+    "G_loss": {
+      "task_id": "qt1_feasible_seed_21",
+      "outcomes": {
+        "B0": true,
+        "G": false
+      },
+      "path": "runs/full-benchmark/n37-v1/reviews/G_loss"
+    }
+  },
+  "default_variant": "G",
+  "candidate_selection": false,
+  "N13_independent_holdout_conclusion": "SR +4.69pp, Holm p=.216; significant improvement unproven; illegal96->16."
+}

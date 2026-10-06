@@ -2,9 +2,23 @@
 
 基于官方 SimuHome 单轮 ReAct benchmark 与 Agent Lightning 的可审计智能家居 Agent harness。项目实现工具契约校验、动作生命周期记录、四卡隔离调度与配对评测，保留完整失败及成本证据。
 
-**当前默认：Qwen3.5-9B + Guard（G）。已完成至 N36，新增 N37 全量验收待运行。** 项目概览、设计取舍与案例见[项目总结书](docs/项目总结书.md)。
+**当前默认：Qwen3.5-9B + Guard（G）。已完成至 N37，包括官方600任务全量验收。** 项目概览、设计取舍与案例见[项目总结书](docs/项目总结书.md)。
 
 ## 结果与边界
+
+N37全量验收：当前官方快照600任务、十二类各50个，B0/G×seed42共1,200次。
+
+| 指标 | B0：原9B ReAct | G：原9B + Guard |
+|---|---:|---:|
+| 成功 / SR | 197/600，32.83% | 231/600，38.50% |
+| 非法执行总次数 | 325 | 70 |
+| Actor tokens / 任务 | 43,469.2 | 45,853.9 |
+| 额外查询总次数 | 0 | 903 |
+| 未完成（计失败） | 5 | 8 |
+
+G的SR增加 **5.67个百分点**，非法执行减少 **78.46%**，actor tokens/任务增加 **5.49%**。本快照配对95% CI[+2.17,+9.00]、p=0.00245；包含历史开发暴露任务，不能当作600任务独立留出收益。全流程约22分钟，12,391阶段文件核验通过；[完整报表](docs/实验报表.md)、[全量证据索引](docs/data/full-benchmark.json)。
+
+下面保留N13独立留出主检验，与全量成绩分开解释。
 
 N13正式实验：冻结的192个官方任务、十二类各16个，预声明seed42。
 
@@ -17,7 +31,7 @@ N13正式实验：冻结的192个官方任务、十二类各16个，预声明see
 
 非法执行减少 **83.33%**，actor tokens增加 **6.62%**。SR差+4.69个百分点，95% CI[-1.04,+10.94]，Holm p=0.216，**未证明显著提升成功率**。非法执行只计实际工具返回的非法动作错误，不含schema拒绝；tokens包含成功及失败任务，不含judge。论文采用600任务及不同模型/judge，不能直接横向宣称超越论文。
 
-N31动作生命周期已接入G。N32恢复预算、N33目标关联、N34证据上下文为可选实现，未替换G；Context/Verify、TimePlan及一次历史LoRA SFT也未准入。N35/N36交付验收完成。N37按用户授权增加当前官方600任务的B0/G配对验收，包括此前封存95任务；已有192任务结果仍单独保留，全量不作独立留出收益。状态见[计划](PLAN.md)，N36交付索引见[delivery.json](docs/data/delivery.json)。
+N31动作生命周期已接入G。N32恢复预算、N33目标关联、N34证据上下文为可选实现，未替换G；Context/Verify、TimePlan及一次历史LoRA SFT也未准入。N35/N36交付验收完成。N37已完成用户授权的官方600任务B0/G配对验收，包括此前封存95任务；已有192任务结果仍单独保留，全量不作独立留出收益。状态见[计划](PLAN.md)，N36交付索引见[delivery.json](docs/data/delivery.json)。
 
 ## 核心工程设计
 
@@ -74,5 +88,14 @@ python scripts/verify_benchmark.py runs/delivery/<新目录>/smoke
 ```
 
 [交付配置](configs/harness-release.json)：4×H100各一个9B actor，每actor16个独立模拟器槽，共64槽；Qwen3.6-35B-A3B judge常驻2×A800，CPU BGE检索。仅已暴露calibration12的B0/G×seed42共24次链路验收，不重新选优或替代正式实验。judge三票来自同一模型，不是三个独立judge。
+
+N37完整600任务复现沿用同一环境，在干净Git工作区运行：
+
+```bash
+python scripts/run_node_experiment.py --config configs/harness-full-benchmark.json --run-dir runs/full-benchmark/<新目录>
+python scripts/verify_full_benchmark.py --run runs/full-benchmark/<新目录>
+```
+
+已有N37结果及原始证据保留，无需为查看报告重跑。[全量配置](configs/harness-full-benchmark.json)保持B0/G、seed42及所有失败，不追加调参。
 
 旧实验方案、SFT数据/权重和失败证据均保留；历史入口见[后续开发计划](docs/后续开发计划.md)、[SFT执行计划](docs/SFT执行计划.md)。正式结论以[N13](docs/nodes/N13.md)与实验报表为准。
