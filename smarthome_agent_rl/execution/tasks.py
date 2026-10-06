@@ -172,12 +172,17 @@ class TaskManager:
                     {key: value for key, value in condition.items() if key != 'device_id'},))
                 result = check_postconditions(function, {}, {}, public_states.get(device, {}))
                 decisions.append({'device_id': device, **result.as_dict()})
-            pending = any(job['task_id'] == task_id and job['task_version'] == task.version
-                          and job['status'] in ('REGISTERING', 'SCHEDULED', 'CLAIMED', 'UNKNOWN')
-                          for job in self.store.list('job', db=db))
-            all_verified = bool(decisions) and not pending and all(
+            jobs = [job for job in self.store.list('job', db=db)
+                    if job['task_id'] == task_id and job['task_version'] == task.version]
+            pending = any(job['status'] in ('REGISTERING', 'SCHEDULED', 'CLAIMED', 'UNKNOWN') for job in jobs)
+            failed_jobs = [job['job_id'] for job in jobs if job['status'] == 'FAILED']
+            all_verified = bool(decisions) and not pending and not failed_jobs and all(
                 row['status'] == VerificationStatus.VERIFIED_SUCCESS for row in decisions)
-            task.status = TaskStatus.COMPLETED if all_verified else TaskStatus.WAITING
-            task.evidence.append({'kind': 'task_postconditions', 'version': task.version, 'decisions': decisions})
+            # A later matching state cannot erase a verified failed timed job.
+            # Keep remaining jobs tracked until settled; do not orphan native work.
+            task.status = (TaskStatus.FAILED if failed_jobs and not pending else
+                           TaskStatus.COMPLETED if all_verified else TaskStatus.WAITING)
+            task.evidence.append({'kind': 'task_postconditions', 'version': task.version,
+                                  'decisions': decisions, 'failed_job_ids': failed_jobs})
             self.store.put('task', task_id, task.as_dict(), expected_revision=revision, db=db)
             return task

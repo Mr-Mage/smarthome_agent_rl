@@ -142,6 +142,18 @@ class SchedulerRuntimeTests(unittest.TestCase):
                          VerificationStatus.VERIFIED_SUCCESS)
         self.assertEqual(self.manager.get(self.task.task_id, 'u1').status, 'COMPLETED')
 
+    def test_later_matching_task_state_cannot_erase_verified_timed_failure(self):
+        job = self.schedule()
+        self.scheduler.execute_action = lambda *args: PostconditionResult(
+            VerificationStatus.VERIFIED_FAILURE,
+            ({'path': 'power', 'observed': True, 'expected': False, 'matched': False},),
+            observed_at=10)
+        self.scheduler.tick(10)
+        # Whole-task callback returns power=False, but the timed failure remains.
+        task = self.manager.get(self.task.task_id, 'u1')
+        self.assertEqual(task.status, 'FAILED')
+        self.assertEqual(task.evidence[-1]['failed_job_ids'], [job['job_id']])
+
     def test_cancellation_acknowledgement_alone_does_not_confirm_cancelled(self):
         job = self.schedule(native_call={'tool': 'native_schedule', 'args': {'at': 10}})
         self.trace.dispatch = lambda *args: {'status': {'code': 200}, 'data': {}}
