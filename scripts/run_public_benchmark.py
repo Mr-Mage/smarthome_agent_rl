@@ -27,6 +27,7 @@ def actors(config, directory):
     monitor = None
     start = time.monotonic()
     lifecycle = {'started_unix': time.time(), 'error': None, 'ready_seconds': None}
+    save(directory/'config.json', config)
     try:
         if sorted(a['gpu'] for a in config['actors']) != [0, 1, 2, 3]:
             raise ValueError('Expected four independent GPU actors')
@@ -47,7 +48,7 @@ def actors(config, directory):
         for actor in config['actors']:
             name = 'actor'+str(actor['id'])
             parsed = urlparse(actor['endpoint'])
-            cache = directory/name/'cache'
+            cache = ROOT/config.get('kernel_cache_root', str(directory/'kernel-cache'))/name
             environment = {**os.environ, 'CUDA_VISIBLE_DEVICES': str(actor['gpu']),
                            'CUDA_HOME': '/usr/local/cuda-12.8', 'CUDA_PATH': '/usr/local/cuda-12.8',
                            'VLLM_CACHE_ROOT': str(cache/'vllm'), 'FLASHINFER_WORKSPACE_BASE': str(cache/'flashinfer'),
@@ -61,6 +62,7 @@ def actors(config, directory):
                        '--gpu-memory-utilization', str(config['gpu_memory_utilization']),
                        '--seed', str(config['engine_seed']), '--language-model-only',
                        '--enable-prefix-caching', '--no-enable-log-requests']
+            command += config.get('actor_extra_args', [])
             log = (directory/(name+'.log')).open('w', encoding='utf-8')
             handles.append(log)
             process = subprocess.Popen(command, cwd=ROOT, env=environment,
@@ -152,9 +154,11 @@ def main():
         if report['status'] != 'complete' or not report['engineering_gate']['passed'] or freeze['config_sha256'] != digest(config):
             raise ValueError('Frozen calibration engineering gate not satisfied')
     adapter = HomeBenchAdapter(args.source, lock)
+    # Freeze execution identity before service startup; later documentation commits cannot rewrite it.
+    commit = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip()
     def execute():
         report = run(adapter, config, args.output, config['selection'][args.stage])
-        report['provenance'] = {'git_commit': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
+        report['provenance'] = {'git_commit': commit,
                                 'source': lock, 'stage': args.stage}
         save(args.output/'report.json', report)
         print(json.dumps({'state': report['status'], 'episodes': report['arms']['B0']['episodes'],

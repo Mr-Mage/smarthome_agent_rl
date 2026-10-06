@@ -84,5 +84,10 @@
     "task_conflict_rate"
   ],
   "cost_policy": "B2 references B1 request; count each actual actor request once; include failed starts and model allocation; no judge needed",
-  "source_adaptation": "published output instead of unavailable output2; published home_status_method instead of unavailable new_home_status_method; exact official zero-shot prompt and Counter metric"
+  "source_adaptation": "published output instead of unavailable output2; published home_status_method instead of unavailable new_home_status_method; exact official zero-shot prompt and Counter metric",
+  "actor_extra_args": [
+    "--gdn-prefill-backend",
+    "triton"
+  ],
+  "kernel_cache_root": "/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/zhengrj/agent/smarthome_agent_rl/work/concurrency-capacity/kernel-cache"
 }
