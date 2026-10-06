@@ -16,6 +16,8 @@ from smarthome_agent_rl.structured import StructuredProvider, tool_schemas
 from smarthome_agent_rl.verification import expected_effect, expected_effect_v2, verify_effect, verify_effect_v2
 from smarthome_agent_rl.action_state import ActionLedger
 from smarthome_agent_rl.recovery import RecoveryPolicy, public_context
+from smarthome_agent_rl.semantic_verifier import VerificationContext, feedback as semantic_feedback
+from smarthome_agent_rl.device_contract import ContractRegistry
 
 ROOT = Path(__file__).resolve().parents[1]
 MUTATIONS = {'execute_command', 'write_attribute', 'schedule_workflow', 'cancel_workflow',
@@ -29,7 +31,9 @@ def ok(response):
 class GuardedExecutor:
     def __init__(self, *, verify=False, verification_version=1, repair_limit=2, query_limit=40,
                  dead_front=False, workflow_all_devices=False, audit_fn=None, dispatch=run_tool,
-                 recovery=False, recovery_total_limit=6):
+                 recovery=False, recovery_total_limit=6, semantic_verifier=None,
+                 reflection_verifier=None, semantic_blocking=False, contract_registry=None,
+                 contract_blocking=False):
         contracts, sources = command_contracts(ROOT / 'deps/SimuHome/src/simulator/domain/clusters')
         power_rules, device_sources = public_power_rules(ROOT / 'deps/SimuHome/src/simulator/domain/devices', dead_front=dead_front)
         sources.update(device_sources)
@@ -50,6 +54,11 @@ class GuardedExecutor:
         self.start_semantics_audit = []
         self.time_plan = None
         self.task_spec = None
+        self.semantic_verifier = semantic_verifier
+        self.reflection_verifier = reflection_verifier
+        self.semantic_blocking = semantic_blocking
+        self.contract_registry = contract_registry
+        self.contract_blocking = contract_blocking
 
     def save_audit(self):
         if self.audit_fn:
@@ -131,6 +140,17 @@ class GuardedExecutor:
                 else:
                     before = query['data']
                     record['uncovered'].extend(self.guard.capability(tool, arguments, before))
+                    if self.contract_registry is not None:
+                        contract_action = {'function': arguments.get('command_id', arguments.get('attribute_id')),
+                                           'args': arguments.get('args', {'value': arguments.get('value')})}
+                        contract_result = self.contract_registry.validate(contract_action, before)
+                        record['contract'] = contract_result.response()
+                        record['uncovered'].extend(contract_result.uncovered)
+                        if self.contract_blocking and not contract_result.accepted:
+                            raise GuardError('deterministic', 'Executable device contract rejected action',
+                                             reason_code=contract_result.reason_code,
+                                             **contract_result.evidence,
+                                             repair_hint=contract_result.repair_hint)
             elif tool == 'schedule_workflow':
                 # Inspect only static capabilities; today's state cannot predict future state.
                 structures = {}
@@ -154,6 +174,20 @@ class GuardedExecutor:
                     else:
                         record['uncovered'].append('workflow_device_not_queried:' + device)
                 record['uncovered'].append('future_state_preconditions')
+            verifier = self.reflection_verifier or self.semantic_verifier
+            if verifier is not None and tool in MUTATIONS:
+                semantic_context = VerificationContext(
+                    user_goal=getattr(self, 'user_goal', ''), environment_state=before,
+                    proposed_action={'tool': tool, **copy.deepcopy(arguments)},
+                    recent_actions=[{'tool': row.tool, **copy.deepcopy(row.params)} for row in self.actual[-8:]],
+                    contract=record.get('contract'))
+                semantic_result = verifier.verify(semantic_context)
+                record['semantic_verification'] = semantic_result.as_dict()
+                if self.semantic_blocking and semantic_result.verdict == 'DENY':
+                    raise GuardError('semantic', 'Semantic verifier rejected the proposed action',
+                                     reason_code=semantic_result.reason_code or 'SEMANTIC_REJECT',
+                                     verifier=semantic_result.as_dict(),
+                                     repair_hint=semantic_feedback(semantic_result).get('repair_hint', {}))
             recovery_context = None
             if self.recovery is not None:
                 recovery_context = public_context(tool, arguments, self.observations)
@@ -221,7 +255,7 @@ class GuardedExecutor:
 class HarnessAgent:
     def __init__(self, llm, *, variant, max_steps, trace_fn=None, audit_fn=None,
                  repair_limit=2, query_limit=40, policy=None, token_count_fn=None):
-        if variant not in ('G', 'GV', 'GC', 'Full', 'GV2', 'GC2', 'Candidate', 'GD', 'GW', 'GDW', 'TimePlan', 'GThinking', 'Teacher', 'SFT9B', 'GB', 'SFT9B_B', 'GS', 'GR', 'GTS', 'GEC'):
+        if variant not in ('B0', 'B1', 'B2', 'G', 'GV', 'GC', 'Full', 'GV2', 'GC2', 'Candidate', 'GD', 'GW', 'GDW', 'TimePlan', 'GThinking', 'Teacher', 'SFT9B', 'GB', 'SFT9B_B', 'GS', 'GR', 'GTS', 'GEC'):
             raise ValueError(variant)
         policy = policy or {'verify': variant in ('GV', 'Full', 'GV2'),
             'verification_version': 2 if variant == 'GV2' else 1,
@@ -231,7 +265,12 @@ class HarnessAgent:
                                        dead_front=policy.get('dead_front', False),
                                        workflow_all_devices=policy.get('workflow_all_devices', False),
                                        recovery=policy.get('recovery', variant == 'GR'),
-                                       recovery_total_limit=policy.get('recovery_total_limit', 6))
+                                       recovery_total_limit=policy.get('recovery_total_limit', 6),
+                                       semantic_verifier=policy.get('semantic_verifier'),
+                                       reflection_verifier=policy.get('reflection_verifier'),
+                                       semantic_blocking=policy.get('semantic_blocking', False),
+                                       contract_registry=policy.get('contract_registry'),
+                                       contract_blocking=policy.get('contract_blocking', False))
         if policy.get('evidence_context', variant == 'GEC'):
             if variant in ('GTS', 'GR') or any(policy.get(key) for key in ('verify', 'context_version', 'time_plan',
                     'identifier_binding', 'start_semantics', 'recovery', 'task_spec',
@@ -269,6 +308,7 @@ class HarnessAgent:
             show_assistant_raw=True, trace_fn=trace_fn))
 
     def run(self, query, *, user_location=None, current_time=None):
+        self.executor.user_goal = query
         if self.executor.task_spec is not None:
             self.executor.task_spec.initialize(query)
         if self.executor.time_plan is not None:
