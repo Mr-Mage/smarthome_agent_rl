@@ -163,6 +163,9 @@ def main():
         elif config['node_experiment']['node'] in ('N63', 'N66'):
             command('analyze_native_task_runtime.py', '--run', args.run_dir,
                     '--stage', config['node_experiment']['stages'][0].get('name', 'calibration'))
+        elif config['node_experiment']['node'] == 'N69':
+            command('audit_native_resource_context.py', '--run', args.run_dir,
+                    '--stage', config['node_experiment']['stages'][0].get('name', 'calibration'))
         state('complete')
     except BaseException as exc:
         write(run / 'failure.json', {'type': type(exc).__name__, 'message': str(exc)})

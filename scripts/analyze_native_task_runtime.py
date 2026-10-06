@@ -85,7 +85,7 @@ def audit_episode(directory):
                     valid_clock = False
                 if not valid_clock:
                     problems.append('Timed outcome clock does not match its public receipt')
-            elif contract['config'].get('variant_policies', {}).get('GTME', {}).get('task_runtime_clock') == 'public_events':
+            elif data.get('event_supervision') is not None or contract['config'].get('variant_policies', {}).get('GTME', {}).get('task_runtime_clock') == 'public_events':
                 problems.append('Event runtime timed outcome lacks clock receipt provenance')
         if job['status'] == 'DONE' and (job['payload']['uncovered'] or not job['payload']['conditions']):
             problems.append('Uncovered action intention incorrectly verified')
