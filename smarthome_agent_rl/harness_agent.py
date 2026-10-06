@@ -14,6 +14,7 @@ from src.agents.types import ChatMessage
 from smarthome_agent_rl.guard import ToolGuard, GuardError, command_contracts, public_power_rules, harness_schemas
 from smarthome_agent_rl.structured import StructuredProvider, tool_schemas
 from smarthome_agent_rl.verification import expected_effect, expected_effect_v2, verify_effect, verify_effect_v2
+from smarthome_agent_rl.action_state import ActionLedger
 
 ROOT = Path(__file__).resolve().parents[1]
 MUTATIONS = {'execute_command', 'write_attribute', 'schedule_workflow', 'cancel_workflow',
@@ -37,6 +38,8 @@ class GuardedExecutor:
         self.workflow_all_devices = workflow_all_devices
         self.repair_limit, self.query_limit, self.audit_fn, self.dispatch = repair_limit, query_limit, audit_fn, dispatch
         self.audit, self.actual, self.failures, self.observations = [], [], {}, []
+        self.actions = ActionLedger()
+        self.active_action_id = None
         self.extra_queries, self.turn = 0, 0
         self.context_audit = []
         self.structured_audit = []
@@ -51,31 +54,45 @@ class GuardedExecutor:
                 'context': self.context_audit, 'structured': self.structured_audit,
                 'binding': self.binding_audit,
                 'start_semantics': self.start_semantics_audit,
+                'action_lifecycle': self.actions.snapshot(),
                 'time_plan': self.time_plan.snapshot() if self.time_plan is not None else None})
 
     def record_structured(self, records):
         self.structured_audit = records
         self.save_audit()
 
-    def call(self, tool, arguments, *, extra=False):
+    def call(self, tool, arguments, *, extra=False, action_id=None):
         if extra:
             if self.extra_queries >= self.query_limit:
                 return None
             self.extra_queries += 1
+        action_id = action_id or self.actions.propose(tool, arguments, turn=self.turn,
+            observation_version=len(self.observations), extra_query=extra,
+            parent_action_id=self.active_action_id)
         started = time.monotonic()
-        response = self.dispatch(tool, copy.deepcopy(arguments))
+        self.actions.dispatched(action_id)
+        try:
+            response = self.dispatch(tool, copy.deepcopy(arguments))
+        except Exception as exc:
+            self.actions.interrupted(action_id, exc)
+            raise
         invocation = ToolInvocation(tool=tool, params=copy.deepcopy(arguments), observation=copy.deepcopy(response))
         self.actual.append(invocation)
         self.observations.append({'turn': self.turn, 'tool': tool, 'arguments': copy.deepcopy(arguments),
             'response': copy.deepcopy(response), 'extra_query': extra,
             'duration_seconds': time.monotonic() - started})
+        self.actions.observed(action_id, response, len(self.observations))
         if extra and isinstance(response, dict) and response.get('status', {}).get('code', 200) >= 500:
             raise RuntimeError(f'Guard query infrastructure failure: {response}')
         return response
 
     def execute(self, tool, arguments):
         self.turn = self.structured_audit[-1]['turn'] if self.structured_audit else self.turn + 1
+        action_id = self.actions.propose(tool, arguments, turn=self.turn,
+                                         observation_version=len(self.observations))
+        self.active_action_id = action_id
         record = {'turn': self.turn, 'tool': tool, 'arguments': copy.deepcopy(arguments),
+            'action_id': action_id,
             'blocked': False, 'uncovered': [], 'extra_queries_before': self.extra_queries,
             'actual_calls_before': len(self.actual)}
         self.audit.append(record)
@@ -123,7 +140,7 @@ class GuardedExecutor:
                     else:
                         record['uncovered'].append('workflow_device_not_queried:' + device)
                 record['uncovered'].append('future_state_preconditions')
-            response = self.call(tool, arguments)
+            response = self.call(tool, arguments, action_id=action_id)
             if self.time_plan is not None:
                 self.time_plan.observe(tool, arguments, response)
             simulator_failed = not ok(response)
@@ -166,10 +183,15 @@ class GuardedExecutor:
                            'reached_executor': False})
             self.failures[key] = self.failures.get(key, 0) + 1
             record['response'] = exc.response()
+            self.actions.rejected(action_id, record['response'])
             return record['response']
+        except Exception as exc:
+            self.actions.interrupted(action_id, exc)
+            raise
         finally:
             record['extra_queries'] = self.extra_queries - record['extra_queries_before']
             record['actual_calls'] = len(self.actual) - record['actual_calls_before']
+            self.active_action_id = None
             self.save_audit()
 
 

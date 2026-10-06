@@ -1,0 +1,24 @@
+{
+  "node": "N31",
+  "mode": "offline_public_receipt_replay",
+  "source_run": "runs/start-semantics/n28-v3",
+  "baseline_commit": "59620b5",
+  "baseline_source_sha256": "730861c984c9dac384e62f4f57cd422c9c28d65f780ee0946d43729af1b057c2",
+  "simulator_commit": "e202971348348e1bb56651245185ecb3a0e6b12d",
+  "expected": {
+    "episodes": 192,
+    "proposals": 1137,
+    "actual_calls": 1415,
+    "extra_queries": 342,
+    "rejections": 64
+  },
+  "exclusions": [],
+  "invariants": [
+    "identical_public_returns",
+    "identical_dispatch_order_and_parameters",
+    "identical_legacy_audit_except_action_id_and_duration",
+    "no_new_model_or_network_calls",
+    "rejected_proposals_are_not_dispatched",
+    "workflow_registration_is_not_completion"
+  ]
+}
