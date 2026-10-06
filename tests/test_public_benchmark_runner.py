@@ -106,6 +106,21 @@ class PublicRunnerTests(unittest.TestCase):
         self.assertEqual(messages[1], {'role': 'user', 'content': ''})
         self.assertEqual(len(messages), 2)
 
+    def test_format_and_guard_are_independent_arms_with_shared_cost(self):
+        self.config.update(extra_arms=['F', 'FG'], engineering_gate_arm='FG')
+        def semicolon(*args):
+            value = self.request(*args)
+            value['text'] = '{garage.light.turn_on();}'
+            return value
+        report = run(self.adapter, self.config, self.output, {'kind': 'full'}, semicolon)
+        self.assertEqual(report['cost']['actual_actor_requests'], 2)
+        self.assertEqual(report['arms']['B2']['guard_uncovered_episodes'], 1)
+        self.assertEqual(report['arms']['F']['exact_match'], 0)
+        self.assertEqual(report['arms']['FG']['exact_match'], 1)
+        self.assertTrue(report['engineering_gate']['passed'])
+        self.assertEqual(report['engineering_gate']['arm'], 'FG')
+        self.assertTrue(verify(self.output, self.root, {'files': self.files, 'commit': 'fixture'})['verified'])
+
     def test_evidence_verifier_rejects_answer_injected_request(self):
         run(self.adapter, self.config, self.output, {'kind': 'full'}, self.request)
         lock = {'files': self.files, 'commit': 'fixture'}

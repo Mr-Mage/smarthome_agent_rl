@@ -9,6 +9,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from smarthome_agent_rl.benchmarks.homebench import HomeBenchAdapter
 from smarthome_agent_rl.benchmarks.runner import digest, messages_for, select_tasks, summarize
+from smarthome_agent_rl.benchmarks.instructions import serialize_instructions
 
 
 def verify(directory, source, lock=None):
@@ -23,8 +24,9 @@ def verify(directory, source, lock=None):
     if ids != select_tasks(adapter, freeze['selection']):
         raise AssertionError('Selection differs')
     rows = [json.loads(line) for line in (directory/'episodes.jsonl').read_text(encoding='utf-8').splitlines()]
+    arms = ('B0', 'B1', 'B2')+tuple(config.get('extra_arms', []))
     index = {(r['task_id'], r['arm']): r for r in rows}
-    if len(index) != len(rows) or set(index) != {(t, a) for t in ids for a in ('B0', 'B1', 'B2')}:
+    if len(index) != len(rows) or set(index) != {(t, a) for t in ids for a in arms}:
         raise AssertionError('Missing/duplicate/unplanned episodes')
     references = set()
     for (task_id, arm), row in index.items():
@@ -35,8 +37,9 @@ def verify(directory, source, lock=None):
             raise AssertionError('Receipt escaped evidence directory')
         call = json.loads(receipt.read_text(encoding='utf-8'))
         references.add(receipt.resolve())
-        parent = 'B1' if arm == 'B2' else arm
-        messages = messages_for(adapter, task_id, parent, config.get('chat_transport', 'native'))
+        parent = 'B0' if arm == 'B0' else 'B1'
+        location = 'after' if config.get('schema') == 'homebench-ablation-v1' and 'contract_location' not in config else 'before'
+        messages = messages_for(adapter, task_id, parent, config.get('chat_transport', 'native'), location)
         generation = config['generation']
         body = {'model': config['model'], 'messages': messages, 'seed': config['model_seed'],
                 **{k: v for k, v in generation.items() if k != 'extra_body'}, **generation.get('extra_body', {})}
@@ -44,9 +47,15 @@ def verify(directory, source, lock=None):
             raise AssertionError('Actor input/config drift or evaluator leakage')
         if row['error'] != call['error'] or row['usage'] != call['usage']:
             raise AssertionError('Cost/failure evidence differs')
-        if arm == 'B2':
-            guarded = adapter.guard(task_id, call['text'])
-            if row['guard'] != guarded or row['prediction'] != guarded['prediction']:
+        if arm not in ('B0', 'B1'):
+            prediction = call['text']
+            if arm in ('F', 'FG'):
+                formatted = serialize_instructions(prediction)
+                if row['format'] != formatted:
+                    raise AssertionError('Format replay differs')
+                prediction = formatted['prediction']
+            guarded = adapter.guard(task_id, prediction) if arm != 'F' else {'prediction': prediction}
+            if row['prediction'] != guarded['prediction'] or (arm != 'F' and row['guard'] != guarded):
                 raise AssertionError('Guard replay differs')
             if row['request_receipt'] != index[(task_id, 'B1')]['request_receipt']:
                 raise AssertionError('B2 did not share B1 request')
@@ -60,7 +69,10 @@ def verify(directory, source, lock=None):
     if len(references) != 2*len(ids):
         raise AssertionError('Actual request accounting differs')
     report = json.loads((directory/'report.json').read_text(encoding='utf-8'))
-    reproduced = summarize(rows, len(ids), report['seconds'])
+    reproduced = summarize(rows, len(ids), report['seconds'], arms)
+    for arm in arms:
+        if 'format_uncovered_episodes' not in report['arms'][arm]:
+            reproduced['arms'][arm].pop('format_uncovered_episodes')
     for field in ('status', 'arms', 'paired_changes', 'cost'):
         if report[field] != reproduced[field]:
             raise AssertionError(f'Report differs: {field}')

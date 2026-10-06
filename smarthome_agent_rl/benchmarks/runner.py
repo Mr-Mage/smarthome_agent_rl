@@ -9,6 +9,7 @@ import urllib.error
 import urllib.request
 
 from .homebench import aggregate
+from .instructions import serialize_instructions
 
 
 def digest(value):
@@ -37,7 +38,7 @@ def select_tasks(adapter, selection):
     return result
 
 
-def messages_for(adapter, task_id, arm, transport='native'):
+def messages_for(adapter, task_id, arm, transport='native', location='before'):
     messages = adapter.public_input(task_id)
     if arm == 'B0':
         pass
@@ -50,6 +51,9 @@ def messages_for(adapter, task_id, arm, transport='native'):
         marker = '-------------------------------\nHere are the user instructions you need to reply to.\n'
         enriched = []
         for message in messages:
+            if location == 'after':
+                enriched.append({'role': message['role'], 'content': message['content']+context})
+                continue
             prefix, separator, suffix = message['content'].partition(marker)
             if not separator:
                 raise ValueError('Pinned HomeBench task boundary missing')
@@ -93,9 +97,9 @@ def completion(endpoint, body, timeout):
     return row
 
 
-def summarize(records, total_tasks, seconds):
+def summarize(records, total_tasks, seconds, arm_names=('B0', 'B1', 'B2')):
     arms = {}
-    for name in ('B0', 'B1', 'B2'):
+    for name in arm_names:
         rows = [r for r in records if r['arm'] == name]
         scores = [r['score'] for r in rows]
         native = aggregate(scores)
@@ -109,19 +113,22 @@ def summarize(records, total_tasks, seconds):
                       'request_latency_median': statistics.median(r['request_seconds'] for r in rows) if rows else None,
                       'guard_rejected_instructions': sum(len(r.get('guard', {}).get('rejections', [])) for r in rows),
                       'guard_uncovered_episodes': sum(bool(r.get('guard', {}).get('uncovered')) for r in rows),
-                      'cost_attribution': 'shared B1 request; no additional actor request' if name == 'B2' else 'own requests'}
-    actual = [r for r in records if r['arm'] != 'B2']
+                      'format_uncovered_episodes': sum(bool(r.get('format', {}).get('uncovered')) for r in rows),
+                      'cost_attribution': 'shared B1 request; no additional actor request' if name not in ('B0', 'B1') else 'own requests'}
+    actual = [r for r in records if r['arm'] in ('B0', 'B1')]
     complete_usage = [r['usage'] for r in actual if valid_usage(r['usage'])]
     changes = {}
     indexed = {(r['task_id'], r['arm']): r for r in records}
-    for left, right in [('B0', 'B1'), ('B1', 'B2')]:
+    for left, right in [('B0', 'B1'), ('B1', 'B2'), ('B1', 'F'), ('F', 'FG')]:
+        if left not in arm_names or right not in arm_names:
+            continue
         pairs = [(indexed[(t, left)], indexed[(t, right)]) for t, a in indexed
                  if a == left and (t, right) in indexed]
         wins = [b['task_id'] for a, b in pairs if not a['score']['exact_match'] and b['score']['exact_match']]
         losses = [b['task_id'] for a, b in pairs if a['score']['exact_match'] and not b['score']['exact_match']]
         changes[left+'_'+right] = {'paired': len(pairs), 'wins': len(wins), 'losses': len(losses),
                                   'win_case_ids': wins[:3], 'loss_case_ids': losses[:3]}
-    return {'status': 'complete' if len(records) == 3*total_tasks else 'running',
+    return {'status': 'complete' if len(records) == len(arm_names)*total_tasks else 'running',
             'arms': arms, 'paired_changes': changes, 'seconds': seconds,
             'cost': {'actual_actor_requests': len(actual), 'failed_actor_requests': sum(r['error'] is not None for r in actual),
                      'prompt_tokens': sum(u['prompt_tokens'] for u in complete_usage),
@@ -144,6 +151,12 @@ def run(adapter, config, output, selection, request_fn=completion):
     output.mkdir(parents=True, exist_ok=False)
     start = time.monotonic()
     ids = select_tasks(adapter, selection)
+    extra_arms = config.get('extra_arms', [])
+    if len(set(extra_arms)) != len(extra_arms) or any(a not in ('F', 'FG') for a in extra_arms):
+        raise ValueError('Unknown/duplicate additional arm')
+    arm_names = ('B0', 'B1', 'B2')+tuple(extra_arms)
+    if config.get('engineering_gate_arm', 'B2') not in arm_names:
+        raise ValueError('Engineering gate arm absent from frozen experiment')
     if not ids or len(set(ids)) != len(ids):
         raise ValueError('Empty or duplicate selection')
     actors = config['actors']
@@ -158,7 +171,8 @@ def run(adapter, config, output, selection, request_fn=completion):
     last_checkpoint = start
     def episode(task_id, arm, actor, submitted):
         queued = time.monotonic()
-        messages = messages_for(adapter, task_id, arm, config.get('chat_transport', 'native'))
+        location = 'after' if config.get('schema') == 'homebench-ablation-v1' and 'contract_location' not in config else 'before'
+        messages = messages_for(adapter, task_id, arm, config.get('chat_transport', 'native'), location)
         generation = config['generation']
         body = {'model': config['model'], 'messages': messages, 'seed': config['model_seed'],
                 **{k: v for k, v in generation.items() if k != 'extra_body'}, **generation.get('extra_body', {})}
@@ -186,6 +200,21 @@ def run(adapter, config, output, selection, request_fn=completion):
             if call['error']:
                 b2['score']['exact_match'] = False
             batch.append(b2)
+            if extra_arms:
+                format_started = time.monotonic()
+                formatted = serialize_instructions(call['text'])
+                for arm_name in extra_arms:
+                    result = {'prediction': formatted['prediction'], 'rejections': [], 'uncovered': []}
+                    if arm_name == 'FG':
+                        result = adapter.guard(task_id, formatted['prediction'])
+                    extra = {**row, 'arm': arm_name, 'prediction': result['prediction'], 'format': formatted,
+                             'format_seconds': time.monotonic()-format_started, 'shared_request': 'B1',
+                             'score': adapter.score(task_id, result['prediction'])}
+                    if arm_name == 'FG':
+                        extra['guard'] = result
+                    if call['error']:
+                        extra['score']['exact_match'] = False
+                    batch.append(extra)
         return batch
     # Separate pools enforce the per-actor budget. Home affinity permits prefix reuse.
     pools = [ThreadPoolExecutor(max_workers=config['slots_per_actor']) for _ in actors]
@@ -208,19 +237,22 @@ def run(adapter, config, output, selection, request_fn=completion):
                 # after every completion would introduce quadratic CPU work.
                 now = time.monotonic()
                 if len(records) == len(batch) or now-last_checkpoint >= config.get('checkpoint_seconds', 10):
-                    save(output/'report.json', summarize(records, len(ids), now-start))
+                    save(output/'report.json', summarize(records, len(ids), now-start, arm_names))
                     last_checkpoint = now
     finally:
         for pool in pools:
             pool.shutdown(wait=True)
-    report = summarize(records, len(ids), time.monotonic()-start)
+    report = summarize(records, len(ids), time.monotonic()-start, arm_names)
     failures = report['cost']['failed_actor_requests']
     missing = report['cost']['missing_usage_requests']
-    uncovered = report['arms']['B2']['guard_uncovered_episodes'] / len(ids)
+    gate_arm = config.get('engineering_gate_arm', 'B2')
+    uncovered = sum(bool(r.get('guard', {}).get('uncovered') or r.get('format', {}).get('uncovered'))
+                    for r in records if r['arm'] == gate_arm) / len(ids)
     report['engineering_gate'] = {'passed': failures == 0 and missing == 0 and uncovered <= config['max_guard_uncovered_rate'],
                                   'failed_requests': failures, 'missing_usage': missing,
                                   'guard_uncovered_rate': uncovered,
                                   'threshold': config['max_guard_uncovered_rate'],
+                                  'arm': gate_arm,
                                   'benefit_proven': False}
     save(output/'report.json', report)
     return report
