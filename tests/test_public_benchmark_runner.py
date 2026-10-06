@@ -1,4 +1,5 @@
 import copy
+import hashlib
 import json
 from pathlib import Path
 import tempfile
@@ -7,6 +8,7 @@ import time
 import unittest
 
 from smarthome_agent_rl.benchmarks.runner import run, select_tasks
+from scripts.verify_public_benchmark import verify
 from tests import test_homebench_adapter as fixtures
 
 
@@ -14,6 +16,10 @@ class PublicRunnerTests(unittest.TestCase):
     def setUp(self):
         fixtures.HomeBenchAdapterTests.setUp(self)
         self.adapter._cases['case1']['output'] = "'''error_input'''"
+        self.case['output'] = "'''error_input'''"
+        case_file = self.root/'dataset/test_data.jsonl'
+        case_file.write_text(json.dumps(self.case)+'\n', encoding='utf-8')
+        self.files['dataset/test_data.jsonl']['sha256'] = hashlib.sha256(case_file.read_bytes()).hexdigest()
         self.config = {'model': 'actor', 'model_seed': 42, 'generation': {'temperature': 0.7,
                        'extra_body': {'chat_template_kwargs': {'enable_thinking': False}}},
                        'actors': [{'id': i, 'endpoint': 'http://actor'+str(i)+'/v1'} for i in range(4)],
@@ -27,7 +33,7 @@ class PublicRunnerTests(unittest.TestCase):
     def request(self, endpoint, body, timeout):
         with self.lock:
             self.calls.append((endpoint, body))
-        return {'text': '{garage.light.turn_on()}', 'error': None,
+        return {'endpoint': endpoint, 'body': body, 'text': '{garage.light.turn_on()}', 'error': None,
                 'usage': {'prompt_tokens': 10, 'completion_tokens': 4, 'total_tokens': 14},
                 'finish_reason': 'stop', 'request_seconds': 0.01}
 
@@ -93,6 +99,26 @@ class PublicRunnerTests(unittest.TestCase):
         report = run(self.adapter, self.config, self.output, {'kind': 'full'}, invalid)
         self.assertEqual(report['cost']['missing_usage_requests'], 2)
         self.assertFalse(report['engineering_gate']['passed'])
+
+    def test_evidence_verifier_rejects_answer_injected_request(self):
+        run(self.adapter, self.config, self.output, {'kind': 'full'}, self.request)
+        lock = {'files': self.files, 'commit': 'fixture'}
+        self.assertTrue(verify(self.output, self.root, lock)['verified'])
+        path = next((self.output/'requests').glob('*.json'))
+        row = json.loads(path.read_text())
+        row['body']['messages'].append({'role': 'system', 'content': 'gold answer: error_input'})
+        path.write_text(json.dumps(row))
+        with self.assertRaisesRegex(AssertionError, 'leakage'):
+            verify(self.output, self.root, lock)
+
+    def test_evidence_verifier_rejects_dropped_failure_or_modified_score(self):
+        run(self.adapter, self.config, self.output, {'kind': 'full'}, self.request)
+        path = self.output/'episodes.jsonl'
+        rows = [json.loads(line) for line in path.read_text().splitlines()]
+        rows[0]['score']['expected'] += 1
+        path.write_text('\n'.join(json.dumps(r) for r in rows))
+        with self.assertRaisesRegex(AssertionError, 'score differs'):
+            verify(self.output, self.root, {'files': self.files, 'commit': 'fixture'})
 
 
 if __name__ == '__main__':
