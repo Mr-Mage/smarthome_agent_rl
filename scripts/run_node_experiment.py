@@ -31,6 +31,14 @@ def main():
         raise ValueError('Online node driver requires the existing agent-lightning environment with agl-server; source ../activate-agent-lightning.sh first')
     if config.get('driver_python') and Path(sys.executable).resolve() != Path(config['driver_python']).resolve():
         raise ValueError('Driver interpreter differs from frozen driver_python')
+    interpreters = {'simulator': ROOT / '.venv-simuhome/bin/python',
+                    'episode': ROOT / '.venv-baseline/bin/python',
+                    'model': Path(config['model_python'])}
+    for label, path in interpreters.items():
+        if not path.is_file() or not os.access(path, os.X_OK):
+            raise FileNotFoundError(f'Existing {label} interpreter missing: {path}; map the existing environment before reserving GPUs')
+    if not (ROOT / config['actor_path']).is_dir() or not (ROOT / 'deps/SimuHome').is_dir():
+        raise FileNotFoundError('Existing actor weights or SimuHome source unavailable')
     slots = execution_slots(config)
     if len(slots) != 64 or len(config['workflows']) != 4 or not external_judge(config):
         raise ValueError('Node execution requires four actors, 64 slots and external judge')
@@ -42,6 +50,7 @@ def main():
     services = run / 'services'
     services.mkdir()
     write(run / 'protocol.json', {'commit': commit, 'config': config, 'config_sha256': digest(config_path),
+        'runtime_interpreters': {label: str(path.resolve()) for label, path in interpreters.items()},
         'stages': [{**s, 'manifest_sha256': digest(ROOT / s['manifest'])} for s in config['node_experiment']['stages']],
         'exclusions': 'None; task failures retained. Infrastructure failure invalidates entire stage; no selective reruns.',
         'resources': {'actors': 4, 'total_slots': 64, 'judge_managed': False},
