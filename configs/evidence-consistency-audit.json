@@ -1,0 +1,38 @@
+{
+  "node": "N79",
+  "schema": "reviewer-evidence-consistency-v1",
+  "parents": {
+    "n76": {
+      "run": "runs/typed-semantic-review/n76-v1",
+      "manifest": "artifact_manifest.json",
+      "manifest_sha256": "d1cc915888f8e0a8487ab4647c65f301bc40601f4d26183bea8b90bfbcff4118"
+    },
+    "n78": {
+      "run": "runs/native-report-semantic-review/n78-v1",
+      "manifest": "collection-manifest.json",
+      "manifest_sha256": "bcaab466b66bdea02f121b651c101dd203c1237036ad0ae19329aaf496e2e59e"
+    }
+  },
+  "records_by_origin": {
+    "n76": 38,
+    "n78": 40
+  },
+  "inputs_sha256": "7bbc6b7dd1fc280d52c06e529fe19ba7b9b5037b0a91a7224f9c3a4a57a0bd00",
+  "selection": "All38 N76 and all40 N78 reviewer receipts,including original failures;zero-mutation source episodes retained in coverage. No category/task/outcome selection.",
+  "criteria": [
+    "Target YES with unsupported step or goal YES with time-conflict step: internal conflict",
+    "Target NO without unsupported step or goal NO without temporal conflict: unsupported dimension evidence,not proof of false denial",
+    "Conflict quote exactly matches encoded time under explicit initial-clock/same-date arithmetic assumptions: binding-review flag,not proof of semantic agreement",
+    "Previous-action/event timing requires unresolved binding;no stale-countdown extrapolation,precision tolerance or guessed phase"
+  ],
+  "metrics": [
+    "Original parse/schema/literal provenance denominators",
+    "Flag counts by source,class and record",
+    "Arithmetic assumptions and unhandled/previous/event quotes",
+    "Distinct contexts/tasks and repeated source coverage",
+    "Reused review tokens separate from zero new requests/GPU;CPU hash/parse/audit/write timing"
+  ],
+  "exclusions": "None. Invalid outputs remain in every original denominator;flags do not correct original labels or admit blocking.",
+  "stop_rule": "One78-record read-only audit. No model requests,online expansion,selective retry,prompt/schema/gate tuning or new truth labels.",
+  "scope": "Previously exposed official single-turn public traces only;not independent entailment/false-rejection accuracy,SR,Task completion,new benchmark,training or default adoption."
+}
