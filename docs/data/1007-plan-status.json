@@ -3,6 +3,304 @@
   "scope": "Latest user confirmation: official single-turn harness diagnostics/ablations only; no SFT/RL, new benchmark or multi-session experiments.",
   "default": "Qwen3.5-9B + G; permanent baseline tag baseline/1007-9b-g",
   "nodes": {
+    "N87": {
+      "status": "bounded_review_format_stability_improved_semantic_gates_failed",
+      "source_commit": "dcc9c9c28a88998d15e8d038bc8fb086a3bd0fa7",
+      "config": "configs/bounded-review-ablation.json",
+      "evidence": "runs/bounded-review-ablation/n87-v1/",
+      "arms": {
+        "control": {
+          "records": 78,
+          "parsed": 63,
+          "schema_conformant": 63,
+          "literal_evidence_valid": 62,
+          "evidence_issues": {
+            "invalid_model_decision": 15,
+            "target:unsupported_positive_binding": 1
+          },
+          "internal_conflict_records": 0,
+          "aggregate_mismatch_records": 1,
+          "verdicts": {
+            "INVALID": 15,
+            "UNCERTAIN": 24,
+            "DENY": 30,
+            "ALLOW": 9
+          },
+          "evidence_first_outputs": 63,
+          "label_first_outputs": 0,
+          "invalid_order_outputs": 15,
+          "tokens": 445621,
+          "prompt_tokens": 364921,
+          "completion_tokens": 80700,
+          "http_errors": 0,
+          "missing_usage": 0,
+          "truncations": 12,
+          "median_request_seconds": 8.856585014989832,
+          "developer_conflicts": {
+            "DENY": 4,
+            "INVALID": 2
+          },
+          "developer_controls": {
+            "UNCERTAIN": 3
+          },
+          "developer_reason_dimensions": {
+            "time": {
+              "records": 4,
+              "expected_dimension_no": 2
+            },
+            "target": {
+              "records": 2,
+              "expected_dimension_no": 0
+            }
+          },
+          "by_origin": {
+            "n76": {
+              "records": 38,
+              "literal_evidence_valid": 31
+            },
+            "n78": {
+              "records": 40,
+              "literal_evidence_valid": 31
+            }
+          },
+          "binding_percentage_statuses": {
+            "multiple_percentage_references": 2,
+            "literal_percentage_matches": 19,
+            "no_explicit_percentage": 7
+          },
+          "percentage_agreement_conflict_records": 0,
+          "offset_binding_review_records": 2,
+          "resolution_errors": 15
+        },
+        "bounded": {
+          "records": 78,
+          "parsed": 78,
+          "schema_conformant": 78,
+          "literal_evidence_valid": 77,
+          "evidence_issues": {
+            "target:unsupported_positive_binding": 1
+          },
+          "internal_conflict_records": 0,
+          "aggregate_mismatch_records": 1,
+          "verdicts": {
+            "UNCERTAIN": 38,
+            "DENY": 36,
+            "ALLOW": 4
+          },
+          "evidence_first_outputs": 78,
+          "label_first_outputs": 0,
+          "invalid_order_outputs": 0,
+          "tokens": 422586,
+          "prompt_tokens": 364921,
+          "completion_tokens": 57665,
+          "http_errors": 0,
+          "missing_usage": 0,
+          "truncations": 0,
+          "median_request_seconds": 6.97569825098617,
+          "developer_conflicts": {
+            "DENY": 6
+          },
+          "developer_controls": {
+            "UNCERTAIN": 3
+          },
+          "developer_reason_dimensions": {
+            "time": {
+              "records": 4,
+              "expected_dimension_no": 2
+            },
+            "target": {
+              "records": 2,
+              "expected_dimension_no": 0
+            }
+          },
+          "by_origin": {
+            "n76": {
+              "records": 38,
+              "literal_evidence_valid": 38
+            },
+            "n78": {
+              "records": 40,
+              "literal_evidence_valid": 39
+            }
+          },
+          "binding_percentage_statuses": {
+            "multiple_percentage_references": 4,
+            "literal_percentage_matches": 21,
+            "no_explicit_percentage": 15
+          },
+          "percentage_agreement_conflict_records": 0,
+          "offset_binding_review_records": 4,
+          "resolution_errors": 0
+        },
+        "historical_identity": {
+          "records": 78,
+          "parsed": 63,
+          "schema_conformant": 63,
+          "literal_evidence_valid": 62,
+          "evidence_issues": {
+            "invalid_model_decision": 15,
+            "target:unsupported_positive_binding": 1
+          },
+          "internal_conflict_records": 0,
+          "aggregate_mismatch_records": 1,
+          "verdicts": {
+            "DENY": 30,
+            "UNCERTAIN": 25,
+            "INVALID": 15,
+            "ALLOW": 8
+          },
+          "evidence_first_outputs": 58,
+          "label_first_outputs": 0,
+          "invalid_order_outputs": 20,
+          "tokens": 450233,
+          "prompt_tokens": 364921,
+          "completion_tokens": 85312,
+          "http_errors": 0,
+          "missing_usage": 0,
+          "truncations": 15,
+          "median_request_seconds": 9.2022191415017,
+          "developer_conflicts": {
+            "DENY": 5,
+            "INVALID": 1
+          },
+          "developer_controls": {
+            "UNCERTAIN": 3
+          },
+          "developer_reason_dimensions": {
+            "time": {
+              "records": 4,
+              "expected_dimension_no": 2
+            },
+            "target": {
+              "records": 2,
+              "expected_dimension_no": 0
+            }
+          },
+          "by_origin": {
+            "n76": {
+              "records": 38,
+              "literal_evidence_valid": 32
+            },
+            "n78": {
+              "records": 40,
+              "literal_evidence_valid": 30
+            }
+          }
+        }
+      },
+      "transitions": {
+        "control->bounded": {
+          "UNCERTAIN->UNCERTAIN": 22,
+          "INVALID->DENY": 10,
+          "DENY->DENY": 25,
+          "ALLOW->UNCERTAIN": 8,
+          "INVALID->ALLOW": 2,
+          "INVALID->UNCERTAIN": 3,
+          "ALLOW->ALLOW": 1,
+          "DENY->UNCERTAIN": 5,
+          "UNCERTAIN->ALLOW": 1,
+          "UNCERTAIN->DENY": 1
+        },
+        "historical_identity->control": {
+          "UNCERTAIN->UNCERTAIN": 21,
+          "INVALID->INVALID": 7,
+          "DENY->DENY": 25,
+          "INVALID->UNCERTAIN": 3,
+          "DENY->INVALID": 5,
+          "ALLOW->ALLOW": 6,
+          "INVALID->DENY": 2,
+          "UNCERTAIN->DENY": 3,
+          "INVALID->ALLOW": 3,
+          "UNCERTAIN->INVALID": 1,
+          "ALLOW->INVALID": 2
+        }
+      },
+      "binding_coverage": {
+        "control": {
+          "record_flags": {
+            "unavailable_schema": 15,
+            "invalid_literal_evidence": 16,
+            "aggregate_mismatch": 1,
+            "unsupported_with_public_identity_words": 4,
+            "requested_without_joint_quote_words": 23,
+            "multiple_percentage_references": 2,
+            "no_explicit_percentage": 7,
+            "disjoint_literal_offset_words": 2
+          },
+          "unsupported_with_public_identity_words_steps": 7,
+          "percentage_statuses": {
+            "multiple_percentage_references": 2,
+            "literal_percentage_matches": 19,
+            "no_explicit_percentage": 7
+          }
+        },
+        "bounded": {
+          "record_flags": {
+            "unavailable_schema": 0,
+            "invalid_literal_evidence": 1,
+            "aggregate_mismatch": 1,
+            "unsupported_with_public_identity_words": 8,
+            "requested_without_joint_quote_words": 28,
+            "multiple_percentage_references": 4,
+            "no_explicit_percentage": 12,
+            "disjoint_literal_offset_words": 4
+          },
+          "unsupported_with_public_identity_words_steps": 19,
+          "percentage_statuses": {
+            "multiple_percentage_references": 4,
+            "literal_percentage_matches": 21,
+            "no_explicit_percentage": 15
+          }
+        }
+      },
+      "bounded_dimensions": {
+        "trajectory_consistent": {
+          "records": 78,
+          "unavailable": 0,
+          "label_mismatch_records": 2,
+          "reference_count": 87,
+          "empty_reference_steps": 90,
+          "duplicate_reference_steps": 22
+        },
+        "safe_to_execute": {
+          "records": 78,
+          "unavailable": 0,
+          "label_mismatch_records": 2,
+          "reference_count": 62,
+          "empty_reference_steps": 90,
+          "duplicate_reference_steps": 23
+        }
+      },
+      "diagnostic_screen_passed": {
+        "control": false,
+        "bounded": false
+      },
+      "historical_strict_parse_valid": 58,
+      "native_admitted": false,
+      "default_changed": false,
+      "cost": {
+        "new_requests": 156,
+        "new_tokens": 868207,
+        "probes": {
+          "requests": 4,
+          "failed": 0,
+          "tokens": 88,
+          "missing_usage": 0
+        },
+        "wall_seconds": 103.12022348499158,
+        "startup_seconds": 65.05819503898965,
+        "reserved_h100_gpu_seconds": 410.61941318796016,
+        "preparation_seconds": 7.776781683031004
+      },
+      "acceptance": "5 specialized;442 server,441passed/1skip;156 responses,175parent files,175collection files,310source blobs verified server/local;semantic gates failed. Original receipts unchanged.",
+      "archive_sha256": "56b21e2293cf68a15f8cc20f62f4928f540075ab94ac97c184190ddf48da1038",
+      "cleanup": {
+        "bytes": 7267130,
+        "files": 3,
+        "receipt": "runs/task-runtime/storage-cleanup-20261007-v9/receipt.json",
+        "receipt_sha256": "12192c8aa428b94ba5e691f011fd9d9764fe66992400693b86b88a2a6a76aa7a"
+      }
+    },
     "N86": {
       "status": "per_step_public_identity_schema_failed_truncation_duplicate_keys_and_reason_regression",
       "source_commit": "3454d195357b262c7ab99d7caf7ae81f93fe3e5d",
@@ -2727,6 +3025,6 @@
     "native_user_goal_conditions": "unimplemented;N67/N70 parsers failed admission;N66/N69 Task remain WAITING,action intentions do not prove user goals",
     "common_simuhome_adapter": "N61 unified entry and public actor boundary verified; native protocols and scores retained"
   },
-  "benefit_acceptance": "not satisfied; no stable benefit on two public benchmarks. N66 CI crosses zero;N67/N70 semantic admission failed;N69 SR flips all without candidate context and tiny stratified interval degenerates. N72/N74 semantic reviews not admitted;N74 all6 conflicts missed;N75 combined6/6 developer denials but35/38 evidence;N76 dynamic schema37/38 andevidence36/38 fail screen,reasons unverified. G retained N77 failure isolation andN78 coverage accepted;N78 all3 wins without review,no attributed benefit;G retained. N80 all3 representation screens failed;coherence internal conflicts0 but24/78 aggregate mismatches,effects quotes degrade;no admission. N82 evidence-first original outputs remove28 aggregate mismatches andrecover2 target dimensions,quotes73/78 fail95%;no native admission or added SR. N83 citation coverage78/78 byconstruction,butaggregate mismatch1 andtime reason dimensions2/4;freshquotes74/78 fail95%. Bothscreens failed;no nativeadmission ornewSR;G retained. N84 all156 original outputs read-only audited;unsupported withobserved room/type lexical windows2->3 records,multivalue percentage0->7 andoffset-worddisjoint0->7;coverage flags not semantic truth,no newSR oradmission. N85 appendedpublic identity improves time reason3/4->4/4 andlexicalunsupported tension3->1,buttargetreason2/2->0/2;extra livingroomfan inherits dehumidifier fan quote. Bothscreens failed,noadoption/newSR;tokens+8.50%,G retained. N86 perstepidentityconst causes15truncations,5additionalnontruncatedduplicate-key records andall3controlALLOW->UNCERTAIN;targetreason2/2->0/2;schema63/78,literal62/78,actualorder58/78 fail. Free trajectory/safety evidence expands;noadoption/newSR,G retained.",
-  "next": "Freeze a bounded trajectory/safety evidence-schema diagnosis onall78retained official inputs withfreshpaired N86schema control. Limit those currently free evidenceobjects todefined perstep relations andreferences toexisting public receipts;keepmessages,target/time schemas,generation,max2048 andoriginal developer reason gates unchanged. Strict duplicate-key rejection onboth arms,allfailures/cost retained;no selected truths,automatic native expansion,budget increase,training,newbenchmark,sealed95 ordefault change. FourH100/64slots."
+  "benefit_acceptance": "not satisfied; no stable benefit on two public benchmarks. N66 CI crosses zero;N67/N70 semantic admission failed;N69 SR flips all without candidate context and tiny stratified interval degenerates. N72/N74 semantic reviews not admitted;N74 all6 conflicts missed;N75 combined6/6 developer denials but35/38 evidence;N76 dynamic schema37/38 andevidence36/38 fail screen,reasons unverified. G retained N77 failure isolation andN78 coverage accepted;N78 all3 wins without review,no attributed benefit;G retained. N80 all3 representation screens failed;coherence internal conflicts0 but24/78 aggregate mismatches,effects quotes degrade;no admission. N82 evidence-first original outputs remove28 aggregate mismatches andrecover2 target dimensions,quotes73/78 fail95%;no native admission or added SR. N83 citation coverage78/78 byconstruction,butaggregate mismatch1 andtime reason dimensions2/4;freshquotes74/78 fail95%. Bothscreens failed;no nativeadmission ornewSR;G retained. N84 all156 original outputs read-only audited;unsupported withobserved room/type lexical windows2->3 records,multivalue percentage0->7 andoffset-worddisjoint0->7;coverage flags not semantic truth,no newSR oradmission. N85 appendedpublic identity improves time reason3/4->4/4 andlexicalunsupported tension3->1,buttargetreason2/2->0/2;extra livingroomfan inherits dehumidifier fan quote. Bothscreens failed,noadoption/newSR;tokens+8.50%,G retained. N86 perstepidentityconst causes15truncations,5additionalnontruncatedduplicate-key records andall3controlALLOW->UNCERTAIN;targetreason2/2->0/2;schema63/78,literal62/78,actualorder58/78 fail. Free trajectory/safety evidence expands;noadoption/newSR,G retained. N87 bounded trajectory/safety evidence eliminates fresh candidate parse/truncation failures (78/78),reduces outputtokens28.54%,butall3controls UNCERTAIN,target reasons0/2,andaggregate mismatch1;format benefit only,no semantic admission ornewSR,G retained.",
+  "next": "Freeze same78exposed official inputs x2x2 factors (312requests): repeated target identity metadata present/removed,and original/explicit known-empty observed attempt history prompt. All arms bounded trajectory/safety evidence,strict parser,same generation,max2048,original6DENY/3ALLOW/4time+2target reason gates. Inspect public context applicability first;no chosen truth,hidden evaluator,sealed95,training,native expansion ordefault change. FourH100/64slots."
 }
