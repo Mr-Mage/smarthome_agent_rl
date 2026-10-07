@@ -1,0 +1,114 @@
+{
+  "model": "smarthome-qwen35-9b",
+  "actor_path": "../models/Qwen3.5-9B",
+  "model_python": "/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/anaconda3/envs/qwen36-vllm/bin/python",
+  "context": 32768,
+  "engine_seed": 0,
+  "model_seed": 42,
+  "generation": {
+    "temperature": 0.0,
+    "max_tokens": 2048,
+    "extra_body": {
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    }
+  },
+  "slots_per_actor": 16,
+  "max_num_seqs": 32,
+  "gpu_memory_utilization": 0.8,
+  "startup_timeout": 1200,
+  "request_timeout": 240,
+  "actors": [
+    {
+      "id": 0,
+      "gpu": 0,
+      "endpoint": "http://127.0.0.1:20400/v1"
+    },
+    {
+      "id": 1,
+      "gpu": 1,
+      "endpoint": "http://127.0.0.1:20401/v1"
+    },
+    {
+      "id": 2,
+      "gpu": 2,
+      "endpoint": "http://127.0.0.1:20402/v1"
+    },
+    {
+      "id": 3,
+      "gpu": 3,
+      "endpoint": "http://127.0.0.1:20403/v1"
+    }
+  ],
+  "actor_extra_args": [
+    "--gdn-prefill-backend",
+    "triton"
+  ],
+  "kernel_cache_root": "/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/zhengrj/agent/smarthome_agent_rl/work/concurrency-capacity/kernel-cache",
+  "chat_transport": "append_empty_user",
+  "node": "N80",
+  "schema": "effect-evidence-ablation-v1",
+  "parent_run": "runs/evidence-consistency/n79-v1",
+  "parent_collection_sha256": "6e08a9d2b6e5324b26ac3f106a1dd5a3797b17fa01a5acbb56eb02e7668c8ebe",
+  "inputs_sha256": "7bbc6b7dd1fc280d52c06e529fe19ba7b9b5037b0a91a7224f9c3a4a57a0bd00",
+  "records": 78,
+  "new_requests": 234,
+  "arms": [
+    "effects",
+    "coherence",
+    "combined"
+  ],
+  "prompts_sha256": "83ad34a442fefd6a0c65325006e7711de5c9d8b0ac775a3b58542c402945616a",
+  "schemas_sha256": "c5fd7330d0434877f145a283f20864c801866c7a8b1135db75d059b6274e8c07",
+  "developer_labels_sha256": "da2ed8a8b832ffd9b200b23448c5c0502cb65fed15d5c00194fc919dc23cad2c",
+  "developer_counts": {
+    "CONSISTENT_CONTROL": 3,
+    "CERTAIN_CONFLICT": 6,
+    "UNCERTAIN": 29,
+    "UNLABELED": 40
+  },
+  "developer_conflict_groups": {
+    "time": [
+      "n76:qt4-1_feasible_seed_26:seed42:a000007",
+      "n76:qt4-1_feasible_seed_26:seed42:a000009",
+      "n76:qt4-1_feasible_seed_26:seed43:a000006",
+      "n76:qt4-1_feasible_seed_26:seed43:a000008"
+    ],
+    "target": [
+      "n76:qt4-1_infeasible_seed_27:seed42:a000009",
+      "n76:qt4-1_infeasible_seed_27:seed44:a000007"
+    ]
+  },
+  "valid_ratio_min": 0.95,
+  "evidence_valid_ratio_min": 0.95,
+  "selection": "All original38 N76+40 N78 requests including failures;N78 zero-review episodes kept in coverage. Repeated contexts are not independent tasks.",
+  "intervention": {
+    "effects": "Operation/value evidence prompt+schema added;no aggregation instruction",
+    "coherence": "Aggregate relation instructions only;original schema",
+    "combined": "Both changes;not a pure prompt-only or schema-only arm"
+  },
+  "metrics": [
+    "Full schema and literal quote provenance;not entailment",
+    "Internal contradiction and aggregate relation mismatches",
+    "Paired historical verdict transitions",
+    "Original developer6 conflicts/3 controls with time4/target2 reason checks;other69 unknown/unlabeled",
+    "All234 HTTP/error/usage/length/tokens/latency plus probes/startup/GPU/preparation;historical cost separate"
+  ],
+  "diagnostic_screen": "Per arm full78 denominator,>=95% schema and literal provenance,zero HTTP/missing usage/internal conflicts/aggregate mismatches,original6 conflicts DENY with correct declared reason dimension and3 controls ALLOW. Complete234 unique requests required. Diagnostic screening only,not independent semantics or native admission;N76 historical failed gate unchanged.",
+  "exclusions": "None;no removed failures or transferred N76 labels to N78. No hidden evaluator/judge labels in requests.",
+  "budget": {
+    "new_requests": 234,
+    "maximum_completion_tokens": 479232,
+    "total_slots": 64,
+    "requests_per_actor": [
+      60,
+      60,
+      57,
+      57
+    ],
+    "retries": 0
+  },
+  "stop_rule": "One frozen234-request run,backend schema compilation first. No selective retry,prompt/schema/gate tuning,automatic expansion or A800 requests. Keep failure receipts;stop owned actors on failure.",
+  "scope": "Existing exposed official single-turn traces only;no simulation,training,new benchmark,sealed95,SR,Task completion,default change or native blocking."
+}
