@@ -3,6 +3,115 @@
   "scope": "Latest user confirmation: official single-turn harness diagnostics/ablations only; no SFT/RL, new benchmark or multi-session experiments.",
   "default": "Qwen3.5-9B + G; permanent baseline tag baseline/1007-9b-g",
   "nodes": {
+    "N74": {
+      "status": "engineering_passed_semantic_failed_not_admitted",
+      "implementation_commit": "f9fb5f4",
+      "source_commit": "4b10325",
+      "auditor_tests_commit": "dd9e24f",
+      "config": "configs/public-context-semantic-ablation.json",
+      "evidence": "runs/context-semantic-ablation/n74-v1/",
+      "source_episodes": 36,
+      "proposals": 38,
+      "new_requests": 114,
+      "reused_baseline_requests": 38,
+      "arms": {
+        "9b_public": {
+          "records": 38,
+          "valid": 38,
+          "verdicts": {
+            "DENY": 6,
+            "ALLOW": 32
+          },
+          "tokens": 87300,
+          "http_errors": 0,
+          "missing_usage": 0,
+          "parse_errors": 0,
+          "median_request_seconds": 4.471970106533263,
+          "developer_conflicts": {
+            "ALLOW": 6
+          },
+          "developer_controls": {
+            "ALLOW": 3
+          },
+          "cost_origin": "reused immutable N72; not new cost"
+        },
+        "9b_references": {
+          "records": 38,
+          "valid": 38,
+          "verdicts": {
+            "ALLOW": 33,
+            "DENY": 5
+          },
+          "tokens": 115846,
+          "http_errors": 0,
+          "missing_usage": 0,
+          "parse_errors": 0,
+          "median_request_seconds": 4.4902749994944315,
+          "developer_conflicts": {
+            "ALLOW": 6
+          },
+          "developer_controls": {
+            "ALLOW": 3
+          },
+          "cost_origin": "new inference"
+        },
+        "9b_workflow": {
+          "records": 38,
+          "valid": 38,
+          "verdicts": {
+            "ALLOW": 33,
+            "DENY": 5
+          },
+          "tokens": 92991,
+          "http_errors": 0,
+          "missing_usage": 0,
+          "parse_errors": 0,
+          "median_request_seconds": 3.9393582325137686,
+          "developer_conflicts": {
+            "ALLOW": 6
+          },
+          "developer_controls": {
+            "ALLOW": 3
+          },
+          "cost_origin": "new inference"
+        },
+        "9b_both": {
+          "records": 38,
+          "valid": 38,
+          "verdicts": {
+            "ALLOW": 36,
+            "DENY": 2
+          },
+          "tokens": 121510,
+          "http_errors": 0,
+          "missing_usage": 0,
+          "parse_errors": 0,
+          "median_request_seconds": 4.064012569986517,
+          "developer_conflicts": {
+            "ALLOW": 6
+          },
+          "developer_controls": {
+            "ALLOW": 3
+          },
+          "cost_origin": "new inference"
+        }
+      },
+      "developer_case_gate": {
+        "9b_references": false,
+        "9b_workflow": false,
+        "9b_both": false
+      },
+      "acceptance": "Server/local370 artifacts,36 episodes,38 cutoffs,114 new/38 reused requests;final358 checks,357 passed/1 skip",
+      "cost": {
+        "new_model_tokens": 330347,
+        "probe_requests": 4,
+        "probe_tokens": 88,
+        "wall_seconds": 200.4055445319973,
+        "reserved_h100_gpu_seconds": 801.5956103960052
+      },
+      "archive_sha256": "5a711fb5eb367c82b16ff11c083e8740d057bff3a447a937614dc93334e8d30b",
+      "scope": "Developer labels are not independent truth;all6 conflicts missed per arm;no automatic blocking,rerun or default change"
+    },
     "N73": {
       "status": "independent_context_engineering_verified",
       "source_commit": "b7128c7",
@@ -542,6 +651,6 @@
     "native_user_goal_conditions": "unimplemented;N67/N70 parsers failed admission;N66/N69 Task remain WAITING,action intentions do not prove user goals",
     "common_simuhome_adapter": "N61 unified entry and public actor boundary verified; native protocols and scores retained"
   },
-  "benefit_acceptance": "not satisfied; no stable benefit on two public benchmarks. N66 CI crosses zero;N67/N70 semantic admission failed;N69 SR flips all without candidate context and tiny stratified interval degenerates. N72 semantic review not admitted. G retained",
-  "next": "Independent engineering node: retain observed reference-device receipts and expose public workflow step-time facts;preserve failed N72,no automatic blocking or rerun"
+  "benefit_acceptance": "not satisfied; no stable benefit on two public benchmarks. N66 CI crosses zero;N67/N70 semantic admission failed;N69 SR flips all without candidate context and tiny stratified interval degenerates. N72/N74 semantic reviews not admitted;N74 all6 conflicts missed under three independent contexts. G retained",
+  "next": "Independent prompt-only review diagnosis: explicit per-step target/time evidence against frozen public workflow facts;retain failed N72/N74,no native blocking or automatic expansion"
 }
