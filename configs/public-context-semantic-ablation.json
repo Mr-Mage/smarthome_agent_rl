@@ -66,7 +66,7 @@
     "9b_workflow",
     "9b_both"
   ],
-  "inputs_sha256": "PREPARE_BEFORE_INFERENCE",
+  "inputs_sha256": "78874cf99cd0fdbed4ae6d26deab136510130a1171006bdd2ac9fc16daf7defc",
   "valid_ratio_min": 0.95,
   "historical_reference": "N72 immutable9b_public38 requests/87300 tokens;not billed as new,no rerun",
   "intervention": "Reference-only/workflow-only/both from exact original public observations before dispatch;unchanged prompt/schema/seed/generation/action",
