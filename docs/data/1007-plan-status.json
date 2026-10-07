@@ -4,12 +4,260 @@
   "default": "Qwen3.5-9B + G; permanent baseline tag baseline/1007-9b-g",
   "nodes": {
     "N93": {
-      "status": "frozen_pending_preflight",
+      "status": "claim_reduction_consistent_semantic_gate_failed_branch_stopped",
+      "source_commit": "d5b81c0892cabf37bd51ad6ca80137dd33b014dd",
       "config": "configs/evidence-reducer-ablation.json",
+      "evidence": "runs/evidence-reducer-ablation/n93-v1/",
       "records_per_arm": 78,
       "new_requests": 156,
       "default_changed": false,
-      "native_admitted": false
+      "native_admitted": false,
+      "arms": {
+        "joint": {
+          "records": 78,
+          "parsed": 78,
+          "wire_schema": 78,
+          "wire_evidence_first": 78,
+          "derived_evidence_schema": 78,
+          "literal_evidence_valid": 78,
+          "evidence_issues": {},
+          "aggregate_mismatch_records": 0,
+          "internal_conflict_records": 0,
+          "bounded_label_mismatches": {
+            "trajectory_consistent": 1,
+            "safe_to_execute": 1
+          },
+          "verdicts": {
+            "ALLOW": 36,
+            "DENY": 38,
+            "UNCERTAIN": 4
+          },
+          "developer_conflicts": {
+            "DENY": 6
+          },
+          "developer_controls": {
+            "ALLOW": 3
+          },
+          "developer_reason_dimensions": {
+            "time": {
+              "records": 4,
+              "expected_dimension_no": 2
+            },
+            "target": {
+              "records": 2,
+              "expected_dimension_no": 2
+            }
+          },
+          "cost": {
+            "requests": 78,
+            "http_errors": 0,
+            "missing_usage": 0,
+            "prompt_tokens": 377323,
+            "completion_tokens": 32022,
+            "total_tokens": 409345,
+            "truncations": 0,
+            "sum_http_seconds": 458.7511849537841,
+            "median_http_seconds": 5.373432933527511
+          },
+          "label_origin": "model",
+          "probability_origin": "model_uncalibrated_not_used_for_admission"
+        },
+        "evidence_only": {
+          "records": 78,
+          "parsed": 78,
+          "wire_schema": 78,
+          "wire_evidence_first": 78,
+          "derived_evidence_schema": 78,
+          "literal_evidence_valid": 78,
+          "evidence_issues": {},
+          "aggregate_mismatch_records": 0,
+          "internal_conflict_records": 0,
+          "bounded_label_mismatches": {
+            "trajectory_consistent": 0,
+            "safe_to_execute": 0
+          },
+          "verdicts": {
+            "ALLOW": 36,
+            "DENY": 39,
+            "UNCERTAIN": 3
+          },
+          "developer_conflicts": {
+            "DENY": 6
+          },
+          "developer_controls": {
+            "ALLOW": 3
+          },
+          "developer_reason_dimensions": {
+            "time": {
+              "records": 4,
+              "expected_dimension_no": 2
+            },
+            "target": {
+              "records": 2,
+              "expected_dimension_no": 2
+            }
+          },
+          "cost": {
+            "requests": 78,
+            "http_errors": 0,
+            "missing_usage": 0,
+            "prompt_tokens": 388399,
+            "completion_tokens": 30136,
+            "total_tokens": 418535,
+            "truncations": 0,
+            "sum_http_seconds": 431.212402441015,
+            "median_http_seconds": 4.8416137594904285
+          },
+          "label_origin": "deterministic_declared_claim_reduction",
+          "probability_origin": "model_uncalibrated_not_used_for_admission"
+        },
+        "historical_joint": {
+          "records": 78,
+          "parsed": 78,
+          "wire_schema": 78,
+          "wire_evidence_first": 78,
+          "derived_evidence_schema": 78,
+          "literal_evidence_valid": 78,
+          "evidence_issues": {},
+          "aggregate_mismatch_records": 0,
+          "internal_conflict_records": 0,
+          "bounded_label_mismatches": {
+            "trajectory_consistent": 1,
+            "safe_to_execute": 1
+          },
+          "verdicts": {
+            "DENY": 38,
+            "ALLOW": 36,
+            "UNCERTAIN": 4
+          },
+          "developer_conflicts": {
+            "DENY": 6
+          },
+          "developer_controls": {
+            "ALLOW": 3
+          },
+          "developer_reason_dimensions": {
+            "time": {
+              "records": 4,
+              "expected_dimension_no": 2
+            },
+            "target": {
+              "records": 2,
+              "expected_dimension_no": 2
+            }
+          },
+          "cost": {
+            "requests": 78,
+            "http_errors": 0,
+            "missing_usage": 0,
+            "prompt_tokens": 377323,
+            "completion_tokens": 31996,
+            "total_tokens": 409319,
+            "truncations": 0,
+            "sum_http_seconds": 562.1143832048983,
+            "median_http_seconds": 6.035889121994842
+          },
+          "label_origin": "model",
+          "probability_origin": "model_uncalibrated_not_used_for_admission"
+        }
+      },
+      "transitions": {
+        "joint->evidence_only": {
+          "DENY->DENY": 38,
+          "ALLOW->ALLOW": 34,
+          "UNCERTAIN->ALLOW": 2,
+          "UNCERTAIN->UNCERTAIN": 2,
+          "ALLOW->DENY": 1,
+          "ALLOW->UNCERTAIN": 1
+        },
+        "historical_joint->joint": {
+          "DENY->DENY": 38,
+          "ALLOW->ALLOW": 36,
+          "UNCERTAIN->UNCERTAIN": 4
+        }
+      },
+      "diagnostic_screen_passed": {
+        "joint": false,
+        "evidence_only": false
+      },
+      "new_tokens": 827880,
+      "wall_seconds": 106.04150841600494,
+      "resources": {
+        "started_unix": 1791380396.173668,
+        "error": null,
+        "ready_seconds": 82.28495927003678,
+        "initial_gpu_memory": "0, 0\n1, 0\n2, 0\n3, 0\n",
+        "probes": {
+          "requests": 4,
+          "failed": 0,
+          "tokens": 88,
+          "missing_usage": 0
+        },
+        "seconds_including_cleanup": 105.75975570699666,
+        "reserved_h100_gpu_seconds": 423.0390338599682,
+        "stopped_pids": [
+          1773207,
+          1773208,
+          1773209,
+          1773210
+        ],
+        "exit_codes": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "preparation_seconds": 20.70779329398647,
+      "preflight": {
+        "decoder_source_verified": true,
+        "schemas_compiled": 156,
+        "compilation_seconds": 0.5086097639868967,
+        "requests_tokenized": 156,
+        "max_prompt_tokens": 7269,
+        "max_total_reserved_tokens": 9317,
+        "model_context": 32768,
+        "per_input_arm_output_cap": 2048,
+        "by_component": {
+          "joint": {
+            "max_prompt_tokens": 7127,
+            "max_valid_example_tokens": 879,
+            "output_cap": 2048
+          },
+          "evidence_only": {
+            "max_prompt_tokens": 7269,
+            "max_valid_example_tokens": 851,
+            "output_cap": 2048
+          }
+        },
+        "valid_example_scope": "One schema-valid lexical example only;not guarantee every future output fits orsemantic truth.No example is sent toactor.",
+        "total_cpu_wall_seconds": 2.7421505029778928,
+        "model_requests": 0,
+        "tokens": 0,
+        "gpu_seconds": 0
+      },
+      "checks": {
+        "release_config": true,
+        "actors": 4,
+        "slots": 64,
+        "exposed_calibration_tasks": 12,
+        "local_links_checked": 106,
+        "mode": "full",
+        "tests": 466,
+        "skipped": 1,
+        "passed": true
+      },
+      "collection_files": 180,
+      "source_blobs": 453,
+      "archive_sha256": "b4bc3caf36cc6fe0d3a15cbeb6481931be973f9f3879802a5a1fc1f8011a4b1d",
+      "cleanup": {
+        "files": 3,
+        "bytes": 7720090,
+        "receipt": "runs/task-runtime/storage-cleanup-20261007-v16/receipt.json",
+        "receipt_sha256": "9d80db139c7432e78a1e71584b04bf864859172c3bdfc5a55640a55d3294a263"
+      },
+      "limitations": "New evidence-only wire protocol explicitly changes label responsibility; zero aggregation mismatches is by construction. All78exposed;4time cases fromone task;4decisionchanges unknown/unlabeled. Purifier remains targetNO/goalUNCERTAIN. Confidence distributions change,notcalibrated orusedforadmission. SomeCPUcost unmetered;originalHTTP unchanged.",
+      "stop_rule_outcome": "Failedsemantic gate;stop reducer branch andautomatic prompt/partition/independent variants;no nativeexpansion."
     },
     "N92": {
       "status": "independent_time_labels_improved_evidence_and_consistency_failed",
@@ -5278,9 +5526,9 @@
     "task_conflict": "N68 native conflict engineering verified;N69 official72 episodes verified34 claims and19 HTTP contexts,but no real conflict and no attributed SR benefit;report only,no arbitration",
     "scheduler_official_runner": "N63 remains failed; independent GTME accepted in N66 official720 episodes,64 jobs verified; no stable SR benefit,G retained",
     "timed_observation": "N66 public response events and final readback clock receipts exercised; late state remains UNKNOWN,no replay or automatic time advancement",
-    "native_user_goal_conditions": "unimplemented;N67/N70 parsers failed admission;N66/N69 Task remain WAITING,action intentions do not prove user goals N90 onlycitation displayorder:time reasons2/4->3/4,butone missingoperationquote andunlabeled ALLOW->DENY;allgatesfailed,noadoption;G retained. N91 goalfieldpartition leaves time2/4 andpurifier targetNO;relation-label mismatches0 withmore references,buttokens+2.61%;no semanticadmission,G retained.",
+    "native_user_goal_conditions": "unimplemented;N67/N70 parsers failed admission;N66/N69 Task remain WAITING,action intentions do not prove user goals N90 onlycitation displayorder:time reasons2/4->3/4,butone missingoperationquote andunlabeled ALLOW->DENY;allgatesfailed,noadoption;G retained. N91 goalfieldpartition leaves time2/4 andpurifier targetNO;relation-label mismatches0 withmore references,buttokens+2.61%;no semanticadmission,G retained. N92 independent timeNO4/4 retainswrongdevice citations and68/78 evidence;N93 reducer time2/4,zero inconsistencies structuralonly;bothfailed andnoadoption.",
     "common_simuhome_adapter": "N61 unified entry and public actor boundary verified; native protocols and scores retained"
   },
-  "benefit_acceptance": "not satisfied; no stable benefit on two public benchmarks. N66 CI crosses zero;N67/N70 semantic admission failed;N69 SR flips all without candidate context and tiny stratified interval degenerates. N72/N74 semantic reviews not admitted;N74 all6 conflicts missed;N75 combined6/6 developer denials but35/38 evidence;N76 dynamic schema37/38 andevidence36/38 fail screen,reasons unverified. G retained N77 failure isolation andN78 coverage accepted;N78 all3 wins without review,no attributed benefit;G retained. N80 all3 representation screens failed;coherence internal conflicts0 but24/78 aggregate mismatches,effects quotes degrade;no admission. N82 evidence-first original outputs remove28 aggregate mismatches andrecover2 target dimensions,quotes73/78 fail95%;no native admission or added SR. N83 citation coverage78/78 byconstruction,butaggregate mismatch1 andtime reason dimensions2/4;freshquotes74/78 fail95%. Bothscreens failed;no nativeadmission ornewSR;G retained. N84 all156 original outputs read-only audited;unsupported withobserved room/type lexical windows2->3 records,multivalue percentage0->7 andoffset-worddisjoint0->7;coverage flags not semantic truth,no newSR oradmission. N85 appendedpublic identity improves time reason3/4->4/4 andlexicalunsupported tension3->1,buttargetreason2/2->0/2;extra livingroomfan inherits dehumidifier fan quote. Bothscreens failed,noadoption/newSR;tokens+8.50%,G retained. N86 perstepidentityconst causes15truncations,5additionalnontruncatedduplicate-key records andall3controlALLOW->UNCERTAIN;targetreason2/2->0/2;schema63/78,literal62/78,actualorder58/78 fail. Free trajectory/safety evidence expands;noadoption/newSR,G retained. N87 bounded trajectory/safety evidence eliminates fresh candidate parse/truncation failures (78/78),reduces outputtokens28.54%,butall3controls UNCERTAIN,target reasons0/2,andaggregate mismatch1;format benefit only,no semantic admission ornewSR,G retained. N88 2x2 factorial: history prompt recovers3repeated lighting controls andmetadata removal restores2target reasons,butall4arms time reasons2/4;second-sentence requested purifier falsely unsupported,aggregate DENY useswrongreason. Jointarm78/78 schema/literal buttrajectory/safety2relation-label disagreements each;noadoption/newSR,G retained. N89 explicitxgrammar allow/compact pairs inoriginal/history prompt strata:compact both78/78 schema/literal andzero truncation versus9/2failures;outputtokens-41.50%/-23.21% andHTTPmedian-33.79%/-29.73%. Time reasonsall2/4,historycompacttrajectory/safety1relation-label disagreement each;semantic screensfailed,G retained. Differentfixed GPUreplicas,nocrossover,historicalN88autobackend comparisons separate;not stable native gain. N90 citationorder time2/4->3/4 butone missingquote andunlabeled decisionflip;N91 fieldpartition time2/4 unchanged,moreboundrefs/zero relation-label mismatch butcost+2.61%;bothgatesfailed,no nativegain.",
-  "next": "N93：证据输出与确定性聚合架构消融；先预检后156请求，保留原语义门槛。失败停止该分支，不自动增加提示词变体。"
+  "benefit_acceptance": "not satisfied; no stable benefit on two public benchmarks. N66 CI crosses zero;N67/N70 semantic admission failed;N69 SR flips all without candidate context and tiny stratified interval degenerates. N72/N74 semantic reviews not admitted;N74 all6 conflicts missed;N75 combined6/6 developer denials but35/38 evidence;N76 dynamic schema37/38 andevidence36/38 fail screen,reasons unverified. G retained N77 failure isolation andN78 coverage accepted;N78 all3 wins without review,no attributed benefit;G retained. N80 all3 representation screens failed;coherence internal conflicts0 but24/78 aggregate mismatches,effects quotes degrade;no admission. N82 evidence-first original outputs remove28 aggregate mismatches andrecover2 target dimensions,quotes73/78 fail95%;no native admission or added SR. N83 citation coverage78/78 byconstruction,butaggregate mismatch1 andtime reason dimensions2/4;freshquotes74/78 fail95%. Bothscreens failed;no nativeadmission ornewSR;G retained. N84 all156 original outputs read-only audited;unsupported withobserved room/type lexical windows2->3 records,multivalue percentage0->7 andoffset-worddisjoint0->7;coverage flags not semantic truth,no newSR oradmission. N85 appendedpublic identity improves time reason3/4->4/4 andlexicalunsupported tension3->1,buttargetreason2/2->0/2;extra livingroomfan inherits dehumidifier fan quote. Bothscreens failed,noadoption/newSR;tokens+8.50%,G retained. N86 perstepidentityconst causes15truncations,5additionalnontruncatedduplicate-key records andall3controlALLOW->UNCERTAIN;targetreason2/2->0/2;schema63/78,literal62/78,actualorder58/78 fail. Free trajectory/safety evidence expands;noadoption/newSR,G retained. N87 bounded trajectory/safety evidence eliminates fresh candidate parse/truncation failures (78/78),reduces outputtokens28.54%,butall3controls UNCERTAIN,target reasons0/2,andaggregate mismatch1;format benefit only,no semantic admission ornewSR,G retained. N88 2x2 factorial: history prompt recovers3repeated lighting controls andmetadata removal restores2target reasons,butall4arms time reasons2/4;second-sentence requested purifier falsely unsupported,aggregate DENY useswrongreason. Jointarm78/78 schema/literal buttrajectory/safety2relation-label disagreements each;noadoption/newSR,G retained. N89 explicitxgrammar allow/compact pairs inoriginal/history prompt strata:compact both78/78 schema/literal andzero truncation versus9/2failures;outputtokens-41.50%/-23.21% andHTTPmedian-33.79%/-29.73%. Time reasonsall2/4,historycompacttrajectory/safety1relation-label disagreement each;semantic screensfailed,G retained. Differentfixed GPUreplicas,nocrossover,historicalN88autobackend comparisons separate;not stable native gain. N90 citationorder time2/4->3/4 butone missingquote andunlabeled decisionflip;N91 fieldpartition time2/4 unchanged,moreboundrefs/zero relation-label mismatch butcost+2.61%;bothgatesfailed,no nativegain. N92 independent timeNO4/4 withwrongbinding/evidence68/78,tokens3.83x;N93 reducer preserves78/78evidence buttime2/4,tokens+2.25%. Bothfailed;stop thesevariants,defaultG retained.",
+  "next": "设备—操作—时间绑定覆盖审计：仅既有公开输入/原回执，明确可验证与不可验证边界；先离线工程验收，不追加模型调用、提示词变体或blocking。稳定收益门槛仍未通过。"
 }
