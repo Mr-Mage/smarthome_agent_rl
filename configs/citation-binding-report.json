@@ -1,0 +1,26 @@
+{
+  "node": "N84",
+  "schema": "citation-binding-report-v1",
+  "parent_run": "runs/citation-review/n83-v1",
+  "parent_collection_sha256": "b090153622c0880c8c5d7260ebcc71a969d9d056d9100bd60767d7c60000d4d2",
+  "inputs_sha256": "7bbc6b7dd1fc280d52c06e529fe19ba7b9b5037b0a91a7224f9c3a4a57a0bd00",
+  "sources_sha256": "15ccca0a46e0bf361601359dc649ce0945a96990c7fbf213d54bb0912d910d1d",
+  "paired_inputs": 78,
+  "records": 156,
+  "arms": [
+    "quotes",
+    "citations"
+  ],
+  "selection": "Every retained N83 HTTP/model receipt andoriginal context;no filtering,retry,new labels orsealed95 reads.",
+  "identity_panel": "Only observed catalog room/type words,allpublic1-to3 adjacent lexical windows. No device-ID decoding,exact numbered-device claim,anaphora resolution orchosen requested value. Ambiguous/truncated/unobserved identity stays unavailable.",
+  "phase_panel": "All exact occurrences ofselected text;keep repeated occurrences,null andnonliteral cases. Reuse bounded PercentSetting literals andoffset-word comparisons;multi-value/absent evidence unresolved,no phase correctness claim.",
+  "metrics": [
+    "All156 paired records,78inputs,unique task/context coverage;schema andliteral evidence denominators unchanged",
+    "Unsupported declarations withobserved room/type window candidates;requested declarations missingjoint words inselected quote;both tension/coverage only",
+    "Every identity step andexplicit-percentagestep;nonliteral/multivalue/null anddisjoint offset-word statuses",
+    "Paired flag transitions,original decision hashes,andzero new inference plusCPU audit cost"
+  ],
+  "acceptance": "Source/checksum audit ofallparents and156original responses;recomputeallpanels andcounts onserver/local;original decisions unchanged,new model/tokens/GPU0,no dispatch output orTask completion. Engineering acceptance only,N83 semantic gate unchanged.",
+  "stop_rule": "One read-only allreceipt report. Stop onsource/hash/count mismatch;no repair,new request,automatic native expansion ormodel service launch.",
+  "scope": "Official already-exposed single-turn posthoc diagnosis only;no training,newbenchmark,multi-session,sealed95,blocking,SR ordefault adoption."
+}
