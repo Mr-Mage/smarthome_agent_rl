@@ -4,12 +4,197 @@
   "default": "Qwen3.5-9B + G; permanent baseline tag baseline/1007-9b-g",
   "nodes": {
     "N94": {
-      "status": "frozen_pending_source_audit",
+      "status": "source_graph_engineering_verified_semantics_unverified",
+      "source_commit": "0d534736e599bcbc9befb978cb2eaa414fbacb7f",
       "config": "configs/binding-obligations.json",
+      "evidence": "runs/binding-obligations/n94-v1/",
       "records": 234,
+      "coverage": {
+        "paired_inputs": 78,
+        "task_count": 9,
+        "distinct_contexts": 72
+      },
+      "arms": {
+        "n93_joint": {
+          "records": 78,
+          "schema_conformant": 78,
+          "literal_evidence_valid": 78,
+          "steps": 126,
+          "original_verdicts": {
+            "DENY": 38,
+            "ALLOW": 36,
+            "UNCERTAIN": 4
+          },
+          "identity_statuses": {
+            "public_catalog_words_available": 125,
+            "missing_ambiguous_or_truncated_catalog": 1
+          },
+          "operation_statuses": {
+            "bounded_command_vocabulary": 70,
+            "bounded_percentage_vocabulary": 40,
+            "uncovered_operation": 16
+          },
+          "step_flags": {
+            "selected_target_missing": 30,
+            "selected_operation_missing": 29,
+            "selected_time_missing": 28,
+            "selected_time_without_device_words": 46,
+            "selected_operation_without_device_words": 35,
+            "selected_multi_operation_literals": 11,
+            "selected_previous_action_unbound": 7,
+            "unsupported_with_identity_windows": 18,
+            "selected_operation_time_all_disjoint": 30,
+            "uncovered_operation": 16
+          },
+          "record_flags": {
+            "selected_multi_operation_literals": 11,
+            "selected_operation_missing": 17,
+            "selected_operation_time_all_disjoint": 18,
+            "selected_operation_without_device_words": 31,
+            "selected_previous_action_unbound": 5,
+            "selected_target_missing": 18,
+            "selected_time_missing": 15,
+            "selected_time_without_device_words": 32,
+            "uncovered_operation": 12,
+            "unsupported_with_identity_windows": 7
+          },
+          "steps_with_joint_word_windows": 48,
+          "selected_occurrence_pair_relations": {
+            "same_span": 35,
+            "overlap": 31,
+            "disjoint": 30
+          }
+        },
+        "n93_evidence_only": {
+          "records": 78,
+          "schema_conformant": 78,
+          "literal_evidence_valid": 78,
+          "steps": 126,
+          "original_verdicts": {
+            "DENY": 39,
+            "ALLOW": 36,
+            "UNCERTAIN": 3
+          },
+          "identity_statuses": {
+            "public_catalog_words_available": 125,
+            "missing_ambiguous_or_truncated_catalog": 1
+          },
+          "operation_statuses": {
+            "bounded_command_vocabulary": 70,
+            "bounded_percentage_vocabulary": 40,
+            "uncovered_operation": 16
+          },
+          "step_flags": {
+            "selected_target_missing": 30,
+            "selected_operation_missing": 30,
+            "selected_time_missing": 31,
+            "selected_time_without_device_words": 42,
+            "selected_operation_without_device_words": 44,
+            "selected_multi_operation_literals": 12,
+            "selected_previous_action_unbound": 5,
+            "unsupported_with_identity_windows": 18,
+            "selected_operation_time_all_disjoint": 30,
+            "uncovered_operation": 16
+          },
+          "record_flags": {
+            "selected_multi_operation_literals": 12,
+            "selected_operation_missing": 18,
+            "selected_operation_time_all_disjoint": 22,
+            "selected_operation_without_device_words": 38,
+            "selected_previous_action_unbound": 3,
+            "selected_target_missing": 18,
+            "selected_time_missing": 18,
+            "selected_time_without_device_words": 31,
+            "uncovered_operation": 12,
+            "unsupported_with_identity_windows": 7
+          },
+          "steps_with_joint_word_windows": 48,
+          "selected_occurrence_pair_relations": {
+            "same_span": 29,
+            "overlap": 35,
+            "disjoint": 30
+          }
+        },
+        "n92_independent": {
+          "records": 78,
+          "schema_conformant": 78,
+          "literal_evidence_valid": 68,
+          "steps": 126,
+          "original_verdicts": {
+            "DENY": 45,
+            "ALLOW": 6,
+            "UNCERTAIN": 27
+          },
+          "identity_statuses": {
+            "public_catalog_words_available": 125,
+            "missing_ambiguous_or_truncated_catalog": 1
+          },
+          "operation_statuses": {
+            "bounded_command_vocabulary": 70,
+            "bounded_percentage_vocabulary": 40,
+            "uncovered_operation": 16
+          },
+          "step_flags": {
+            "selected_target_missing": 31,
+            "selected_operation_missing": 27,
+            "selected_time_missing": 27,
+            "selected_time_without_device_words": 37,
+            "selected_operation_without_device_words": 25,
+            "selected_multi_operation_literals": 27,
+            "selected_previous_action_unbound": 12,
+            "unsupported_with_identity_windows": 18,
+            "selected_operation_time_all_disjoint": 31,
+            "uncovered_operation": 16
+          },
+          "record_flags": {
+            "selected_multi_operation_literals": 18,
+            "selected_operation_missing": 26,
+            "selected_operation_time_all_disjoint": 24,
+            "selected_operation_without_device_words": 20,
+            "selected_previous_action_unbound": 8,
+            "selected_target_missing": 19,
+            "selected_time_missing": 26,
+            "selected_time_without_device_words": 26,
+            "uncovered_operation": 12,
+            "unsupported_with_identity_windows": 7
+          },
+          "steps_with_joint_word_windows": 48,
+          "selected_occurrence_pair_relations": {
+            "same_span": 31,
+            "overlap": 34,
+            "disjoint": 31
+          }
+        }
+      },
       "new_requests": 0,
+      "new_tokens": 0,
+      "reserved_gpu_seconds": 0,
+      "original_decisions_changed": 0,
+      "semantic_status": "UNVERIFIED",
       "default_changed": false,
-      "native_admitted": false
+      "native_admitted": false,
+      "cpu_wall_seconds": 25.023706583015155,
+      "checks": {
+        "release_config": true,
+        "actors": 4,
+        "slots": 64,
+        "exposed_calibration_tasks": 12,
+        "local_links_checked": 106,
+        "mode": "full",
+        "tests": 472,
+        "skipped": 1,
+        "passed": true
+      },
+      "collection_files": 10,
+      "source_blobs": 458,
+      "archive_sha256": "ecdffb082980eb3348078749efe70e8f5472fd4172478ce95b47a5de6eb56ab1",
+      "cleanup": {
+        "files": 5,
+        "bytes": 292394,
+        "receipt": "runs/task-runtime/storage-cleanup-20261007-v17/receipt.json",
+        "receipt_sha256": "251eb0b26ee171f4e0ed4731714cecf8bc82b4e8fcdcdc0244a72f739710879d"
+      },
+      "limitations": "78 exposed inputs,9 tasks,72 distinct contexts;related trajectories not independent. Literal missing/disjoint/overlap/joint windows are coverage facts,not semantic truth. No alias/numbered-device/phase/time-anchor binding,decision repair,blocking or SR claim. Some CPU costs unmetered;raw HTTP and original receipts retained."
     },
     "N93": {
       "status": "claim_reduction_consistent_semantic_gate_failed_branch_stopped",
@@ -5534,9 +5719,9 @@
     "task_conflict": "N68 native conflict engineering verified;N69 official72 episodes verified34 claims and19 HTTP contexts,but no real conflict and no attributed SR benefit;report only,no arbitration",
     "scheduler_official_runner": "N63 remains failed; independent GTME accepted in N66 official720 episodes,64 jobs verified; no stable SR benefit,G retained",
     "timed_observation": "N66 public response events and final readback clock receipts exercised; late state remains UNKNOWN,no replay or automatic time advancement",
-    "native_user_goal_conditions": "unimplemented;N67/N70 parsers failed admission;N66/N69 Task remain WAITING,action intentions do not prove user goals N90 onlycitation displayorder:time reasons2/4->3/4,butone missingoperationquote andunlabeled ALLOW->DENY;allgatesfailed,noadoption;G retained. N91 goalfieldpartition leaves time2/4 andpurifier targetNO;relation-label mismatches0 withmore references,buttokens+2.61%;no semanticadmission,G retained. N92 independent timeNO4/4 retainswrongdevice citations and68/78 evidence;N93 reducer time2/4,zero inconsistencies structuralonly;bothfailed andnoadoption.",
+    "native_user_goal_conditions": "Unimplemented. N67/N70 parsing and N71-N93 semantic reviews failed admission;N94 verifies source-bound lexical coverage only. Device references,action phases and time anchors remain semantically unbound. N66/N69 Task remain WAITING;action intentions do not prove user goals.",
     "common_simuhome_adapter": "N61 unified entry and public actor boundary verified; native protocols and scores retained"
   },
-  "benefit_acceptance": "not satisfied; no stable benefit on two public benchmarks. N66 CI crosses zero;N67/N70 semantic admission failed;N69 SR flips all without candidate context and tiny stratified interval degenerates. N72/N74 semantic reviews not admitted;N74 all6 conflicts missed;N75 combined6/6 developer denials but35/38 evidence;N76 dynamic schema37/38 andevidence36/38 fail screen,reasons unverified. G retained N77 failure isolation andN78 coverage accepted;N78 all3 wins without review,no attributed benefit;G retained. N80 all3 representation screens failed;coherence internal conflicts0 but24/78 aggregate mismatches,effects quotes degrade;no admission. N82 evidence-first original outputs remove28 aggregate mismatches andrecover2 target dimensions,quotes73/78 fail95%;no native admission or added SR. N83 citation coverage78/78 byconstruction,butaggregate mismatch1 andtime reason dimensions2/4;freshquotes74/78 fail95%. Bothscreens failed;no nativeadmission ornewSR;G retained. N84 all156 original outputs read-only audited;unsupported withobserved room/type lexical windows2->3 records,multivalue percentage0->7 andoffset-worddisjoint0->7;coverage flags not semantic truth,no newSR oradmission. N85 appendedpublic identity improves time reason3/4->4/4 andlexicalunsupported tension3->1,buttargetreason2/2->0/2;extra livingroomfan inherits dehumidifier fan quote. Bothscreens failed,noadoption/newSR;tokens+8.50%,G retained. N86 perstepidentityconst causes15truncations,5additionalnontruncatedduplicate-key records andall3controlALLOW->UNCERTAIN;targetreason2/2->0/2;schema63/78,literal62/78,actualorder58/78 fail. Free trajectory/safety evidence expands;noadoption/newSR,G retained. N87 bounded trajectory/safety evidence eliminates fresh candidate parse/truncation failures (78/78),reduces outputtokens28.54%,butall3controls UNCERTAIN,target reasons0/2,andaggregate mismatch1;format benefit only,no semantic admission ornewSR,G retained. N88 2x2 factorial: history prompt recovers3repeated lighting controls andmetadata removal restores2target reasons,butall4arms time reasons2/4;second-sentence requested purifier falsely unsupported,aggregate DENY useswrongreason. Jointarm78/78 schema/literal buttrajectory/safety2relation-label disagreements each;noadoption/newSR,G retained. N89 explicitxgrammar allow/compact pairs inoriginal/history prompt strata:compact both78/78 schema/literal andzero truncation versus9/2failures;outputtokens-41.50%/-23.21% andHTTPmedian-33.79%/-29.73%. Time reasonsall2/4,historycompacttrajectory/safety1relation-label disagreement each;semantic screensfailed,G retained. Differentfixed GPUreplicas,nocrossover,historicalN88autobackend comparisons separate;not stable native gain. N90 citationorder time2/4->3/4 butone missingquote andunlabeled decisionflip;N91 fieldpartition time2/4 unchanged,moreboundrefs/zero relation-label mismatch butcost+2.61%;bothgatesfailed,no nativegain. N92 independent timeNO4/4 withwrongbinding/evidence68/78,tokens3.83x;N93 reducer preserves78/78evidence buttime2/4,tokens+2.25%. Bothfailed;stop thesevariants,defaultG retained.",
-  "next": "N94：既有回执设备—操作—时间绑定覆盖审计，新增推理0；原语义门槛及默认G保留。"
+  "benefit_acceptance": "Not satisfied: no stable benefit on two public benchmarks. N66 SR interval crosses zero;N69/N78 wins are not attributed to candidate context/review. N67/N70 and N71-N93 semantic admission failed. N94 is read-only engineering coverage,not an online benefit. Detailed failures and costs retained per node;default9B+G.",
+  "next": "先设计带来源的设备指称、动作阶段与时间锚绑定接口及离线验收边界；不再自动扩展提示词变体，词面覆盖不用于blocking，不追加训练或新benchmark。稳定在线收益验收仍未完成。"
 }
