@@ -1,0 +1,111 @@
+{
+  "model": "smarthome-qwen35-9b",
+  "actor_path": "../models/Qwen3.5-9B",
+  "model_python": "/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/anaconda3/envs/qwen36-vllm/bin/python",
+  "context": 32768,
+  "engine_seed": 0,
+  "model_seed": 42,
+  "generation": {
+    "temperature": 0.0,
+    "max_tokens": 2048,
+    "extra_body": {
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    }
+  },
+  "slots_per_actor": 16,
+  "max_num_seqs": 32,
+  "gpu_memory_utilization": 0.8,
+  "startup_timeout": 1200,
+  "request_timeout": 240,
+  "actors": [
+    {
+      "id": 0,
+      "gpu": 0,
+      "endpoint": "http://127.0.0.1:20400/v1"
+    },
+    {
+      "id": 1,
+      "gpu": 1,
+      "endpoint": "http://127.0.0.1:20401/v1"
+    },
+    {
+      "id": 2,
+      "gpu": 2,
+      "endpoint": "http://127.0.0.1:20402/v1"
+    },
+    {
+      "id": 3,
+      "gpu": 3,
+      "endpoint": "http://127.0.0.1:20403/v1"
+    }
+  ],
+  "actor_extra_args": [
+    "--gdn-prefill-backend",
+    "triton"
+  ],
+  "kernel_cache_root": "/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/zhengrj/agent/smarthome_agent_rl/work/concurrency-capacity/kernel-cache",
+  "chat_transport": "append_empty_user",
+  "developer_labels_sha256": "da2ed8a8b832ffd9b200b23448c5c0502cb65fed15d5c00194fc919dc23cad2c",
+  "developer_counts": {
+    "CONSISTENT_CONTROL": 3,
+    "CERTAIN_CONFLICT": 6,
+    "UNCERTAIN": 29,
+    "UNLABELED": 40
+  },
+  "developer_conflict_groups": {
+    "time": [
+      "n76:qt4-1_feasible_seed_26:seed42:a000007",
+      "n76:qt4-1_feasible_seed_26:seed42:a000009",
+      "n76:qt4-1_feasible_seed_26:seed43:a000006",
+      "n76:qt4-1_feasible_seed_26:seed43:a000008"
+    ],
+    "target": [
+      "n76:qt4-1_infeasible_seed_27:seed42:a000009",
+      "n76:qt4-1_infeasible_seed_27:seed44:a000007"
+    ]
+  },
+  "valid_ratio_min": 0.95,
+  "evidence_valid_ratio_min": 0.95,
+  "node": "N83",
+  "schema": "public-citation-review-v1",
+  "parent_run": "runs/evidence-order-ablation/n82-v1",
+  "parent_collection_sha256": "c3c88d69b6a5e94345df3d9dcb1d2b2cb0258b48e6a6f0047227def06a4b9a84",
+  "inputs_sha256": "7bbc6b7dd1fc280d52c06e529fe19ba7b9b5037b0a91a7224f9c3a4a57a0bd00",
+  "records": 78,
+  "new_requests": 156,
+  "arms": [
+    "quotes",
+    "citations"
+  ],
+  "ordered_schemas_sha256": "2f3b1c57545d84f2f66421658220fa764ea92ed8b66ac5641796d5f5b109720a",
+  "catalogs_sha256": "d1d2bad70607fa3954c93cbbc9ea0c8c7f3e76e6c233a8bc2fd83c49377d6a3e",
+  "prompts_sha256": "8745d4a810d7ea8aacbc10c90895e6b5bac5deff6fd4417cbca3fc4ee0a4fb38",
+  "selection": "All78 retained official exposed inputs,including repeated contexts andhistorical failures. Original6developer conflicts/3controls unchanged,other69unknown/unlabeled.",
+  "intervention": "Both arms evidence-first. Fresh quote control exactly N82 evidence-first request. Candidate jointly changes citation field schema,prompt instructions,andadds public lexical catalog. No pure-schema/prompt attribution. IDs are all1-to3 adjacent lexical segment windows,unlabeled,with exact original character offsets.",
+  "resolution": "Keep raw model decision and resolved text separately. Dereference IDs only;no label/confidence/verdict/action changes or chosen desired values/phase. Noninteger/out-of-range/duplicate quote+ref rejected;all failures retained.",
+  "binding_checks": "PercentSetting only: quoted numeric percentage orzero/tens/hundred word values compared to actual proposed value. agrees with one distinct different percentage flagged;multiple values/absent percentage remain unverified. Different cited from-now/after-previous offset literals require binding review,not automatic correction or semantic truth.",
+  "metrics": [
+    "Raw schema/order and contiguous citation provenance;ID provenance is by construction,not entailment",
+    "Same original aggregate/internal consistency checks and6DENY/3ALLOW/4time+2target reason dimensions",
+    "Explicit percentage-agreement contradiction and unresolved literal offset binding;not independent phase accuracy",
+    "Paired fresh verdicts/historical drift andall failure/prompt/output/total tokens/latency/probe/startup/GPU/preparation costs"
+  ],
+  "diagnostic_screen": "Complete156 unique paired requests;eacharm78 actual evidence-first outputs,>=95%schema andliteral/necessary citation coverage,zero HTTP/missing usage/resolution errors/internal conflicts/aggregate mismatch/explicit percentage-agreement conflicts,6developer conflictsDENY,3controlsALLOW,4time/2target corresponding negative dimensions. Screening only;no native admission even if passed. Historical N82 failed gate unchanged.",
+  "exclusions": "None;no successful-reference-only selection,new labels,hidden evaluators,sealed95 or corrected historical outputs.",
+  "budget": {
+    "new_requests": 156,
+    "maximum_completion_tokens": 319488,
+    "total_slots": 64,
+    "requests_per_actor": [
+      40,
+      40,
+      38,
+      38
+    ],
+    "retries": 0
+  },
+  "stop_rule": "One frozen156-request run after compiling allschemas andchecking actual tokenized request context budgets inexisting model environment. No selective retry,prompt/catalog/gate tuning,automatic expansion,A800 calls or simulation. Stop owned actors on failure.",
+  "scope": "Official exposed single-turn representation diagnosis only;no training,new benchmark,SR,Task completion,blocking or default adoption."
+}
