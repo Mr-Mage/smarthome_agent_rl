@@ -1,0 +1,35 @@
+{
+  "node": "N94",
+  "schema": "public-binding-obligations-v1",
+  "parent_run": "runs/evidence-reducer-ablation/n93-v1",
+  "parent_collection_sha256": "f0ce29eb857347a628bae0bb5b1d8643c15163e7ec4be9f5c8ff8b16c473002f",
+  "secondary_run": "runs/independent-review-ablation/n92-v1",
+  "secondary_collection_sha256": "1c86e5b83a493fc5a3b00232a345620fd55951f94213e513c473e0e8ad661023",
+  "inputs_sha256": "7bbc6b7dd1fc280d52c06e529fe19ba7b9b5037b0a91a7224f9c3a4a57a0bd00",
+  "sources_sha256": "a4373d36edb6d43ffcd9939928201b97b62c1e9aa84ed461002319154ec0734f",
+  "paired_inputs": 78,
+  "records": 234,
+  "arms": [
+    "n93_joint",
+    "n93_evidence_only",
+    "n92_independent"
+  ],
+  "selection": "All156 N93 joint/evidence-only reviews plusall78 N92independent assemblies;468original HTTP callsalready verified inparents.No filter/newlabels/hiddenoutcomes/sealed95.",
+  "identity": "Onecomplete catalog membership withwellformed get_room_devices source;observed room/type wordspans only.No numbered-device parsing,aliases,IDdecoding oranaphora.",
+  "operation": "Frozen bounded OnOff/OperationalState commandwords andFanControl.PercentSetting explicitpercentages. Allpositive/negative/multivalue/negated wordoccurrences retained;allother operations uncovered. No requestedcommand/value selected.",
+  "time": "All explicit offsets fromnow/previous-action plusAMPM clockswithoriginal spans;previousaction,date/timezone andfreshness remainunbound. No desiredtime,implicitwaits orcompleted-goal inference.",
+  "graph": "Alloriginal 1-to3 lexicalcitationwindows;perstep identity/operation/time wordedges;allliteraloccurrence pairs ofselected effect/time quotes.No chosen window,phase orsemantic edge;missing/repeated/disjoint/multivalue flags diagnostic only.",
+  "metrics": [
+    "234sources/78inputs/unique tasks andcontexts;allsource SHA andoriginaldecisions preserved",
+    "Perstep publicidentity andboundedoperation availability,jointword windows,selectedreference/null/repeated/disjoint/unboundpreviousaction flags",
+    "Engineering source-graph audit,newmodel/tokens/GPU0,andallCPU preparation/write/audit costs measurable separately"
+  ],
+  "acceptance": "Allparent/source/HTTP hashes verified;recomputable234 graphs andcounts;rawdecisions unchanged;no semanticadmission,dispatch orTaskcompletion. No sources dropped for schema/HTTP failure.",
+  "budget": {
+    "new_model_requests": 0,
+    "new_tokens": 0,
+    "reserved_gpu_seconds": 0
+  },
+  "stop_rule": "Oneall-source read-only audit afterfreeze. Stoponsource/count/hash mismatch;no repairs,inference,newbenchmark,nativeexpansion orenvironment change.",
+  "scope": "Officialalreadyexposed singleturn coverage only;not entailment,independent reasonaccuracy,false-rejection/SR,blocking,training ordefault adoption."
+}
