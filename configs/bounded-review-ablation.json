@@ -1,0 +1,112 @@
+{
+  "model": "smarthome-qwen35-9b",
+  "actor_path": "../models/Qwen3.5-9B",
+  "model_python": "/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/anaconda3/envs/qwen36-vllm/bin/python",
+  "context": 32768,
+  "engine_seed": 0,
+  "model_seed": 42,
+  "generation": {
+    "temperature": 0.0,
+    "max_tokens": 2048,
+    "extra_body": {
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    }
+  },
+  "slots_per_actor": 16,
+  "max_num_seqs": 32,
+  "gpu_memory_utilization": 0.8,
+  "startup_timeout": 1200,
+  "request_timeout": 240,
+  "actors": [
+    {
+      "id": 0,
+      "gpu": 0,
+      "endpoint": "http://127.0.0.1:20400/v1"
+    },
+    {
+      "id": 1,
+      "gpu": 1,
+      "endpoint": "http://127.0.0.1:20401/v1"
+    },
+    {
+      "id": 2,
+      "gpu": 2,
+      "endpoint": "http://127.0.0.1:20402/v1"
+    },
+    {
+      "id": 3,
+      "gpu": 3,
+      "endpoint": "http://127.0.0.1:20403/v1"
+    }
+  ],
+  "actor_extra_args": [
+    "--gdn-prefill-backend",
+    "triton"
+  ],
+  "kernel_cache_root": "/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/zhengrj/agent/smarthome_agent_rl/work/concurrency-capacity/kernel-cache",
+  "chat_transport": "append_empty_user",
+  "developer_labels_sha256": "da2ed8a8b832ffd9b200b23448c5c0502cb65fed15d5c00194fc919dc23cad2c",
+  "developer_counts": {
+    "CONSISTENT_CONTROL": 3,
+    "CERTAIN_CONFLICT": 6,
+    "UNCERTAIN": 29,
+    "UNLABELED": 40
+  },
+  "developer_conflict_groups": {
+    "time": [
+      "n76:qt4-1_feasible_seed_26:seed42:a000007",
+      "n76:qt4-1_feasible_seed_26:seed42:a000009",
+      "n76:qt4-1_feasible_seed_26:seed43:a000006",
+      "n76:qt4-1_feasible_seed_26:seed43:a000008"
+    ],
+    "target": [
+      "n76:qt4-1_infeasible_seed_27:seed42:a000009",
+      "n76:qt4-1_infeasible_seed_27:seed44:a000007"
+    ]
+  },
+  "valid_ratio_min": 0.95,
+  "evidence_valid_ratio_min": 0.95,
+  "node": "N87",
+  "schema": "bounded-trajectory-safety-evidence-v1",
+  "parent_run": "runs/identity-evidence-ablation/n86-v1",
+  "parent_collection_sha256": "011bc0d0ea9a67a9822d025d9c22570b9e0dfff8b2e73596866249347cfd68d6",
+  "inputs_sha256": "7bbc6b7dd1fc280d52c06e529fe19ba7b9b5037b0a91a7224f9c3a4a57a0bd00",
+  "records": 78,
+  "new_requests": 156,
+  "arms": [
+    "control",
+    "bounded"
+  ],
+  "selection": "All78 retained official exposed inputs,including repeated contexts andhistorical failures. Original6developer conflicts/3controls unchanged,other69unknown/unlabeled.",
+  "metrics": [
+    "StrictJSON/parser/schema/order/literal andallunchanged originaldeveloper reason gates;allfailures retained",
+    "Boundedperstep reference coverage,empty/duplicate references,andrelation-label consistency asdiagnostic only",
+    "Freshpaired verdicts,immutablehistoricalN86identity plusseparatestrict parse count,all request/token/latency/startup/GPU/probe costs"
+  ],
+  "diagnostic_screen": "OriginalN83/N86 diagnostic gates unchanged:156unique pairs,each78evidence-firstoutputs,>=95%schema/literalcoverage,zeroHTTP/missingusage/resolution/internalconflict/target-time aggregate mismatch/percentage-agreementconflict,6DENY/3ALLOW/4time+2target reason dimensions. Bounded structure validated inparser;trajectory/safety relation-label disagreement remainsreport-only. No nativeadmission evenifpassed.",
+  "exclusions": "None;no successful-reference-only selection,new labels,hidden evaluators,sealed95 or corrected historical outputs.",
+  "budget": {
+    "new_requests": 156,
+    "maximum_completion_tokens": 319488,
+    "total_slots": 64,
+    "requests_per_actor": [
+      40,
+      40,
+      38,
+      38
+    ],
+    "retries": 0
+  },
+  "stop_rule": "Onefrozen156request run afterall156schema compilation andtokenization inexisting environment. No retry,budgetincrease,newlabels,gatetuning,selectivesuccessdenominator,native expansion,A800,simulation orenvironment changes.",
+  "scope": "Official alreadyexposed singleturn engineering/semantic diagnosis only;no training,newbenchmark,sealed95,SR,blocking,Taskcompletion ordefaultchange.",
+  "historical_run": "runs/citation-review/n83-v1",
+  "intervention": "Onlytrajectory/safety evidence schema changes fromfreeobject toexactperstep step_index/public_refs/relation,<=3existing visible receipt pointers,relation predicted. Control exactN86identity request;messages,target/time schemas,metadata,citation catalog,generation,max2048 unchanged. No chosen truths ornewobservations.",
+  "resolution": "Bothfresharms rejectduplicateJSONkeys atanydepth beforeparsing. Keeprawresponse;validate bounded fields/refs/stepcoverage forboundedarm;verifiedpublic identitymetadata removed andcitation IDs dereferenced only,predicted relations/labels/probability/verdict unchanged. Historical N86 canonical parsed counts notrewritten;strict historical parse count reported separately.",
+  "identity_metric": "Observedcatalog-derived identity metadata rawvalidity only,notsemantic correctness;identity room/type coverage remains N84 mechanicaltension diagnostic. Ambiguous,truncated,multicatalog,missing receipts preserved,no IDdecoding.",
+  "ordered_schemas_sha256": "1320965ff8a0cbd17c1e48fd8ab3830762b8c55db745cca062840c90d5326e46",
+  "ordered_requests_sha256": "5c8856cef3aa315c8950ae2719e573b03fa3312cb8e0b40fe14b0f13a2d566a2",
+  "reference_metric": "Pointers onlytovisible environment/recent-action source,structure_source,receipt_source objects withpositiveobservationordinal andpublicresponseSHA. Emptyrefs permitted,no sourceinvented;<=3refs/step. Duplicaterefs counted,notdeduplicated;wellformed pointerdoesnotprove entailment orfreshness.",
+  "references_sha256": "c819392d0a48f056416a704242935a23af307daf466f9d324eb0de212c223041"
+}
