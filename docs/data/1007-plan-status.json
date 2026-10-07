@@ -3,6 +3,14 @@
   "scope": "Latest user confirmation: official single-turn harness diagnostics/ablations only; no SFT/RL, new benchmark or multi-session experiments.",
   "default": "Qwen3.5-9B + G; permanent baseline tag baseline/1007-9b-g",
   "nodes": {
+    "N90": {
+      "status": "frozen_pending_server_preflight",
+      "config": "configs/citation-order-ablation.json",
+      "records_per_arm": 78,
+      "new_requests": 156,
+      "default_changed": false,
+      "native_admitted": false
+    },
     "N89": {
       "status": "decoder_whitespace_format_cost_improvement_verified_semantic_gates_failed",
       "source_commit": "04054bc6da85fb8b0badaf9e3e49a905d25c7050",
