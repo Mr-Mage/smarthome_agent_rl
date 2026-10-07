@@ -3,6 +3,17 @@
   "scope": "Latest user confirmation: official single-turn harness diagnostics/ablations only; no SFT/RL, new benchmark or multi-session experiments.",
   "default": "Qwen3.5-9B + G; permanent baseline tag baseline/1007-9b-g",
   "nodes": {
+    "N73": {
+      "status": "independent_context_engineering_verified",
+      "source_commit": "b7128c7",
+      "evidence": "runs/task-runtime/n73-server-v1/",
+      "acceptance": "38 specialized;full349,348 passed/1 skip;5 artifacts and7 source blobs verified locally;native same-clock workflow and independent ReAct flags",
+      "model_requests": 0,
+      "tokens": 0,
+      "reserved_gpu_seconds": 0,
+      "archive_sha256": "8ceec2189820b659c4d98728d58587f36efa00922f8e121d8009db2b8a3ee8f9",
+      "scope": "Opt-in version2 references/workflow independent flags;not calibrated or native-blocking verifier"
+    },
     "N72": {
       "status": "failed_not_admitted",
       "implementation_commit": "697313f",
@@ -285,7 +296,7 @@
     "N52": {
       "status": "read_only_format_diagnosis_complete",
       "evidence": "runs/homebench/n52-format-analysis-v2/report.json",
-      "next": "independent F / F+frozen Guard ablation; N51 remains not admitted"
+      "next": "Independent frozen9B reference-only/workflow-only/both review ablation on all38 retained N72 proposals;reuse historical9b_public outputs,no baseline rerun"
     },
     "N53": {
       "status": "independent_format_calibration_passed",
