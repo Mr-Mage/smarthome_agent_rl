@@ -3,6 +3,147 @@
   "scope": "Latest user confirmation: official single-turn harness diagnostics/ablations only; no SFT/RL, new benchmark or multi-session experiments.",
   "default": "Qwen3.5-9B + G; permanent baseline tag baseline/1007-9b-g",
   "nodes": {
+    "N81": {
+      "status": "read_only_declared_projection_and_binding_diagnosis_verified_not_semantic_gain",
+      "source_commit": "f381c4490ed628f1025466b632d2fcf63493a7c6",
+      "config": "configs/declared-evidence-report.json",
+      "evidence": "runs/declared-evidence-report/n81-v1/",
+      "records": 312,
+      "arms": {
+        "historical": {
+          "records": 78,
+          "available": 75,
+          "unavailable": 3,
+          "projected_label_change_records": 30,
+          "projected_label_changes": {
+            "correct_target": 18,
+            "goal_consistent": 17
+          },
+          "original_to_declared_projection": {
+            "DENY->DENY": 35,
+            "ALLOW->ALLOW": 22,
+            "DENY->ALLOW": 5,
+            "UNCERTAIN->UNCERTAIN": 2,
+            "DENY->UNCERTAIN": 11,
+            "INVALID->UNAVAILABLE": 2,
+            "DENY->UNAVAILABLE": 1
+          },
+          "shared_target_quote_records": 1,
+          "explicit_equivalent_clock_disagreement_records": 3,
+          "cited_quote_dual_anchor_disagreement_records": 0,
+          "literal_catalog_room_coverage": {
+            "steps": 122,
+            "room_word_present": 87,
+            "room_word_absent": 34,
+            "room_unobserved": 1
+          },
+          "cost_origin": "immutable historical receipts;no new inference"
+        },
+        "effects": {
+          "records": 78,
+          "available": 68,
+          "unavailable": 10,
+          "projected_label_change_records": 24,
+          "projected_label_changes": {
+            "correct_target": 14,
+            "goal_consistent": 14
+          },
+          "original_to_declared_projection": {
+            "DENY->DENY": 29,
+            "ALLOW->ALLOW": 27,
+            "DENY->UNAVAILABLE": 9,
+            "DENY->ALLOW": 6,
+            "ALLOW->DENY": 5,
+            "ALLOW->UNAVAILABLE": 1,
+            "DENY->UNCERTAIN": 1
+          },
+          "shared_target_quote_records": 0,
+          "explicit_equivalent_clock_disagreement_records": 3,
+          "cited_quote_dual_anchor_disagreement_records": 0,
+          "literal_catalog_room_coverage": {
+            "steps": 126,
+            "room_word_present": 98,
+            "room_word_absent": 27,
+            "room_unobserved": 1
+          },
+          "cost_origin": "immutable historical receipts;no new inference"
+        },
+        "coherence": {
+          "records": 78,
+          "available": 78,
+          "unavailable": 0,
+          "projected_label_change_records": 24,
+          "projected_label_changes": {
+            "correct_target": 24,
+            "goal_consistent": 6
+          },
+          "original_to_declared_projection": {
+            "ALLOW->ALLOW": 24,
+            "DENY->DENY": 38,
+            "DENY->ALLOW": 3,
+            "UNCERTAIN->UNCERTAIN": 13
+          },
+          "shared_target_quote_records": 3,
+          "explicit_equivalent_clock_disagreement_records": 3,
+          "cited_quote_dual_anchor_disagreement_records": 1,
+          "literal_catalog_room_coverage": {
+            "steps": 126,
+            "room_word_present": 88,
+            "room_word_absent": 37,
+            "room_unobserved": 1
+          },
+          "cost_origin": "immutable historical receipts;no new inference"
+        },
+        "combined": {
+          "records": 78,
+          "available": 63,
+          "unavailable": 15,
+          "projected_label_change_records": 19,
+          "projected_label_changes": {
+            "correct_target": 15,
+            "goal_consistent": 9
+          },
+          "original_to_declared_projection": {
+            "DENY->DENY": 26,
+            "ALLOW->ALLOW": 20,
+            "DENY->UNAVAILABLE": 15,
+            "DENY->ALLOW": 5,
+            "UNCERTAIN->UNCERTAIN": 9,
+            "DENY->UNCERTAIN": 3
+          },
+          "shared_target_quote_records": 3,
+          "explicit_equivalent_clock_disagreement_records": 3,
+          "cited_quote_dual_anchor_disagreement_records": 0,
+          "literal_catalog_room_coverage": {
+            "steps": 126,
+            "room_word_present": 93,
+            "room_word_absent": 32,
+            "room_unobserved": 1
+          },
+          "cost_origin": "immutable historical receipts;no new inference"
+        }
+      },
+      "changed_original_decisions": 0,
+      "native_admitted": false,
+      "cost": {
+        "new_model_requests": 0,
+        "new_tokens": 0,
+        "reserved_gpu_seconds": 0,
+        "cpu_hash_parent_audit_parse_projection_write_seconds": 3.5980676040053368,
+        "tests_seconds": 7.332,
+        "archive_transfer_cpu": "not fully measured"
+      },
+      "acceptance": "8 specialized;server410,409passed/1skip;local312 reports,255 N80 parent artifacts/234 HTTP,11 collection files,285 Git blobs,2 cleanup backups verified",
+      "archive_sha256": "b6186fadfc90e8e24fa9aa7172fc6560b657350d772988830023c63cc7b1a863",
+      "storage_cleanup": {
+        "bytes": 2077449,
+        "files": 2,
+        "original_members_verified": 267,
+        "receipt": "runs/task-runtime/storage-cleanup-20261007-v4/receipt.json",
+        "receipt_sha256": "e347e662266fe3aec846da9a0c1fe98f0fca7e68bf103d422657e933a5fe0945"
+      },
+      "scope": "Projection consistency by construction;not semantic improvement,accuracy,SR,blocking or Task completion;originals retained,N80 failed screens unchanged"
+    },
     "N80": {
       "status": "representation_ablation_complete_all_screens_failed_not_admitted",
       "source_commit": "929a4080a6ae7bd3d0305c9974442986a98b3cb9",
@@ -1389,5 +1530,5 @@
     "common_simuhome_adapter": "N61 unified entry and public actor boundary verified; native protocols and scores retained"
   },
   "benefit_acceptance": "not satisfied; no stable benefit on two public benchmarks. N66 CI crosses zero;N67/N70 semantic admission failed;N69 SR flips all without candidate context and tiny stratified interval degenerates. N72/N74 semantic reviews not admitted;N74 all6 conflicts missed;N75 combined6/6 developer denials but35/38 evidence;N76 dynamic schema37/38 andevidence36/38 fail screen,reasons unverified. G retained N77 failure isolation andN78 coverage accepted;N78 all3 wins without review,no attributed benefit;G retained. N80 all3 representation screens failed;coherence internal conflicts0 but24/78 aggregate mismatches,effects quotes degrade;no admission.",
-  "next": "Read-only diagnosis on retained N80 receipts: device binding and conflicting clock anchors;explicit report-only aggregation interface preserving original outputs. Freeze separately before any future inference;no benchmark expansion,training,sealed95 or native blocking."
+  "next": "Freeze a separate evidence-first representation ablation on the same retained official cohort;inspect generated field ordering and device/relation evidence rather than treating constructed aggregation consistency as semantic admission. FourH100/64 slots for inference;no training,new benchmark,sealed95,default change or native blocking."
 }
