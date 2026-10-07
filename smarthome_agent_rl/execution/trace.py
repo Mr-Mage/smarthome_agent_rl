@@ -48,3 +48,15 @@ class ToolTrace:
         if self.sink:
             self.sink(row.as_dict())
         return row
+
+    def call_read(self, tool, arguments, *, retry_budget=None, task_id=None,
+                  workflow_id=None, parent_step=None):
+        """Retry a read only when the failure is classified transient."""
+        from .retry import transient_read_failure
+        while True:
+            row = self.call(tool, arguments, task_id=task_id,
+                            workflow_id=workflow_id, parent_step=parent_step)
+            if not row.error or retry_budget is None or not transient_read_failure(row):
+                return row
+            if not retry_budget.acquire("read", reason=row.error.get("type")):
+                return row

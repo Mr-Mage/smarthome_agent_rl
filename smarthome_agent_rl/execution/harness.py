@@ -29,6 +29,7 @@ class RuntimeExecutor:
         self.structured_audit, self.failures = [], {}
         self.extra_queries, self.turn, self._extra = 0, 0, False
         self.task_spec = self.time_plan = None
+        self.retry_budget = None
 
     @property
     def dispatch(self):
@@ -58,7 +59,7 @@ class RuntimeExecutor:
         self.extra_queries += 1
         self._extra = True
         try:
-            return self.trace.call(tool, arguments, **linkage)
+            return self.trace.call_read(tool, arguments, retry_budget=self.retry_budget, **linkage)
         finally:
             self._extra = False
 
