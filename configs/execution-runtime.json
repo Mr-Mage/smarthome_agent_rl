@@ -1,0 +1,13 @@
+{
+  "schema": "task-execution-runtime-v1",
+  "baseline": "configs/1007-baseline.json",
+  "default_enabled": false,
+  "invocation_policy": "trace all dispatched queries, mutations and registration calls",
+  "mutation_statuses": ["VERIFIED_SUCCESS", "VERIFIED_FAILURE", "UNVERIFIED"],
+  "success_source": "public read-back postconditions; never acknowledgement",
+  "uncertain_dispatch": "read-back once; never replay mutation automatically",
+  "unknown_contract_precondition": "reject before dispatch",
+  "react_policy_switch": "execution_runtime",
+  "tests": ["tests.test_device_contract", "tests.test_execution_runtime", "tests.test_runtime_harness", "tests.test_runtime_simuhome"],
+  "scope": "opt-in single-turn SimuHome boundary; scheduler not attached to official runner; no new benchmark scores"
+}

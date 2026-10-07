@@ -23,6 +23,7 @@ from smarthome_agent_rl.generation import install_generation_options, record_gen
 from smarthome_agent_rl.retrieval import load_retrieval
 from smarthome_agent_rl.benchmark import task_failure_kind
 from smarthome_agent_rl.profiling import PhaseProfile, TimedTime
+from smarthome_agent_rl.benchmarks.simuhome import SimuHomeAdapter
 
 
 def main(mode):
@@ -46,9 +47,8 @@ def main(mode):
             response = client.post(os.environ['AGL_EVENT_URL'], headers={'Authorization': f'Bearer {key}'},
                                    json={'event_type': kind, 'data': data})
             response.raise_for_status()
-    path = ROOT / 'deps/SimuHome/data/benchmark' / task['path']
-    if path.name != task['path'] or hashlib.sha256(path.read_bytes()).hexdigest() != task['sha256']:
-        raise ValueError('Frozen official case identity mismatch')
+    benchmark = SimuHomeAdapter(ROOT / 'deps/SimuHome/data/benchmark', {'tasks': [task]})
+    path = benchmark.task_path(task['id'])
     calls, judges, events, starts = [], [], [], {}
     calls_lock = Lock()
     provider_errors = []
@@ -89,6 +89,12 @@ def main(mode):
     set_tool_config(ToolConfig(base_url=config['simulator_url'], timeout=30,
         db=load_retrieval(retrieval, output / 'retrieval_calls.json')))
     variant = config['variant']
+    attached_runtime = None
+    from smarthome_agent_rl.report_semantic_review import attach_report_reviewer
+    agent_policy, report_reviewer = attach_report_reviewer(config, variant,
+        audit_fn=lambda rows: save('semantic_review_calls.json', rows))
+    if report_reviewer is not None:
+        report_reviewer.verify = profile.wrap(report_reviewer.verify, 'semantic_review')
     def trace(kind, payload):
         event = {'event': kind, 'payload': payload, 'at_seconds': time.monotonic() - profile.origin}
         events.append(event)
@@ -111,6 +117,7 @@ def main(mode):
         save('tokenization_calls.json', tokenization_calls)
         return response.json()['count']
     def build(llm, *, max_steps, strategy):
+        nonlocal attached_runtime
         if variant == 'B0':
             agent = original(llm, max_steps=max_steps, strategy=strategy)
             agent.config.trace_fn = trace
@@ -119,9 +126,37 @@ def main(mode):
             agent = HarnessAgent(llm, variant=variant, max_steps=max_steps, trace_fn=trace,
                 audit_fn=lambda data: save('harness_audit.json', data),
                 repair_limit=config['recovery_per_action'], query_limit=config['extra_queries_max'],
-                policy=config.get('variant_policies', {}).get(variant), token_count_fn=count_tokens)
+                policy=agent_policy, token_count_fn=count_tokens)
+        if config.get('variant_policies', {}).get(variant, {}).get('task_runtime'):
+            if variant not in ('GTM', 'GTME', 'GTMEC') or type(agent.executor).__name__ != 'GuardedExecutor':
+                raise ValueError('Native task-runtime ablation must use an isolated legacy Guard arm')
+            policies = config['variant_policies']
+            base_policy = {k: v for k, v in policies[variant].items()
+                           if k not in ('task_runtime', 'task_runtime_tolerance', 'task_runtime_clock', 'task_runtime_context')}
+            if base_policy != policies.get('G'):
+                raise ValueError('GTM must preserve the frozen G policy and isolate runtime attachment')
+            from smarthome_agent_rl.execution.episode import EpisodeRuntime
+            from smarthome_agent_rl.execution.simuhome_contract import SimuHomeContractAdapter
+            from smarthome_agent_rl.guard import command_contracts, public_power_rules
+            signatures, _ = command_contracts(ROOT / 'deps/SimuHome/src/simulator/domain/clusters')
+            power, _ = public_power_rules(ROOT / 'deps/SimuHome/src/simulator/domain/devices')
+            clock_policy = policies[variant].get('task_runtime_clock', 'poll')
+            if clock_policy == 'public_events' and variant == 'GTMEC' and policies[variant].get('task_runtime_context'):
+                from smarthome_agent_rl.execution.resource_context import ResourceEpisodeRuntime
+                runtime_class = ResourceEpisodeRuntime
+            elif clock_policy == 'public_events' and variant == 'GTME':
+                from smarthome_agent_rl.execution.events import EventEpisodeRuntime
+                runtime_class = EventEpisodeRuntime
+            elif clock_policy == 'poll' and variant == 'GTM':
+                runtime_class = EpisodeRuntime
+            else:
+                raise ValueError('Runtime variant/clock policy differs from frozen arm identity')
+            attached_runtime = agent.task_runtime = runtime_class(agent.executor,
+                SimuHomeContractAdapter(signatures, power), output / 'task-runtime.sqlite3',
+                tolerance=config['variant_policies'][variant]['task_runtime_tolerance'], save=save)
+            attached_runtime.supervise = profile.wrap(attached_runtime.supervise, 'runtime_supervision')
         import src.agents.strategies.react_agent as react_module
-        return profile.agent(agent, react_module)
+        return benchmark.bind_agent(task['id'], profile.agent(agent, react_module))
     runner._build_agent = build
     import src.agents.strategies.react_agent as react_module
     evaluation_module = importlib.import_module(runner._EVALUATOR_REGISTRY[(task['query_type'], task['case'])])
@@ -138,14 +173,30 @@ def main(mode):
             method = getattr(runner.SmartHomeClient, name)
             client_methods.append((name, method))
             setattr(runner.SmartHomeClient, name, profile.wrap(method, 'simulator_client', name))
+    original_fast_forward = runner.SmartHomeClient.fast_forward_to
+    def observed_fast_forward(*args, **kwargs):
+        response = original_fast_forward(*args, **kwargs)
+        # Never pass evaluator deadlines, labels or result payloads to the
+        # runtime. Read the current public clock through its budgeted tools.
+        if attached_runtime is not None:
+            if hasattr(attached_runtime, 'observe_native_response'):
+                attached_runtime.observe_native_response(response)
+            else:
+                attached_runtime.supervise(phase='native_virtual_time_advanced')
+        return response
+    runner.SmartHomeClient.fast_forward_to = observed_fast_forward
     save('contract.json', {'config': config, 'task_identity': task, 'mode': mode,
         'evaluator': 'original run_single_config', 'upstream_source_modified': False,
-        'agent_inputs': ['query', 'user_location', 'current_time'], 'training': False})
+        'agent_inputs': ['query', 'user_location', 'current_time'],
+        'public_context': benchmark.public_input(task['id']), 'training': False})
     error, result = None, None
     started = time.monotonic()
     try:
         result = runner.run_single_config(cfg_path=str(path), base_url=config['simulator_url'], timeout=30,
             max_steps=config['max_steps'], agent_strategy='react', main_llm=actor, judge_llms=panel)
+        if attached_runtime is not None:
+            attached_runtime.finish()
+        benchmark.score(task['id'], result)  # Validate native episode identity; never replace its evaluator.
         save('official_result.json', result)
     except Exception as exc:
         error = {'type': type(exc).__name__, 'message': str(exc)}
@@ -157,6 +208,8 @@ def main(mode):
             module.time = original_time
         for name, method in client_methods:
             setattr(runner.SmartHomeClient, name, method)
+        if attached_runtime is not None:
+            attached_runtime.finish(supervise=False)
         failure_kind = task_failure_kind(error, calls)
         task_failure = failure_kind is not None
         score = result['evaluation_result']['score'] if result else None
@@ -168,6 +221,7 @@ def main(mode):
             'infrastructure_error': (error is not None and not task_failure) or score == -1,
             'actor_model_calls': len(calls), 'actor_tokens': tokens(calls),
             'judge_model_calls': len(judges), 'judge_tokens': tokens(judges),
+            'semantic_review': report_reviewer.costs() if report_reviewer is not None else None,
             'duration_seconds': time.monotonic() - started}
         save('summary.json', summary)
         profile.flush(summary['duration_seconds'], started - profile.origin)

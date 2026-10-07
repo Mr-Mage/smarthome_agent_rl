@@ -1,5 +1,6 @@
 """Project variants around the upstream ReAct loop, with process-local tool injection."""
 import copy
+from dataclasses import asdict
 import json
 import hashlib
 from pathlib import Path
@@ -16,6 +17,8 @@ from smarthome_agent_rl.structured import StructuredProvider, tool_schemas
 from smarthome_agent_rl.verification import expected_effect, expected_effect_v2, verify_effect, verify_effect_v2
 from smarthome_agent_rl.action_state import ActionLedger
 from smarthome_agent_rl.recovery import RecoveryPolicy, public_context
+from smarthome_agent_rl.semantic_verifier import VerificationContext, feedback as semantic_feedback
+from smarthome_agent_rl.device_contract import ContractRegistry
 
 ROOT = Path(__file__).resolve().parents[1]
 MUTATIONS = {'execute_command', 'write_attribute', 'schedule_workflow', 'cancel_workflow',
@@ -29,7 +32,19 @@ def ok(response):
 class GuardedExecutor:
     def __init__(self, *, verify=False, verification_version=1, repair_limit=2, query_limit=40,
                  dead_front=False, workflow_all_devices=False, audit_fn=None, dispatch=run_tool,
-                 recovery=False, recovery_total_limit=6):
+                 recovery=False, recovery_total_limit=6, semantic_verifier=None,
+                 reflection_verifier=None, semantic_blocking=False, contract_registry=None,
+                 contract_blocking=False, semantic_context_version=0,
+                 semantic_context_references=False, semantic_context_workflow=False):
+        if type(semantic_context_version) is not int or semantic_context_version not in (0, 1, 2):
+            raise ValueError('Unsupported semantic context version')
+        if type(semantic_context_references) is not bool or type(semantic_context_workflow) is not bool:
+            raise ValueError('Semantic context interventions must be explicit booleans')
+        if (semantic_context_version == 2) != (semantic_context_references or semantic_context_workflow):
+            raise ValueError('Version2 requires explicit reference/workflow interventions; legacy versions forbid them')
+        if semantic_blocking and any(getattr(v, 'report_only', False)
+                                     for v in (semantic_verifier, reflection_verifier)):
+            raise ValueError('Report-only reviewers cannot enable semantic blocking')
         contracts, sources = command_contracts(ROOT / 'deps/SimuHome/src/simulator/domain/clusters')
         power_rules, device_sources = public_power_rules(ROOT / 'deps/SimuHome/src/simulator/domain/devices', dead_front=dead_front)
         sources.update(device_sources)
@@ -50,6 +65,17 @@ class GuardedExecutor:
         self.start_semantics_audit = []
         self.time_plan = None
         self.task_spec = None
+        self.semantic_verifier = semantic_verifier
+        self.reflection_verifier = reflection_verifier
+        self.semantic_blocking = semantic_blocking
+        self.semantic_context_version = semantic_context_version
+        self.semantic_context_references = semantic_context_references
+        self.semantic_workflow_rules = None
+        if semantic_context_workflow:
+            from smarthome_agent_rl.workflow_semantics import load_workflow_semantics
+            self.semantic_workflow_rules = load_workflow_semantics()
+        self.contract_registry = contract_registry
+        self.contract_blocking = contract_blocking
 
     def save_audit(self):
         if self.audit_fn:
@@ -131,6 +157,17 @@ class GuardedExecutor:
                 else:
                     before = query['data']
                     record['uncovered'].extend(self.guard.capability(tool, arguments, before))
+                    if self.contract_registry is not None:
+                        contract_action = {'function': arguments.get('command_id', arguments.get('attribute_id')),
+                                           'args': arguments.get('args', {'value': arguments.get('value')})}
+                        contract_result = self.contract_registry.validate(contract_action, before)
+                        record['contract'] = contract_result.response()
+                        record['uncovered'].extend(contract_result.uncovered)
+                        if self.contract_blocking and not contract_result.accepted:
+                            raise GuardError('deterministic', 'Executable device contract rejected action',
+                                             reason_code=contract_result.reason_code,
+                                             **contract_result.evidence,
+                                             repair_hint=contract_result.repair_hint)
             elif tool == 'schedule_workflow':
                 # Inspect only static capabilities; today's state cannot predict future state.
                 structures = {}
@@ -154,6 +191,38 @@ class GuardedExecutor:
                     else:
                         record['uncovered'].append('workflow_device_not_queried:' + device)
                 record['uncovered'].append('future_state_preconditions')
+            verifier = self.reflection_verifier or self.semantic_verifier
+            if verifier is not None and tool in MUTATIONS:
+                if self.semantic_context_version in (1, 2):
+                    if self.semantic_context_version == 2:
+                        from smarthome_agent_rl.semantic_context_enriched import build_enriched_context
+                        build_context = build_enriched_context
+                        options = {'references': self.semantic_context_references,
+                                   'workflow_rules': self.semantic_workflow_rules}
+                    else:
+                        from smarthome_agent_rl.semantic_context import build_context
+                        options = {}
+                    semantic_context = build_context(getattr(self, 'user_goal', ''),
+                        {'tool': tool, **copy.deepcopy(arguments)}, self.observations,
+                        user_location=getattr(self, 'user_location', None),
+                        initial_time=getattr(self, 'initial_public_time', None), contract=record.get('contract'), **options)
+                    record['semantic_context'] = asdict(semantic_context)
+                    record['semantic_context_sha256'] = hashlib.sha256(json.dumps(
+                        record['semantic_context'], sort_keys=True, ensure_ascii=False,
+                        separators=(',', ':')).encode('utf-8')).hexdigest()
+                else:
+                    semantic_context = VerificationContext(
+                        user_goal=getattr(self, 'user_goal', ''), environment_state=before,
+                        proposed_action={'tool': tool, **copy.deepcopy(arguments)},
+                        recent_actions=[{'tool': row.tool, **copy.deepcopy(row.params)} for row in self.actual[-8:]],
+                        contract=record.get('contract'))
+                semantic_result = verifier.verify(semantic_context)
+                record['semantic_verification'] = semantic_result.as_dict()
+                if self.semantic_blocking and semantic_result.verdict == 'DENY':
+                    raise GuardError('semantic', 'Semantic verifier rejected the proposed action',
+                                     reason_code=semantic_result.reason_code or 'SEMANTIC_REJECT',
+                                     verifier=semantic_result.as_dict(),
+                                     repair_hint=semantic_feedback(semantic_result).get('repair_hint', {}))
             recovery_context = None
             if self.recovery is not None:
                 recovery_context = public_context(tool, arguments, self.observations)
@@ -221,17 +290,45 @@ class GuardedExecutor:
 class HarnessAgent:
     def __init__(self, llm, *, variant, max_steps, trace_fn=None, audit_fn=None,
                  repair_limit=2, query_limit=40, policy=None, token_count_fn=None):
-        if variant not in ('G', 'GV', 'GC', 'Full', 'GV2', 'GC2', 'Candidate', 'GD', 'GW', 'GDW', 'TimePlan', 'GThinking', 'Teacher', 'SFT9B', 'GB', 'SFT9B_B', 'GS', 'GR', 'GTS', 'GEC'):
+        if variant not in ('B0', 'B1', 'B2', 'G', 'GV', 'GC', 'Full', 'GV2', 'GC2', 'Candidate', 'GD', 'GW', 'GDW', 'TimePlan', 'GThinking', 'Teacher', 'SFT9B', 'GB', 'SFT9B_B', 'GS', 'GR', 'GTS', 'GEC', 'RC', 'RCV', 'GTM', 'GTME', 'GTMEC'):
             raise ValueError(variant)
         policy = policy or {'verify': variant in ('GV', 'Full', 'GV2'),
             'verification_version': 2 if variant == 'GV2' else 1,
             'context_version': 2 if variant == 'GC2' else 1 if variant in ('GC', 'Full') else 0}
-        self.executor = GuardedExecutor(verify=policy['verify'], verification_version=policy['verification_version'], audit_fn=audit_fn,
+        if policy.get('execution_runtime'):
+            incompatible = ('verify', 'context_version', 'time_plan', 'identifier_binding',
+                            'start_semantics', 'recovery', 'task_spec', 'evidence_context',
+                            'semantic_verifier', 'reflection_verifier', 'semantic_context_version',
+                            'semantic_context_references', 'semantic_context_workflow', 'contract_registry',
+                            'dead_front', 'workflow_all_devices')
+            if variant in ('B0', 'GR', 'GTS', 'GEC') or any(policy.get(key) for key in incompatible):
+                raise ValueError('Execution runtime comparison must isolate the tool execution boundary')
+            from smarthome_agent_rl.execution.harness import RuntimeExecutor
+            from smarthome_agent_rl.execution.simuhome_contract import SimuHomeContractAdapter
+            contracts, sources = command_contracts(ROOT / 'deps/SimuHome/src/simulator/domain/clusters')
+            power_rules, device_sources = public_power_rules(ROOT / 'deps/SimuHome/src/simulator/domain/devices')
+            sources.update(device_sources)
+            for filename in ('configs/device-contract-rules.json', 'deps/SimuHome/src/simulator/api/schemas.py'):
+                sources[filename] = hashlib.sha256((ROOT / filename).read_bytes()).hexdigest()
+            self.executor = RuntimeExecutor(guard=ToolGuard(harness_schemas(tool_schemas()), contracts, power_rules),
+                adapter=SimuHomeContractAdapter(contracts, power_rules), dispatch=run_tool,
+                invocation_factory=ToolInvocation, sources=sources, query_limit=query_limit, audit_fn=audit_fn,
+                verify_mutations=policy.get('runtime_verify', True))
+        else:
+            self.executor = GuardedExecutor(verify=policy['verify'], verification_version=policy['verification_version'], audit_fn=audit_fn,
                                        repair_limit=repair_limit, query_limit=query_limit,
                                        dead_front=policy.get('dead_front', False),
                                        workflow_all_devices=policy.get('workflow_all_devices', False),
                                        recovery=policy.get('recovery', variant == 'GR'),
-                                       recovery_total_limit=policy.get('recovery_total_limit', 6))
+                                       recovery_total_limit=policy.get('recovery_total_limit', 6),
+                                       semantic_verifier=policy.get('semantic_verifier'),
+                                       reflection_verifier=policy.get('reflection_verifier'),
+                                       semantic_context_version=policy.get('semantic_context_version', 0),
+                                       semantic_context_references=policy.get('semantic_context_references', False),
+                                       semantic_context_workflow=policy.get('semantic_context_workflow', False),
+                                       semantic_blocking=policy.get('semantic_blocking', False),
+                                       contract_registry=policy.get('contract_registry'),
+                                       contract_blocking=policy.get('contract_blocking', False))
         if policy.get('evidence_context', variant == 'GEC'):
             if variant in ('GTS', 'GR') or any(policy.get(key) for key in ('verify', 'context_version', 'time_plan',
                     'identifier_binding', 'start_semantics', 'recovery', 'task_spec',
@@ -265,18 +362,35 @@ class HarnessAgent:
         if policy['context_version']:
             from smarthome_agent_rl.context import LedgerProvider, CompactLedgerProvider
             provider = CompactLedgerProvider(provider, self.executor, token_count_fn) if policy['context_version'] == 2 else LedgerProvider(provider, self.executor)
+        if policy.get('task_runtime_context'):
+            if variant != 'GTMEC' or not policy.get('task_runtime') or policy.get('task_runtime_clock') != 'public_events':
+                raise ValueError('Resource context requires the dedicated public-event runtime arm')
+            from smarthome_agent_rl.execution.resource_context import RuntimeContextProvider
+            provider = RuntimeContextProvider(provider, lambda: getattr(self, 'task_runtime', None))
         self.agent = ReActAgent(provider, config=ReActConfig(max_steps=max_steps,
             show_assistant_raw=True, trace_fn=trace_fn))
 
     def run(self, query, *, user_location=None, current_time=None):
+        self.executor.user_goal = query
+        self.executor.user_location = copy.deepcopy(user_location)
+        self.executor.initial_public_time = copy.deepcopy(current_time)
+        runtime = getattr(self, 'task_runtime', None)
+        if runtime is not None:
+            runtime.start(query, user_location=user_location, current_time=current_time)
         if self.executor.task_spec is not None:
             self.executor.task_spec.initialize(query)
         if self.executor.time_plan is not None:
             self.executor.time_plan.initialize(query, current_time)
         original = react_module.run_tool
-        react_module.run_tool = self.executor.execute
+        def execute_with_supervision(tool, arguments):
+            response = self.executor.execute(tool, arguments)
+            runtime.supervise(phase='agent_tool_return')
+            return response
+        react_module.run_tool = execute_with_supervision if runtime is not None else self.executor.execute
         try:
             result = self.agent.run(query, user_location=user_location, current_time=current_time)
+            if runtime is not None:
+                runtime.finish()
             # Evaluators see real calls, including extra public queries; blocked proposals aren't calls.
             result.tool_calls = list(self.executor.actual)
             return result

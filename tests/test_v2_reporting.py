@@ -18,7 +18,9 @@ class V2ReportingTests(unittest.TestCase):
         numeric = ('actor_tokens judge_tokens actor_model_calls judge_model_calls invalid_proposed '
             'invalid_reached_executor structured_rejections executed_tool_calls guard_blocked extra_queries '
             'verification_failures recovered_actions recovery_budget_blocked duration_seconds retrieval_tokens '
-            'actor_latency judge_latency extra_query_latency tokenization_calls tokenization_latency').split()
+            'actor_latency judge_latency extra_query_latency tokenization_calls tokenization_latency '
+            'runtime_tasks runtime_tasks_completed runtime_native_jobs runtime_jobs_verified runtime_jobs_failed '
+            'runtime_jobs_unknown runtime_jobs_pending runtime_jobs_cancelled runtime_supervisor_queries').split()
         def metrics(path):
             seed = int(path.parts[-5][4:])
             variant, task = path.parts[-2], path.parts[-3]

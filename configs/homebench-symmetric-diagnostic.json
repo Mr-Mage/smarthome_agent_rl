@@ -1,0 +1,15 @@
+{
+  "schema": "homebench-symmetric-diagnostic-v1",
+  "source_commit": "6d650caa19ba061e8790fc0f78f506169d029e4e",
+  "scope": "Additional read-only attribution on exposed paired B0/B1 outputs; not a new online or heldout result.",
+  "inputs": ["B0", "B1"],
+  "transforms": ["F", "FG", "W", "WG"],
+  "contract_comparison": "B1 vs B0 after the same frozen transform; retain every loss, error and uncovered output",
+  "rules": "Use existing serializers and unchanged legacy Guard. No symbolic enum binding, parameter inference, label-derived repair or execution.",
+  "metrics": ["native_exact_match", "native_micro_f1", "paired_wins_losses", "coverage"],
+  "exclude_rule": "none",
+  "actor_requests": 0,
+  "judge_requests": 0,
+  "tokens": 0,
+  "gpu_seconds": 0
+}

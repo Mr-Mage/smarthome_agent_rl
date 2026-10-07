@@ -8,14 +8,20 @@ from datetime import datetime
 
 
 class GuardError(ValueError):
-    def __init__(self, layer, detail, **evidence):
+    def __init__(self, layer, detail, *, reason_code=None, repair_hint=None, **evidence):
         super().__init__(detail)
-        self.layer, self.detail, self.evidence = layer, detail, evidence
+        self.layer, self.detail, self.reason_code = layer, detail, reason_code or {
+            'schema': 'ARGUMENT_SCHEMA', 'capability': 'UNSUPPORTED_CAPABILITY',
+            'precondition': 'PRECONDITION_FAILED', 'recovery': 'RECOVERY_BUDGET_EXHAUSTED',
+            'semantic': 'SEMANTIC_REJECT'}.get(layer, 'DETERMINISTIC_REJECT')
+        self.repair_hint, self.evidence = repair_hint or {}, evidence
 
     def response(self):
-        return {'status': {'code': 422, 'message': 'Harness validation failed'}, 'data': {},
+        return {'status': {'code': 422, 'message': 'Harness validation failed', 'state': 'rejected'}, 'data': {},
                 'error': {'type': 'harness_guard', 'layer': self.layer, 'detail': self.detail,
-                          'evidence': self.evidence, 'repair': 'Replan using public capabilities; no action was executed.'}}
+                          'reason_code': self.reason_code, 'evidence': self.evidence,
+                          'repair_hint': self.repair_hint,
+                          'repair': 'Replan using public capabilities; no action was executed.'}}
 
 
 def validate_object(schema, arguments, label):

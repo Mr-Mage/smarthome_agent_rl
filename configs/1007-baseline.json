@@ -1,0 +1,57 @@
+{
+  "schema": "1007-permanent-baseline-v1",
+  "source_commit": "bb39ee75ab1d5bf64e00be32dfc59f18767a30ed",
+  "tag": "baseline/1007-9b-g",
+  "variant": "G",
+  "actor": "Qwen3.5-9B",
+  "training": false,
+  "experiment": "N37 full600; existing exposed official snapshot",
+  "files": [
+    {
+      "path": "configs/harness-release.json",
+      "sha256": "2a45c9dff5cd1b0c385c60d2fe52fceaa4665affdb7fda4739486c90aa874ec8"
+    },
+    {
+      "path": "configs/harness-full-benchmark.json",
+      "sha256": "5d455beb4b9b4a7ff25b2452c8356f465403bfe01a232ef24a82fe52482e7513"
+    },
+    {
+      "path": "configs/benchmark-all/full600.json",
+      "sha256": "a6ebc678c76717a3d5fd743179a8b1be33f0c51c27a065c54279c9c23f1c986e"
+    },
+    {
+      "path": "dependencies.lock.json",
+      "sha256": "2d5cd933a067c72c9fe1d8d96c9afa9c104193fa1eeb34878bdf59566085baee"
+    },
+    {
+      "path": "smarthome_agent_rl/harness_agent.py",
+      "sha256": "56ed2b6163c30f3dda17d9ea609d934fb01de0d96eeb1e5c53e14c372ab71853"
+    },
+    {
+      "path": "smarthome_agent_rl/guard.py",
+      "sha256": "f528068d9bb4c14a2d839065c361a0de6e14b0ab148aaa0194d9382740271e91"
+    },
+    {
+      "path": "smarthome_agent_rl/action_state.py",
+      "sha256": "80e8eceda4e03048faf9a904d13b58f3b95597098b95790d68fcba4a3c79194f"
+    },
+    {
+      "path": "scripts/run_benchmark_episode.py",
+      "sha256": "9214043b48eba91b8c0b36408506f8c179b64968110541a0b53ec0a49a31de76"
+    }
+  ],
+  "evidence": "docs/data/full-benchmark.json",
+  "results": {
+    "B0": {
+      "successes": 197,
+      "tasks": 600,
+      "illegal_executions": 325
+    },
+    "G": {
+      "successes": 231,
+      "tasks": 600,
+      "illegal_executions": 70
+    }
+  },
+  "policy": "Preserve source revision and results. New execution runtime is opt-in, and benchmark arms must not silently alter the baseline."
+}

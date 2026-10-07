@@ -1,0 +1,34 @@
+{
+  "node": "N81",
+  "schema": "declared-evidence-report-v1",
+  "parent_run": "runs/effect-evidence-ablation/n80-v1",
+  "parent_collection_sha256": "a8c81fef46ac238199d6a287b70c2af927d94c9549ac606ef04609eec1280ead",
+  "inputs_sha256": "7bbc6b7dd1fc280d52c06e529fe19ba7b9b5037b0a91a7224f9c3a4a57a0bd00",
+  "contexts": 78,
+  "records": 312,
+  "arms": [
+    "historical",
+    "effects",
+    "coherence",
+    "combined"
+  ],
+  "sources_sha256": "adee6bb65d8372376bc12c296d8378e68d6c3975ecc8869826b3e06f3d6b3610",
+  "selection": "All78 historical+234 N80 outputs,including failures;no task/outcome selection or new labels",
+  "rules": [
+    "Original model output/decisions never changed;report-only,no dispatch field or Task completion",
+    "No projection for malformed decision or invalid literal evidence;keep in denominator",
+    "Project correct_target from declared unsupported/unknown/other support;goal from declared conflict/unknown/other relations. Other dimensions retain original labels;no calibrated probabilities",
+    "Catalog room/type words and shared quotes are lexical diagnostics only;do not decode device IDs or convert absence/shared quote into false binding",
+    "Clock+from-now anchors compared only for adjacent explicit that-is/which-is/i.e. equivalence;retain initial-clock/same-date/staleness assumptions,no previous-action binding or chosen priority"
+  ],
+  "metrics": [
+    "Projection availability and label/verdict transitions;consistency by construction,not semantic gain",
+    "Shared target quote coverage and observed catalog room-word coverage;not binding accuracy",
+    "Explicit and cited dual-anchor disagreement under stated assumptions",
+    "Source hashes/raw retained outputs;CPU diagnosis costs;zero new inference/GPU"
+  ],
+  "exclusions": "None. Historical invalids retained;N80 failure screen and default9B+G unchanged",
+  "stop_rule": "One312-receipt read-only diagnosis;no inference,retries,tuning,new benchmark,training,sealed95 or native blocking",
+  "acceptance": "All312 source-bound reports reproducible;original decisions unchanged;invalids unavailable;no dispatch/adoption fields. No semantic admission gate.",
+  "scope": "Post-hoc exposed official single-turn receipt diagnosis only;not independent semantics,SR,user-goal completion or benefit acceptance"
+}

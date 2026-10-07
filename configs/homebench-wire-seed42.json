@@ -1,0 +1,111 @@
+{
+  "schema": "homebench-wire-ablation-v1",
+  "benchmark": "HomeBench",
+  "source_commit": "6d650caa19ba061e8790fc0f78f506169d029e4e",
+  "arms": {
+    "B0": "official system prompt plus empty user for Qwen3.5 template compatibility",
+    "B1": "B0 plus public declarative contract",
+    "B2": "B1 raw prediction plus deterministic Guard; shared actor request"
+  },
+  "model": "smarthome-qwen35-9b",
+  "actor_path": "../models/Qwen3.5-9B",
+  "model_python": "/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/anaconda3/envs/qwen36-vllm/bin/python",
+  "context": 32768,
+  "engine_seed": 0,
+  "model_seed": 42,
+  "generation": {
+    "temperature": 0.7,
+    "top_p": 0.8,
+    "max_tokens": 2048,
+    "presence_penalty": 1.5,
+    "extra_body": {
+      "top_k": 20,
+      "min_p": 0.0,
+      "repetition_penalty": 1.0,
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    }
+  },
+  "slots_per_actor": 16,
+  "max_num_seqs": 32,
+  "gpu_memory_utilization": 0.8,
+  "startup_timeout": 1200,
+  "request_timeout": 240,
+  "max_guard_uncovered_rate": 0.25,
+  "actors": [
+    {
+      "id": 0,
+      "gpu": 0,
+      "endpoint": "http://127.0.0.1:20400/v1"
+    },
+    {
+      "id": 1,
+      "gpu": 1,
+      "endpoint": "http://127.0.0.1:20401/v1"
+    },
+    {
+      "id": 2,
+      "gpu": 2,
+      "endpoint": "http://127.0.0.1:20402/v1"
+    },
+    {
+      "id": 3,
+      "gpu": 3,
+      "endpoint": "http://127.0.0.1:20403/v1"
+    }
+  ],
+  "selection": {
+    "calibration": {
+      "kind": "category_hash",
+      "per_category": 4,
+      "salt": "homebench-n51-before-inference-v1"
+    },
+    "full": {
+      "kind": "full"
+    }
+  },
+  "exclude_rule": "none; preserve errors, empty, truncated and uncovered predictions",
+  "stop_rule": "WG frozen25% format coverage, zero request or usage failures required before full; no outcome-based rule or threshold changes.",
+  "metrics": [
+    "native_exact_match",
+    "native_micro_precision",
+    "native_micro_recall",
+    "native_micro_f1",
+    "guard_rejections",
+    "guard_uncovered",
+    "tokens",
+    "latency"
+  ],
+  "not_applicable": [
+    "world_state_task_success",
+    "unverified_action_rate",
+    "recovery_success",
+    "task_conflict_rate"
+  ],
+  "cost_policy": "B2 references B1 request; count each actual actor request once; include failed starts and model allocation; no judge needed",
+  "source_adaptation": "published output instead of unavailable output2; published home_status_method instead of unavailable new_home_status_method; exact official zero-shot prompt and Counter metric; Qwen3.5 requires a user message: keep official system content intact and append one empty user message in all arms",
+  "actor_extra_args": [
+    "--gdn-prefill-backend",
+    "triton"
+  ],
+  "kernel_cache_root": "/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/zhengrj/agent/smarthome_agent_rl/work/concurrency-capacity/kernel-cache",
+  "chat_transport": "append_empty_user",
+  "checkpoint_seconds": 10,
+  "contract_location": "before official task instruction boundary, allowing public context prefix reuse",
+  "dispatch_policy": "home_hash_contiguous; paired arms on same actor",
+  "extra_arms": [
+    "F",
+    "FG",
+    "W",
+    "WG"
+  ],
+  "extra_arm_definitions": {
+    "F": "B1 raw output serialized as an instruction sequence; no argument or method repair",
+    "FG": "F plus unchanged public contract Guard",
+    "W": "public wire compiler: quoted sentinel/layout and qualified method to argument maps; duplicate keys retained; declared signature binding; no arbitrary parameter or method inference",
+    "WG": "W plus unchanged Guard"
+  },
+  "engineering_gate_arm": "WG",
+  "freeze_note": "Independent public wire-format ablation after failed N56 replication calibration; preserve old F/FG results and thresholds; all calibration remains exposed diagnostics. String argument quotes are preserved; quoted error_input alone is the reserved error marker."
+}

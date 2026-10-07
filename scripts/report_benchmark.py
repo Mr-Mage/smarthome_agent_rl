@@ -79,6 +79,19 @@ def episode_metrics(directory):
     if summary['infrastructure_error'] or summary['official_score'] == -1:
         raise ValueError(f'Infrastructure failure cannot be included as a completed primary run: {directory}')
     phases = {}
+    runtime_diagnostics = {'runtime_tasks': 0, 'runtime_tasks_completed': 0, 'runtime_native_jobs': 0,
+        'runtime_jobs_verified': 0, 'runtime_jobs_failed': 0, 'runtime_jobs_unknown': 0,
+        'runtime_jobs_pending': 0, 'runtime_jobs_cancelled': 0, 'runtime_supervisor_queries': 0}
+    runtime_path = directory / 'task_runtime.json'
+    if runtime_path.exists():
+        runtime = read(runtime_path)
+        runtime_diagnostics.update(runtime_tasks=len(runtime['tasks']),
+            runtime_tasks_completed=sum(t['status'] == 'COMPLETED' for t in runtime['tasks']),
+            runtime_native_jobs=len(runtime['jobs']), runtime_supervisor_queries=runtime['supervisor_queries'])
+        for metric, statuses in {'verified': ['DONE'], 'failed': ['FAILED'], 'unknown': ['UNKNOWN'],
+                                'pending': ['REGISTERING', 'SCHEDULED', 'CLAIMED'],
+                                'cancelled': ['CANCELLED']}.items():
+            runtime_diagnostics['runtime_jobs_' + metric] = sum(j['status'] in statuses for j in runtime['jobs'])
     time_diagnostics = {}
     if audit_path.exists() and audit.get('time_plan') is not None:
         ledger = audit['time_plan']
@@ -106,7 +119,8 @@ def episode_metrics(directory):
         # Agent residual includes parsing, trace persistence and framework work, not GPU compute.
         phases['agent_residual_seconds'] = max(0, phases['agent_seconds'] - phases['tool_seconds'] -
             phases['agent_wait_seconds'] - sum(r['duration_seconds'] for r in calls)) if agent_spans else None
-    return {**summary, **phases, **time_diagnostics, 'invalid_proposed': invalid_proposed, 'invalid_reached_executor': actual_invalid,
+    return {**summary, **phases, **time_diagnostics, **runtime_diagnostics,
+        'invalid_proposed': invalid_proposed, 'invalid_reached_executor': actual_invalid,
         'guard_blocked': blocked, 'structured_rejections': structured_rejections,
         'recovery_budget_blocked': budget_blocked,
         'verification_failures': verification_failures, 'recovered_actions': recoveries,
@@ -154,7 +168,10 @@ def report(run):
             'invalid_proposed', 'invalid_reached_executor', 'structured_rejections',
             'executed_tool_calls', 'guard_blocked', 'extra_queries',
             'verification_failures', 'recovered_actions', 'recovery_budget_blocked', 'duration_seconds', 'retrieval_tokens',
-            'actor_latency', 'judge_latency', 'extra_query_latency', 'tokenization_calls', 'tokenization_latency']
+            'actor_latency', 'judge_latency', 'extra_query_latency', 'tokenization_calls', 'tokenization_latency',
+            'runtime_tasks', 'runtime_tasks_completed', 'runtime_native_jobs', 'runtime_jobs_verified',
+            'runtime_jobs_failed', 'runtime_jobs_unknown', 'runtime_jobs_pending', 'runtime_jobs_cancelled',
+            'runtime_supervisor_queries']
         summary[variant] = {'episodes': len(records), 'successes': len(success_records),
             'cost_latency': cost_summary(records),
             'time_plan_diagnostics': {k: sum(r.get(k, 0) for r in records) for k in

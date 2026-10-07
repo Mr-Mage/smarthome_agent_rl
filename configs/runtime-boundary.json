@@ -1,0 +1,9 @@
+{
+  "schema": "task-runtime-boundary-v1",
+  "entrypoint": "smarthome_agent_rl.execution.runtime.RuntimeBoundary.open",
+  "persistent_store": "sqlite",
+  "default_query_budget": 40,
+  "automatic_mutation_retry": false,
+  "unknown_mutation_replay": false,
+  "scope": "opt-in runtime composition; frozen benchmark G remains unchanged"
+}

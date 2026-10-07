@@ -1,0 +1,13 @@
+{
+  "schema": "agentic-rl-verifier-v1",
+  "student": "Qwen3.5-9B",
+  "verifier_frozen_during_actor_training": true,
+  "variants": {
+    "RL-A": {"task_reward": true, "hard_violation_feedback": false, "semantic_feedback": false},
+    "RL-B": {"task_reward": true, "hard_violation_feedback": true, "semantic_feedback": false},
+    "RL-C": {"task_reward": true, "hard_violation_feedback": true, "semantic_feedback": true}
+  },
+  "reward": {"task_success": 1.0, "hard_violation": 0.1, "semantic_reject": 0.05, "excessive_step": 0.01},
+  "training_boundary": "separate training environment; never modify existing baseline Conda/venv",
+  "stop_criteria": {"no_task_sr_gain": "fall_back_to_sparse_task_reward", "false_reject_high": "observation_only", "verifier_no_cost_advantage": "remove_small_verifier"}
+}

@@ -1,0 +1,36 @@
+{
+  "schema": "public-benchmark-sources-v1",
+  "HomeBench": {
+    "repository": "BITHLP/HomeBench",
+    "commit": "6d650caa19ba061e8790fc0f78f506169d029e4e",
+    "files": {
+      "code/eval.py": {
+        "sha256": "e2037866e4bbd26a0d656740e64ffefab4bf7437c9e3904680436e046a1a04dd",
+        "git_blob": "5ed6c672aae28a9e59c4b7ece37f487428620d61",
+        "bytes": 7219
+      },
+      "code/model_test.py": {
+        "sha256": "60ea00e9182ccc58aa9566615fae989bfd4bd1ce5efe7bade7d880c7557879cf",
+        "git_blob": "d46189457ce73e2b99594ffa5be6451a1a0f89c3",
+        "bytes": 23635
+      },
+      "code/system.txt": {
+        "sha256": "3cd12656f84b1f6ef38016407b1f17c27097d245764cc5b59eb9350065b9b728",
+        "git_blob": "61c7081d225b82b89e90d026336d2ab3fb414634",
+        "bytes": 436
+      },
+      "dataset/test_data.jsonl": {
+        "sha256": "db2b4e023af6166dceb49c079083942aabb67c202286891c290a5e7932f7d58f",
+        "git_blob": "19cc48175e684cd2c85ce544b10134ce61ee5696",
+        "bytes": 4971761
+      },
+      "dataset/home_status_method.jsonl": {
+        "sha256": "bd04c02c7ed1c1585e5588f7cd28232994c13eb93d1d3a1995b6bb8e1d69873a",
+        "git_blob": "5c61266f1f7e1facac69414afa2d8833ec87b6ab",
+        "bytes": 2113905
+      }
+    },
+    "license": "not declared in repository metadata audited earlier",
+    "protocol_note": "Published test_data has output; eval CLI expects output2 and inference references unavailable new_home_status_method.jsonl. Use published output with unchanged Counter metric function, published home_status_method and official zero-shot formatter; disclose this source adaptation."
+  }
+}

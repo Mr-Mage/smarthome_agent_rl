@@ -2,7 +2,23 @@
 
 基于官方 SimuHome 单轮 ReAct benchmark 与 Agent Lightning 的可审计智能家居 Agent harness。项目实现工具契约校验、动作生命周期记录、四卡隔离调度与配对评测，保留完整失败及成本证据。
 
-**当前默认：Qwen3.5-9B + Guard（G）。已完成至 N37，包括官方600任务全量验收。** 项目概览、设计取舍与案例见[项目总结书](docs/项目总结书.md)。
+**当前默认：Qwen3.5-9B + Guard（G）。官方600任务全量结果已完成；新执行 runtime 尚无在线收益结论。** 项目概览、设计取舍与案例见[项目总结书](docs/项目总结书.md)。
+
+N41–N46已实现执行分层、SQLite任务与调度器；N61统一入口完成原生验收。N63监督门槛失败，N64修复错误回执与重复写盘；独立GTME在[N66](docs/nodes/N66.md)的720回合消融中通过工程验收，191个定时Job中64个有公开读回证据。G/GTME成功率34.17%/35.00%，区间跨0且成本增加，未证明稳定收益。目标未核实的Task保留WAITING。默认G不变；本轮不追加训练、多轮或新benchmark。
+
+N47已完成48次四组校准：G/新契约/新契约加读回/原ReAct成功5/5/5/6（各12）。新契约覆盖不足，按预声明门槛停止扩大实验，保留G；未证实读回收益。当前进度见[状态索引](docs/data/1007-plan-status.json)，失败及全部成本见[N47](docs/nodes/N47.md)。
+
+[目标解析诊断（N67/N70）](docs/nodes/N70.md)未准入：9B/35B结构有效207/317（各360），开发者语义审阅通过6/11（各36）。漏条件与跨句引用尚未解决；开发者及同模型审阅均非独立真值，Task保留WAITING。
+
+[语义审阅诊断（N71–N93）](docs/nodes/N93.md)仍未准入：紧凑解码改善格式/成本；独立审阅代价为联合的3.83倍且引用退化，最新156请求的证据输出＋确定性聚合虽消除标签不一致，时间理由仍2/4、总tokens+2.25%。净化器目标与时间绑定仍失败，已停止这些方案的变体扩展；默认G不变。[原生报告模式（N77–N78）](docs/nodes/N78.md)的3个配对胜例均未触发审阅。
+
+[N94绑定覆盖审计](docs/nodes/N94.md)完成234份既有记录核验，新增推理0。公开身份信息大多可用，但缺引用、跨设备和未绑定时间锚仍存在；词面标记也会覆盖正常请求，不能作为语义拒绝规则。下一步先明确指称、动作阶段与时间锚的可靠绑定边界。
+
+[N68–N69](docs/nodes/N69.md)已接通公开资源声明与Agent Job摘要；72回合确认34声明、19次实际HTTP上下文送达。成功13/36→14/36，但全部结果翻转均无候选上下文，未证明收益；本轮无真实冲突，冲突检测仅有原生工程测试证据。
+
+HomeBench公开全量17,366任务已完成：N54原提示B0 EM27.34%、F+Guard 54.92%；N57独立W格式+Guard三种子EM为54.93%/55.80%/54.96%。主要收益来自输出表示与非法调用过滤；这是静态指令匹配，不能等同设备执行成功率。含94条暴露校准任务，三种子为描述性复核；[全量结果与成本](docs/nodes/N57.md)。
+
+[对称只读诊断](docs/nodes/N60.md)：同样加W格式与Guard后，原提示58.02%、契约提示54.96%。契约没有正收益且增加tokens；不能把不对称的原B0→FG差值归因于契约或规划改进。
 
 ## 结果与边界
 
@@ -46,7 +62,7 @@ N31动作生命周期已接入G。N32恢复预算、N33目标关联、N34证据�
 | 异常与重试 | 区分领域失败、未知执行结果和基础设施故障；GR默认关闭，网络重试沿用上游 |
 | 隔离与评测 | 4 actor × 16独立模拟器槽，配对固定actor；独立A800 judge，按冻结规则验收效果与成本 |
 
-持久恢复、可靠幂等/事务、多用户权限和生产SLO未验收。动作完成不自动等于用户目标成功。
+N95–N99已收敛统一运行时入口，补充进程中断恢复、只读重试预算、显式上下文契约和离线验收入口；结果见节点记录。可靠幂等、分布式租约、多用户权限和生产SLO仍未验收。动作完成不自动等于用户目标成功。
 
 ## 工程入口
 
@@ -54,6 +70,7 @@ N31动作生命周期已接入G。N32恢复预算、N33目标关联、N34证据�
 - [项目架构](docs/项目架构.md)：意图、记忆、上下文、状态、恢复及实现边界。
 - [实验报表](docs/实验报表.md)：论文参照、9B基线、正式结果和全部节点负结果。
 - [节点记录](docs/nodes/)：[N31](docs/nodes/N31.md)、[N32](docs/nodes/N32.md)、[N33](docs/nodes/N33.md)、[N34](docs/nodes/N34.md)、[N35](docs/nodes/N35.md)、[N36](docs/nodes/N36.md)。
+- [1006改进计划状态](docs/data/1006-plan-status.json)：N38 Contract、N39 Semantic Verification/Self-Reflection、N40 Process Reward 接口；本轮只做 Harness 与消融，保留 RL 接口但不训练、不生成新 benchmark。
 - [依赖身份](dependencies.lock.json)、[开发约定](AGENTS.md)：沿用环境和用户补丁。
 
 源码在`smarthome_agent_rl/`，运行脚本在`scripts/`，配置在`configs/`，测试在`tests/`。原始运行放`runs/`，审阅包放`outputs/`，临时工具放`work/`，均不入Git；不删除唯一证据。克隆仓库不包含这些运行产物，已有证据包位置由[交付索引](docs/data/delivery.json)记录。
@@ -97,5 +114,20 @@ python scripts/verify_full_benchmark.py --run runs/full-benchmark/<新目录>
 ```
 
 已有N37结果及原始证据保留，无需为查看报告重跑。[全量配置](configs/harness-full-benchmark.json)保持B0/G、seed42及所有失败，不追加调参。
+
+## HomeBench公开单轮对照
+
+[公开资源适配](docs/nodes/N50.md)固定17,366任务/100家庭及上游SHA。公开字段、zero-shot提示内容与Counter指标保持一致；Qwen3.5模板要求user消息，因此各臂统一追加空user消息。这是指令生成EM/F1，无设备执行或judge。B0适配后原提示、B1加公开契约、B2复用B1输出加Guard，成本按实际请求计一次。
+
+在当前隔离工作区、既有venv运行（四张H100需空闲）：
+
+```bash
+bench_source=work/public-benchmarks/homebench/6d650caa19ba061e8790fc0f78f506169d029e4e
+.venv-baseline/bin/python scripts/fetch_public_benchmark.py --benchmark HomeBench --output "$bench_source" --proxy http://127.0.0.1:7897
+.venv-baseline/bin/python scripts/run_public_benchmark.py --source "$bench_source" --output runs/homebench/calibration --launch-actors
+.venv-baseline/bin/python scripts/verify_public_benchmark.py --source "$bench_source" --run-dir runs/homebench/calibration
+```
+
+校准接入门槛通过后，同配置增加`--stage full --calibration runs/homebench/calibration`并使用新输出目录。冻结配置见[homebench-ablation.json](configs/homebench-ablation.json)；原始预测、失败、usage、GPU采样和共享请求均保留，当前实验状态见[实验报表](docs/实验报表.md)。
 
 旧实验方案、SFT数据/权重和失败证据均保留；历史入口见[后续开发计划](docs/后续开发计划.md)、[SFT执行计划](docs/SFT执行计划.md)。正式结论以[N13](docs/nodes/N13.md)与实验报表为准。

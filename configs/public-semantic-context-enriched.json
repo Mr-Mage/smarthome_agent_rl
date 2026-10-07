@@ -1,0 +1,19 @@
+{
+  "node": "N73",
+  "scope": "Engineering pre-action public reference receipts and workflow source facts; no inference, simulation benchmark, training or user-goal IR",
+  "interventions": ["references only", "workflow facts only", "both; explicitly isolated in later ablations"],
+  "limits": {"reference_candidates": 8, "read_facts_per_candidate": 4, "environment_json_characters": 24000},
+  "source_rules": "configs/public-workflow-semantics.json",
+  "acceptance": [
+    "Version0/1 and default G unchanged; opt-in version2 requires explicit flags",
+    "Reference candidates come only from pre-dispatch observed reads, not hidden targets or extracted goal dependencies",
+    "Raw receipts retain request/response identity,ordinal,turn,SHA and UNKNOWN freshness; no guessed finish times",
+    "Limits remove whole rows and preserve all selection/omission counts",
+    "Workflow facts bound to unchanged native source SHA and public step fields",
+    "Native Home proves consecutive successful steps have same virtual clock; failure halts later steps",
+    "Native ReAct forwards context with unchanged query budget and actual tool calls",
+    "Reference-only and workflow-only flags operate independently; rules-only non-workflow input is identical to v1",
+    "Recursive hidden-field rejection and later-receipt exclusion verified; no automatic blocking or completion"
+  ],
+  "stop_rule": "A failed engineering check stops online review/ablation; preserve N72 original prompts,schema,requests,costs and failures unchanged"
+}

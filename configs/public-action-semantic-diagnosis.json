@@ -1,0 +1,81 @@
+{
+  "model": "smarthome-qwen35-9b",
+  "actor_path": "../models/Qwen3.5-9B",
+  "model_python": "/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/anaconda3/envs/qwen36-vllm/bin/python",
+  "context": 32768,
+  "engine_seed": 0,
+  "model_seed": 42,
+  "generation": {
+    "temperature": 0.0,
+    "max_tokens": 2048,
+    "extra_body": {
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    }
+  },
+  "slots_per_actor": 16,
+  "max_num_seqs": 32,
+  "gpu_memory_utilization": 0.8,
+  "startup_timeout": 1200,
+  "request_timeout": 240,
+  "actors": [
+    {
+      "id": 0,
+      "gpu": 0,
+      "endpoint": "http://127.0.0.1:20400/v1"
+    },
+    {
+      "id": 1,
+      "gpu": 1,
+      "endpoint": "http://127.0.0.1:20401/v1"
+    },
+    {
+      "id": 2,
+      "gpu": 2,
+      "endpoint": "http://127.0.0.1:20402/v1"
+    },
+    {
+      "id": 3,
+      "gpu": 3,
+      "endpoint": "http://127.0.0.1:20403/v1"
+    }
+  ],
+  "actor_extra_args": [
+    "--gdn-prefill-backend",
+    "triton"
+  ],
+  "kernel_cache_root": "/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/zhengrj/agent/smarthome_agent_rl/work/concurrency-capacity/kernel-cache",
+  "source_stage": "runs/native-event-supervision/n66-v1/dev",
+  "source_commit": "203985fc14d45974789e37c40675a837264ab6a5",
+  "source_artifact_sha256": "36d4416233c3fe1211d13b9af33859e6740a4c5f1e775815950351a91f04cb3e",
+  "manifest": "configs/sft-pilot/calibration.json",
+  "review_model": "smarthome-qwen36-judge",
+  "review_endpoint": "http://192.168.60.254:20300/v1",
+  "chat_transport": "append_empty_user",
+  "node": "N72",
+  "schema": "public-action-semantic-diagnosis-v1",
+  "source_seeds": [
+    42,
+    43,
+    44
+  ],
+  "episodes": 36,
+  "proposals": 38,
+  "review_slots": 16,
+  "valid_ratio_min": 0.95,
+  "inputs_sha256": "a322aa6d86c637a08fdb494b6f4b6b06abc0af725b5905d09ab2327ddaed5b4d",
+  "intervention": "2x2 paired9B/35B x legacy/public preaction context; unchanged short review prompt and schema in all arms",
+  "selection": "Every Guard-admitted real mutation attempt from retained G calibration12x3seeds; include failed tool outcomes; no score-based selection or fabricated actions",
+  "metrics": [
+    "parse validity",
+    "YES/NO/UNCERTAIN and verdicts",
+    "paired label transitions",
+    "HTTP errors",
+    "all token and startup/allocation costs",
+    "developer semantic diagnosis;not independent truth"
+  ],
+  "exclusions": "Nonmutation or already Guard-blocked proposals counted; zero-mutation episodes retained; no removal based on model review",
+  "scope": "Exposed official single-turn historical traces only; no new benchmark,simulation,training,Task completion or independent holdout.9B self-review and shared35B judge bias retained.",
+  "stop_rule": "One frozen152-request diagnosis with no selective retries,prompt/gate tuning or automatic expansion. Engineering gate does not admit a native verifier. Developer readings and error analysis precede any separately frozen report-only online ablation."
+}

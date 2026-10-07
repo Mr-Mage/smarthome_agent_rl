@@ -31,6 +31,14 @@ def main():
         raise ValueError('Online node driver requires the existing agent-lightning environment with agl-server; source ../activate-agent-lightning.sh first')
     if config.get('driver_python') and Path(sys.executable).resolve() != Path(config['driver_python']).resolve():
         raise ValueError('Driver interpreter differs from frozen driver_python')
+    interpreters = {'simulator': ROOT / '.venv-simuhome/bin/python',
+                    'episode': ROOT / '.venv-baseline/bin/python',
+                    'model': Path(config['model_python'])}
+    for label, path in interpreters.items():
+        if not path.is_file() or not os.access(path, os.X_OK):
+            raise FileNotFoundError(f'Existing {label} interpreter missing: {path}; map the existing environment before reserving GPUs')
+    if not (ROOT / config['actor_path']).is_dir() or not (ROOT / 'deps/SimuHome').is_dir():
+        raise FileNotFoundError('Existing actor weights or SimuHome source unavailable')
     slots = execution_slots(config)
     if len(slots) != 64 or len(config['workflows']) != 4 or not external_judge(config):
         raise ValueError('Node execution requires four actors, 64 slots and external judge')
@@ -42,6 +50,7 @@ def main():
     services = run / 'services'
     services.mkdir()
     write(run / 'protocol.json', {'commit': commit, 'config': config, 'config_sha256': digest(config_path),
+        'runtime_interpreters': {label: str(path.resolve()) for label, path in interpreters.items()},
         'stages': [{**s, 'manifest_sha256': digest(ROOT / s['manifest'])} for s in config['node_experiment']['stages']],
         'exclusions': 'None; task failures retained. Infrastructure failure invalidates entire stage; no selective reruns.',
         'resources': {'actors': 4, 'total_slots': 64, 'judge_managed': False},
@@ -133,6 +142,12 @@ def main():
             completion = json.loads((directory / 'completion.json').read_text())
             write(run / (name + '-resources.json'), {'allocated_actor_gpu_seconds': 4 * completion['elapsed_seconds'],
                 'scope': 'Four reserved H100 actors × suite elapsed; not active GPU compute or monetary cost'})
+            if config['node_experiment']['node'] == 'N47':
+                command('analyze_runtime_ablation.py', '--run', args.run_dir, '--stage', name)
+                gate = json.loads((run / (name + '-runtime-gate.json')).read_text())
+                if name == 'smoke' and not gate['can_continue']:
+                    state('stopped_by_gate', gate=gate, reference_retained='G')
+                    return
         if config['node_experiment']['node'] == 'N15':
             write(run / 'selection.json', select_guard(reports['dev'], config['node_experiment']['gates']))
         elif config['node_experiment']['node'] == 'N16':
@@ -145,6 +160,15 @@ def main():
             command('analyze_task_spec.py', '--run', args.run_dir)
         elif config['node_experiment']['node'] == 'N36':
             command('verify_delivery.py', '--run', args.run_dir)
+        elif config['node_experiment']['node'] in ('N63', 'N66'):
+            command('analyze_native_task_runtime.py', '--run', args.run_dir,
+                    '--stage', config['node_experiment']['stages'][0].get('name', 'calibration'))
+        elif config['node_experiment']['node'] == 'N69':
+            command('audit_native_resource_context.py', '--run', args.run_dir,
+                    '--stage', config['node_experiment']['stages'][0].get('name', 'calibration'))
+        elif config['node_experiment']['node'] == 'N78':
+            command('audit_native_report_review.py', '--run', args.run_dir,
+                    '--stage', config['node_experiment']['stages'][0].get('name', 'calibration'))
         state('complete')
     except BaseException as exc:
         write(run / 'failure.json', {'type': type(exc).__name__, 'message': str(exc)})

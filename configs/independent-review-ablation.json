@@ -1,0 +1,141 @@
+{
+  "model": "smarthome-qwen35-9b",
+  "actor_path": "../models/Qwen3.5-9B",
+  "model_python": "/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/anaconda3/envs/qwen36-vllm/bin/python",
+  "context": 32768,
+  "engine_seed": 0,
+  "model_seed": 42,
+  "generation": {
+    "temperature": 0.0,
+    "max_tokens": 2048,
+    "extra_body": {
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    }
+  },
+  "slots_per_actor": 16,
+  "max_num_seqs": 32,
+  "gpu_memory_utilization": 0.8,
+  "startup_timeout": 1200,
+  "request_timeout": 240,
+  "actors": [
+    {
+      "id": 0,
+      "gpu": 0,
+      "endpoint": "http://127.0.0.1:20400/v1"
+    },
+    {
+      "id": 1,
+      "gpu": 1,
+      "endpoint": "http://127.0.0.1:20401/v1"
+    },
+    {
+      "id": 2,
+      "gpu": 2,
+      "endpoint": "http://127.0.0.1:20402/v1"
+    },
+    {
+      "id": 3,
+      "gpu": 3,
+      "endpoint": "http://127.0.0.1:20403/v1"
+    }
+  ],
+  "actor_extra_args": [
+    "--gdn-prefill-backend",
+    "triton",
+    "--structured-outputs-config",
+    "{\"backend\":\"xgrammar\",\"disable_any_whitespace\":true}"
+  ],
+  "kernel_cache_root": "/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/zhengrj/agent/smarthome_agent_rl/work/concurrency-capacity/kernel-cache",
+  "chat_transport": "append_empty_user",
+  "developer_labels_sha256": "da2ed8a8b832ffd9b200b23448c5c0502cb65fed15d5c00194fc919dc23cad2c",
+  "developer_counts": {
+    "CONSISTENT_CONTROL": 3,
+    "CERTAIN_CONFLICT": 6,
+    "UNCERTAIN": 29,
+    "UNLABELED": 40
+  },
+  "developer_conflict_groups": {
+    "time": [
+      "n76:qt4-1_feasible_seed_26:seed42:a000007",
+      "n76:qt4-1_feasible_seed_26:seed42:a000009",
+      "n76:qt4-1_feasible_seed_26:seed43:a000006",
+      "n76:qt4-1_feasible_seed_26:seed43:a000008"
+    ],
+    "target": [
+      "n76:qt4-1_infeasible_seed_27:seed42:a000009",
+      "n76:qt4-1_infeasible_seed_27:seed44:a000007"
+    ]
+  },
+  "valid_ratio_min": 0.95,
+  "evidence_valid_ratio_min": 0.95,
+  "node": "N92",
+  "schema": "independent-four-dimension-review-v1",
+  "parent_run": "runs/partitioned-goal-ablation/n91-v1",
+  "parent_collection_sha256": "4a4e4ea0f590e6fb6309439aca83ca6966b43a05e054ee476d91a8b2a22e9228",
+  "inputs_sha256": "7bbc6b7dd1fc280d52c06e529fe19ba7b9b5037b0a91a7224f9c3a4a57a0bd00",
+  "records": 78,
+  "new_requests": 390,
+  "arms": [
+    "joint",
+    "independent"
+  ],
+  "exclusions": "None;no successful-reference-only selection,new labels,hidden evaluators,sealed95 or corrected historical outputs.",
+  "scope": "Official alreadyexposed singleturn engineering/semantic diagnosis only;no training,newbenchmark,sealed95,SR,blocking,Taskcompletion ordefaultchange.",
+  "ordered_schemas_sha256": "96feb69e930e9f5b924fe0d9e89dd1de2787348a5db689346e83afddecce17d3",
+  "ordered_requests_sha256": "2a088cc712d8a6afb757bfd088696c270aaab660295e79384c4b44642512a70e",
+  "known_empty_history_inputs": 45,
+  "decoder_source": {
+    "versions": {
+      "vllm": "0.19.0",
+      "xgrammar": "0.2.3"
+    },
+    "source_sha256": {
+      "/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/anaconda3/envs/qwen36-vllm/lib/python3.12/site-packages/vllm/config/structured_outputs.py": "55649776594349b8b4aa3e08fc4c88068366732a486d6fb235079188044aa829",
+      "/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/anaconda3/envs/qwen36-vllm/lib/python3.12/site-packages/vllm/v1/structured_output/backend_xgrammar.py": "e78109e76ea84a4464f5206e5ee4f26679367394ce6f31ef5304ce87fa785f21",
+      "/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/anaconda3/envs/qwen36-vllm/lib/python3.12/site-packages/vllm/v1/structured_output/__init__.py": "1aa9481191a688157008ef5e0a69450545a958b90cf5e9ebf5aa314837f2fb61"
+    },
+    "read_only": true
+  },
+  "selection": "All78 already-exposed official inputs and original labels; no filtering, sealed95 or new tasks.",
+  "intervention": "One architecture package:joint four-decision decode vsfour isolated single-dimension decodes with output-scope note andfixed512/1024/256/256 caps,total2048. No prior model outputs acrosscomponents;fullpubliccontext andoriginaldimension schemas/rules preserved.",
+  "metrics": [
+    "156review records/390original HTTP calls required;strict parser/order/schema/literal and6DENY/3ALLOW/4time+2target reason gates unchanged",
+    "Paired labels/verdict changes andbounded-reference consistency diagnostic only",
+    "Allreal calls,prompt/output tokens,HTTP/truncation failures andmissingusage;HTTP median percall,queue-inclusive reviewspan separately"
+  ],
+  "diagnostic_screen": "All156reviews and390unique rawcalls required;losslessassembly thenoriginal parser/reason gates. Per-dimensioncaps maytruncate,failures retained. No nativeadoption evenifpassed;not entailment orSR.",
+  "budget": {
+    "new_requests": 390,
+    "review_records": 156,
+    "maximum_completion_tokens": 319488,
+    "maximum_completion_tokens_per_input_per_arm": 2048,
+    "total_slots": 64,
+    "requests_per_actor": [
+      100,
+      100,
+      95,
+      95
+    ],
+    "retries": 0
+  },
+  "stop_rule": "One frozen390call run afterall schema/token/source andper-dimension schema-valid output-example preflight. No retries,repair,labels,gate changes,budget reallocation/increase,environment edits ornative expansion. Stop onlyowned actors.",
+  "actor_affinity": "index%4 actor forjoint andallfour independentcomponents;four9B/H100,16slots each,64total.Flat390-job pool,rotate5component submissionorder byindex%5;no nested heldslots,simulator orjudge calls.",
+  "resolution": "Keep original HTTP component outputs;strict duplicate/scope validation thenjoin selected dimensionfields only. Existingreflection aggregation andcitationdereference unchanged. No synthetic HTTP receipts;derived assemblies andmetricsadapter explicitly separate.",
+  "components": [
+    "joint",
+    "correct_target",
+    "goal_consistent",
+    "trajectory_consistent",
+    "safe_to_execute"
+  ],
+  "review_records": 156,
+  "dimension_tokens": {
+    "correct_target": 512,
+    "goal_consistent": 1024,
+    "trajectory_consistent": 256,
+    "safe_to_execute": 256
+  },
+  "latency_scope": "Component HTTP requestseconds excluding queue;reviewspan fromfirst submission tolast componentfinish includes frozen queue. Sum HTTP durations isnot walltime;startup/cleanup andpreparation separately."
+}

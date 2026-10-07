@@ -36,12 +36,12 @@ def verify(run):
                     continue
                 contract_path = episode_directory(run, item, variant) / 'contract.json'
                 if contract_path.exists():
-                    config = json.loads(contract_path.read_text())['config']
+                    config = json.loads(contract_path.read_text(encoding='utf-8'))['config']
                     if 'actor_seed' in item and config['model_seed'] != item['actor_seed']:
                         failures.append({'task': item['task']['id'], 'variant': variant, 'problem': 'actor seed isolation mismatch'})
                     calls_path = contract_path.parent / 'model_calls.json'
                     if calls_path.exists() and any(call['request'].get('seed') != config['model_seed']
-                            for call in json.loads(calls_path.read_text())):
+                            for call in json.loads(calls_path.read_text(encoding='utf-8'))):
                         failures.append({'task': item['task']['id'], 'variant': variant, 'problem': 'HTTP actor seed differs from contract'})
                     expected=runtime(protocol['config'],variant,slot) if 'config' in protocol else {'model_endpoint':f"http://127.0.0.1:{slot['actor_port']}/v1"}
                     if config['simulator_url'] != f"http://127.0.0.1:{slot['simulator_port']}/api" or (
@@ -50,7 +50,7 @@ def verify(run):
                     if 'config' in protocol and (config['served_model']!=expected['served_model'] or config['generation']!=expected['generation']):
                         failures.append({'task':item['task']['id'],'variant':variant,'problem':'variant runtime differs from frozen protocol'})
                     if 'config' in protocol and calls_path.exists():
-                        for call in json.loads(calls_path.read_text()):
+                        for call in json.loads(calls_path.read_text(encoding='utf-8')):
                             if call['request']['model']!=expected['served_model'] or (
                                 call.get('status')==200 and call['response'].get('model')!=expected['served_model']):
                                 failures.append({'task':item['task']['id'],'variant':variant,'problem':'HTTP served model identity mismatch'})

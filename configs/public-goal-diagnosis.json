@@ -1,0 +1,112 @@
+{
+  "model": "smarthome-qwen35-9b",
+  "actor_path": "../models/Qwen3.5-9B",
+  "model_python": "/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/anaconda3/envs/qwen36-vllm/bin/python",
+  "context": 32768,
+  "engine_seed": 0,
+  "model_seed": 42,
+  "generation": {
+    "temperature": 0.7,
+    "top_p": 0.8,
+    "max_tokens": 4096,
+    "presence_penalty": 1.5,
+    "extra_body": {
+      "top_k": 20,
+      "min_p": 0.0,
+      "repetition_penalty": 1.0,
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    }
+  },
+  "slots_per_actor": 16,
+  "max_num_seqs": 32,
+  "gpu_memory_utilization": 0.8,
+  "startup_timeout": 1200,
+  "request_timeout": 240,
+  "actors": [
+    {
+      "id": 0,
+      "gpu": 0,
+      "endpoint": "http://127.0.0.1:20400/v1"
+    },
+    {
+      "id": 1,
+      "gpu": 1,
+      "endpoint": "http://127.0.0.1:20401/v1"
+    },
+    {
+      "id": 2,
+      "gpu": 2,
+      "endpoint": "http://127.0.0.1:20402/v1"
+    },
+    {
+      "id": 3,
+      "gpu": 3,
+      "endpoint": "http://127.0.0.1:20403/v1"
+    }
+  ],
+  "actor_extra_args": [
+    "--gdn-prefill-backend",
+    "triton"
+  ],
+  "kernel_cache_root": "/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/zhengrj/agent/smarthome_agent_rl/work/concurrency-capacity/kernel-cache",
+  "schema": "public-goal-diagnosis-v1",
+  "node": "N67",
+  "actor_seeds": [
+    42,
+    43,
+    44
+  ],
+  "source_stage": "runs/native-event-supervision/n66-v1/dev",
+  "source_commit": "203985fc14d45974789e37c40675a837264ab6a5",
+  "source_artifact_sha256": "36d4416233c3fe1211d13b9af33859e6740a4c5f1e775815950351a91f04cb3e",
+  "manifest": "configs/benchmark-v2/dev.json",
+  "review_model": "smarthome-qwen36-judge",
+  "review_endpoint": "http://192.168.60.254:20300/v1",
+  "review_seed": 42,
+  "review_generation": {
+    "temperature": 0.0,
+    "max_tokens": 1024,
+    "extra_body": {
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    }
+  },
+  "gates": {
+    "records": 360,
+    "public_tasks": 120,
+    "valid_proposal_ratio_min": 0.95,
+    "review_all_yes_ratio_min": 0.95,
+    "manual_semantics_all_pass": true,
+    "http_errors": 0,
+    "missing_usage": 0
+  },
+  "manual_review": {
+    "task_ids": [
+      "qt1_feasible_seed_11",
+      "qt1_infeasible_seed_42",
+      "qt2_feasible_seed_73",
+      "qt2_infeasible_seed_124",
+      "qt3_feasible_seed_2",
+      "qt3_infeasible_seed_19",
+      "qt4-1_feasible_seed_34",
+      "qt4-1_infeasible_seed_41",
+      "qt4-2_feasible_seed_31",
+      "qt4-2_infeasible_seed_47",
+      "qt4-3_feasible_seed_73",
+      "qt4-3_infeasible_seed_22"
+    ],
+    "criteria": [
+      "Every requested phase and condition preserved verbatim or explicitly unresolved",
+      "No invented target/threshold/command or completion",
+      "Dependencies belong to the requested sequence,not another device",
+      "Indirect wishes/event ambiguity preserved; reject fabricated clock anchors"
+    ],
+    "scope": "12 hash-selected exposed tasks x3 seeds; assess before any native integration. Model reviewer alone cannot satisfy this gate."
+  },
+  "stop_rule": "One frozen360-record public-goal diagnosis. Preserve every invalid/truncated/error output and all cost. No selective retry or prompt/gate/source tuning from outcomes. Failed gates stop native goal integration.",
+  "scope": "Previously exposed dev120 public input only; no sealed95 access,training,new benchmark,simulator action,native score input or N33/N47/N63 rerun. Three repeats do not increase independent task count. Reviewer shares official judge model; model agreement is not semantic ground truth.",
+  "chat_transport": "append_empty_user"
+}
