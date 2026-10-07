@@ -3,6 +3,103 @@
   "scope": "Latest user confirmation: official single-turn harness diagnostics/ablations only; no SFT/RL, new benchmark or multi-session experiments.",
   "default": "Qwen3.5-9B + G; permanent baseline tag baseline/1007-9b-g",
   "nodes": {
+    "N76": {
+      "status": "engineering_passed_evidence_screen_failed_not_admitted",
+      "source_commit": "57ae129",
+      "config": "configs/public-typed-semantic-review.json",
+      "evidence": "runs/typed-semantic-review/n76-v1/",
+      "source_episodes": 36,
+      "proposals": 38,
+      "new_requests": 38,
+      "reused_baseline_requests": 38,
+      "arms": {
+        "9b_historical_stepwise": {
+          "records": 38,
+          "valid": 38,
+          "verdicts": {
+            "DENY": 27,
+            "ALLOW": 10,
+            "UNCERTAIN": 1
+          },
+          "tokens": 140004,
+          "http_errors": 0,
+          "missing_usage": 0,
+          "parse_errors": 0,
+          "schema_conformant": 36,
+          "median_request_seconds": 4.381275499006733,
+          "developer_conflicts": {
+            "DENY": 6
+          },
+          "developer_controls": {
+            "ALLOW": 3
+          },
+          "developer_unknowns": {
+            "DENY": 21,
+            "ALLOW": 7,
+            "UNCERTAIN": 1
+          },
+          "step_evidence": {
+            "valid": 35,
+            "issues": {
+              "target:missing_or_extra_steps": 2,
+              "time:missing_or_extra_steps": 1,
+              "target:nonliteral_quote": 1
+            }
+          },
+          "cost_origin": "immutable N75;not new cost"
+        },
+        "9b_typed": {
+          "records": 38,
+          "valid": 37,
+          "verdicts": {
+            "DENY": 26,
+            "ALLOW": 9,
+            "UNCERTAIN": 2,
+            "INVALID": 1
+          },
+          "tokens": 142168,
+          "http_errors": 0,
+          "missing_usage": 0,
+          "parse_errors": 1,
+          "schema_conformant": 37,
+          "median_request_seconds": 4.456553769472521,
+          "developer_conflicts": {
+            "DENY": 6
+          },
+          "developer_controls": {
+            "ALLOW": 3
+          },
+          "developer_unknowns": {
+            "DENY": 20,
+            "ALLOW": 6,
+            "UNCERTAIN": 2,
+            "INVALID": 1
+          },
+          "step_evidence": {
+            "valid": 36,
+            "issues": {
+              "target:nonliteral_quote": 1,
+              "invalid_model_decision": 1
+            }
+          },
+          "cost_origin": "new inference"
+        }
+      },
+      "developer_case_gate": true,
+      "diagnostic_screen_passed": false,
+      "acceptance": "38 existing backend grammars;6 specialized;full373,372 passed/1 skip;server/local554 artifacts,36 episodes,38 cutoffs,38 new/38 reused requests",
+      "cost": {
+        "new_model_tokens": 142168,
+        "probe_requests": 4,
+        "probe_tokens": 88,
+        "wall_seconds": 84.00364646100206,
+        "reserved_h100_gpu_seconds": 335.97557493206114,
+        "preparation_seconds": 6.778953535016626,
+        "snapshot_seconds": 1.6414130060002208
+      },
+      "archive_sha256": "f6c87a501d91f172b6216ef673a31d5f796ec86a63ab5ceaa484b2fa7a4c7cfc",
+      "scope": "37/38 schema conformant,36/38 literal evidence;all6 developer conflicts denied/3 controls allowed,but reasons andunknown29 rejection truth unverified;no native adoption"
+    },
     "N75": {
       "status": "developer_case_gate_passed_step_evidence_failed_not_admitted",
       "implementation_commit": "affebb5",
@@ -833,6 +930,6 @@
     "native_user_goal_conditions": "unimplemented;N67/N70 parsers failed admission;N66/N69 Task remain WAITING,action intentions do not prove user goals",
     "common_simuhome_adapter": "N61 unified entry and public actor boundary verified; native protocols and scores retained"
   },
-  "benefit_acceptance": "not satisfied; no stable benefit on two public benchmarks. N66 CI crosses zero;N67/N70 semantic admission failed;N69 SR flips all without candidate context and tiny stratified interval degenerates. N72/N74 semantic reviews not admitted;N74 all6 conflicts missed;N75 combined6/6 developer denials but35/38 evidence andunverified rejection reasons fail admission. G retained",
-  "next": "Independent dynamic evidence-schema-only diagnosis on38 retained N75 contexts;keep prompt/model unchanged;schema constrains metadata not labels;no automatic native blocking"
+  "benefit_acceptance": "not satisfied; no stable benefit on two public benchmarks. N66 CI crosses zero;N67/N70 semantic admission failed;N69 SR flips all without candidate context and tiny stratified interval degenerates. N72/N74 semantic reviews not admitted;N74 all6 conflicts missed;N75 combined6/6 developer denials but35/38 evidence;N76 dynamic schema37/38 andevidence36/38 fail screen,reasons unverified. G retained",
+  "next": "Native report-only adapter engineering: isolate HTTP/parse/literal-evidence failures as UNCERTAIN with raw/cost retained;never automatic semantic blocking or relabeling frozen model validity. Then independently freeze official single-turn coverage/cost diagnosis."
 }
