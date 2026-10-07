@@ -3,6 +3,152 @@
   "scope": "Latest user confirmation: official single-turn harness diagnostics/ablations only; no SFT/RL, new benchmark or multi-session experiments.",
   "default": "Qwen3.5-9B + G; permanent baseline tag baseline/1007-9b-g",
   "nodes": {
+    "N84": {
+      "status": "all_original_citation_binding_diagnosis_complete_no_semantic_admission",
+      "source_commit": "2c05235cc95e4f1229bf461848e54d0c6cad50a7",
+      "config": "configs/citation-binding-report.json",
+      "evidence": "runs/citation-binding-report/n84-v1/",
+      "report": {
+        "complete": true,
+        "records": 156,
+        "arms": {
+          "quotes": {
+            "records": 78,
+            "schema_conformant": 78,
+            "literal_evidence_valid": 74,
+            "original_verdicts": {
+              "DENY": 33,
+              "ALLOW": 36,
+              "UNCERTAIN": 9
+            },
+            "record_flags": {
+              "unavailable_schema": 0,
+              "invalid_literal_evidence": 4,
+              "aggregate_mismatch": 0,
+              "unsupported_with_public_identity_words": 2,
+              "requested_without_joint_quote_words": 33,
+              "multiple_percentage_references": 0,
+              "no_explicit_percentage": 8,
+              "disjoint_literal_offset_words": 0
+            },
+            "identity_steps": 126,
+            "identity_word_panel_available": 125,
+            "declared_support": {
+              "requested": 105,
+              "unsupported": 16,
+              "prerequisite": 3,
+              "implicit": 2
+            },
+            "unsupported_with_public_identity_words_steps": 8,
+            "requested_without_joint_quote_words_steps": 39,
+            "percentage_steps": 40,
+            "percentage_statuses": {
+              "literal_percentage_matches": 21,
+              "literal_percentage_disagrees": 5,
+              "no_explicit_percentage": 9,
+              "invalid_literal_evidence": 5
+            },
+            "disjoint_literal_offset_words_steps": 0
+          },
+          "citations": {
+            "records": 78,
+            "schema_conformant": 78,
+            "literal_evidence_valid": 78,
+            "original_verdicts": {
+              "DENY": 35,
+              "ALLOW": 28,
+              "UNCERTAIN": 15
+            },
+            "record_flags": {
+              "unavailable_schema": 0,
+              "invalid_literal_evidence": 0,
+              "aggregate_mismatch": 1,
+              "unsupported_with_public_identity_words": 3,
+              "requested_without_joint_quote_words": 30,
+              "multiple_percentage_references": 7,
+              "no_explicit_percentage": 10,
+              "disjoint_literal_offset_words": 7
+            },
+            "identity_steps": 126,
+            "identity_word_panel_available": 125,
+            "declared_support": {
+              "unsupported": 21,
+              "requested": 99,
+              "implicit": 2,
+              "unknown": 4
+            },
+            "unsupported_with_public_identity_words_steps": 11,
+            "requested_without_joint_quote_words_steps": 31,
+            "percentage_steps": 40,
+            "percentage_statuses": {
+              "literal_percentage_matches": 20,
+              "no_explicit_percentage": 13,
+              "multiple_percentage_references": 7
+            },
+            "disjoint_literal_offset_words_steps": 7
+          }
+        },
+        "paired_flags": {
+          "unavailable_schema": {
+            "False->False": 78
+          },
+          "invalid_literal_evidence": {
+            "False->False": 74,
+            "True->False": 4
+          },
+          "aggregate_mismatch": {
+            "False->False": 77,
+            "False->True": 1
+          },
+          "unsupported_with_public_identity_words": {
+            "False->False": 75,
+            "True->True": 2,
+            "False->True": 1
+          },
+          "requested_without_joint_quote_words": {
+            "True->True": 28,
+            "False->False": 43,
+            "False->True": 2,
+            "True->False": 5
+          },
+          "multiple_percentage_references": {
+            "False->False": 71,
+            "False->True": 7
+          },
+          "no_explicit_percentage": {
+            "False->False": 68,
+            "True->True": 8,
+            "False->True": 2
+          },
+          "disjoint_literal_offset_words": {
+            "False->False": 71,
+            "False->True": 7
+          }
+        },
+        "coverage": {
+          "task_count": 9,
+          "distinct_contexts": 72,
+          "paired_inputs": 78
+        },
+        "new_model_requests": 0,
+        "new_tokens": 0,
+        "reserved_gpu_seconds": 0,
+        "original_decisions_changed": 0,
+        "semantic_status": "UNVERIFIED",
+        "native_admitted": false,
+        "scope": "All156 original N83 receipts including failures. Mechanical post-hoc coverage diagnosis;repeated task trajectories not independent benefits. No label projection,blocking orTask completion."
+      },
+      "cost": {
+        "new_model_requests": 0,
+        "new_tokens": 0,
+        "reserved_gpu_seconds": 0,
+        "cpu_wall_seconds": 4.875714130990673,
+        "test_seconds": 7.352
+      },
+      "acceptance": "7specialized;428server,427passed/1skip;156raw source HTTP,176parent collection files,10collection files,298source blobs verified onserver/local;no decision change",
+      "archive_sha256": "3e5fa5e76e6922829e7e95195c8156f98468a1da5331e256ae9bf77de5563df8",
+      "default_changed": false
+    },
     "N83": {
       "status": "citation_representation_complete_format_coverage_improved_semantic_screen_failed",
       "source_commit": "073140154c094d0ab75c3a320e27f36a65b818cc",
@@ -1975,6 +2121,6 @@
     "native_user_goal_conditions": "unimplemented;N67/N70 parsers failed admission;N66/N69 Task remain WAITING,action intentions do not prove user goals",
     "common_simuhome_adapter": "N61 unified entry and public actor boundary verified; native protocols and scores retained"
   },
-  "benefit_acceptance": "not satisfied; no stable benefit on two public benchmarks. N66 CI crosses zero;N67/N70 semantic admission failed;N69 SR flips all without candidate context and tiny stratified interval degenerates. N72/N74 semantic reviews not admitted;N74 all6 conflicts missed;N75 combined6/6 developer denials but35/38 evidence;N76 dynamic schema37/38 andevidence36/38 fail screen,reasons unverified. G retained N77 failure isolation andN78 coverage accepted;N78 all3 wins without review,no attributed benefit;G retained. N80 all3 representation screens failed;coherence internal conflicts0 but24/78 aggregate mismatches,effects quotes degrade;no admission. N82 evidence-first original outputs remove28 aggregate mismatches andrecover2 target dimensions,quotes73/78 fail95%;no native admission or added SR. N83 citation coverage78/78 byconstruction,butaggregate mismatch1 andtime reason dimensions2/4;freshquotes74/78 fail95%. Bothscreens failed;no nativeadmission ornewSR;G retained.",
-  "next": "Read-only audit all156 retained N83 outputs for public device identity,phase andparameter citation misbinding,including missing/null andunknown claims;preserve original decisions,denominators andcosts. Then freeze an independent single-factor ablation before anyinference. No native expansion,training,newbenchmark,sealed95 ordefault change."
+  "benefit_acceptance": "not satisfied; no stable benefit on two public benchmarks. N66 CI crosses zero;N67/N70 semantic admission failed;N69 SR flips all without candidate context and tiny stratified interval degenerates. N72/N74 semantic reviews not admitted;N74 all6 conflicts missed;N75 combined6/6 developer denials but35/38 evidence;N76 dynamic schema37/38 andevidence36/38 fail screen,reasons unverified. G retained N77 failure isolation andN78 coverage accepted;N78 all3 wins without review,no attributed benefit;G retained. N80 all3 representation screens failed;coherence internal conflicts0 but24/78 aggregate mismatches,effects quotes degrade;no admission. N82 evidence-first original outputs remove28 aggregate mismatches andrecover2 target dimensions,quotes73/78 fail95%;no native admission or added SR. N83 citation coverage78/78 byconstruction,butaggregate mismatch1 andtime reason dimensions2/4;freshquotes74/78 fail95%. Bothscreens failed;no nativeadmission ornewSR;G retained. N84 all156 original outputs read-only audited;unsupported withobserved room/type lexical windows2->3 records,multivalue percentage0->7 andoffset-worddisjoint0->7;coverage flags not semantic truth,no newSR oradmission.",
+  "next": "Freeze a paired single-factor public identity presentation ablation onall78 retained inputs:append onlyobserved proposed-device identity fields withreceipt provenance;keeporiginal public context,prompt,schema,citation catalog,generation anddeveloper groups unchanged. Comparefresh N83 citation control,keepallfailures,null/multivalue evidence andcosts;fourH100/64slots. No identity truth fromdeviceID orlexical matches,native expansion,training,newbenchmark,sealed95 ordefault change."
 }
