@@ -3,6 +3,234 @@
   "scope": "Latest user confirmation: official single-turn harness diagnostics/ablations only; no SFT/RL, new benchmark or multi-session experiments.",
   "default": "Qwen3.5-9B + G; permanent baseline tag baseline/1007-9b-g",
   "nodes": {
+    "N83": {
+      "status": "citation_representation_complete_format_coverage_improved_semantic_screen_failed",
+      "source_commit": "073140154c094d0ab75c3a320e27f36a65b818cc",
+      "config": "configs/citation-review.json",
+      "evidence": "runs/citation-review/n83-v1/",
+      "records_per_arm": 78,
+      "new_requests": 156,
+      "arms": {
+        "quotes": {
+          "records": 78,
+          "parsed": 78,
+          "schema_conformant": 78,
+          "literal_evidence_valid": 74,
+          "evidence_issues": {
+            "effect:nonliteral_quote": 5
+          },
+          "internal_conflict_records": 0,
+          "aggregate_mismatch_records": 0,
+          "verdicts": {
+            "ALLOW": 36,
+            "DENY": 33,
+            "UNCERTAIN": 9
+          },
+          "evidence_first_outputs": 78,
+          "label_first_outputs": 0,
+          "invalid_order_outputs": 0,
+          "tokens": 330394,
+          "prompt_tokens": 288868,
+          "completion_tokens": 41526,
+          "http_errors": 0,
+          "missing_usage": 0,
+          "truncations": 0,
+          "median_request_seconds": 5.998897482495522,
+          "developer_conflicts": {
+            "DENY": 6
+          },
+          "developer_controls": {
+            "ALLOW": 3
+          },
+          "developer_reason_dimensions": {
+            "time": {
+              "records": 4,
+              "expected_dimension_no": 4
+            },
+            "target": {
+              "records": 2,
+              "expected_dimension_no": 2
+            }
+          },
+          "by_origin": {
+            "n76": {
+              "records": 38,
+              "literal_evidence_valid": 36
+            },
+            "n78": {
+              "records": 40,
+              "literal_evidence_valid": 38
+            }
+          },
+          "binding_percentage_statuses": {
+            "literal_percentage_disagrees": 5,
+            "literal_percentage_matches": 26,
+            "no_explicit_percentage": 9
+          },
+          "percentage_agreement_conflict_records": 0,
+          "offset_binding_review_records": 0,
+          "resolution_errors": 0
+        },
+        "citations": {
+          "records": 78,
+          "parsed": 78,
+          "schema_conformant": 78,
+          "literal_evidence_valid": 78,
+          "evidence_issues": {},
+          "internal_conflict_records": 0,
+          "aggregate_mismatch_records": 1,
+          "verdicts": {
+            "ALLOW": 28,
+            "DENY": 35,
+            "UNCERTAIN": 15
+          },
+          "evidence_first_outputs": 78,
+          "label_first_outputs": 0,
+          "invalid_order_outputs": 0,
+          "tokens": 403792,
+          "prompt_tokens": 364921,
+          "completion_tokens": 38871,
+          "http_errors": 0,
+          "missing_usage": 0,
+          "truncations": 0,
+          "median_request_seconds": 5.855127374001313,
+          "developer_conflicts": {
+            "DENY": 6
+          },
+          "developer_controls": {
+            "ALLOW": 3
+          },
+          "developer_reason_dimensions": {
+            "time": {
+              "records": 4,
+              "expected_dimension_no": 2
+            },
+            "target": {
+              "records": 2,
+              "expected_dimension_no": 2
+            }
+          },
+          "by_origin": {
+            "n76": {
+              "records": 38,
+              "literal_evidence_valid": 38
+            },
+            "n78": {
+              "records": 40,
+              "literal_evidence_valid": 40
+            }
+          },
+          "binding_percentage_statuses": {
+            "multiple_percentage_references": 7,
+            "literal_percentage_matches": 20,
+            "no_explicit_percentage": 13
+          },
+          "percentage_agreement_conflict_records": 0,
+          "offset_binding_review_records": 7,
+          "resolution_errors": 0
+        },
+        "historical_evidence_first": {
+          "records": 78,
+          "parsed": 78,
+          "schema_conformant": 78,
+          "literal_evidence_valid": 73,
+          "evidence_issues": {
+            "effect:nonliteral_quote": 5
+          },
+          "internal_conflict_records": 0,
+          "aggregate_mismatch_records": 0,
+          "verdicts": {
+            "DENY": 34,
+            "ALLOW": 36,
+            "UNCERTAIN": 8
+          },
+          "evidence_first_outputs": 78,
+          "label_first_outputs": 0,
+          "invalid_order_outputs": 0,
+          "tokens": 330740,
+          "prompt_tokens": 288868,
+          "completion_tokens": 41872,
+          "http_errors": 0,
+          "missing_usage": 0,
+          "truncations": 0,
+          "median_request_seconds": 5.57911589750438,
+          "developer_conflicts": {
+            "DENY": 6
+          },
+          "developer_controls": {
+            "ALLOW": 3
+          },
+          "developer_reason_dimensions": {
+            "time": {
+              "records": 4,
+              "expected_dimension_no": 4
+            },
+            "target": {
+              "records": 2,
+              "expected_dimension_no": 2
+            }
+          },
+          "by_origin": {
+            "n76": {
+              "records": 38,
+              "literal_evidence_valid": 36
+            },
+            "n78": {
+              "records": 40,
+              "literal_evidence_valid": 37
+            }
+          }
+        }
+      },
+      "transitions": {
+        "quotes->citations": {
+          "UNCERTAIN->UNCERTAIN": 2,
+          "ALLOW->ALLOW": 24,
+          "ALLOW->UNCERTAIN": 12,
+          "DENY->DENY": 30,
+          "UNCERTAIN->DENY": 5,
+          "UNCERTAIN->ALLOW": 2,
+          "DENY->ALLOW": 2,
+          "DENY->UNCERTAIN": 1
+        },
+        "historical_evidence_first->quotes": {
+          "DENY->UNCERTAIN": 1,
+          "ALLOW->ALLOW": 35,
+          "UNCERTAIN->UNCERTAIN": 7,
+          "DENY->DENY": 32,
+          "UNCERTAIN->DENY": 1,
+          "DENY->ALLOW": 1,
+          "ALLOW->UNCERTAIN": 1
+        }
+      },
+      "diagnostic_screen_passed": {
+        "quotes": false,
+        "citations": false
+      },
+      "native_admitted": false,
+      "cost": {
+        "new_tokens": 734186,
+        "probes": {
+          "requests": 4,
+          "failed": 0,
+          "tokens": 88,
+          "missing_usage": 0
+        },
+        "wall_seconds": 85.51094146101968,
+        "startup_seconds": 61.903203652997036,
+        "reserved_h100_gpu_seconds": 341.211396335857,
+        "preparation_seconds": 3.5742773310048506
+      },
+      "acceptance": "7 specialized;421server,420passed/1skip;156HTTP and text-only resolution,176collection files,294source blobs verified onserver/local;both frozen diagnostic screens failed",
+      "archive_sha256": "4ca7da5103d7f8f6e27bdaf60e96fa2e59d8f30443c36b9f73a1aada0bc69458",
+      "scope": "ID provenance by construction is not entailment. Both evidence-first;citation schema/prompt/catalog jointly changed. No native blocking,new SR,Task completion or default adoption.",
+      "cleanup": {
+        "bytes": 16002525,
+        "original_members": 1515,
+        "receipt": "runs/task-runtime/storage-cleanup-20261007-v6/receipt.json",
+        "receipt_sha256": "87dd8173938c35127fb785430c79c124b3e2e414d9bc0fe56bd48ade4d1596a8"
+      }
+    },
     "N82": {
       "status": "evidence_order_ablation_complete_structure_improved_quote_screen_failed",
       "source_commit": "e6acb2998b81f038f2930da8c0a300c849886bf3",
@@ -1747,6 +1975,6 @@
     "native_user_goal_conditions": "unimplemented;N67/N70 parsers failed admission;N66/N69 Task remain WAITING,action intentions do not prove user goals",
     "common_simuhome_adapter": "N61 unified entry and public actor boundary verified; native protocols and scores retained"
   },
-  "benefit_acceptance": "not satisfied; no stable benefit on two public benchmarks. N66 CI crosses zero;N67/N70 semantic admission failed;N69 SR flips all without candidate context and tiny stratified interval degenerates. N72/N74 semantic reviews not admitted;N74 all6 conflicts missed;N75 combined6/6 developer denials but35/38 evidence;N76 dynamic schema37/38 andevidence36/38 fail screen,reasons unverified. G retained N77 failure isolation andN78 coverage accepted;N78 all3 wins without review,no attributed benefit;G retained. N80 all3 representation screens failed;coherence internal conflicts0 but24/78 aggregate mismatches,effects quotes degrade;no admission. N82 evidence-first original outputs remove28 aggregate mismatches andrecover2 target dimensions,quotes73/78 fail95%;no native admission or added SR.",
-  "next": "Independently freeze a public citation-ID representation ablation with evidence-first generation and explicit phase/parameter support checks on the same78 retained official inputs. Literal citation existence is not entailment;keep historical quote failures andall cost. FourH100/64slots for inference;no training,new benchmark,sealed95,native blocking or default change."
+  "benefit_acceptance": "not satisfied; no stable benefit on two public benchmarks. N66 CI crosses zero;N67/N70 semantic admission failed;N69 SR flips all without candidate context and tiny stratified interval degenerates. N72/N74 semantic reviews not admitted;N74 all6 conflicts missed;N75 combined6/6 developer denials but35/38 evidence;N76 dynamic schema37/38 andevidence36/38 fail screen,reasons unverified. G retained N77 failure isolation andN78 coverage accepted;N78 all3 wins without review,no attributed benefit;G retained. N80 all3 representation screens failed;coherence internal conflicts0 but24/78 aggregate mismatches,effects quotes degrade;no admission. N82 evidence-first original outputs remove28 aggregate mismatches andrecover2 target dimensions,quotes73/78 fail95%;no native admission or added SR. N83 citation coverage78/78 byconstruction,butaggregate mismatch1 andtime reason dimensions2/4;freshquotes74/78 fail95%. Bothscreens failed;no nativeadmission ornewSR;G retained.",
+  "next": "Read-only audit all156 retained N83 outputs for public device identity,phase andparameter citation misbinding,including missing/null andunknown claims;preserve original decisions,denominators andcosts. Then freeze an independent single-factor ablation before anyinference. No native expansion,training,newbenchmark,sealed95 ordefault change."
 }
