@@ -3,6 +3,98 @@
   "scope": "Latest user confirmation: official single-turn harness diagnostics/ablations only; no SFT/RL, new benchmark or multi-session experiments.",
   "default": "Qwen3.5-9B + G; permanent baseline tag baseline/1007-9b-g",
   "nodes": {
+    "N79": {
+      "status": "read_only_evidence_consistency_diagnosis_completed_not_semantic_truth",
+      "source_commit": "04548dc",
+      "config": "configs/evidence-consistency-audit.json",
+      "evidence": "runs/evidence-consistency/n79-v1/",
+      "records": 78,
+      "distinct_contexts": 72,
+      "tasks_with_reviews": 9,
+      "origins": {
+        "n76": {
+          "records": 38,
+          "parsed_outputs": 37,
+          "schema_conformant": 37,
+          "literal_evidence_valid": 36,
+          "flagged_records": 19,
+          "flag_kinds": {
+            "target_yes_with_unsupported_steps": 2,
+            "target_no_without_declared_unsupported_step": 8,
+            "goal_no_without_declared_time_conflict": 8,
+            "time_conflict_despite_cited_anchor_arithmetic_match": 4
+          },
+          "flagged_records_by_class": {
+            "internal_conflict": 2,
+            "unsubstantiated_dimension": 14,
+            "arithmetic_binding_review": 3
+          },
+          "anchor_statuses": {
+            "unavailable_clock_encoding": 19,
+            "arithmetic_projection": 23,
+            "needs_previous_action_or_event_binding": 17,
+            "unhandled_quote": 4
+          },
+          "original_verdicts": {
+            "DENY": 26,
+            "ALLOW": 9,
+            "UNCERTAIN": 2,
+            "INVALID": 1
+          },
+          "reused_review_tokens": 142168
+        },
+        "n78": {
+          "records": 40,
+          "parsed_outputs": 39,
+          "schema_conformant": 39,
+          "literal_evidence_valid": 39,
+          "flagged_records": 16,
+          "flag_kinds": {
+            "target_no_without_declared_unsupported_step": 7,
+            "goal_no_without_declared_time_conflict": 9,
+            "time_conflict_despite_cited_anchor_arithmetic_match": 3,
+            "target_yes_with_unsupported_steps": 1
+          },
+          "flagged_records_by_class": {
+            "internal_conflict": 1,
+            "unsubstantiated_dimension": 13,
+            "arithmetic_binding_review": 2
+          },
+          "anchor_statuses": {
+            "unavailable_clock_encoding": 22,
+            "arithmetic_projection": 22,
+            "needs_previous_action_or_event_binding": 14,
+            "unhandled_quote": 1
+          },
+          "original_verdicts": {
+            "DENY": 26,
+            "ALLOW": 13,
+            "INVALID": 1
+          },
+          "reused_review_tokens": 138593
+        }
+      },
+      "new_model_requests": 0,
+      "new_tokens": 0,
+      "reserved_gpu_seconds": 0,
+      "changed_verdicts": 0,
+      "acceptance": "9 specialized;full390,389 passed/1skip;local1645 parent artifacts,78 HTTP,10 collection files,274 Git source blobs;original receipts unchanged",
+      "cost": {
+        "cpu_hash_parse_audit_write_seconds": 1.0023740849574097,
+        "tests_seconds": 7.17,
+        "historical_review_tokens": 280761,
+        "archive_transfer_cpu": "not fully measured"
+      },
+      "storage_cleanup": {
+        "files": 4,
+        "bytes": 23318401,
+        "receipt": "runs/task-runtime/storage-cleanup-20261007-v3/receipt.json",
+        "receipt_sha256": "043d721e1f26158fa98a450cf92cee3333ee28f4b959d5821630fe355391ae0d",
+        "all_local_backups_and_original_run_directories_verified": true
+      },
+      "archive_sha256": "aff90af3b2ff3eddb2bd8c30c303665071e15494dec5536c20ba3c4d3be33309",
+      "scope": "3 internally conflicting outputs,27 with unsupported dimension evidence,5 clock-binding review records;not semantic error truth or false rejection accuracy. No changed labels,blocking,SR or default adoption."
+    },
     "N78": {
       "status": "native_report_only_engineering_verified_no_attributed_benefit",
       "source_commit": "a2b120f",
@@ -1172,5 +1264,5 @@
     "common_simuhome_adapter": "N61 unified entry and public actor boundary verified; native protocols and scores retained"
   },
   "benefit_acceptance": "not satisfied; no stable benefit on two public benchmarks. N66 CI crosses zero;N67/N70 semantic admission failed;N69 SR flips all without candidate context and tiny stratified interval degenerates. N72/N74 semantic reviews not admitted;N74 all6 conflicts missed;N75 combined6/6 developer denials but35/38 evidence;N76 dynamic schema37/38 andevidence36/38 fail screen,reasons unverified. G retained N77 failure isolation andN78 coverage accepted;N78 all3 wins without review,no attributed benefit;G retained.",
-  "next": "Audit whether literal quotes actually support per-device/per-time decisions on existing exposed official evidence;freeze any further intervention independently. Retain synchronous report reviewer for diagnosis only;no automatic online expansion,blocking,training or sealed95 access."
+  "next": "Independently freeze a per-step representation diagnosis that separates command/value effects from timing and makes aggregate label/evidence relations explicit. Reuse original N79 cohort without native benchmark rerun. FourH100 for future inference;no semantic blocking,training,sealed95 or automatic N78 expansion."
 }
