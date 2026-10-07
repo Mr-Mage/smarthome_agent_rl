@@ -38,6 +38,7 @@ class RuntimeBoundary:
         if policy.automatic_mutation_retry or policy.unknown_mutation_replay:
             raise ValueError("Mutation retries/replays require explicit reconciliation")
         store = RuntimeStore(Path(path))
+        store.recover_inflight()
         tasks = TaskManager(store)
         trace = ToolTrace(dispatch, sink=store.trace_sink)
         scheduler = Scheduler(tasks, trace, execute_action=execute_action,
@@ -55,6 +56,7 @@ class RuntimeBoundary:
             "jobs": len(self.store.list("job")),
             "workflows": len(self.store.list("workflow")),
             "trace_invocations": len(self.store.list("trace")),
+            "recovery_events": len(self.store.list("recovery")),
             "policy": {
                 "query_budget": self.policy.query_budget,
                 "automatic_mutation_retry": self.policy.automatic_mutation_retry,
