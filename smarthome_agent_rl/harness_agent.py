@@ -42,6 +42,9 @@ class GuardedExecutor:
             raise ValueError('Semantic context interventions must be explicit booleans')
         if (semantic_context_version == 2) != (semantic_context_references or semantic_context_workflow):
             raise ValueError('Version2 requires explicit reference/workflow interventions; legacy versions forbid them')
+        if semantic_blocking and any(getattr(v, 'report_only', False)
+                                     for v in (semantic_verifier, reflection_verifier)):
+            raise ValueError('Report-only reviewers cannot enable semantic blocking')
         contracts, sources = command_contracts(ROOT / 'deps/SimuHome/src/simulator/domain/clusters')
         power_rules, device_sources = public_power_rules(ROOT / 'deps/SimuHome/src/simulator/domain/devices', dead_front=dead_front)
         sources.update(device_sources)

@@ -90,6 +90,9 @@ def main(mode):
         db=load_retrieval(retrieval, output / 'retrieval_calls.json')))
     variant = config['variant']
     attached_runtime = None
+    from smarthome_agent_rl.report_semantic_review import attach_report_reviewer
+    agent_policy, report_reviewer = attach_report_reviewer(config, variant,
+        audit_fn=lambda rows: save('semantic_review_calls.json', rows))
     def trace(kind, payload):
         event = {'event': kind, 'payload': payload, 'at_seconds': time.monotonic() - profile.origin}
         events.append(event)
@@ -121,7 +124,7 @@ def main(mode):
             agent = HarnessAgent(llm, variant=variant, max_steps=max_steps, trace_fn=trace,
                 audit_fn=lambda data: save('harness_audit.json', data),
                 repair_limit=config['recovery_per_action'], query_limit=config['extra_queries_max'],
-                policy=config.get('variant_policies', {}).get(variant), token_count_fn=count_tokens)
+                policy=agent_policy, token_count_fn=count_tokens)
         if config.get('variant_policies', {}).get(variant, {}).get('task_runtime'):
             if variant not in ('GTM', 'GTME', 'GTMEC') or type(agent.executor).__name__ != 'GuardedExecutor':
                 raise ValueError('Native task-runtime ablation must use an isolated legacy Guard arm')
@@ -216,6 +219,7 @@ def main(mode):
             'infrastructure_error': (error is not None and not task_failure) or score == -1,
             'actor_model_calls': len(calls), 'actor_tokens': tokens(calls),
             'judge_model_calls': len(judges), 'judge_tokens': tokens(judges),
+            'semantic_review': report_reviewer.costs() if report_reviewer is not None else None,
             'duration_seconds': time.monotonic() - started}
         save('summary.json', summary)
         profile.flush(summary['duration_seconds'], started - profile.origin)
