@@ -4,12 +4,456 @@
   "default": "Qwen3.5-9B + G; permanent baseline tag baseline/1007-9b-g",
   "nodes": {
     "N91": {
-      "status": "frozen_pending_preflight",
+      "status": "partitioned_evidence_consistency_improved_semantic_gates_failed",
+      "source_commit": "da5ff1c923e24a8dfe82376976a2db9d5b0667d5",
       "config": "configs/partitioned-goal-ablation.json",
+      "evidence": "runs/partitioned-goal-ablation/n91-v1/",
       "records_per_arm": 78,
       "new_requests": 156,
       "default_changed": false,
-      "native_admitted": false
+      "native_admitted": false,
+      "arms": {
+        "original": {
+          "records": 78,
+          "parsed": 78,
+          "schema_conformant": 78,
+          "literal_evidence_valid": 78,
+          "evidence_issues": {},
+          "internal_conflict_records": 0,
+          "aggregate_mismatch_records": 0,
+          "verdicts": {
+            "ALLOW": 36,
+            "DENY": 38,
+            "UNCERTAIN": 4
+          },
+          "evidence_first_outputs": 78,
+          "label_first_outputs": 0,
+          "invalid_order_outputs": 0,
+          "tokens": 409325,
+          "prompt_tokens": 377323,
+          "completion_tokens": 32002,
+          "http_errors": 0,
+          "missing_usage": 0,
+          "truncations": 0,
+          "median_request_seconds": 5.157021004502894,
+          "developer_conflicts": {
+            "DENY": 6
+          },
+          "developer_controls": {
+            "ALLOW": 3
+          },
+          "developer_reason_dimensions": {
+            "time": {
+              "records": 4,
+              "expected_dimension_no": 2
+            },
+            "target": {
+              "records": 2,
+              "expected_dimension_no": 2
+            }
+          },
+          "by_origin": {
+            "n76": {
+              "records": 38,
+              "literal_evidence_valid": 38
+            },
+            "n78": {
+              "records": 40,
+              "literal_evidence_valid": 40
+            }
+          },
+          "binding_percentage_statuses": {
+            "multiple_percentage_references": 5,
+            "no_explicit_percentage": 17,
+            "literal_percentage_matches": 18
+          },
+          "percentage_agreement_conflict_records": 0,
+          "offset_binding_review_records": 7,
+          "resolution_errors": 0
+        },
+        "partitioned": {
+          "records": 78,
+          "parsed": 78,
+          "schema_conformant": 78,
+          "literal_evidence_valid": 77,
+          "evidence_issues": {
+            "effect:missing_operation_clause": 1
+          },
+          "internal_conflict_records": 0,
+          "aggregate_mismatch_records": 0,
+          "verdicts": {
+            "ALLOW": 31,
+            "DENY": 36,
+            "UNCERTAIN": 11
+          },
+          "evidence_first_outputs": 78,
+          "label_first_outputs": 0,
+          "invalid_order_outputs": 0,
+          "tokens": 420012,
+          "prompt_tokens": 385669,
+          "completion_tokens": 34343,
+          "http_errors": 0,
+          "missing_usage": 0,
+          "truncations": 0,
+          "median_request_seconds": 5.678306397487177,
+          "developer_conflicts": {
+            "DENY": 6
+          },
+          "developer_controls": {
+            "ALLOW": 3
+          },
+          "developer_reason_dimensions": {
+            "time": {
+              "records": 4,
+              "expected_dimension_no": 2
+            },
+            "target": {
+              "records": 2,
+              "expected_dimension_no": 2
+            }
+          },
+          "by_origin": {
+            "n76": {
+              "records": 38,
+              "literal_evidence_valid": 37
+            },
+            "n78": {
+              "records": 40,
+              "literal_evidence_valid": 40
+            }
+          },
+          "binding_percentage_statuses": {
+            "multiple_percentage_references": 4,
+            "no_explicit_percentage": 17,
+            "literal_percentage_matches": 19
+          },
+          "percentage_agreement_conflict_records": 0,
+          "offset_binding_review_records": 2,
+          "resolution_errors": 0
+        },
+        "historical_original": {
+          "records": 78,
+          "parsed": 78,
+          "schema_conformant": 78,
+          "literal_evidence_valid": 78,
+          "evidence_issues": {},
+          "internal_conflict_records": 0,
+          "aggregate_mismatch_records": 0,
+          "verdicts": {
+            "DENY": 38,
+            "ALLOW": 36,
+            "UNCERTAIN": 4
+          },
+          "evidence_first_outputs": 78,
+          "label_first_outputs": 0,
+          "invalid_order_outputs": 0,
+          "tokens": 409357,
+          "prompt_tokens": 377323,
+          "completion_tokens": 32034,
+          "http_errors": 0,
+          "missing_usage": 0,
+          "truncations": 0,
+          "median_request_seconds": 5.259854061994702,
+          "developer_conflicts": {
+            "DENY": 6
+          },
+          "developer_controls": {
+            "ALLOW": 3
+          },
+          "developer_reason_dimensions": {
+            "time": {
+              "records": 4,
+              "expected_dimension_no": 2
+            },
+            "target": {
+              "records": 2,
+              "expected_dimension_no": 2
+            }
+          },
+          "by_origin": {
+            "n76": {
+              "records": 38,
+              "literal_evidence_valid": 38
+            },
+            "n78": {
+              "records": 40,
+              "literal_evidence_valid": 40
+            }
+          }
+        }
+      },
+      "diagnostic_screen_passed": {
+        "original": false,
+        "partitioned": false
+      },
+      "transitions": {
+        "original->partitioned": {
+          "ALLOW->ALLOW": 31,
+          "UNCERTAIN->UNCERTAIN": 4,
+          "DENY->DENY": 35,
+          "ALLOW->DENY": 1,
+          "ALLOW->UNCERTAIN": 4,
+          "DENY->UNCERTAIN": 3
+        },
+        "historical_original->original": {
+          "ALLOW->ALLOW": 36,
+          "UNCERTAIN->UNCERTAIN": 4,
+          "DENY->DENY": 38
+        }
+      },
+      "bounded_dimensions": {
+        "original": {
+          "trajectory_consistent": {
+            "records": 78,
+            "unavailable": 0,
+            "label_mismatch": 1,
+            "reference_count": 21,
+            "empty_reference_steps": 116,
+            "duplicate_reference_steps": 3
+          },
+          "safe_to_execute": {
+            "records": 78,
+            "unavailable": 0,
+            "label_mismatch": 1,
+            "reference_count": 17,
+            "empty_reference_steps": 109,
+            "duplicate_reference_steps": 0
+          }
+        },
+        "partitioned": {
+          "trajectory_consistent": {
+            "records": 78,
+            "unavailable": 0,
+            "label_mismatch": 0,
+            "reference_count": 34,
+            "empty_reference_steps": 100,
+            "duplicate_reference_steps": 0
+          },
+          "safe_to_execute": {
+            "records": 78,
+            "unavailable": 0,
+            "label_mismatch": 0,
+            "reference_count": 65,
+            "empty_reference_steps": 61,
+            "duplicate_reference_steps": 0
+          }
+        }
+      },
+      "paired_changes": {
+        "verdict": [
+          {
+            "id": "n76:qt4-3_infeasible_seed_36:seed43:a000009",
+            "original": "ALLOW",
+            "partitioned": "UNCERTAIN"
+          },
+          {
+            "id": "n78:qt4-2_feasible_seed_31:seed42:r000001",
+            "original": "DENY",
+            "partitioned": "UNCERTAIN"
+          },
+          {
+            "id": "n78:qt4-2_feasible_seed_31:seed43:r000001",
+            "original": "DENY",
+            "partitioned": "UNCERTAIN"
+          },
+          {
+            "id": "n78:qt4-3_infeasible_seed_36:seed43:r000002",
+            "original": "ALLOW",
+            "partitioned": "UNCERTAIN"
+          },
+          {
+            "id": "n78:qt2_feasible_seed_78:seed44:r000003",
+            "original": "ALLOW",
+            "partitioned": "DENY"
+          },
+          {
+            "id": "n78:qt4-2_feasible_seed_31:seed44:r000001",
+            "original": "DENY",
+            "partitioned": "UNCERTAIN"
+          },
+          {
+            "id": "n78:qt4-3_feasible_seed_21:seed44:r000002",
+            "original": "ALLOW",
+            "partitioned": "UNCERTAIN"
+          },
+          {
+            "id": "n78:qt4-3_infeasible_seed_36:seed44:r000001",
+            "original": "ALLOW",
+            "partitioned": "UNCERTAIN"
+          }
+        ],
+        "correct_target": [
+          {
+            "id": "n78:qt4-2_feasible_seed_31:seed42:r000001",
+            "original": "NO",
+            "partitioned": "YES"
+          },
+          {
+            "id": "n78:qt2_feasible_seed_78:seed44:r000003",
+            "original": "YES",
+            "partitioned": "NO"
+          }
+        ],
+        "goal_consistent": [
+          {
+            "id": "n76:qt4-3_infeasible_seed_36:seed43:a000009",
+            "original": "YES",
+            "partitioned": "UNCERTAIN"
+          },
+          {
+            "id": "n78:qt4-2_feasible_seed_31:seed42:r000001",
+            "original": "NO",
+            "partitioned": "UNCERTAIN"
+          },
+          {
+            "id": "n78:qt4-2_feasible_seed_31:seed43:r000001",
+            "original": "NO",
+            "partitioned": "UNCERTAIN"
+          },
+          {
+            "id": "n78:qt2_feasible_seed_78:seed44:r000003",
+            "original": "YES",
+            "partitioned": "UNCERTAIN"
+          },
+          {
+            "id": "n78:qt4-2_feasible_seed_31:seed44:r000001",
+            "original": "NO",
+            "partitioned": "UNCERTAIN"
+          },
+          {
+            "id": "n78:qt4-3_infeasible_seed_36:seed44:r000001",
+            "original": "YES",
+            "partitioned": "UNCERTAIN"
+          }
+        ],
+        "trajectory_consistent": [
+          {
+            "id": "n76:qt4-3_feasible_seed_21:seed43:a000008",
+            "original": "YES",
+            "partitioned": "UNCERTAIN"
+          },
+          {
+            "id": "n76:qt4-3_infeasible_seed_36:seed43:a000009",
+            "original": "YES",
+            "partitioned": "UNCERTAIN"
+          },
+          {
+            "id": "n78:qt4-3_feasible_seed_21:seed42:r000002",
+            "original": "YES",
+            "partitioned": "UNCERTAIN"
+          },
+          {
+            "id": "n78:qt4-3_infeasible_seed_36:seed43:r000002",
+            "original": "YES",
+            "partitioned": "UNCERTAIN"
+          },
+          {
+            "id": "n78:qt4-1_feasible_seed_26:seed44:r000002",
+            "original": "YES",
+            "partitioned": "UNCERTAIN"
+          },
+          {
+            "id": "n78:qt4-1_feasible_seed_26:seed44:r000004",
+            "original": "UNCERTAIN",
+            "partitioned": "YES"
+          },
+          {
+            "id": "n78:qt4-3_feasible_seed_21:seed44:r000002",
+            "original": "YES",
+            "partitioned": "UNCERTAIN"
+          }
+        ],
+        "safe_to_execute": [
+          {
+            "id": "n76:qt4-3_feasible_seed_21:seed43:a000008",
+            "original": "YES",
+            "partitioned": "UNCERTAIN"
+          },
+          {
+            "id": "n76:qt4-3_infeasible_seed_36:seed44:a000008",
+            "original": "UNCERTAIN",
+            "partitioned": "YES"
+          },
+          {
+            "id": "n78:qt4-2_feasible_seed_31:seed42:r000001",
+            "original": "UNCERTAIN",
+            "partitioned": "YES"
+          },
+          {
+            "id": "n78:qt4-3_feasible_seed_21:seed42:r000002",
+            "original": "YES",
+            "partitioned": "UNCERTAIN"
+          },
+          {
+            "id": "n78:qt4-1_feasible_seed_26:seed44:r000002",
+            "original": "YES",
+            "partitioned": "UNCERTAIN"
+          },
+          {
+            "id": "n78:qt4-1_feasible_seed_26:seed44:r000004",
+            "original": "UNCERTAIN",
+            "partitioned": "YES"
+          },
+          {
+            "id": "n78:qt4-3_feasible_seed_21:seed44:r000002",
+            "original": "YES",
+            "partitioned": "UNCERTAIN"
+          }
+        ]
+      },
+      "new_tokens": 829337,
+      "wall_seconds": 90.79802581900731,
+      "resources": {
+        "started_unix": 1791375503.4803112,
+        "error": null,
+        "ready_seconds": 69.6545268119662,
+        "initial_gpu_memory": "0, 0\n1, 0\n2, 0\n3, 0\n",
+        "probes": {
+          "requests": 4,
+          "failed": 0,
+          "tokens": 88,
+          "missing_usage": 0
+        },
+        "seconds_including_cleanup": 90.38863285799744,
+        "reserved_h100_gpu_seconds": 361.55455461191013,
+        "stopped_pids": [
+          1751623,
+          1751624,
+          1751625,
+          1751626
+        ],
+        "exit_codes": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "preparation_seconds": 18.08324911899399,
+      "preflight": {
+        "decoder_source_verified": true,
+        "schemas_compiled": 156,
+        "compilation_seconds": 0.5175265159923583,
+        "requests_tokenized": 156,
+        "max_prompt_tokens": 7234,
+        "max_total_reserved_tokens": 9282,
+        "model_context": 32768,
+        "by_arm_max_prompt_tokens": {
+          "original": 7127,
+          "partitioned": 7234
+        },
+        "total_cpu_wall_seconds": 1.8158451300114393,
+        "model_requests": 0,
+        "tokens": 0,
+        "gpu_seconds": 0
+      },
+      "archive_sha256": "70400e252ee6148eb67a64e13112722ee1bc68561c8b6195e1bded6bc9a17405",
+      "collection_files": 181,
+      "source_blobs": 443,
+      "launch_failure_retained": true,
+      "cleanup_bytes": 7839903,
+      "cleanup_receipt_sha256": "382103154b7896b4a2c5997f4db3d418a10a0762f1c46d96f2675a317be5193e",
+      "scope": "Exposed diagnosis only;labels andrelations unchanged byfield projection;4time records fromone originaltask;unknown/unlabeled decision changes not accuracy."
     },
     "N90": {
       "status": "citation_order_sensitivity_verified_both_semantic_gates_failed",
@@ -4422,9 +4866,9 @@
     "task_conflict": "N68 native conflict engineering verified;N69 official72 episodes verified34 claims and19 HTTP contexts,but no real conflict and no attributed SR benefit;report only,no arbitration",
     "scheduler_official_runner": "N63 remains failed; independent GTME accepted in N66 official720 episodes,64 jobs verified; no stable SR benefit,G retained",
     "timed_observation": "N66 public response events and final readback clock receipts exercised; late state remains UNKNOWN,no replay or automatic time advancement",
-    "native_user_goal_conditions": "unimplemented;N67/N70 parsers failed admission;N66/N69 Task remain WAITING,action intentions do not prove user goals N90 onlycitation displayorder:time reasons2/4->3/4,butone missingoperationquote andunlabeled ALLOW->DENY;allgatesfailed,noadoption;G retained.",
+    "native_user_goal_conditions": "unimplemented;N67/N70 parsers failed admission;N66/N69 Task remain WAITING,action intentions do not prove user goals N90 onlycitation displayorder:time reasons2/4->3/4,butone missingoperationquote andunlabeled ALLOW->DENY;allgatesfailed,noadoption;G retained. N91 goalfieldpartition leaves time2/4 andpurifier targetNO;relation-label mismatches0 withmore references,buttokens+2.61%;no semanticadmission,G retained.",
     "common_simuhome_adapter": "N61 unified entry and public actor boundary verified; native protocols and scores retained"
   },
-  "benefit_acceptance": "not satisfied; no stable benefit on two public benchmarks. N66 CI crosses zero;N67/N70 semantic admission failed;N69 SR flips all without candidate context and tiny stratified interval degenerates. N72/N74 semantic reviews not admitted;N74 all6 conflicts missed;N75 combined6/6 developer denials but35/38 evidence;N76 dynamic schema37/38 andevidence36/38 fail screen,reasons unverified. G retained N77 failure isolation andN78 coverage accepted;N78 all3 wins without review,no attributed benefit;G retained. N80 all3 representation screens failed;coherence internal conflicts0 but24/78 aggregate mismatches,effects quotes degrade;no admission. N82 evidence-first original outputs remove28 aggregate mismatches andrecover2 target dimensions,quotes73/78 fail95%;no native admission or added SR. N83 citation coverage78/78 byconstruction,butaggregate mismatch1 andtime reason dimensions2/4;freshquotes74/78 fail95%. Bothscreens failed;no nativeadmission ornewSR;G retained. N84 all156 original outputs read-only audited;unsupported withobserved room/type lexical windows2->3 records,multivalue percentage0->7 andoffset-worddisjoint0->7;coverage flags not semantic truth,no newSR oradmission. N85 appendedpublic identity improves time reason3/4->4/4 andlexicalunsupported tension3->1,buttargetreason2/2->0/2;extra livingroomfan inherits dehumidifier fan quote. Bothscreens failed,noadoption/newSR;tokens+8.50%,G retained. N86 perstepidentityconst causes15truncations,5additionalnontruncatedduplicate-key records andall3controlALLOW->UNCERTAIN;targetreason2/2->0/2;schema63/78,literal62/78,actualorder58/78 fail. Free trajectory/safety evidence expands;noadoption/newSR,G retained. N87 bounded trajectory/safety evidence eliminates fresh candidate parse/truncation failures (78/78),reduces outputtokens28.54%,butall3controls UNCERTAIN,target reasons0/2,andaggregate mismatch1;format benefit only,no semantic admission ornewSR,G retained. N88 2x2 factorial: history prompt recovers3repeated lighting controls andmetadata removal restores2target reasons,butall4arms time reasons2/4;second-sentence requested purifier falsely unsupported,aggregate DENY useswrongreason. Jointarm78/78 schema/literal buttrajectory/safety2relation-label disagreements each;noadoption/newSR,G retained. N89 explicitxgrammar allow/compact pairs inoriginal/history prompt strata:compact both78/78 schema/literal andzero truncation versus9/2failures;outputtokens-41.50%/-23.21% andHTTPmedian-33.79%/-29.73%. Time reasonsall2/4,historycompacttrajectory/safety1relation-label disagreement each;semantic screensfailed,G retained. Differentfixed GPUreplicas,nocrossover,historicalN88autobackend comparisons separate;not stable native gain.",
-  "next": "先冻结目标支持与时间/阶段证据拆分的单因素方案，保留完整原文、未知锚点和原理由门槛；同78已暴露输入作诊断，停止仅靠引用排序调优。不追加训练、新benchmark、sealed95或原生准入；默认9B+G保留。"
+  "benefit_acceptance": "not satisfied; no stable benefit on two public benchmarks. N66 CI crosses zero;N67/N70 semantic admission failed;N69 SR flips all without candidate context and tiny stratified interval degenerates. N72/N74 semantic reviews not admitted;N74 all6 conflicts missed;N75 combined6/6 developer denials but35/38 evidence;N76 dynamic schema37/38 andevidence36/38 fail screen,reasons unverified. G retained N77 failure isolation andN78 coverage accepted;N78 all3 wins without review,no attributed benefit;G retained. N80 all3 representation screens failed;coherence internal conflicts0 but24/78 aggregate mismatches,effects quotes degrade;no admission. N82 evidence-first original outputs remove28 aggregate mismatches andrecover2 target dimensions,quotes73/78 fail95%;no native admission or added SR. N83 citation coverage78/78 byconstruction,butaggregate mismatch1 andtime reason dimensions2/4;freshquotes74/78 fail95%. Bothscreens failed;no nativeadmission ornewSR;G retained. N84 all156 original outputs read-only audited;unsupported withobserved room/type lexical windows2->3 records,multivalue percentage0->7 andoffset-worddisjoint0->7;coverage flags not semantic truth,no newSR oradmission. N85 appendedpublic identity improves time reason3/4->4/4 andlexicalunsupported tension3->1,buttargetreason2/2->0/2;extra livingroomfan inherits dehumidifier fan quote. Bothscreens failed,noadoption/newSR;tokens+8.50%,G retained. N86 perstepidentityconst causes15truncations,5additionalnontruncatedduplicate-key records andall3controlALLOW->UNCERTAIN;targetreason2/2->0/2;schema63/78,literal62/78,actualorder58/78 fail. Free trajectory/safety evidence expands;noadoption/newSR,G retained. N87 bounded trajectory/safety evidence eliminates fresh candidate parse/truncation failures (78/78),reduces outputtokens28.54%,butall3controls UNCERTAIN,target reasons0/2,andaggregate mismatch1;format benefit only,no semantic admission ornewSR,G retained. N88 2x2 factorial: history prompt recovers3repeated lighting controls andmetadata removal restores2target reasons,butall4arms time reasons2/4;second-sentence requested purifier falsely unsupported,aggregate DENY useswrongreason. Jointarm78/78 schema/literal buttrajectory/safety2relation-label disagreements each;noadoption/newSR,G retained. N89 explicitxgrammar allow/compact pairs inoriginal/history prompt strata:compact both78/78 schema/literal andzero truncation versus9/2failures;outputtokens-41.50%/-23.21% andHTTPmedian-33.79%/-29.73%. Time reasonsall2/4,historycompacttrajectory/safety1relation-label disagreement each;semantic screensfailed,G retained. Differentfixed GPUreplicas,nocrossover,historicalN88autobackend comparisons separate;not stable native gain. N90 citationorder time2/4->3/4 butone missingquote andunlabeled decisionflip;N91 fieldpartition time2/4 unchanged,moreboundrefs/zero relation-label mismatch butcost+2.61%;bothgatesfailed,no nativegain.",
+  "next": "冻结同78输入的联合审阅/四维度独立审阅对比；独立调用不接收其他维度输出，原标签不修正，按既有规则组合并核验全部原理由门槛。先做schema及分维度输出预算预检，再推理；保留重复context的额外成本和失败。仍是已暴露输入诊断，默认G保留，不自动扩大原生评测。"
 }
