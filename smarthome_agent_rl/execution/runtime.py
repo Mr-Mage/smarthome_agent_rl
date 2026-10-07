@@ -11,6 +11,7 @@ from .scheduler import Scheduler
 from .store import RuntimeStore
 from .tasks import TaskManager
 from .trace import ToolTrace
+from .context_policy import ContextPolicy
 
 
 @dataclass(frozen=True)
@@ -19,6 +20,7 @@ class RuntimePolicy:
     query_budget: int = 40
     automatic_mutation_retry: bool = False
     unknown_mutation_replay: bool = False
+    context_max_characters: int = 12000
 
 
 class RuntimeBoundary:
@@ -61,5 +63,10 @@ class RuntimeBoundary:
                 "query_budget": self.policy.query_budget,
                 "automatic_mutation_retry": self.policy.automatic_mutation_retry,
                 "unknown_mutation_replay": self.policy.unknown_mutation_replay,
+                "context_max_characters": self.policy.context_max_characters,
             },
         }
+
+    def context(self, *, task, facts=(), receipts=(), errors=()):
+        return ContextPolicy(self.policy.context_max_characters).render(
+            task=task, facts=facts, receipts=receipts, errors=errors)
