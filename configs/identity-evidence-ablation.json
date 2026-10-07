@@ -1,0 +1,111 @@
+{
+  "model": "smarthome-qwen35-9b",
+  "actor_path": "../models/Qwen3.5-9B",
+  "model_python": "/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/anaconda3/envs/qwen36-vllm/bin/python",
+  "context": 32768,
+  "engine_seed": 0,
+  "model_seed": 42,
+  "generation": {
+    "temperature": 0.0,
+    "max_tokens": 2048,
+    "extra_body": {
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    }
+  },
+  "slots_per_actor": 16,
+  "max_num_seqs": 32,
+  "gpu_memory_utilization": 0.8,
+  "startup_timeout": 1200,
+  "request_timeout": 240,
+  "actors": [
+    {
+      "id": 0,
+      "gpu": 0,
+      "endpoint": "http://127.0.0.1:20400/v1"
+    },
+    {
+      "id": 1,
+      "gpu": 1,
+      "endpoint": "http://127.0.0.1:20401/v1"
+    },
+    {
+      "id": 2,
+      "gpu": 2,
+      "endpoint": "http://127.0.0.1:20402/v1"
+    },
+    {
+      "id": 3,
+      "gpu": 3,
+      "endpoint": "http://127.0.0.1:20403/v1"
+    }
+  ],
+  "actor_extra_args": [
+    "--gdn-prefill-backend",
+    "triton"
+  ],
+  "kernel_cache_root": "/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/zhengrj/agent/smarthome_agent_rl/work/concurrency-capacity/kernel-cache",
+  "chat_transport": "append_empty_user",
+  "developer_labels_sha256": "da2ed8a8b832ffd9b200b23448c5c0502cb65fed15d5c00194fc919dc23cad2c",
+  "developer_counts": {
+    "CONSISTENT_CONTROL": 3,
+    "CERTAIN_CONFLICT": 6,
+    "UNCERTAIN": 29,
+    "UNLABELED": 40
+  },
+  "developer_conflict_groups": {
+    "time": [
+      "n76:qt4-1_feasible_seed_26:seed42:a000007",
+      "n76:qt4-1_feasible_seed_26:seed42:a000009",
+      "n76:qt4-1_feasible_seed_26:seed43:a000006",
+      "n76:qt4-1_feasible_seed_26:seed43:a000008"
+    ],
+    "target": [
+      "n76:qt4-1_infeasible_seed_27:seed42:a000009",
+      "n76:qt4-1_infeasible_seed_27:seed44:a000007"
+    ]
+  },
+  "valid_ratio_min": 0.95,
+  "evidence_valid_ratio_min": 0.95,
+  "node": "N86",
+  "schema": "public-identity-evidence-schema-v1",
+  "parent_run": "runs/identity-presentation-ablation/n85-v1",
+  "parent_collection_sha256": "46f31f6e473d9bed9c394c4d52996b2077d5ed6af0497c36537b4ec16f3b9f18",
+  "inputs_sha256": "7bbc6b7dd1fc280d52c06e529fe19ba7b9b5037b0a91a7224f9c3a4a57a0bd00",
+  "records": 78,
+  "new_requests": 156,
+  "arms": [
+    "control",
+    "identity"
+  ],
+  "selection": "All78 retained official exposed inputs,including repeated contexts andhistorical failures. Original6developer conflicts/3controls unchanged,other69unknown/unlabeled.",
+  "metrics": [
+    "All frozen schema/order/literal/internal/aggregate/developer reason gates;original predicted labels preserved",
+    "All-record lexical identity/percentage/offset coverage flags;generatedconst matchingbyconstruction,notidentitytruth",
+    "Freshpaired verdict changes,historical N85control drift,andallfailures/request/token/latency/startup/GPU/probe cost"
+  ],
+  "diagnostic_screen": "Reuse N83/N85 gates unchanged:complete156unique paired requests,each78 evidence-first outputs,>=95%schema/literal coverage,zero HTTP/missingusage/resolution/internal conflict/aggregate mismatch/explicit percentage-agreement conflict,6DENY/3ALLOW/4time+2target reason dimensions. No native admission evenifpassed.",
+  "exclusions": "None;no successful-reference-only selection,new labels,hidden evaluators,sealed95 or corrected historical outputs.",
+  "budget": {
+    "new_requests": 156,
+    "maximum_completion_tokens": 319488,
+    "total_slots": 64,
+    "requests_per_actor": [
+      40,
+      40,
+      38,
+      38
+    ],
+    "retries": 0
+  },
+  "stop_rule": "Onefrozen156-request run afterall156schema compile/context tokenization inexisting environment. Keepmax2048,no retries,newlabels,gatetuning,automatic native expansion,simulation,A800 orenvironment changes.",
+  "scope": "Existing official exposed single-turn inputs only;no training,newbenchmark,sealed95,SR,blocking,Task completion ordefault adoption.",
+  "historical_run": "runs/citation-review/n83-v1",
+  "intervention": "Onlytarget evidence schema changes:generated observed_identity const afterdevice_id,before support_ref/support,usingexisting public catalog room/type andreceipts. Messages,prompt,citation catalog,original context,generation unchanged;freshcontrol exactN85control/N83citation request. No appendedidentity message orselected user-identitytruth.",
+  "resolution": "Keeprawmodel withgenerated public metadata. Validateauxiliary const againstpublic context thenremoveonlythatmetadata anddereference IDs;allpredicted supports/labels/confidence/verdict unchanged. Invalid/missing/forged metadata retainedasfailure. Passingconst generation isnot identityunderstanding.",
+  "identity_metric": "Observedcatalog-derived identity metadata rawvalidity only,notsemantic correctness;identity room/type coverage remains N84 mechanicaltension diagnostic. Ambiguous,truncated,multicatalog,missing receipts preserved,no IDdecoding.",
+  "ordered_schemas_sha256": "130f8082666d5b3ef884cf0b6987b2b1650b1ecadb529043fe7d1ee28f3aab24",
+  "ordered_requests_sha256": "17e079a784eef243362b5f0af9586501758a30d59b0991e0a949c672df51a24e",
+  "identities_sha256": "e549e5685f372d5a55f78431c4a707aa7749921da68f17acf9e26f9ba1ec048f"
+}
