@@ -5707,6 +5707,33 @@
           "losses": 834
         }
       }
+    },
+    "N95": {
+      "status": "runtime_composition_root_complete",
+      "evidence": "docs/nodes/N95.md",
+      "default_changed": false
+    },
+    "N96": {
+      "status": "restart_recovery_complete",
+      "evidence": "docs/nodes/N96.md",
+      "default_changed": false
+    },
+    "N97": {
+      "status": "bounded_retry_budget_complete",
+      "evidence": "docs/nodes/N97.md",
+      "default_changed": false
+    },
+    "N98": {
+      "status": "context_contract_complete",
+      "evidence": "docs/nodes/N98.md",
+      "default_changed": false
+    },
+    "N99": {
+      "status": "offline_runtime_acceptance_complete",
+      "evidence": "docs/nodes/N99.md",
+      "default_changed": false,
+      "model_requests": 0,
+      "gpu_seconds": 0
     }
   },
   "benchmark_status": {
@@ -5723,5 +5750,5 @@
     "common_simuhome_adapter": "N61 unified entry and public actor boundary verified; native protocols and scores retained"
   },
   "benefit_acceptance": "Not satisfied: no stable benefit on two public benchmarks. N66 SR interval crosses zero;N69/N78 wins are not attributed to candidate context/review. N67/N70 and N71-N93 semantic admission failed. N94 is read-only engineering coverage,not an online benefit. Detailed failures and costs retained per node;default9B+G.",
-  "next": "先设计带来源的设备指称、动作阶段与时间锚绑定接口及离线验收边界；不再自动扩展提示词变体，词面覆盖不用于blocking，不追加训练或新benchmark。稳定在线收益验收仍未完成。"
+  "next": "???????? N95?N99??????????????????????????????SLO????????????SR??????????benchmark?"
 }

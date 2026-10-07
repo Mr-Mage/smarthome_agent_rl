@@ -21,6 +21,12 @@
 | N39 Semantic Verification | 离线完成 | public-only四维决策、置信度门控、Self-Reflection解析器；不生成新benchmark、不做在线对照 |
 | N40 Process Reward / RL接口 | 接口完成 | RL-A/B/C、冻结verifier reward、交替调度；按本轮范围不启动训练；[N40](docs/nodes/N40.md) |
 
+| N95 运行时入口 | 完成 | `RuntimeBoundary` 统一 Store/Task/Trace/Scheduler 组合；[N95](docs/nodes/N95.md) |
+| N96 中断恢复 | 完成 | CLAIMED→UNKNOWN，REGISTERING 保持待核对，重启不重放；[N96](docs/nodes/N96.md) |
+| N97 重试预算 | 完成 | 仅暂时性读失败有界重试，变更走核对；[N97](docs/nodes/N97.md) |
+| N98 上下文契约 | 完成 | 目标、当前事实、回执、错误和 stale 分层并有预算；[N98](docs/nodes/N98.md) |
+| N99 运行时交付 | 完成 | 固定离线验收入口，成本与 benchmark 参照分开；[N99](docs/nodes/N99.md) |
+
 | N41 基线冻结 | 完成 | 永久 tag `baseline/1007-9b-g`、八份源码 SHA 核验；[N41](docs/nodes/N41.md) |
 | N42 执行分层 | 工程完成 | Tool Trace / Mutation / Workflow 分开；[N42](docs/nodes/N42.md) |
 | N43 Task 持久化 | 工程完成 | SQLite、版本修订、所有权和整个目标验证；[N43](docs/nodes/N43.md) |
