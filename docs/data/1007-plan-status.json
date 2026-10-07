@@ -3,6 +3,14 @@
   "scope": "Latest user confirmation: official single-turn harness diagnostics/ablations only; no SFT/RL, new benchmark or multi-session experiments.",
   "default": "Qwen3.5-9B + G; permanent baseline tag baseline/1007-9b-g",
   "nodes": {
+    "N93": {
+      "status": "frozen_pending_preflight",
+      "config": "configs/evidence-reducer-ablation.json",
+      "records_per_arm": 78,
+      "new_requests": 156,
+      "default_changed": false,
+      "native_admitted": false
+    },
     "N92": {
       "status": "independent_time_labels_improved_evidence_and_consistency_failed",
       "source_commit": "7460112ad1c3f30ad52e2dc6f5b7c0150290e1ea",
@@ -5274,5 +5282,5 @@
     "common_simuhome_adapter": "N61 unified entry and public actor boundary verified; native protocols and scores retained"
   },
   "benefit_acceptance": "not satisfied; no stable benefit on two public benchmarks. N66 CI crosses zero;N67/N70 semantic admission failed;N69 SR flips all without candidate context and tiny stratified interval degenerates. N72/N74 semantic reviews not admitted;N74 all6 conflicts missed;N75 combined6/6 developer denials but35/38 evidence;N76 dynamic schema37/38 andevidence36/38 fail screen,reasons unverified. G retained N77 failure isolation andN78 coverage accepted;N78 all3 wins without review,no attributed benefit;G retained. N80 all3 representation screens failed;coherence internal conflicts0 but24/78 aggregate mismatches,effects quotes degrade;no admission. N82 evidence-first original outputs remove28 aggregate mismatches andrecover2 target dimensions,quotes73/78 fail95%;no native admission or added SR. N83 citation coverage78/78 byconstruction,butaggregate mismatch1 andtime reason dimensions2/4;freshquotes74/78 fail95%. Bothscreens failed;no nativeadmission ornewSR;G retained. N84 all156 original outputs read-only audited;unsupported withobserved room/type lexical windows2->3 records,multivalue percentage0->7 andoffset-worddisjoint0->7;coverage flags not semantic truth,no newSR oradmission. N85 appendedpublic identity improves time reason3/4->4/4 andlexicalunsupported tension3->1,buttargetreason2/2->0/2;extra livingroomfan inherits dehumidifier fan quote. Bothscreens failed,noadoption/newSR;tokens+8.50%,G retained. N86 perstepidentityconst causes15truncations,5additionalnontruncatedduplicate-key records andall3controlALLOW->UNCERTAIN;targetreason2/2->0/2;schema63/78,literal62/78,actualorder58/78 fail. Free trajectory/safety evidence expands;noadoption/newSR,G retained. N87 bounded trajectory/safety evidence eliminates fresh candidate parse/truncation failures (78/78),reduces outputtokens28.54%,butall3controls UNCERTAIN,target reasons0/2,andaggregate mismatch1;format benefit only,no semantic admission ornewSR,G retained. N88 2x2 factorial: history prompt recovers3repeated lighting controls andmetadata removal restores2target reasons,butall4arms time reasons2/4;second-sentence requested purifier falsely unsupported,aggregate DENY useswrongreason. Jointarm78/78 schema/literal buttrajectory/safety2relation-label disagreements each;noadoption/newSR,G retained. N89 explicitxgrammar allow/compact pairs inoriginal/history prompt strata:compact both78/78 schema/literal andzero truncation versus9/2failures;outputtokens-41.50%/-23.21% andHTTPmedian-33.79%/-29.73%. Time reasonsall2/4,historycompacttrajectory/safety1relation-label disagreement each;semantic screensfailed,G retained. Differentfixed GPUreplicas,nocrossover,historicalN88autobackend comparisons separate;not stable native gain. N90 citationorder time2/4->3/4 butone missingquote andunlabeled decisionflip;N91 fieldpartition time2/4 unchanged,moreboundrefs/zero relation-label mismatch butcost+2.61%;bothgatesfailed,no nativegain.",
-  "next": "冻结同78输入的联合审阅/四维度独立审阅对比；独立调用不接收其他维度输出，原标签不修正，按既有规则组合并核验全部原理由门槛。先做schema及分维度输出预算预检，再推理；保留重复context的额外成本和失败。仍是已暴露输入诊断，默认G保留，不自动扩大原生评测。"
+  "next": "N93：证据输出与确定性聚合架构消融；先预检后156请求，保留原语义门槛。失败停止该分支，不自动增加提示词变体。"
 }
