@@ -1,0 +1,84 @@
+{
+  "model": "smarthome-qwen35-9b",
+  "actor_path": "../models/Qwen3.5-9B",
+  "model_python": "/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/anaconda3/envs/qwen36-vllm/bin/python",
+  "context": 32768,
+  "engine_seed": 0,
+  "model_seed": 42,
+  "generation": {
+    "temperature": 0.0,
+    "max_tokens": 2048,
+    "extra_body": {
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    }
+  },
+  "slots_per_actor": 16,
+  "max_num_seqs": 32,
+  "gpu_memory_utilization": 0.8,
+  "startup_timeout": 1200,
+  "request_timeout": 240,
+  "actors": [
+    {
+      "id": 0,
+      "gpu": 0,
+      "endpoint": "http://127.0.0.1:20400/v1"
+    },
+    {
+      "id": 1,
+      "gpu": 1,
+      "endpoint": "http://127.0.0.1:20401/v1"
+    },
+    {
+      "id": 2,
+      "gpu": 2,
+      "endpoint": "http://127.0.0.1:20402/v1"
+    },
+    {
+      "id": 3,
+      "gpu": 3,
+      "endpoint": "http://127.0.0.1:20403/v1"
+    }
+  ],
+  "actor_extra_args": [
+    "--gdn-prefill-backend",
+    "triton"
+  ],
+  "kernel_cache_root": "/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/zhengrj/agent/smarthome_agent_rl/work/concurrency-capacity/kernel-cache",
+  "chat_transport": "append_empty_user",
+  "node": "N74",
+  "schema": "public-context-semantic-ablation-v1",
+  "parent_run": "runs/action-semantic-diagnosis/n72-v1",
+  "parent_artifact_sha256": "2f79f6f3843a93d571524b58c35be58f9dbaf64103821c8725c78988b1688be0",
+  "parent_inputs_sha256": "a322aa6d86c637a08fdb494b6f4b6b06abc0af725b5905d09ab2327ddaed5b4d",
+  "developer_labels_sha256": "da2ed8a8b832ffd9b200b23448c5c0502cb65fed15d5c00194fc919dc23cad2c",
+  "developer_counts": {
+    "CONSISTENT_CONTROL": 3,
+    "CERTAIN_CONFLICT": 6,
+    "UNCERTAIN": 29
+  },
+  "episodes": 36,
+  "proposals": 38,
+  "new_requests": 114,
+  "arms": [
+    "9b_references",
+    "9b_workflow",
+    "9b_both"
+  ],
+  "inputs_sha256": "PREPARE_BEFORE_INFERENCE",
+  "valid_ratio_min": 0.95,
+  "historical_reference": "N72 immutable9b_public38 requests/87300 tokens;not billed as new,no rerun",
+  "intervention": "Reference-only/workflow-only/both from exact original public observations before dispatch;unchanged prompt/schema/seed/generation/action",
+  "selection": "Every original38 Guard-admitted proposal;36 source episodes retained,14 zero-mutation;165 original excluded proposals retained in coverage",
+  "metrics": [
+    "structural validity",
+    "paired verdict transitions",
+    "developer6 conflict denials/3 control allows;not independent truth",
+    "all new tokens/HTTP/errors/length/probe/startup/wall/GPU costs;historical costs separate"
+  ],
+  "developer_case_gate": "Per arm >=95% structural,all6 retained clear conflicts DENY,all3 controls ALLOW including invalids. Diagnostic screening only;never native blocking admission.",
+  "exclusions": "None of38 based on candidate decisions;original upstream nonmutation/Guard blocks only,unchanged. Unknown29 not treated as wrong/correct labels.",
+  "stop_rule": "One114-request frozen run;no selective retry,prompt/gate tuning or automatic expansion. Preserve every failure. No A800 requests/reservation.",
+  "scope": "Exposed official single-turn retained traces;no new benchmark,simulation,training,sealed95 read,SR or Task completion. Same9B reviewer and3 seed clusters retain bias."
+}
