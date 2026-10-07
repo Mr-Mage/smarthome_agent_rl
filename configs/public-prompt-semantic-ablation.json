@@ -1,0 +1,103 @@
+{
+  "model": "smarthome-qwen35-9b",
+  "actor_path": "../models/Qwen3.5-9B",
+  "model_python": "/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/anaconda3/envs/qwen36-vllm/bin/python",
+  "context": 32768,
+  "engine_seed": 0,
+  "model_seed": 42,
+  "generation": {
+    "temperature": 0.0,
+    "max_tokens": 2048,
+    "extra_body": {
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    }
+  },
+  "slots_per_actor": 16,
+  "max_num_seqs": 32,
+  "gpu_memory_utilization": 0.8,
+  "startup_timeout": 1200,
+  "request_timeout": 240,
+  "actors": [
+    {
+      "id": 0,
+      "gpu": 0,
+      "endpoint": "http://127.0.0.1:20400/v1"
+    },
+    {
+      "id": 1,
+      "gpu": 1,
+      "endpoint": "http://127.0.0.1:20401/v1"
+    },
+    {
+      "id": 2,
+      "gpu": 2,
+      "endpoint": "http://127.0.0.1:20402/v1"
+    },
+    {
+      "id": 3,
+      "gpu": 3,
+      "endpoint": "http://127.0.0.1:20403/v1"
+    }
+  ],
+  "actor_extra_args": [
+    "--gdn-prefill-backend",
+    "triton"
+  ],
+  "kernel_cache_root": "/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/zhengrj/agent/smarthome_agent_rl/work/concurrency-capacity/kernel-cache",
+  "chat_transport": "append_empty_user",
+  "node": "N75",
+  "schema": "public-prompt-semantic-ablation-v1",
+  "parent_run": "runs/context-semantic-ablation/n74-v1",
+  "parent_artifact_sha256": "b701ea0b216e60289a6cb96114260c1c04de5ac45f5ff9a478067ed53be8e4b1",
+  "parent_inputs_sha256": "78874cf99cd0fdbed4ae6d26deab136510130a1171006bdd2ac9fc16daf7defc",
+  "developer_labels_sha256": "da2ed8a8b832ffd9b200b23448c5c0502cb65fed15d5c00194fc919dc23cad2c",
+  "developer_counts": {
+    "CONSISTENT_CONTROL": 3,
+    "CERTAIN_CONFLICT": 6,
+    "UNCERTAIN": 29
+  },
+  "developer_conflict_groups": {
+    "time": [
+      "qt4-1_feasible_seed_26:seed42:a000007",
+      "qt4-1_feasible_seed_26:seed42:a000009",
+      "qt4-1_feasible_seed_26:seed43:a000006",
+      "qt4-1_feasible_seed_26:seed43:a000008"
+    ],
+    "target": [
+      "qt4-1_infeasible_seed_27:seed42:a000009",
+      "qt4-1_infeasible_seed_27:seed44:a000007"
+    ]
+  },
+  "episodes": 36,
+  "proposals": 38,
+  "new_requests": 114,
+  "arms": [
+    "9b_target",
+    "9b_time",
+    "9b_stepwise"
+  ],
+  "inputs_sha256": "PREPARE_BEFORE_INFERENCE",
+  "prompt_sha256": {
+    "9b_target": "73666f4e7ac53f5682eebf7d8e374d3b643fb5d9f102c111abeb69684d5a8071",
+    "9b_time": "18528bf4465a70efdfcc94518f9ebfa68849172941a317c0e7a5abbbdb428961",
+    "9b_stepwise": "8cd5b1f3431c547faf8982c64746875c0c0d946c10f78ee3e00accec4226af6d"
+  },
+  "valid_ratio_min": 0.95,
+  "evidence_valid_ratio_min": 0.95,
+  "historical_reference": "N74 immutable9b_both38 requests/121510 tokens;not new cost,no rerun",
+  "intervention": "Target/time/combined stepwise audit prompts only;all contexts identical to N74 both,all other generation/schema/action/source settings unchanged",
+  "selection": "Every original38 Guard-admitted real proposal;36 source episodes retained,14 zero-mutation;165 original exclusions unchanged",
+  "metrics": [
+    "structural validity",
+    "paired verdict transitions",
+    "developer4 time/2 target conflict denials and3 controls;not independent truth",
+    "step coverage/exact device identity/encoded time/literal quote provenance;not entailment",
+    "all new HTTP/errors/length/tokens/probe/startup/wall/GPU/preparation costs;historical separate"
+  ],
+  "diagnostic_screen": "Per arm >=95% structural and>=95% step evidence coverage,all6 developer clear conflicts DENY,all3 controls ALLOW including invalids. Screening only,never native blocking admission.",
+  "exclusions": "No outcome-based removal;all38 actions preserved;original upstream nonmutation/Guard blocks only. Unknown29 not assigned positive/negative truth.",
+  "stop_rule": "One114-request frozen diagnosis;no selective retry,prompt/gate tuning or automatic expansion. Preserve all failures. No A800 calls or reservation.",
+  "scope": "Exposed official single-turn historical traces;no simulation,new benchmark,training,sealed95 read,SR or Task completion. Same9B review and3 source-seed clusters retain bias."
+}
