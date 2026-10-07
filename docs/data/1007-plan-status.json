@@ -3,6 +3,15 @@
   "scope": "Latest user confirmation: official single-turn harness diagnostics/ablations only; no SFT/RL, new benchmark or multi-session experiments.",
   "default": "Qwen3.5-9B + G; permanent baseline tag baseline/1007-9b-g",
   "nodes": {
+    "N92": {
+      "status": "frozen_pending_preflight",
+      "config": "configs/independent-review-ablation.json",
+      "records_per_arm": 78,
+      "new_requests": 390,
+      "review_records": 156,
+      "default_changed": false,
+      "native_admitted": false
+    },
     "N91": {
       "status": "partitioned_evidence_consistency_improved_semantic_gates_failed",
       "source_commit": "da5ff1c923e24a8dfe82376976a2db9d5b0667d5",
