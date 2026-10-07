@@ -1,0 +1,111 @@
+{
+  "model": "smarthome-qwen35-9b",
+  "actor_path": "../models/Qwen3.5-9B",
+  "model_python": "/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/anaconda3/envs/qwen36-vllm/bin/python",
+  "context": 32768,
+  "engine_seed": 0,
+  "model_seed": 42,
+  "generation": {
+    "temperature": 0.0,
+    "max_tokens": 2048,
+    "extra_body": {
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    }
+  },
+  "slots_per_actor": 16,
+  "max_num_seqs": 32,
+  "gpu_memory_utilization": 0.8,
+  "startup_timeout": 1200,
+  "request_timeout": 240,
+  "actors": [
+    {
+      "id": 0,
+      "gpu": 0,
+      "endpoint": "http://127.0.0.1:20400/v1"
+    },
+    {
+      "id": 1,
+      "gpu": 1,
+      "endpoint": "http://127.0.0.1:20401/v1"
+    },
+    {
+      "id": 2,
+      "gpu": 2,
+      "endpoint": "http://127.0.0.1:20402/v1"
+    },
+    {
+      "id": 3,
+      "gpu": 3,
+      "endpoint": "http://127.0.0.1:20403/v1"
+    }
+  ],
+  "actor_extra_args": [
+    "--gdn-prefill-backend",
+    "triton"
+  ],
+  "kernel_cache_root": "/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/zhengrj/agent/smarthome_agent_rl/work/concurrency-capacity/kernel-cache",
+  "chat_transport": "append_empty_user",
+  "developer_labels_sha256": "da2ed8a8b832ffd9b200b23448c5c0502cb65fed15d5c00194fc919dc23cad2c",
+  "developer_counts": {
+    "CONSISTENT_CONTROL": 3,
+    "CERTAIN_CONFLICT": 6,
+    "UNCERTAIN": 29,
+    "UNLABELED": 40
+  },
+  "developer_conflict_groups": {
+    "time": [
+      "n76:qt4-1_feasible_seed_26:seed42:a000007",
+      "n76:qt4-1_feasible_seed_26:seed42:a000009",
+      "n76:qt4-1_feasible_seed_26:seed43:a000006",
+      "n76:qt4-1_feasible_seed_26:seed43:a000008"
+    ],
+    "target": [
+      "n76:qt4-1_infeasible_seed_27:seed42:a000009",
+      "n76:qt4-1_infeasible_seed_27:seed44:a000007"
+    ]
+  },
+  "valid_ratio_min": 0.95,
+  "evidence_valid_ratio_min": 0.95,
+  "node": "N82",
+  "schema": "evidence-order-ablation-v1",
+  "parent_run": "runs/effect-evidence-ablation/n80-v1",
+  "parent_collection_sha256": "a8c81fef46ac238199d6a287b70c2af927d94c9549ac606ef04609eec1280ead",
+  "inputs_sha256": "7bbc6b7dd1fc280d52c06e529fe19ba7b9b5037b0a91a7224f9c3a4a57a0bd00",
+  "records": 78,
+  "new_requests": 156,
+  "arms": [
+    "label_first",
+    "evidence_first"
+  ],
+  "ordered_schemas_sha256": "4d36b2edd9d7900e60c35b20610dd0211513a55ba26709d08510201c0fb96256",
+  "prompt_sha256": "640cd2e1b63726e7fec79039581d87e9fe003f91fded9d4bdd3ef24615bf0dd9",
+  "selection": "All original78 N79/N80 inputs,including2 historical parse failures and repeated contexts;no label/outcome selection. Original developer6 conflicts/3 controls retained,other69 unknown/unlabeled.",
+  "intervention": "Only per-dimension schema properties order:label/probability/evidence versus evidence/label/probability. Required lists,other schema metadata/constraints,prompt/context/model/seed/generation unchanged. Actual raw output order must be verified,not assumed from schema.",
+  "pairing": "Both fresh arms per input share actor index%4,16slots peractor/64total. Alternate submission arm order by input parity. OriginalN80 combined78 receipts reused only as historical reference;no retrospective gate change.",
+  "metrics": [
+    "All4 dimensions actual raw generated key order,including invalid/duplicate JSON",
+    "Schema and literal evidence provenance,not entailment",
+    "Internal conflict and aggregate mismatch records",
+    "Fresh paired verdicts and historical-control drift;repeated contexts not independent tasks",
+    "Original developer6 denials/3allows and4time/2target reason dimensions;not independent accuracy",
+    "All156 failed/successful HTTP/prompt/completion/total tokens/latencies plus4probes/startup/GPU/preparation"
+  ],
+  "diagnostic_screen": "Complete156 unique paired requests. Perarm all78 actual output orders match arm,>=95% schema and literal provenance,zero HTTP/missing usage/internal conflicts/aggregate mismatch,6 developer conflicts DENY,3controls ALLOW,4time/2target correct declared negative dimensions. Diagnostic screening only;native admission remains false even if passed.",
+  "exclusions": "None;keep all failures. No inferenced labels,predictions,repaired decisions,hidden evaluator data or user outcome scores in requests.",
+  "budget": {
+    "new_requests": 156,
+    "maximum_completion_tokens": 319488,
+    "total_slots": 64,
+    "requests_per_actor": [
+      40,
+      40,
+      38,
+      38
+    ],
+    "retries": 0
+  },
+  "stop_rule": "One frozen156-request run;compile156 ordered schemas first with existing backend. No selective retry,schema/prompt/gate tuning,automatic expansion,A800 request or native simulation. Stop owned actors on failure;retain all receipts.",
+  "scope": "Exposed official single-turn representation diagnosis only;no training,new benchmark,sealed95,SR,Task completion,blocking or default adoption. All original failed screens retained."
+}
