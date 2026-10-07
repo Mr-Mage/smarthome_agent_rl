@@ -93,6 +93,8 @@ def main(mode):
     from smarthome_agent_rl.report_semantic_review import attach_report_reviewer
     agent_policy, report_reviewer = attach_report_reviewer(config, variant,
         audit_fn=lambda rows: save('semantic_review_calls.json', rows))
+    if report_reviewer is not None:
+        report_reviewer.verify = profile.wrap(report_reviewer.verify, 'semantic_review')
     def trace(kind, payload):
         event = {'event': kind, 'payload': payload, 'at_seconds': time.monotonic() - profile.origin}
         events.append(event)
