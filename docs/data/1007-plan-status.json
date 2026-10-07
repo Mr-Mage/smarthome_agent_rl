@@ -3,6 +3,131 @@
   "scope": "Latest user confirmation: official single-turn harness diagnostics/ablations only; no SFT/RL, new benchmark or multi-session experiments.",
   "default": "Qwen3.5-9B + G; permanent baseline tag baseline/1007-9b-g",
   "nodes": {
+    "N80": {
+      "status": "representation_ablation_complete_all_screens_failed_not_admitted",
+      "source_commit": "929a4080a6ae7bd3d0305c9974442986a98b3cb9",
+      "config": "configs/effect-evidence-ablation.json",
+      "evidence": "runs/effect-evidence-ablation/n80-v1/",
+      "records_per_arm": 78,
+      "new_requests": 234,
+      "arms": {
+        "historical": {
+          "schema_conformant": 76,
+          "literal_evidence_valid": 75,
+          "internal_conflict_records": 3,
+          "aggregate_mismatch_records": 30,
+          "developer_conflicts": {
+            "DENY": 6
+          },
+          "developer_controls": {
+            "ALLOW": 3
+          },
+          "developer_reason_dimensions": {
+            "time": {
+              "records": 4,
+              "expected_dimension_no": 4
+            },
+            "target": {
+              "records": 2,
+              "expected_dimension_no": 0
+            }
+          },
+          "tokens": 280761
+        },
+        "effects": {
+          "schema_conformant": 78,
+          "literal_evidence_valid": 68,
+          "internal_conflict_records": 7,
+          "aggregate_mismatch_records": 28,
+          "developer_conflicts": {
+            "DENY": 5,
+            "ALLOW": 1
+          },
+          "developer_controls": {
+            "ALLOW": 3
+          },
+          "developer_reason_dimensions": {
+            "time": {
+              "records": 4,
+              "expected_dimension_no": 4
+            },
+            "target": {
+              "records": 2,
+              "expected_dimension_no": 0
+            }
+          },
+          "tokens": 310227
+        },
+        "coherence": {
+          "schema_conformant": 78,
+          "literal_evidence_valid": 78,
+          "internal_conflict_records": 0,
+          "aggregate_mismatch_records": 24,
+          "developer_conflicts": {
+            "DENY": 5,
+            "ALLOW": 1
+          },
+          "developer_controls": {
+            "ALLOW": 3
+          },
+          "developer_reason_dimensions": {
+            "time": {
+              "records": 4,
+              "expected_dimension_no": 4
+            },
+            "target": {
+              "records": 2,
+              "expected_dimension_no": 0
+            }
+          },
+          "tokens": 293471
+        },
+        "combined": {
+          "schema_conformant": 78,
+          "literal_evidence_valid": 63,
+          "internal_conflict_records": 1,
+          "aggregate_mismatch_records": 30,
+          "developer_conflicts": {
+            "DENY": 6
+          },
+          "developer_controls": {
+            "ALLOW": 3
+          },
+          "developer_reason_dimensions": {
+            "time": {
+              "records": 4,
+              "expected_dimension_no": 4
+            },
+            "target": {
+              "records": 2,
+              "expected_dimension_no": 0
+            }
+          },
+          "tokens": 325032
+        }
+      },
+      "diagnostic_screen_passed": {
+        "effects": false,
+        "coherence": false,
+        "combined": false
+      },
+      "native_admitted": false,
+      "cost": {
+        "new_tokens": 928730,
+        "probe_requests": 4,
+        "probe_tokens": 88,
+        "wall_seconds": 106.85015164100332,
+        "startup_seconds": 78.98482751403935,
+        "reserved_h100_gpu_seconds": 426.717481255997,
+        "preparation_seconds": 2.002519818022847,
+        "backend_compilation_seconds": 0.5454764280002564,
+        "historical_review_tokens": 280761,
+        "archive_transfer_cpu": "not fully measured"
+      },
+      "acceptance": "12 specialized;server402,401passed/1skip;local full missing dependencies failed,no environment changes. 1645 parent artifacts,234 HTTP,255 collection files,280 Git blobs verified;GPUs released,A800 preserved",
+      "archive_sha256": "e91be1558e676706e0c9d1bf89ff8bc7fbc63587f3e2159521f03c6d5ce1adda",
+      "scope": "Representation diagnosis only;no independent semantic accuracy,SR,training,blocking or default adoption. N76 failed gate retained."
+    },
     "N79": {
       "status": "read_only_evidence_consistency_diagnosis_completed_not_semantic_truth",
       "source_commit": "04548dc",
@@ -1263,6 +1388,6 @@
     "native_user_goal_conditions": "unimplemented;N67/N70 parsers failed admission;N66/N69 Task remain WAITING,action intentions do not prove user goals",
     "common_simuhome_adapter": "N61 unified entry and public actor boundary verified; native protocols and scores retained"
   },
-  "benefit_acceptance": "not satisfied; no stable benefit on two public benchmarks. N66 CI crosses zero;N67/N70 semantic admission failed;N69 SR flips all without candidate context and tiny stratified interval degenerates. N72/N74 semantic reviews not admitted;N74 all6 conflicts missed;N75 combined6/6 developer denials but35/38 evidence;N76 dynamic schema37/38 andevidence36/38 fail screen,reasons unverified. G retained N77 failure isolation andN78 coverage accepted;N78 all3 wins without review,no attributed benefit;G retained.",
-  "next": "Independently freeze a per-step representation diagnosis that separates command/value effects from timing and makes aggregate label/evidence relations explicit. Reuse original N79 cohort without native benchmark rerun. FourH100 for future inference;no semantic blocking,training,sealed95 or automatic N78 expansion."
+  "benefit_acceptance": "not satisfied; no stable benefit on two public benchmarks. N66 CI crosses zero;N67/N70 semantic admission failed;N69 SR flips all without candidate context and tiny stratified interval degenerates. N72/N74 semantic reviews not admitted;N74 all6 conflicts missed;N75 combined6/6 developer denials but35/38 evidence;N76 dynamic schema37/38 andevidence36/38 fail screen,reasons unverified. G retained N77 failure isolation andN78 coverage accepted;N78 all3 wins without review,no attributed benefit;G retained. N80 all3 representation screens failed;coherence internal conflicts0 but24/78 aggregate mismatches,effects quotes degrade;no admission.",
+  "next": "Read-only diagnosis on retained N80 receipts: device binding and conflicting clock anchors;explicit report-only aggregation interface preserving original outputs. Freeze separately before any future inference;no benchmark expansion,training,sealed95 or native blocking."
 }
