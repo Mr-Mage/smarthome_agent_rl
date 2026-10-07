@@ -3,6 +3,29 @@
   "scope": "Latest user confirmation: official single-turn harness diagnostics/ablations only; no SFT/RL, new benchmark or multi-session experiments.",
   "default": "Qwen3.5-9B + G; permanent baseline tag baseline/1007-9b-g",
   "nodes": {
+    "N77": {
+      "status": "report_only_engineering_verified_not_blocking_admitted",
+      "source_commit": "a5ba25e",
+      "evidence": "runs/task-runtime/n77-server-v1/",
+      "reused_requests": 38,
+      "accepted_model_outputs": 36,
+      "report_verdicts": {
+        "DENY": 25,
+        "ALLOW": 9,
+        "UNCERTAIN": 4
+      },
+      "fallbacks": {
+        "REVIEW_INCOMPLETE_OUTPUT": 1,
+        "REVIEW_EVIDENCE_FAILURE": 1
+      },
+      "new_model_requests": 0,
+      "new_tokens": 0,
+      "reserved_gpu_seconds": 0,
+      "historical_tokens": 142168,
+      "acceptance": "6 specialized;full379,378 passed/1 skip;local6 artifacts/38 original HTTP/9 native paths;actor inputs,tools and observations identical",
+      "archive_sha256": "c05fe46757db97bc0998e6e493880c395e8f06a13c637ca04419d29e958b3894",
+      "scope": "Failure isolation only;original N76 validity unchanged,no semantic blocking,SR,Task completion or default adoption"
+    },
     "N76": {
       "status": "engineering_passed_evidence_screen_failed_not_admitted",
       "source_commit": "57ae129",
@@ -567,18 +590,43 @@
       "config": "configs/native-resource-context.json",
       "evidence": "runs/native-resource-context/n69-v1/",
       "tasks": 12,
-      "actor_seeds": [42, 43, 44],
+      "actor_seeds": [
+        42,
+        43,
+        44
+      ],
       "episodes": 72,
       "reference": "GTME",
       "candidate": "GTMEC",
       "acceptance_before_inference": "22 specialized server checks;full317,316 passed,one environment skip",
       "source_commit": "7c656e9",
-      "successes": {"GTME": 13, "GTMEC": 14},
-      "paired_overall": {"wins": 3, "losses": 2},
+      "successes": {
+        "GTME": 13,
+        "GTMEC": 14
+      },
+      "paired_overall": {
+        "wins": 3,
+        "losses": 2
+      },
       "discordance_without_candidate_context": 5,
       "statistics_limitation": "one task per category; frozen stratified bootstrap degenerates to point,not uncertainty evidence",
-      "candidate_runtime": {"jobs": 19, "fixed_claims": 34, "uncovered_steps": 3, "actual_context_requests": 19, "historical_conflicts": 0},
-      "cost": {"actor_requests": 500, "actor_tokens": 3052896, "judge_requests": 126, "judge_tokens": 275286, "probe_requests": 10, "probe_tokens": 324, "wall_seconds": 503.06, "reserved_h100_gpu_seconds": 2012.24},
+      "candidate_runtime": {
+        "jobs": 19,
+        "fixed_claims": 34,
+        "uncovered_steps": 3,
+        "actual_context_requests": 19,
+        "historical_conflicts": 0
+      },
+      "cost": {
+        "actor_requests": 500,
+        "actor_tokens": 3052896,
+        "judge_requests": 126,
+        "judge_tokens": 275286,
+        "probe_requests": 10,
+        "probe_tokens": 324,
+        "wall_seconds": 503.06,
+        "reserved_h100_gpu_seconds": 2012.24
+      },
       "acceptance": "1167 artifacts,36 initial pairs and actual HTTP contexts verified;local72 SQLite/Trace and36 declaration/disclosure checks passed",
       "archive_sha256": "9ed06f849e54053296993e1d15d3a4ff3ffeb53cfb4ec69e306e1f0c58e494e4",
       "scope": "Frozen exposed official single-turn calibration;no automatic expansion,default adoption,training or new benchmark"
@@ -816,10 +864,24 @@
       "source_commit": "f4813dd",
       "auditor_commit": "a99df46",
       "evidence": "runs/native-task-supervision/n63-v1/evidence-receipt.json",
-      "successes_per_12": {"G": 6, "GTM": 6},
-      "paired": {"wins": 1, "losses": 1},
-      "stop_reasons": ["null-data native400 receipt interrupted registration", "one raw tool call omitted from legacy audit"],
-      "runtime": {"public_tasks_waiting": 12, "jobs": 5, "verified_jobs": 0, "supervisor_queries": 45},
+      "successes_per_12": {
+        "G": 6,
+        "GTM": 6
+      },
+      "paired": {
+        "wins": 1,
+        "losses": 1
+      },
+      "stop_reasons": [
+        "null-data native400 receipt interrupted registration",
+        "one raw tool call omitted from legacy audit"
+      ],
+      "runtime": {
+        "public_tasks_waiting": 12,
+        "jobs": 5,
+        "verified_jobs": 0,
+        "supervisor_queries": 45
+      },
       "scope": "24 exposed single-turn episodes; no new SR benefit,expansion or rerun",
       "archive_sha256": "dfa0efb46979371be1b9190c0b9a8ab1b6079a229fe21ce53941c0df813b9a26"
     },
@@ -829,15 +891,31 @@
       "config": "configs/public-goal-diagnosis.json",
       "evidence": "runs/public-goal-diagnosis/n67-v1/",
       "tasks": 120,
-      "actor_seeds": [42, 43, 44],
+      "actor_seeds": [
+        42,
+        43,
+        44
+      ],
       "records": 360,
       "acceptance_before_inference": "14 server checks; full303,302 passed,one environment skip",
       "valid_proposals": 207,
       "review_all_yes": 84,
-      "manual": {"passed": 6, "failed": 30},
+      "manual": {
+        "passed": 6,
+        "failed": 30
+      },
       "acceptance": "16 specialized checks; full305,304 passed,one skip;374 original artifacts and360 HTTP records verified; semantic gates failed",
       "ready_for_native_integration": false,
-      "cost": {"extractor_requests": 360, "extractor_tokens": 186987, "reviewer_requests": 207, "reviewer_tokens": 166698, "probe_requests": 4, "probe_tokens": 88, "wall_seconds": 188.80, "reserved_h100_gpu_seconds": 755.16},
+      "cost": {
+        "extractor_requests": 360,
+        "extractor_tokens": 186987,
+        "reviewer_requests": 207,
+        "reviewer_tokens": 166698,
+        "probe_requests": 4,
+        "probe_tokens": 88,
+        "wall_seconds": 188.8,
+        "reserved_h100_gpu_seconds": 755.16
+      },
       "archive_sha256": "97457dcaeb92ca0d6b5b1db17598ba5aadce65cb9fc663f5950c784fac9fba99",
       "scope": "Separate public goal proposals and graph diagnosis only; no ReAct changes,Task completion,training or new benchmark"
     },
@@ -855,13 +933,32 @@
       "evidence": "runs/native-event-supervision/n66-v1/",
       "config": "configs/native-event-supervision.json",
       "tasks": 120,
-      "actor_seeds": [42, 43, 44],
+      "actor_seeds": [
+        42,
+        43,
+        44
+      ],
       "episodes": 720,
-      "successes": {"G": 123, "GTME": 126},
+      "successes": {
+        "G": 123,
+        "GTME": 126
+      },
       "verified_native_jobs": 64,
       "native_jobs": 191,
-      "task_clustered_delta_ci95": [-0.02777777777777778, 0.047222222222222214],
-      "cost": {"actor_requests": 5066, "actor_tokens": 31937717, "judge_requests": 1242, "judge_tokens": 2552115, "probe_requests": 10, "probe_tokens": 324, "wall_seconds": 822.2625447410392, "reserved_h100_gpu_seconds": 3289.0501789641567},
+      "task_clustered_delta_ci95": [
+        -0.02777777777777778,
+        0.047222222222222214
+      ],
+      "cost": {
+        "actor_requests": 5066,
+        "actor_tokens": 31937717,
+        "judge_requests": 1242,
+        "judge_tokens": 2552115,
+        "probe_requests": 10,
+        "probe_tokens": 324,
+        "wall_seconds": 822.2625447410392,
+        "reserved_h100_gpu_seconds": 3289.0501789641567
+      },
       "acceptance": "8639 artifacts and360 initial paired requests verified;191 native jobs,64 verified; zero infrastructure/accounting errors",
       "archive_sha256": "2c3ad8591483a01cfa4f5fbb98992331c5cb6267985ba40707a0e877a1b1f74e",
       "public_case_diagnosis_sha256": "cb9df07a2334c4d5e65727c5394c97cb7e971f7c1b54cc39a00005566e8001fa",
@@ -931,5 +1028,5 @@
     "common_simuhome_adapter": "N61 unified entry and public actor boundary verified; native protocols and scores retained"
   },
   "benefit_acceptance": "not satisfied; no stable benefit on two public benchmarks. N66 CI crosses zero;N67/N70 semantic admission failed;N69 SR flips all without candidate context and tiny stratified interval degenerates. N72/N74 semantic reviews not admitted;N74 all6 conflicts missed;N75 combined6/6 developer denials but35/38 evidence;N76 dynamic schema37/38 andevidence36/38 fail screen,reasons unverified. G retained",
-  "next": "Native report-only adapter engineering: isolate HTTP/parse/literal-evidence failures as UNCERTAIN with raw/cost retained;never automatic semantic blocking or relabeling frozen model validity. Then independently freeze official single-turn coverage/cost diagnosis."
+  "next": "Independently freeze official G vs report-only Candidate native coverage/failure/cost diagnosis;4 actors/64 slots,permanent A800 scoring;no semantic blocking or presumed SR benefit."
 }
