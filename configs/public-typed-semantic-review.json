@@ -1,0 +1,82 @@
+{
+  "model": "smarthome-qwen35-9b",
+  "actor_path": "../models/Qwen3.5-9B",
+  "model_python": "/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/anaconda3/envs/qwen36-vllm/bin/python",
+  "context": 32768,
+  "engine_seed": 0,
+  "model_seed": 42,
+  "generation": {
+    "temperature": 0.0,
+    "max_tokens": 2048,
+    "extra_body": {
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    }
+  },
+  "slots_per_actor": 16,
+  "max_num_seqs": 32,
+  "gpu_memory_utilization": 0.8,
+  "startup_timeout": 1200,
+  "request_timeout": 240,
+  "actors": [
+    {
+      "id": 0,
+      "gpu": 0,
+      "endpoint": "http://127.0.0.1:20400/v1"
+    },
+    {
+      "id": 1,
+      "gpu": 1,
+      "endpoint": "http://127.0.0.1:20401/v1"
+    },
+    {
+      "id": 2,
+      "gpu": 2,
+      "endpoint": "http://127.0.0.1:20402/v1"
+    },
+    {
+      "id": 3,
+      "gpu": 3,
+      "endpoint": "http://127.0.0.1:20403/v1"
+    }
+  ],
+  "actor_extra_args": [
+    "--gdn-prefill-backend",
+    "triton"
+  ],
+  "kernel_cache_root": "/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/zhengrj/agent/smarthome_agent_rl/work/concurrency-capacity/kernel-cache",
+  "chat_transport": "append_empty_user",
+  "node": "N76",
+  "schema": "public-typed-semantic-review-v1",
+  "parent_run": "runs/prompt-semantic-ablation/n75-v1",
+  "parent_artifact_sha256": "146d6b1cd02f6aa686c1faa7a2a8f293f38b3264eae3a9a0adff045cf3beec11",
+  "inputs_sha256": "6e1027bb30b8ecf403a91ec0d16cae831fc830d2b151de51b2e5cdccdd216d84",
+  "schemas_sha256": "7bf7c0c10626e2624598efbb9ee72584c747cd73e1251b68b56976aed7bdfd84",
+  "prompt_sha256": "8cd5b1f3431c547faf8982c64746875c0c0d946c10f78ee3e00accec4226af6d",
+  "developer_labels_sha256": "da2ed8a8b832ffd9b200b23448c5c0502cb65fed15d5c00194fc919dc23cad2c",
+  "developer_counts": {
+    "CONSISTENT_CONTROL": 3,
+    "CERTAIN_CONFLICT": 6,
+    "UNCERTAIN": 29
+  },
+  "episodes": 36,
+  "proposals": 38,
+  "new_requests": 38,
+  "valid_ratio_min": 0.95,
+  "evidence_valid_ratio_min": 0.95,
+  "historical_reference": "N75 immutable9b_stepwise38 requests/140004 tokens;not new cost,no rerun",
+  "intervention": "Dynamic evidence schema only: fixed1-based step index,proposed device ID and encoded time,exact step count/shape;verdict choices and quotes unconstrained. Original combined prompt/context/model/generation unchanged.",
+  "selection": "Every original38 Guard-admitted real proposal;36 source episodes retained,14 zero-mutation;165 original exclusions unchanged",
+  "metrics": [
+    "JSON/schema conformance",
+    "literal evidence provenance;not entailment",
+    "paired verdict transitions",
+    "developer6 conflicts/3 controls;unknown29 kept without truth",
+    "all new HTTP/length/tokens/probe/startup/wall/GPU/preparation costs;historical separate"
+  ],
+  "diagnostic_screen": "At least95% JSON/schema conformance and95% unchanged evidence checks,all6 developer conflicts DENY,all3 controls ALLOW. Screening only;not independent semantic accuracy or native blocking admission.",
+  "exclusions": "No outcome-based removal;all38 preserved;original upstream exclusions only",
+  "stop_rule": "One38-request frozen run;no selective retry,schema/prompt/gate tuning or automatic expansion. Backend grammar compilation before inference;preserve every failure. No A800 calls.",
+  "scope": "Exposed official single-turn historical public traces only;no simulation,new benchmark,training,sealed95 read,SR or Task completion. Schema depends only on public proposed action,not user-goal truth."
+}
