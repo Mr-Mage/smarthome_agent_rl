@@ -3,6 +3,150 @@
   "scope": "Latest user confirmation: official single-turn harness diagnostics/ablations only; no SFT/RL, new benchmark or multi-session experiments.",
   "default": "Qwen3.5-9B + G; permanent baseline tag baseline/1007-9b-g",
   "nodes": {
+    "N78": {
+      "status": "native_report_only_engineering_verified_no_attributed_benefit",
+      "source_commit": "a2b120f",
+      "config": "configs/native-report-semantic-review.json",
+      "evidence": "runs/native-report-semantic-review/n78-v1/",
+      "episodes": 72,
+      "exposed_public_tasks": 12,
+      "actor_seeds": [
+        42,
+        43,
+        44
+      ],
+      "actors": 4,
+      "slots": 64,
+      "arms": {
+        "G": {
+          "episodes": 36,
+          "successes": 14,
+          "guard_admitted_mutations": 63,
+          "zero_mutation_episodes": 13,
+          "review": {
+            "requests": 0,
+            "tokens": 0,
+            "missing_usage": 0,
+            "request_seconds": 0,
+            "accepted_model_outputs": 0,
+            "fallbacks": 0
+          },
+          "review_wall_seconds": 0,
+          "fallbacks": {},
+          "report_verdicts": {},
+          "model_verdicts": {},
+          "actor_tokens": 1745768,
+          "judge_tokens": 148554,
+          "actor_calls": 270,
+          "judge_calls": 63,
+          "missing_actor_judge_usage": 0,
+          "latency": {
+            "review_wall_seconds": {
+              "p50": 0.0,
+              "p95": 0.0
+            },
+            "agent_seconds": {
+              "p50": 23.29764212248847,
+              "p95": 62.52289272574126
+            },
+            "episode_seconds": {
+              "p50": 27.709921092522563,
+              "p95": 172.719604163256
+            }
+          },
+          "actor_plus_review_tokens": 1745768
+        },
+        "Candidate": {
+          "episodes": 36,
+          "successes": 15,
+          "guard_admitted_mutations": 40,
+          "zero_mutation_episodes": 13,
+          "review": {
+            "requests": 40,
+            "tokens": 138593,
+            "missing_usage": 0,
+            "request_seconds": 171.93145102303242,
+            "accepted_model_outputs": 39,
+            "fallbacks": 1
+          },
+          "review_wall_seconds": 172.41402102308348,
+          "fallbacks": {
+            "REVIEW_INCOMPLETE_OUTPUT": 1
+          },
+          "report_verdicts": {
+            "DENY": 26,
+            "ALLOW": 13,
+            "UNCERTAIN": 1
+          },
+          "model_verdicts": {
+            "DENY": 26,
+            "ALLOW": 13,
+            "INVALID": 1
+          },
+          "actor_tokens": 1414430,
+          "judge_tokens": 126036,
+          "actor_calls": 239,
+          "judge_calls": 63,
+          "missing_actor_judge_usage": 0,
+          "latency": {
+            "review_wall_seconds": {
+              "p50": 4.033286093006609,
+              "p95": 11.37502761882206
+            },
+            "agent_seconds": {
+              "p50": 27.342319137998857,
+              "p95": 56.52740839999751
+            },
+            "episode_seconds": {
+              "p50": 30.872206633008318,
+              "p95": 179.96207606748794
+            }
+          },
+          "actor_plus_review_tokens": 1553023
+        }
+      },
+      "pairs": {
+        "same": 31,
+        "loss": 2,
+        "win": 3
+      },
+      "all_wins_without_reviews": true,
+      "first_request_identical_pairs": 36,
+      "first_response_identical_pairs": 26,
+      "acceptance": "full381,380passed/1skip;server/local72 episodes,40 reviews,1063 stage files/1091 collection files/269 source blobs;original receipts unchanged",
+      "cost": {
+        "total_seconds_including_cleanup": 334.72578973695636,
+        "allocated_actor_gpu_seconds": 1338.9031589478254,
+        "external_judge_stopped": false,
+        "monitor_errors": 0,
+        "sampled_gpu_utilization_mean": 18.64423076923077,
+        "sampled_gpu_utilization_peak": 100.0,
+        "queue_peaks": {
+          "actor_running": 64.0,
+          "actor_waiting": 0.0,
+          "judge_running": 2.0,
+          "judge_waiting": 0.0
+        },
+        "pressure": {
+          "peak_kv_cache_fraction": 0.04543840965566204,
+          "preemptions": 0.0
+        },
+        "scope": "Reserved H100 GPU wall time, including startup/failures/cleanup; excludes A800 shared-service allocation",
+        "actor_requests": 509,
+        "actor_tokens": 3160198,
+        "review_requests": 40,
+        "review_tokens": 138593,
+        "judge_requests": 126,
+        "judge_tokens": 274590,
+        "probe_requests": 10,
+        "probe_tokens": 324,
+        "all_model_requests": 685,
+        "all_model_tokens": 3573705,
+        "startup_seconds": 69.60422243695939
+      },
+      "archive_sha256": "7d988367b1445c870328c91c06d69005e7b3cdebe5c86f9a665c8fc5f7418d3d",
+      "scope": "Synchronous report-only costs/coverage/failure isolation,not semantic truth,blocking,independent holdout,Task completion or default adoption. All3 wins without review;one task/category degenerates stratified CI."
+    },
     "N77": {
       "status": "report_only_engineering_verified_not_blocking_admitted",
       "source_commit": "a5ba25e",
@@ -1027,6 +1171,6 @@
     "native_user_goal_conditions": "unimplemented;N67/N70 parsers failed admission;N66/N69 Task remain WAITING,action intentions do not prove user goals",
     "common_simuhome_adapter": "N61 unified entry and public actor boundary verified; native protocols and scores retained"
   },
-  "benefit_acceptance": "not satisfied; no stable benefit on two public benchmarks. N66 CI crosses zero;N67/N70 semantic admission failed;N69 SR flips all without candidate context and tiny stratified interval degenerates. N72/N74 semantic reviews not admitted;N74 all6 conflicts missed;N75 combined6/6 developer denials but35/38 evidence;N76 dynamic schema37/38 andevidence36/38 fail screen,reasons unverified. G retained",
-  "next": "Independently freeze official G vs report-only Candidate native coverage/failure/cost diagnosis;4 actors/64 slots,permanent A800 scoring;no semantic blocking or presumed SR benefit."
+  "benefit_acceptance": "not satisfied; no stable benefit on two public benchmarks. N66 CI crosses zero;N67/N70 semantic admission failed;N69 SR flips all without candidate context and tiny stratified interval degenerates. N72/N74 semantic reviews not admitted;N74 all6 conflicts missed;N75 combined6/6 developer denials but35/38 evidence;N76 dynamic schema37/38 andevidence36/38 fail screen,reasons unverified. G retained N77 failure isolation andN78 coverage accepted;N78 all3 wins without review,no attributed benefit;G retained.",
+  "next": "Audit whether literal quotes actually support per-device/per-time decisions on existing exposed official evidence;freeze any further intervention independently. Retain synchronous report reviewer for diagnosis only;no automatic online expansion,blocking,training or sealed95 access."
 }
