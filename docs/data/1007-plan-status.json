@@ -3,6 +3,531 @@
   "scope": "Latest user confirmation: official single-turn harness diagnostics/ablations only; no SFT/RL, new benchmark or multi-session experiments.",
   "default": "Qwen3.5-9B + G; permanent baseline tag baseline/1007-9b-g",
   "nodes": {
+    "N89": {
+      "status": "decoder_whitespace_format_cost_improvement_verified_semantic_gates_failed",
+      "source_commit": "04054bc6da85fb8b0badaf9e3e49a905d25c7050",
+      "config": "configs/decoder-whitespace-ablation.json",
+      "evidence": "runs/decoder-whitespace-ablation/n89-v1/",
+      "records_per_arm": 78,
+      "new_requests": 312,
+      "default_changed": false,
+      "native_admitted": false,
+      "arms": {
+        "original_allow": {
+          "records": 78,
+          "parsed": 69,
+          "schema_conformant": 69,
+          "literal_evidence_valid": 69,
+          "evidence_issues": {
+            "invalid_model_decision": 9
+          },
+          "internal_conflict_records": 0,
+          "aggregate_mismatch_records": 1,
+          "verdicts": {
+            "DENY": 35,
+            "UNCERTAIN": 31,
+            "ALLOW": 3,
+            "INVALID": 9
+          },
+          "evidence_first_outputs": 69,
+          "label_first_outputs": 0,
+          "invalid_order_outputs": 9,
+          "tokens": 419748,
+          "prompt_tokens": 364921,
+          "completion_tokens": 54827,
+          "http_errors": 0,
+          "missing_usage": 0,
+          "truncations": 9,
+          "median_request_seconds": 6.408161785511766,
+          "developer_conflicts": {
+            "DENY": 6
+          },
+          "developer_controls": {
+            "UNCERTAIN": 1,
+            "INVALID": 2
+          },
+          "developer_reason_dimensions": {
+            "time": {
+              "records": 4,
+              "expected_dimension_no": 2
+            },
+            "target": {
+              "records": 2,
+              "expected_dimension_no": 2
+            }
+          },
+          "by_origin": {
+            "n76": {
+              "records": 38,
+              "literal_evidence_valid": 34
+            },
+            "n78": {
+              "records": 40,
+              "literal_evidence_valid": 35
+            }
+          },
+          "binding_percentage_statuses": {
+            "no_explicit_percentage": 14,
+            "literal_percentage_matches": 20,
+            "multiple_percentage_references": 6
+          },
+          "percentage_agreement_conflict_records": 0,
+          "offset_binding_review_records": 8,
+          "resolution_errors": 9
+        },
+        "original_compact": {
+          "records": 78,
+          "parsed": 78,
+          "schema_conformant": 78,
+          "literal_evidence_valid": 78,
+          "evidence_issues": {},
+          "internal_conflict_records": 0,
+          "aggregate_mismatch_records": 0,
+          "verdicts": {
+            "UNCERTAIN": 37,
+            "DENY": 39,
+            "ALLOW": 2
+          },
+          "evidence_first_outputs": 78,
+          "label_first_outputs": 0,
+          "invalid_order_outputs": 0,
+          "tokens": 396993,
+          "prompt_tokens": 364921,
+          "completion_tokens": 32072,
+          "http_errors": 0,
+          "missing_usage": 0,
+          "truncations": 0,
+          "median_request_seconds": 4.242932380991988,
+          "developer_conflicts": {
+            "DENY": 6
+          },
+          "developer_controls": {
+            "UNCERTAIN": 3
+          },
+          "developer_reason_dimensions": {
+            "time": {
+              "records": 4,
+              "expected_dimension_no": 2
+            },
+            "target": {
+              "records": 2,
+              "expected_dimension_no": 2
+            }
+          },
+          "by_origin": {
+            "n76": {
+              "records": 38,
+              "literal_evidence_valid": 38
+            },
+            "n78": {
+              "records": 40,
+              "literal_evidence_valid": 40
+            }
+          },
+          "binding_percentage_statuses": {
+            "no_explicit_percentage": 16,
+            "literal_percentage_matches": 18,
+            "multiple_percentage_references": 6
+          },
+          "percentage_agreement_conflict_records": 0,
+          "offset_binding_review_records": 7,
+          "resolution_errors": 0
+        },
+        "history_allow": {
+          "records": 78,
+          "parsed": 76,
+          "schema_conformant": 76,
+          "literal_evidence_valid": 76,
+          "evidence_issues": {
+            "invalid_model_decision": 2
+          },
+          "internal_conflict_records": 0,
+          "aggregate_mismatch_records": 0,
+          "verdicts": {
+            "ALLOW": 38,
+            "DENY": 35,
+            "UNCERTAIN": 3,
+            "INVALID": 2
+          },
+          "evidence_first_outputs": 76,
+          "label_first_outputs": 0,
+          "invalid_order_outputs": 2,
+          "tokens": 419012,
+          "prompt_tokens": 377323,
+          "completion_tokens": 41689,
+          "http_errors": 0,
+          "missing_usage": 0,
+          "truncations": 2,
+          "median_request_seconds": 6.013413012522506,
+          "developer_conflicts": {
+            "DENY": 6
+          },
+          "developer_controls": {
+            "ALLOW": 3
+          },
+          "developer_reason_dimensions": {
+            "time": {
+              "records": 4,
+              "expected_dimension_no": 2
+            },
+            "target": {
+              "records": 2,
+              "expected_dimension_no": 2
+            }
+          },
+          "by_origin": {
+            "n76": {
+              "records": 38,
+              "literal_evidence_valid": 38
+            },
+            "n78": {
+              "records": 40,
+              "literal_evidence_valid": 38
+            }
+          },
+          "binding_percentage_statuses": {
+            "literal_percentage_matches": 16,
+            "no_explicit_percentage": 15,
+            "literal_percentage_disagrees": 1,
+            "multiple_percentage_references": 6
+          },
+          "percentage_agreement_conflict_records": 0,
+          "offset_binding_review_records": 6,
+          "resolution_errors": 2
+        },
+        "history_compact": {
+          "records": 78,
+          "parsed": 78,
+          "schema_conformant": 78,
+          "literal_evidence_valid": 78,
+          "evidence_issues": {},
+          "internal_conflict_records": 0,
+          "aggregate_mismatch_records": 0,
+          "verdicts": {
+            "ALLOW": 36,
+            "DENY": 38,
+            "UNCERTAIN": 4
+          },
+          "evidence_first_outputs": 78,
+          "label_first_outputs": 0,
+          "invalid_order_outputs": 0,
+          "tokens": 409335,
+          "prompt_tokens": 377323,
+          "completion_tokens": 32012,
+          "http_errors": 0,
+          "missing_usage": 0,
+          "truncations": 0,
+          "median_request_seconds": 4.225439245492453,
+          "developer_conflicts": {
+            "DENY": 6
+          },
+          "developer_controls": {
+            "ALLOW": 3
+          },
+          "developer_reason_dimensions": {
+            "time": {
+              "records": 4,
+              "expected_dimension_no": 2
+            },
+            "target": {
+              "records": 2,
+              "expected_dimension_no": 2
+            }
+          },
+          "by_origin": {
+            "n76": {
+              "records": 38,
+              "literal_evidence_valid": 38
+            },
+            "n78": {
+              "records": 40,
+              "literal_evidence_valid": 40
+            }
+          },
+          "binding_percentage_statuses": {
+            "no_explicit_percentage": 16,
+            "literal_percentage_matches": 18,
+            "multiple_percentage_references": 6
+          },
+          "percentage_agreement_conflict_records": 0,
+          "offset_binding_review_records": 8,
+          "resolution_errors": 0
+        }
+      },
+      "transitions": {
+        "original_allow->original_compact": {
+          "UNCERTAIN->UNCERTAIN": 26,
+          "DENY->DENY": 34,
+          "INVALID->UNCERTAIN": 9,
+          "UNCERTAIN->DENY": 5,
+          "ALLOW->UNCERTAIN": 1,
+          "DENY->UNCERTAIN": 1,
+          "ALLOW->ALLOW": 2
+        },
+        "history_allow->history_compact": {
+          "ALLOW->ALLOW": 35,
+          "DENY->DENY": 35,
+          "ALLOW->UNCERTAIN": 1,
+          "ALLOW->DENY": 2,
+          "UNCERTAIN->UNCERTAIN": 3,
+          "INVALID->DENY": 1,
+          "INVALID->ALLOW": 1
+        }
+      },
+      "historical_transitions": {
+        "original": {
+          "INVALID->DENY": 2,
+          "INVALID->INVALID": 7,
+          "DENY->DENY": 33,
+          "UNCERTAIN->UNCERTAIN": 28,
+          "UNCERTAIN->INVALID": 2,
+          "ALLOW->ALLOW": 2,
+          "INVALID->UNCERTAIN": 2,
+          "DENY->UNCERTAIN": 1,
+          "UNCERTAIN->ALLOW": 1
+        },
+        "history": {
+          "ALLOW->ALLOW": 37,
+          "DENY->DENY": 35,
+          "UNCERTAIN->UNCERTAIN": 3,
+          "DENY->INVALID": 1,
+          "ALLOW->INVALID": 1,
+          "UNCERTAIN->ALLOW": 1
+        }
+      },
+      "whitespace": {
+        "original_allow": {
+          "records": 78,
+          "characters": 203114,
+          "outside_string_whitespace": 108251,
+          "max_outside_string_run": 9353,
+          "long_run_records": 9,
+          "parsed_with_outside_whitespace": 69
+        },
+        "original_compact": {
+          "records": 78,
+          "characters": 100114,
+          "outside_string_whitespace": 6404,
+          "max_outside_string_run": 1,
+          "long_run_records": 0,
+          "parsed_with_outside_whitespace": 78
+        },
+        "history_allow": {
+          "records": 78,
+          "characters": 135080,
+          "outside_string_whitespace": 38023,
+          "max_outside_string_run": 9320,
+          "long_run_records": 2,
+          "parsed_with_outside_whitespace": 76
+        },
+        "history_compact": {
+          "records": 78,
+          "characters": 99832,
+          "outside_string_whitespace": 6401,
+          "max_outside_string_run": 1,
+          "long_run_records": 0,
+          "parsed_with_outside_whitespace": 78
+        }
+      },
+      "bounded_dimensions": {
+        "original_allow": {
+          "trajectory_consistent": {
+            "records": 78,
+            "unavailable": 9,
+            "label_mismatch_records": 0,
+            "reference_count": 55,
+            "empty_reference_steps": 86,
+            "duplicate_reference_steps": 10
+          },
+          "safe_to_execute": {
+            "records": 78,
+            "unavailable": 9,
+            "label_mismatch_records": 0,
+            "reference_count": 59,
+            "empty_reference_steps": 61,
+            "duplicate_reference_steps": 5
+          }
+        },
+        "original_compact": {
+          "trajectory_consistent": {
+            "records": 78,
+            "unavailable": 0,
+            "label_mismatch_records": 0,
+            "reference_count": 37,
+            "empty_reference_steps": 103,
+            "duplicate_reference_steps": 5
+          },
+          "safe_to_execute": {
+            "records": 78,
+            "unavailable": 0,
+            "label_mismatch_records": 0,
+            "reference_count": 27,
+            "empty_reference_steps": 99,
+            "duplicate_reference_steps": 0
+          }
+        },
+        "history_allow": {
+          "trajectory_consistent": {
+            "records": 78,
+            "unavailable": 2,
+            "label_mismatch_records": 0,
+            "reference_count": 38,
+            "empty_reference_steps": 101,
+            "duplicate_reference_steps": 9
+          },
+          "safe_to_execute": {
+            "records": 78,
+            "unavailable": 2,
+            "label_mismatch_records": 0,
+            "reference_count": 65,
+            "empty_reference_steps": 64,
+            "duplicate_reference_steps": 5
+          }
+        },
+        "history_compact": {
+          "trajectory_consistent": {
+            "records": 78,
+            "unavailable": 0,
+            "label_mismatch_records": 1,
+            "reference_count": 22,
+            "empty_reference_steps": 115,
+            "duplicate_reference_steps": 3
+          },
+          "safe_to_execute": {
+            "records": 78,
+            "unavailable": 0,
+            "label_mismatch_records": 1,
+            "reference_count": 17,
+            "empty_reference_steps": 109,
+            "duplicate_reference_steps": 0
+          }
+        }
+      },
+      "binding_coverage": {
+        "original_allow": {
+          "record_flags": {
+            "unavailable_schema": 9,
+            "invalid_literal_evidence": 9,
+            "aggregate_mismatch": 1,
+            "unsupported_with_public_identity_words": 4,
+            "requested_without_joint_quote_words": 24,
+            "multiple_percentage_references": 6,
+            "no_explicit_percentage": 11,
+            "disjoint_literal_offset_words": 8
+          },
+          "unsupported_with_public_identity_words_steps": 13,
+          "percentage_statuses": {
+            "no_explicit_percentage": 14,
+            "literal_percentage_matches": 20,
+            "multiple_percentage_references": 6
+          }
+        },
+        "original_compact": {
+          "record_flags": {
+            "unavailable_schema": 0,
+            "invalid_literal_evidence": 0,
+            "aggregate_mismatch": 0,
+            "unsupported_with_public_identity_words": 7,
+            "requested_without_joint_quote_words": 30,
+            "multiple_percentage_references": 6,
+            "no_explicit_percentage": 13,
+            "disjoint_literal_offset_words": 7
+          },
+          "unsupported_with_public_identity_words_steps": 18,
+          "percentage_statuses": {
+            "no_explicit_percentage": 16,
+            "literal_percentage_matches": 18,
+            "multiple_percentage_references": 6
+          }
+        },
+        "history_allow": {
+          "record_flags": {
+            "unavailable_schema": 2,
+            "invalid_literal_evidence": 2,
+            "aggregate_mismatch": 0,
+            "unsupported_with_public_identity_words": 5,
+            "requested_without_joint_quote_words": 30,
+            "multiple_percentage_references": 6,
+            "no_explicit_percentage": 12,
+            "disjoint_literal_offset_words": 6
+          },
+          "unsupported_with_public_identity_words_steps": 15,
+          "percentage_statuses": {
+            "literal_percentage_matches": 16,
+            "no_explicit_percentage": 15,
+            "literal_percentage_disagrees": 1,
+            "multiple_percentage_references": 6
+          }
+        },
+        "history_compact": {
+          "record_flags": {
+            "unavailable_schema": 0,
+            "invalid_literal_evidence": 0,
+            "aggregate_mismatch": 0,
+            "unsupported_with_public_identity_words": 6,
+            "requested_without_joint_quote_words": 31,
+            "multiple_percentage_references": 6,
+            "no_explicit_percentage": 13,
+            "disjoint_literal_offset_words": 8
+          },
+          "unsupported_with_public_identity_words_steps": 17,
+          "percentage_statuses": {
+            "no_explicit_percentage": 16,
+            "literal_percentage_matches": 18,
+            "multiple_percentage_references": 6
+          }
+        }
+      },
+      "diagnostic_screen_passed": {
+        "original_allow": false,
+        "original_compact": false,
+        "history_allow": false,
+        "history_compact": false
+      },
+      "decoder_source": {
+        "versions": {
+          "vllm": "0.19.0",
+          "xgrammar": "0.2.3"
+        },
+        "source_sha256": {
+          "/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/anaconda3/envs/qwen36-vllm/lib/python3.12/site-packages/vllm/config/structured_outputs.py": "55649776594349b8b4aa3e08fc4c88068366732a486d6fb235079188044aa829",
+          "/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/anaconda3/envs/qwen36-vllm/lib/python3.12/site-packages/vllm/v1/structured_output/backend_xgrammar.py": "e78109e76ea84a4464f5206e5ee4f26679367394ce6f31ef5304ce87fa785f21",
+          "/HOME/nsccgz_ywang/nsccgz_ywang_wzh/HDD_POOL/anaconda3/envs/qwen36-vllm/lib/python3.12/site-packages/vllm/v1/structured_output/__init__.py": "1aa9481191a688157008ef5e0a69450545a958b90cf5e9ebf5aa314837f2fb61"
+        },
+        "read_only": true
+      },
+      "cost": {
+        "new_requests": 312,
+        "new_tokens": 1645088,
+        "probes": {
+          "requests": 4,
+          "failed": 0,
+          "tokens": 88,
+          "missing_usage": 0
+        },
+        "wall_seconds": 117.0044894249877,
+        "startup_seconds": 65.95636164903408,
+        "reserved_h100_gpu_seconds": 459.7460692760069,
+        "preparation_seconds": 11.792129840003327
+      },
+      "acceptance": "5 specialized;451server,450passed/1skip;312HTTP,actualengine flags,331parent files,342collection files,320source blobs and3decoder source snapshots verified server/local. Firstlocal GBK log-read failure preserved;UTF8 interpreter recomputation passed,original receipts unchanged. All semantic screens failed,no adoption/newSR.",
+      "archive_sha256": "5baeebf4b38aa0141f91d46d31e61589a9e79c574e338c3bb51eacc4363cbb67",
+      "cleanup": {
+        "bytes": 14572162,
+        "files": 3,
+        "receipt": "runs/task-runtime/storage-cleanup-20261007-v11/receipt.json",
+        "receipt_sha256": "ec422345b1b017d6cbf231ed0e599fe98bcfeebdb93cea5d25e727701da97ff4"
+      },
+      "git_storage_cleanup": {
+        "bytes": 18066240,
+        "objects_retained": 2506,
+        "object_metadata_sha256": "e69b81f0ef06d1e0ef5c896d50f105fd5cd478a190425d6440ef0a65af35aa61",
+        "refs_indices_status_unchanged": true,
+        "fsck_before_after": true,
+        "receipt": "runs/task-runtime/storage-cleanup-20261007-v12/receipt.json",
+        "receipt_sha256": "61c1e8cddea75a24e6e4bd628b44c079f4afeb394a2e9d879381cd4853894616"
+      }
+    },
     "N88": {
       "status": "factorial_complete_controls_target_reasons_recovered_time_reasons_failed_admission",
       "source_commit": "a854d4a7a29ef69ca17309ee4aa97ea5bce04d67",
@@ -3511,6 +4036,6 @@
     "native_user_goal_conditions": "unimplemented;N67/N70 parsers failed admission;N66/N69 Task remain WAITING,action intentions do not prove user goals",
     "common_simuhome_adapter": "N61 unified entry and public actor boundary verified; native protocols and scores retained"
   },
-  "benefit_acceptance": "not satisfied; no stable benefit on two public benchmarks. N66 CI crosses zero;N67/N70 semantic admission failed;N69 SR flips all without candidate context and tiny stratified interval degenerates. N72/N74 semantic reviews not admitted;N74 all6 conflicts missed;N75 combined6/6 developer denials but35/38 evidence;N76 dynamic schema37/38 andevidence36/38 fail screen,reasons unverified. G retained N77 failure isolation andN78 coverage accepted;N78 all3 wins without review,no attributed benefit;G retained. N80 all3 representation screens failed;coherence internal conflicts0 but24/78 aggregate mismatches,effects quotes degrade;no admission. N82 evidence-first original outputs remove28 aggregate mismatches andrecover2 target dimensions,quotes73/78 fail95%;no native admission or added SR. N83 citation coverage78/78 byconstruction,butaggregate mismatch1 andtime reason dimensions2/4;freshquotes74/78 fail95%. Bothscreens failed;no nativeadmission ornewSR;G retained. N84 all156 original outputs read-only audited;unsupported withobserved room/type lexical windows2->3 records,multivalue percentage0->7 andoffset-worddisjoint0->7;coverage flags not semantic truth,no newSR oradmission. N85 appendedpublic identity improves time reason3/4->4/4 andlexicalunsupported tension3->1,buttargetreason2/2->0/2;extra livingroomfan inherits dehumidifier fan quote. Bothscreens failed,noadoption/newSR;tokens+8.50%,G retained. N86 perstepidentityconst causes15truncations,5additionalnontruncatedduplicate-key records andall3controlALLOW->UNCERTAIN;targetreason2/2->0/2;schema63/78,literal62/78,actualorder58/78 fail. Free trajectory/safety evidence expands;noadoption/newSR,G retained. N87 bounded trajectory/safety evidence eliminates fresh candidate parse/truncation failures (78/78),reduces outputtokens28.54%,butall3controls UNCERTAIN,target reasons0/2,andaggregate mismatch1;format benefit only,no semantic admission ornewSR,G retained. N88 2x2 factorial: history prompt recovers3repeated lighting controls andmetadata removal restores2target reasons,butall4arms time reasons2/4;second-sentence requested purifier falsely unsupported,aggregate DENY useswrongreason. Jointarm78/78 schema/literal buttrajectory/safety2relation-label disagreements each;noadoption/newSR,G retained.",
-  "next": "First read-only inspect existing decoder whitespace controls andsame78exposed cross-sentence citation failures. Freeze independent single-factor diagnoses beforeanyinference,retain original6DENY/3ALLOW/4time+2target gates andallcost/failures. N88 plain_history remainsdiagnostic,no automatic native expansion ordefault change. FourH100/64slots;no training,newbenchmark,sealed95,environment orupstream changes."
+  "benefit_acceptance": "not satisfied; no stable benefit on two public benchmarks. N66 CI crosses zero;N67/N70 semantic admission failed;N69 SR flips all without candidate context and tiny stratified interval degenerates. N72/N74 semantic reviews not admitted;N74 all6 conflicts missed;N75 combined6/6 developer denials but35/38 evidence;N76 dynamic schema37/38 andevidence36/38 fail screen,reasons unverified. G retained N77 failure isolation andN78 coverage accepted;N78 all3 wins without review,no attributed benefit;G retained. N80 all3 representation screens failed;coherence internal conflicts0 but24/78 aggregate mismatches,effects quotes degrade;no admission. N82 evidence-first original outputs remove28 aggregate mismatches andrecover2 target dimensions,quotes73/78 fail95%;no native admission or added SR. N83 citation coverage78/78 byconstruction,butaggregate mismatch1 andtime reason dimensions2/4;freshquotes74/78 fail95%. Bothscreens failed;no nativeadmission ornewSR;G retained. N84 all156 original outputs read-only audited;unsupported withobserved room/type lexical windows2->3 records,multivalue percentage0->7 andoffset-worddisjoint0->7;coverage flags not semantic truth,no newSR oradmission. N85 appendedpublic identity improves time reason3/4->4/4 andlexicalunsupported tension3->1,buttargetreason2/2->0/2;extra livingroomfan inherits dehumidifier fan quote. Bothscreens failed,noadoption/newSR;tokens+8.50%,G retained. N86 perstepidentityconst causes15truncations,5additionalnontruncatedduplicate-key records andall3controlALLOW->UNCERTAIN;targetreason2/2->0/2;schema63/78,literal62/78,actualorder58/78 fail. Free trajectory/safety evidence expands;noadoption/newSR,G retained. N87 bounded trajectory/safety evidence eliminates fresh candidate parse/truncation failures (78/78),reduces outputtokens28.54%,butall3controls UNCERTAIN,target reasons0/2,andaggregate mismatch1;format benefit only,no semantic admission ornewSR,G retained. N88 2x2 factorial: history prompt recovers3repeated lighting controls andmetadata removal restores2target reasons,butall4arms time reasons2/4;second-sentence requested purifier falsely unsupported,aggregate DENY useswrongreason. Jointarm78/78 schema/literal buttrajectory/safety2relation-label disagreements each;noadoption/newSR,G retained. N89 explicitxgrammar allow/compact pairs inoriginal/history prompt strata:compact both78/78 schema/literal andzero truncation versus9/2failures;outputtokens-41.50%/-23.21% andHTTPmedian-33.79%/-29.73%. Time reasonsall2/4,historycompacttrajectory/safety1relation-label disagreement each;semantic screensfailed,G retained. Differentfixed GPUreplicas,nocrossover,historicalN88autobackend comparisons separate;not stable native gain.",
+  "next": "Freeze same78exposed official inputs xfreshpaired citation catalog original/reverse display order (156requests),based onN89history_compact. Keepstablecitation IDs,originaltexts,entireusergoal/publiccontext,schema,prompt,generation,max2048 andexplicitxgrammar/compact unchanged. Sameactor perinputpair,fourH100/64slots;original6DENY/3ALLOW/4time+2target reason gates andallfailures/cost retained. Publicbathroom identity andsecond-sentence citations already present;ordertest mustnot addchosen truth,relabel ortruncate. No native expansion,training,newbenchmark,sealed95 ordefaultchange."
 }
